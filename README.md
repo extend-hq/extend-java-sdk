@@ -1,9 +1,9 @@
-# Extendconfig Java Library
+# Extend.ai Java Library
 
 [![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-Built%20with%20Fern-brightgreen)](https://buildwithfern.com?utm_source=github&utm_medium=github&utm_campaign=readme&utm_source=https%3A%2F%2Fgithub.com%2Fextend-hq%2Fextend-java-sdk)
 [![Maven Central](https://img.shields.io/maven-central/v/ai.extend/extend-java-sdk)](https://central.sonatype.com/artifact/ai.extend/extend-java-sdk)
 
-The Extendconfig Java library provides convenient access to the Extendconfig APIs from Java.
+The Extend Java library provides convenient access to the Extend APIs from Java.
 
 ## Documentation
 
@@ -96,11 +96,11 @@ ExtendClient client = ExtendClient
 When the API returns a non-success status code (4xx or 5xx response), an API exception will be thrown.
 
 ```java
-import ai.extend.core.ExtendconfigApiApiException;
+import ai.extend.core.ExtendClientApiException;
 
 try {
     client.workflowRun().create(...);
-} catch (ExtendconfigApiApiException e) {
+} catch (ExtendClientApiException e) {
     // Do something with the API exception...
 }
 ```
@@ -109,7 +109,7 @@ try {
 
 ### Custom Client
 
-This SDK is built to work with any instance of `OkHttpClient`. By default, if no client is provided, the SDK will construct one. 
+This SDK is built to work with any instance of `OkHttpClient`. By default, if no client is provided, the SDK will construct one.
 However, you can pass your own client like so:
 
 ```java
