@@ -45,6 +45,23 @@ java {
 }
 
 
+group = 'ai.extend'
+
+version = '0.0.1-beta'
+
+jar {
+    dependsOn(":generatePomFileForMavenPublication")
+    archiveBaseName = "extend-java-sdk"
+}
+
+sourcesJar {
+    archiveBaseName = "extend-java-sdk"
+}
+
+javadocJar {
+    archiveBaseName = "extend-java-sdk"
+}
+
 signing {
     sign(publishing.publications)
 }
@@ -56,3 +73,59 @@ test {
     }
 }
 
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'ai.extend'
+            artifactId = 'extend-java-sdk'
+            version = '0.0.1-beta'
+            from components.java
+            pom {
+                name = 'Extend.ai'
+                description = 'The Java SDK for Extend.ai'
+                url = 'https://docs.extend.ai/2025-04-21/developers'
+                licenses {
+                    license {
+                        name = 'The MIT License (MIT)'
+                        url = 'https://mit-license.org/'
+                    }
+                }
+                developers {
+                    developer {
+                        name = 'Extend.ai'
+                        email = 'developers@extendconfig.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/extend-hq/extend-java-sdk.git'
+                    developerConnection = 'scm:git:git://github.com/extend-hq/extend-java-sdk.git'
+                    url = 'https://github.com/extend-hq/extend-java-sdk'
+                }
+            }
+        }
+    }
+}
+
+sonatypeCentralUpload {
+    username = "$System.env.MAVEN_USERNAME"
+    password = "$System.env.MAVEN_PASSWORD"
+
+    archives = files(
+        "$buildDir/libs/extend-java-sdk-" + version + ".jar",
+        "$buildDir/libs/extend-java-sdk-" + version + "-sources.jar",
+        "$buildDir/libs/extend-java-sdk-" + version + "-javadoc.jar"
+    )
+
+    pom = file("$buildDir/publications/maven/pom-default.xml")
+    signingKey = "$System.env.MAVEN_SIGNATURE_SECRET_KEY"
+    signingKeyPassphrase = "$System.env.MAVEN_SIGNATURE_PASSWORD"
+}
+
+signing {
+    def signingKeyId = "$System.env.MAVEN_SIGNATURE_SECRET_KEY"
+    def signingPassword = "$System.env.MAVEN_SIGNATURE_PASSWORD"
+    useInMemoryPgpKeys(signingKeyId, signingPassword)
+    sign publishing.publications.maven
+}
+
+sonatypeCentralUpload.dependsOn build
