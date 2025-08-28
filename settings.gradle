@@ -1,1 +1,3 @@
+rootProject.name = 'extend-java-sdk'
+
 include 'sample-app'
