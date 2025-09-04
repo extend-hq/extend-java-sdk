@@ -37,7 +37,7 @@ public final class ExtractionAdvancedOptions {
 
     private final Optional<Integer> fixedPageLimit;
 
-    private final Optional<List<ExtractionAdvancedOptionsPageRangesItem>> pageRanges;
+    private final Optional<List<PageRangesItem>> pageRanges;
 
     private final Map<String, Object> additionalProperties;
 
@@ -50,7 +50,7 @@ public final class ExtractionAdvancedOptions {
             Optional<Boolean> advancedFigureParsingEnabled,
             Optional<ExtractChunkingOptions> chunkingOptions,
             Optional<Integer> fixedPageLimit,
-            Optional<List<ExtractionAdvancedOptionsPageRangesItem>> pageRanges,
+            Optional<List<PageRangesItem>> pageRanges,
             Map<String, Object> additionalProperties) {
         this.documentKind = documentKind;
         this.keyDefinitions = keyDefinitions;
@@ -125,11 +125,8 @@ public final class ExtractionAdvancedOptions {
         return fixedPageLimit;
     }
 
-    /**
-     * @return Limit processing to the specified page ranges. See <a href="/product/page-ranges">Page Ranges</a>.
-     */
     @JsonProperty("pageRanges")
-    public Optional<List<ExtractionAdvancedOptionsPageRangesItem>> getPageRanges() {
+    public Optional<List<PageRangesItem>> getPageRanges() {
         return pageRanges;
     }
 
@@ -197,7 +194,7 @@ public final class ExtractionAdvancedOptions {
 
         private Optional<Integer> fixedPageLimit = Optional.empty();
 
-        private Optional<List<ExtractionAdvancedOptionsPageRangesItem>> pageRanges = Optional.empty();
+        private Optional<List<PageRangesItem>> pageRanges = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -326,16 +323,13 @@ public final class ExtractionAdvancedOptions {
             return this;
         }
 
-        /**
-         * <p>Limit processing to the specified page ranges. See <a href="/product/page-ranges">Page Ranges</a>.</p>
-         */
         @JsonSetter(value = "pageRanges", nulls = Nulls.SKIP)
-        public Builder pageRanges(Optional<List<ExtractionAdvancedOptionsPageRangesItem>> pageRanges) {
+        public Builder pageRanges(Optional<List<PageRangesItem>> pageRanges) {
             this.pageRanges = pageRanges;
             return this;
         }
 
-        public Builder pageRanges(List<ExtractionAdvancedOptionsPageRangesItem> pageRanges) {
+        public Builder pageRanges(List<PageRangesItem> pageRanges) {
             this.pageRanges = Optional.ofNullable(pageRanges);
             return this;
         }

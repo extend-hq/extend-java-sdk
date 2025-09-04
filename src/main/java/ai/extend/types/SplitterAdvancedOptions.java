@@ -29,7 +29,7 @@ public final class SplitterAdvancedOptions {
 
     private final Optional<Integer> fixedPageLimit;
 
-    private final Optional<List<SplitterAdvancedOptionsPageRangesItem>> pageRanges;
+    private final Optional<List<PageRangesItem>> pageRanges;
 
     private final Map<String, Object> additionalProperties;
 
@@ -38,7 +38,7 @@ public final class SplitterAdvancedOptions {
             Optional<SplitterAdvancedOptionsSplitMethod> splitMethod,
             Optional<Boolean> splitExcelDocumentsBySheetEnabled,
             Optional<Integer> fixedPageLimit,
-            Optional<List<SplitterAdvancedOptionsPageRangesItem>> pageRanges,
+            Optional<List<PageRangesItem>> pageRanges,
             Map<String, Object> additionalProperties) {
         this.splitIdentifierRules = splitIdentifierRules;
         this.splitMethod = splitMethod;
@@ -80,11 +80,8 @@ public final class SplitterAdvancedOptions {
         return fixedPageLimit;
     }
 
-    /**
-     * @return Limit processing to the specified page ranges. See <a href="/product/page-ranges">Page Ranges</a>.
-     */
     @JsonProperty("pageRanges")
-    public Optional<List<SplitterAdvancedOptionsPageRangesItem>> getPageRanges() {
+    public Optional<List<PageRangesItem>> getPageRanges() {
         return pageRanges;
     }
 
@@ -136,7 +133,7 @@ public final class SplitterAdvancedOptions {
 
         private Optional<Integer> fixedPageLimit = Optional.empty();
 
-        private Optional<List<SplitterAdvancedOptionsPageRangesItem>> pageRanges = Optional.empty();
+        private Optional<List<PageRangesItem>> pageRanges = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -208,16 +205,13 @@ public final class SplitterAdvancedOptions {
             return this;
         }
 
-        /**
-         * <p>Limit processing to the specified page ranges. See <a href="/product/page-ranges">Page Ranges</a>.</p>
-         */
         @JsonSetter(value = "pageRanges", nulls = Nulls.SKIP)
-        public Builder pageRanges(Optional<List<SplitterAdvancedOptionsPageRangesItem>> pageRanges) {
+        public Builder pageRanges(Optional<List<PageRangesItem>> pageRanges) {
             this.pageRanges = pageRanges;
             return this;
         }
 
-        public Builder pageRanges(List<SplitterAdvancedOptionsPageRangesItem> pageRanges) {
+        public Builder pageRanges(List<PageRangesItem> pageRanges) {
             this.pageRanges = Optional.ofNullable(pageRanges);
             return this;
         }

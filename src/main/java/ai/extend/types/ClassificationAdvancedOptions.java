@@ -27,7 +27,7 @@ public final class ClassificationAdvancedOptions {
 
     private final Optional<Integer> fixedPageLimit;
 
-    private final Optional<List<ClassificationAdvancedOptionsPageRangesItem>> pageRanges;
+    private final Optional<List<PageRangesItem>> pageRanges;
 
     private final Map<String, Object> additionalProperties;
 
@@ -35,7 +35,7 @@ public final class ClassificationAdvancedOptions {
             Optional<ClassificationAdvancedOptionsContext> context,
             Optional<Boolean> advancedMultimodalEnabled,
             Optional<Integer> fixedPageLimit,
-            Optional<List<ClassificationAdvancedOptionsPageRangesItem>> pageRanges,
+            Optional<List<PageRangesItem>> pageRanges,
             Map<String, Object> additionalProperties) {
         this.context = context;
         this.advancedMultimodalEnabled = advancedMultimodalEnabled;
@@ -68,11 +68,8 @@ public final class ClassificationAdvancedOptions {
         return fixedPageLimit;
     }
 
-    /**
-     * @return Limit processing to the specified page ranges. See <a href="/product/page-ranges">Page Ranges</a>.
-     */
     @JsonProperty("pageRanges")
-    public Optional<List<ClassificationAdvancedOptionsPageRangesItem>> getPageRanges() {
+    public Optional<List<PageRangesItem>> getPageRanges() {
         return pageRanges;
     }
 
@@ -116,7 +113,7 @@ public final class ClassificationAdvancedOptions {
 
         private Optional<Integer> fixedPageLimit = Optional.empty();
 
-        private Optional<List<ClassificationAdvancedOptionsPageRangesItem>> pageRanges = Optional.empty();
+        private Optional<List<PageRangesItem>> pageRanges = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -173,16 +170,13 @@ public final class ClassificationAdvancedOptions {
             return this;
         }
 
-        /**
-         * <p>Limit processing to the specified page ranges. See <a href="/product/page-ranges">Page Ranges</a>.</p>
-         */
         @JsonSetter(value = "pageRanges", nulls = Nulls.SKIP)
-        public Builder pageRanges(Optional<List<ClassificationAdvancedOptionsPageRangesItem>> pageRanges) {
+        public Builder pageRanges(Optional<List<PageRangesItem>> pageRanges) {
             this.pageRanges = pageRanges;
             return this;
         }
 
-        public Builder pageRanges(List<ClassificationAdvancedOptionsPageRangesItem> pageRanges) {
+        public Builder pageRanges(List<PageRangesItem> pageRanges) {
             this.pageRanges = Optional.ofNullable(pageRanges);
             return this;
         }

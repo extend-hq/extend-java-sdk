@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -22,11 +23,16 @@ import java.util.Optional;
 public final class ParseConfigAdvancedOptions {
     private final Optional<Boolean> pageRotationEnabled;
 
+    private final Optional<List<PageRangesItem>> pageRanges;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseConfigAdvancedOptions(
-            Optional<Boolean> pageRotationEnabled, Map<String, Object> additionalProperties) {
+            Optional<Boolean> pageRotationEnabled,
+            Optional<List<PageRangesItem>> pageRanges,
+            Map<String, Object> additionalProperties) {
         this.pageRotationEnabled = pageRotationEnabled;
+        this.pageRanges = pageRanges;
         this.additionalProperties = additionalProperties;
     }
 
@@ -36,6 +42,11 @@ public final class ParseConfigAdvancedOptions {
     @JsonProperty("pageRotationEnabled")
     public Optional<Boolean> getPageRotationEnabled() {
         return pageRotationEnabled;
+    }
+
+    @JsonProperty("pageRanges")
+    public Optional<List<PageRangesItem>> getPageRanges() {
+        return pageRanges;
     }
 
     @java.lang.Override
@@ -50,12 +61,12 @@ public final class ParseConfigAdvancedOptions {
     }
 
     private boolean equalTo(ParseConfigAdvancedOptions other) {
-        return pageRotationEnabled.equals(other.pageRotationEnabled);
+        return pageRotationEnabled.equals(other.pageRotationEnabled) && pageRanges.equals(other.pageRanges);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.pageRotationEnabled);
+        return Objects.hash(this.pageRotationEnabled, this.pageRanges);
     }
 
     @java.lang.Override
@@ -71,6 +82,8 @@ public final class ParseConfigAdvancedOptions {
     public static final class Builder {
         private Optional<Boolean> pageRotationEnabled = Optional.empty();
 
+        private Optional<List<PageRangesItem>> pageRanges = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -78,6 +91,7 @@ public final class ParseConfigAdvancedOptions {
 
         public Builder from(ParseConfigAdvancedOptions other) {
             pageRotationEnabled(other.getPageRotationEnabled());
+            pageRanges(other.getPageRanges());
             return this;
         }
 
@@ -95,8 +109,19 @@ public final class ParseConfigAdvancedOptions {
             return this;
         }
 
+        @JsonSetter(value = "pageRanges", nulls = Nulls.SKIP)
+        public Builder pageRanges(Optional<List<PageRangesItem>> pageRanges) {
+            this.pageRanges = pageRanges;
+            return this;
+        }
+
+        public Builder pageRanges(List<PageRangesItem> pageRanges) {
+            this.pageRanges = Optional.ofNullable(pageRanges);
+            return this;
+        }
+
         public ParseConfigAdvancedOptions build() {
-            return new ParseConfigAdvancedOptions(pageRotationEnabled, additionalProperties);
+            return new ParseConfigAdvancedOptions(pageRotationEnabled, pageRanges, additionalProperties);
         }
     }
 }

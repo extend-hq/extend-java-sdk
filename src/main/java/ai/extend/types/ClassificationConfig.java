@@ -54,7 +54,7 @@ public final class ClassificationConfig {
     }
 
     /**
-     * @return The base processor to use. For classifiers, this must be either <code>&quot;classifier_performance&quot;</code> or <code>&quot;classifier_light&quot;</code>. See <a href="/changelog/classification/classification-performance">Classification Changelog</a> for more details.
+     * @return The base processor to use. For classifiers, this must be either <code>&quot;classification_performance&quot;</code> or <code>&quot;classification_light&quot;</code>. See <a href="/changelog/classification/classification-performance">Classification Changelog</a> for more details.
      */
     @JsonProperty("baseProcessor")
     public Optional<ClassificationConfigBaseProcessor> getBaseProcessor() {
@@ -62,7 +62,7 @@ public final class ClassificationConfig {
     }
 
     /**
-     * @return The version of the <code>&quot;classifier_performance&quot;</code> or <code>&quot;classifier_light&quot;</code> processor to use. If this is provided, the <code>baseProcessor</code> must also be provided. See <a href="/changelog/classification/classification-performance">Classification Changelog</a> for more details.
+     * @return The version of the <code>&quot;classification_performance&quot;</code> or <code>&quot;classification_light&quot;</code> processor to use. If this is provided, the <code>baseProcessor</code> must also be provided. See <a href="/changelog/classification/classification-performance">Classification Changelog</a> for more details.
      */
     @JsonProperty("baseVersion")
     public Optional<String> getBaseVersion() {
@@ -171,7 +171,7 @@ public final class ClassificationConfig {
         }
 
         /**
-         * <p>The base processor to use. For classifiers, this must be either <code>&quot;classifier_performance&quot;</code> or <code>&quot;classifier_light&quot;</code>. See <a href="/changelog/classification/classification-performance">Classification Changelog</a> for more details.</p>
+         * <p>The base processor to use. For classifiers, this must be either <code>&quot;classification_performance&quot;</code> or <code>&quot;classification_light&quot;</code>. See <a href="/changelog/classification/classification-performance">Classification Changelog</a> for more details.</p>
          */
         @JsonSetter(value = "baseProcessor", nulls = Nulls.SKIP)
         public Builder baseProcessor(Optional<ClassificationConfigBaseProcessor> baseProcessor) {
@@ -185,7 +185,7 @@ public final class ClassificationConfig {
         }
 
         /**
-         * <p>The version of the <code>&quot;classifier_performance&quot;</code> or <code>&quot;classifier_light&quot;</code> processor to use. If this is provided, the <code>baseProcessor</code> must also be provided. See <a href="/changelog/classification/classification-performance">Classification Changelog</a> for more details.</p>
+         * <p>The version of the <code>&quot;classification_performance&quot;</code> or <code>&quot;classification_light&quot;</code> processor to use. If this is provided, the <code>baseProcessor</code> must also be provided. See <a href="/changelog/classification/classification-performance">Classification Changelog</a> for more details.</p>
          */
         @JsonSetter(value = "baseVersion", nulls = Nulls.SKIP)
         public Builder baseVersion(Optional<String> baseVersion) {
