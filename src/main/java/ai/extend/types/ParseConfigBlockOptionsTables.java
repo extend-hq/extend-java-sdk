@@ -24,14 +24,18 @@ public final class ParseConfigBlockOptionsTables {
 
     private final Optional<ParseConfigBlockOptionsTablesTargetFormat> targetFormat;
 
+    private final Optional<Boolean> tableHeaderContinuationEnabled;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseConfigBlockOptionsTables(
             Optional<Boolean> enabled,
             Optional<ParseConfigBlockOptionsTablesTargetFormat> targetFormat,
+            Optional<Boolean> tableHeaderContinuationEnabled,
             Map<String, Object> additionalProperties) {
         this.enabled = enabled;
         this.targetFormat = targetFormat;
+        this.tableHeaderContinuationEnabled = tableHeaderContinuationEnabled;
         this.additionalProperties = additionalProperties;
     }
 
@@ -55,6 +59,14 @@ public final class ParseConfigBlockOptionsTables {
         return targetFormat;
     }
 
+    /**
+     * @return Whether to automatically copy table headers to headerless tables on subsequent pages when they have matching column counts. Useful for multi-page tables.
+     */
+    @JsonProperty("tableHeaderContinuationEnabled")
+    public Optional<Boolean> getTableHeaderContinuationEnabled() {
+        return tableHeaderContinuationEnabled;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -67,12 +79,14 @@ public final class ParseConfigBlockOptionsTables {
     }
 
     private boolean equalTo(ParseConfigBlockOptionsTables other) {
-        return enabled.equals(other.enabled) && targetFormat.equals(other.targetFormat);
+        return enabled.equals(other.enabled)
+                && targetFormat.equals(other.targetFormat)
+                && tableHeaderContinuationEnabled.equals(other.tableHeaderContinuationEnabled);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.enabled, this.targetFormat);
+        return Objects.hash(this.enabled, this.targetFormat, this.tableHeaderContinuationEnabled);
     }
 
     @java.lang.Override
@@ -90,6 +104,8 @@ public final class ParseConfigBlockOptionsTables {
 
         private Optional<ParseConfigBlockOptionsTablesTargetFormat> targetFormat = Optional.empty();
 
+        private Optional<Boolean> tableHeaderContinuationEnabled = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -98,6 +114,7 @@ public final class ParseConfigBlockOptionsTables {
         public Builder from(ParseConfigBlockOptionsTables other) {
             enabled(other.getEnabled());
             targetFormat(other.getTargetFormat());
+            tableHeaderContinuationEnabled(other.getTableHeaderContinuationEnabled());
             return this;
         }
 
@@ -133,8 +150,23 @@ public final class ParseConfigBlockOptionsTables {
             return this;
         }
 
+        /**
+         * <p>Whether to automatically copy table headers to headerless tables on subsequent pages when they have matching column counts. Useful for multi-page tables.</p>
+         */
+        @JsonSetter(value = "tableHeaderContinuationEnabled", nulls = Nulls.SKIP)
+        public Builder tableHeaderContinuationEnabled(Optional<Boolean> tableHeaderContinuationEnabled) {
+            this.tableHeaderContinuationEnabled = tableHeaderContinuationEnabled;
+            return this;
+        }
+
+        public Builder tableHeaderContinuationEnabled(Boolean tableHeaderContinuationEnabled) {
+            this.tableHeaderContinuationEnabled = Optional.ofNullable(tableHeaderContinuationEnabled);
+            return this;
+        }
+
         public ParseConfigBlockOptionsTables build() {
-            return new ParseConfigBlockOptionsTables(enabled, targetFormat, additionalProperties);
+            return new ParseConfigBlockOptionsTables(
+                    enabled, targetFormat, tableHeaderContinuationEnabled, additionalProperties);
         }
     }
 }

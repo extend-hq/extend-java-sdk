@@ -18,16 +18,15 @@ import java.util.Objects;
 import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-@JsonDeserialize(builder = ClassificationAdvancedOptionsPageRangesItem.Builder.class)
-public final class ClassificationAdvancedOptionsPageRangesItem {
+@JsonDeserialize(builder = PageRangesItem.Builder.class)
+public final class PageRangesItem {
     private final Optional<Integer> start;
 
     private final Optional<Integer> end;
 
     private final Map<String, Object> additionalProperties;
 
-    private ClassificationAdvancedOptionsPageRangesItem(
-            Optional<Integer> start, Optional<Integer> end, Map<String, Object> additionalProperties) {
+    private PageRangesItem(Optional<Integer> start, Optional<Integer> end, Map<String, Object> additionalProperties) {
         this.start = start;
         this.end = end;
         this.additionalProperties = additionalProperties;
@@ -52,8 +51,7 @@ public final class ClassificationAdvancedOptionsPageRangesItem {
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        return other instanceof ClassificationAdvancedOptionsPageRangesItem
-                && equalTo((ClassificationAdvancedOptionsPageRangesItem) other);
+        return other instanceof PageRangesItem && equalTo((PageRangesItem) other);
     }
 
     @JsonAnyGetter
@@ -61,7 +59,7 @@ public final class ClassificationAdvancedOptionsPageRangesItem {
         return this.additionalProperties;
     }
 
-    private boolean equalTo(ClassificationAdvancedOptionsPageRangesItem other) {
+    private boolean equalTo(PageRangesItem other) {
         return start.equals(other.start) && end.equals(other.end);
     }
 
@@ -90,7 +88,7 @@ public final class ClassificationAdvancedOptionsPageRangesItem {
 
         private Builder() {}
 
-        public Builder from(ClassificationAdvancedOptionsPageRangesItem other) {
+        public Builder from(PageRangesItem other) {
             start(other.getStart());
             end(other.getEnd());
             return this;
@@ -124,8 +122,8 @@ public final class ClassificationAdvancedOptionsPageRangesItem {
             return this;
         }
 
-        public ClassificationAdvancedOptionsPageRangesItem build() {
-            return new ClassificationAdvancedOptionsPageRangesItem(start, end, additionalProperties);
+        public PageRangesItem build() {
+            return new PageRangesItem(start, end, additionalProperties);
         }
     }
 }

@@ -22,20 +22,16 @@ import java.util.Optional;
 public final class ParseConfigChunkingStrategy {
     private final Optional<ParseConfigChunkingStrategyType> type;
 
-    private final Optional<Integer> minCharacters;
-
-    private final Optional<Integer> maxCharacters;
+    private final Optional<ParseConfigChunkingStrategyOptions> options;
 
     private final Map<String, Object> additionalProperties;
 
     private ParseConfigChunkingStrategy(
             Optional<ParseConfigChunkingStrategyType> type,
-            Optional<Integer> minCharacters,
-            Optional<Integer> maxCharacters,
+            Optional<ParseConfigChunkingStrategyOptions> options,
             Map<String, Object> additionalProperties) {
         this.type = type;
-        this.minCharacters = minCharacters;
-        this.maxCharacters = maxCharacters;
+        this.options = options;
         this.additionalProperties = additionalProperties;
     }
 
@@ -53,19 +49,11 @@ public final class ParseConfigChunkingStrategy {
     }
 
     /**
-     * @return Specify a minimum number of characters per chunk.
+     * @return Additional options for the chunking strategy.
      */
-    @JsonProperty("minCharacters")
-    public Optional<Integer> getMinCharacters() {
-        return minCharacters;
-    }
-
-    /**
-     * @return Specify a maximum number of characters per chunk.
-     */
-    @JsonProperty("maxCharacters")
-    public Optional<Integer> getMaxCharacters() {
-        return maxCharacters;
+    @JsonProperty("options")
+    public Optional<ParseConfigChunkingStrategyOptions> getOptions() {
+        return options;
     }
 
     @java.lang.Override
@@ -80,14 +68,12 @@ public final class ParseConfigChunkingStrategy {
     }
 
     private boolean equalTo(ParseConfigChunkingStrategy other) {
-        return type.equals(other.type)
-                && minCharacters.equals(other.minCharacters)
-                && maxCharacters.equals(other.maxCharacters);
+        return type.equals(other.type) && options.equals(other.options);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.type, this.minCharacters, this.maxCharacters);
+        return Objects.hash(this.type, this.options);
     }
 
     @java.lang.Override
@@ -103,9 +89,7 @@ public final class ParseConfigChunkingStrategy {
     public static final class Builder {
         private Optional<ParseConfigChunkingStrategyType> type = Optional.empty();
 
-        private Optional<Integer> minCharacters = Optional.empty();
-
-        private Optional<Integer> maxCharacters = Optional.empty();
+        private Optional<ParseConfigChunkingStrategyOptions> options = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -114,8 +98,7 @@ public final class ParseConfigChunkingStrategy {
 
         public Builder from(ParseConfigChunkingStrategy other) {
             type(other.getType());
-            minCharacters(other.getMinCharacters());
-            maxCharacters(other.getMaxCharacters());
+            options(other.getOptions());
             return this;
         }
 
@@ -139,35 +122,21 @@ public final class ParseConfigChunkingStrategy {
         }
 
         /**
-         * <p>Specify a minimum number of characters per chunk.</p>
+         * <p>Additional options for the chunking strategy.</p>
          */
-        @JsonSetter(value = "minCharacters", nulls = Nulls.SKIP)
-        public Builder minCharacters(Optional<Integer> minCharacters) {
-            this.minCharacters = minCharacters;
+        @JsonSetter(value = "options", nulls = Nulls.SKIP)
+        public Builder options(Optional<ParseConfigChunkingStrategyOptions> options) {
+            this.options = options;
             return this;
         }
 
-        public Builder minCharacters(Integer minCharacters) {
-            this.minCharacters = Optional.ofNullable(minCharacters);
-            return this;
-        }
-
-        /**
-         * <p>Specify a maximum number of characters per chunk.</p>
-         */
-        @JsonSetter(value = "maxCharacters", nulls = Nulls.SKIP)
-        public Builder maxCharacters(Optional<Integer> maxCharacters) {
-            this.maxCharacters = maxCharacters;
-            return this;
-        }
-
-        public Builder maxCharacters(Integer maxCharacters) {
-            this.maxCharacters = Optional.ofNullable(maxCharacters);
+        public Builder options(ParseConfigChunkingStrategyOptions options) {
+            this.options = Optional.ofNullable(options);
             return this;
         }
 
         public ParseConfigChunkingStrategy build() {
-            return new ParseConfigChunkingStrategy(type, minCharacters, maxCharacters, additionalProperties);
+            return new ParseConfigChunkingStrategy(type, options, additionalProperties);
         }
     }
 }
