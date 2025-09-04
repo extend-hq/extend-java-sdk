@@ -29,7 +29,7 @@ Add the dependency in your `pom.xml` file:
 <dependency>
   <groupId>ai.extend</groupId>
   <artifactId>extend-java-sdk</artifactId>
-  <version>0.0.1-beta</version>
+  <version>0.0.2-beta</version>
 </dependency>
 ```
 
