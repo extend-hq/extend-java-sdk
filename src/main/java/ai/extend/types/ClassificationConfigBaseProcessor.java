@@ -6,9 +6,9 @@ package ai.extend.types;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ClassificationConfigBaseProcessor {
-    CLASSIFIER_PERFORMANCE("classifier_performance"),
+    CLASSIFICATION_PERFORMANCE("classification_performance"),
 
-    CLASSIFIER_LIGHT("classifier_light");
+    CLASSIFICATION_LIGHT("classification_light");
 
     private final String value;
 

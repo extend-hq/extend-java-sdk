@@ -47,7 +47,7 @@ java {
 
 group = 'ai.extend'
 
-version = '0.0.1-beta'
+version = '0.0.2-beta'
 
 jar {
     dependsOn(":generatePomFileForMavenPublication")
@@ -78,7 +78,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'ai.extend'
             artifactId = 'extend-java-sdk'
-            version = '0.0.1-beta'
+            version = '0.0.2-beta'
             from components.java
             pom {
                 name = 'Extend.ai'
@@ -93,7 +93,7 @@ publishing {
                 developers {
                     developer {
                         name = 'Extend.ai'
-                        email = 'developers@extendconfig.com'
+                        email = 'support@extend.app'
                     }
                 }
                 scm {
