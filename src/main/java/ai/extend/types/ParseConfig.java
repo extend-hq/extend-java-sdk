@@ -44,11 +44,18 @@ public final class ParseConfig {
     }
 
     /**
-     * @return The target format for the parsed content. Supported values:
+     * @return The target format for the parsed content.
+     * <p>Supported values:</p>
      * <ul>
-     * <li><code>markdown</code>: Convert document to Markdown format</li>
-     * <li><code>spatial</code>: Preserve spatial information in the output</li>
+     * <li><code>markdown</code>: True markdown with logical reading order (headings, lists, tables, checkboxes). Best default for LLMs/RAG and enables section-based chunking.</li>
+     * <li><code>spatial</code>: Layout/position-preserving text that uses markdown elements for block types but is not strictly markdown due to whitespace/tabs used to maintain placement. Only page-based chunking is supported.</li>
      * </ul>
+     * <p>Guidance:</p>
+     * <ul>
+     * <li>Prefer <code>markdown</code> for most documents, multi-column reading order, and retrieval use cases</li>
+     * <li>Prefer <code>spatial</code> for messy/scanned/handwritten or skewed documents, when you need near 1:1 layout fidelity, or for BOL-like logistics docs</li>
+     * </ul>
+     * <p>See “Markdown vs Spatial” in the Parse guide for details: /2025-04-21/developers/guides/parse#markdown-vs-spatial</p>
      */
     @JsonProperty("target")
     public Optional<ParseConfigTarget> getTarget() {
@@ -132,11 +139,18 @@ public final class ParseConfig {
         }
 
         /**
-         * <p>The target format for the parsed content. Supported values:</p>
+         * <p>The target format for the parsed content.</p>
+         * <p>Supported values:</p>
          * <ul>
-         * <li><code>markdown</code>: Convert document to Markdown format</li>
-         * <li><code>spatial</code>: Preserve spatial information in the output</li>
+         * <li><code>markdown</code>: True markdown with logical reading order (headings, lists, tables, checkboxes). Best default for LLMs/RAG and enables section-based chunking.</li>
+         * <li><code>spatial</code>: Layout/position-preserving text that uses markdown elements for block types but is not strictly markdown due to whitespace/tabs used to maintain placement. Only page-based chunking is supported.</li>
          * </ul>
+         * <p>Guidance:</p>
+         * <ul>
+         * <li>Prefer <code>markdown</code> for most documents, multi-column reading order, and retrieval use cases</li>
+         * <li>Prefer <code>spatial</code> for messy/scanned/handwritten or skewed documents, when you need near 1:1 layout fidelity, or for BOL-like logistics docs</li>
+         * </ul>
+         * <p>See “Markdown vs Spatial” in the Parse guide for details: /2025-04-21/developers/guides/parse#markdown-vs-spatial</p>
          */
         @JsonSetter(value = "target", nulls = Nulls.SKIP)
         public Builder target(Optional<ParseConfigTarget> target) {

@@ -23,15 +23,19 @@ import java.util.Optional;
 public final class ParseConfigAdvancedOptions {
     private final Optional<Boolean> pageRotationEnabled;
 
+    private final Optional<Boolean> agenticOcrEnabled;
+
     private final Optional<List<PageRangesItem>> pageRanges;
 
     private final Map<String, Object> additionalProperties;
 
     private ParseConfigAdvancedOptions(
             Optional<Boolean> pageRotationEnabled,
+            Optional<Boolean> agenticOcrEnabled,
             Optional<List<PageRangesItem>> pageRanges,
             Map<String, Object> additionalProperties) {
         this.pageRotationEnabled = pageRotationEnabled;
+        this.agenticOcrEnabled = agenticOcrEnabled;
         this.pageRanges = pageRanges;
         this.additionalProperties = additionalProperties;
     }
@@ -42,6 +46,14 @@ public final class ParseConfigAdvancedOptions {
     @JsonProperty("pageRotationEnabled")
     public Optional<Boolean> getPageRotationEnabled() {
         return pageRotationEnabled;
+    }
+
+    /**
+     * @return Whether to enable agentic OCR corrections using VLM-based review and correction of OCR errors for messy handwriting and poorly scanned text.
+     */
+    @JsonProperty("agenticOcrEnabled")
+    public Optional<Boolean> getAgenticOcrEnabled() {
+        return agenticOcrEnabled;
     }
 
     @JsonProperty("pageRanges")
@@ -61,12 +73,14 @@ public final class ParseConfigAdvancedOptions {
     }
 
     private boolean equalTo(ParseConfigAdvancedOptions other) {
-        return pageRotationEnabled.equals(other.pageRotationEnabled) && pageRanges.equals(other.pageRanges);
+        return pageRotationEnabled.equals(other.pageRotationEnabled)
+                && agenticOcrEnabled.equals(other.agenticOcrEnabled)
+                && pageRanges.equals(other.pageRanges);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.pageRotationEnabled, this.pageRanges);
+        return Objects.hash(this.pageRotationEnabled, this.agenticOcrEnabled, this.pageRanges);
     }
 
     @java.lang.Override
@@ -82,6 +96,8 @@ public final class ParseConfigAdvancedOptions {
     public static final class Builder {
         private Optional<Boolean> pageRotationEnabled = Optional.empty();
 
+        private Optional<Boolean> agenticOcrEnabled = Optional.empty();
+
         private Optional<List<PageRangesItem>> pageRanges = Optional.empty();
 
         @JsonAnySetter
@@ -91,6 +107,7 @@ public final class ParseConfigAdvancedOptions {
 
         public Builder from(ParseConfigAdvancedOptions other) {
             pageRotationEnabled(other.getPageRotationEnabled());
+            agenticOcrEnabled(other.getAgenticOcrEnabled());
             pageRanges(other.getPageRanges());
             return this;
         }
@@ -109,6 +126,20 @@ public final class ParseConfigAdvancedOptions {
             return this;
         }
 
+        /**
+         * <p>Whether to enable agentic OCR corrections using VLM-based review and correction of OCR errors for messy handwriting and poorly scanned text.</p>
+         */
+        @JsonSetter(value = "agenticOcrEnabled", nulls = Nulls.SKIP)
+        public Builder agenticOcrEnabled(Optional<Boolean> agenticOcrEnabled) {
+            this.agenticOcrEnabled = agenticOcrEnabled;
+            return this;
+        }
+
+        public Builder agenticOcrEnabled(Boolean agenticOcrEnabled) {
+            this.agenticOcrEnabled = Optional.ofNullable(agenticOcrEnabled);
+            return this;
+        }
+
         @JsonSetter(value = "pageRanges", nulls = Nulls.SKIP)
         public Builder pageRanges(Optional<List<PageRangesItem>> pageRanges) {
             this.pageRanges = pageRanges;
@@ -121,7 +152,8 @@ public final class ParseConfigAdvancedOptions {
         }
 
         public ParseConfigAdvancedOptions build() {
-            return new ParseConfigAdvancedOptions(pageRotationEnabled, pageRanges, additionalProperties);
+            return new ParseConfigAdvancedOptions(
+                    pageRotationEnabled, agenticOcrEnabled, pageRanges, additionalProperties);
         }
     }
 }

@@ -4,21 +4,21 @@
 package ai.extend.errors;
 
 import ai.extend.core.ExtendClientApiException;
-import ai.extend.types.Error;
+import ai.extend.types.ExtendError;
 import okhttp3.Response;
 
 public final class UnprocessableEntityError extends ExtendClientApiException {
     /**
      * The body of the response that triggered the exception.
      */
-    private final Error body;
+    private final ExtendError body;
 
-    public UnprocessableEntityError(Error body) {
+    public UnprocessableEntityError(ExtendError body) {
         super("UnprocessableEntityError", 422, body);
         this.body = body;
     }
 
-    public UnprocessableEntityError(Error body, Response rawResponse) {
+    public UnprocessableEntityError(ExtendError body, Response rawResponse) {
         super("UnprocessableEntityError", 422, body, rawResponse);
         this.body = body;
     }
@@ -27,7 +27,7 @@ public final class UnprocessableEntityError extends ExtendClientApiException {
      * @return the body
      */
     @java.lang.Override
-    public Error body() {
+    public ExtendError body() {
         return this.body;
     }
 }

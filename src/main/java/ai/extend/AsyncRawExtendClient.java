@@ -12,11 +12,15 @@ import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
 import ai.extend.core.RequestOptions;
 import ai.extend.errors.BadRequestError;
+import ai.extend.errors.InternalServerError;
+import ai.extend.errors.NotFoundError;
+import ai.extend.errors.PaymentRequiredError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
 import ai.extend.requests.ParseAsyncRequest;
 import ai.extend.requests.ParseRequest;
 import ai.extend.types.Error;
+import ai.extend.types.ExtendError;
 import ai.extend.types.ParserRun;
 import ai.extend.types.ParserRunStatus;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -111,9 +115,24 @@ public class AsyncRawExtendClient {
                                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class),
                                         response));
                                 return;
+                            case 402:
+                                future.completeExceptionally(new PaymentRequiredError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                            case 404:
+                                future.completeExceptionally(new NotFoundError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
                             case 422:
                                 future.completeExceptionally(new UnprocessableEntityError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class),
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtendError.class),
+                                        response));
+                                return;
+                            case 500:
+                                future.completeExceptionally(new InternalServerError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtendError.class),
                                         response));
                                 return;
                         }

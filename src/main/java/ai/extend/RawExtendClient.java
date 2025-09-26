@@ -12,11 +12,15 @@ import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
 import ai.extend.core.RequestOptions;
 import ai.extend.errors.BadRequestError;
+import ai.extend.errors.InternalServerError;
+import ai.extend.errors.NotFoundError;
+import ai.extend.errors.PaymentRequiredError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
 import ai.extend.requests.ParseAsyncRequest;
 import ai.extend.requests.ParseRequest;
 import ai.extend.types.Error;
+import ai.extend.types.ExtendError;
 import ai.extend.types.ParserRun;
 import ai.extend.types.ParserRunStatus;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -98,9 +102,18 @@ public class RawExtendClient {
                     case 401:
                         throw new UnauthorizedError(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class), response);
+                    case 402:
+                        throw new PaymentRequiredError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 404:
+                        throw new NotFoundError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                     case 422:
                         throw new UnprocessableEntityError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class), response);
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtendError.class), response);
+                    case 500:
+                        throw new InternalServerError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtendError.class), response);
                 }
             } catch (JsonProcessingException ignored) {
                 // unable to map error response, throwing generic error
