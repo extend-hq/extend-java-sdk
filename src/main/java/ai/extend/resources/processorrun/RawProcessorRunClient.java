@@ -9,6 +9,7 @@ import ai.extend.core.ExtendClientException;
 import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
+import ai.extend.core.QueryStringMapper;
 import ai.extend.core.RequestOptions;
 import ai.extend.errors.BadRequestError;
 import ai.extend.errors.InternalServerError;
@@ -16,10 +17,12 @@ import ai.extend.errors.NotFoundError;
 import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.resources.processorrun.requests.ProcessorRunCreateRequest;
+import ai.extend.resources.processorrun.requests.ProcessorRunListRequest;
 import ai.extend.resources.processorrun.types.ProcessorRunCancelResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunCreateResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunDeleteResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunGetResponse;
+import ai.extend.resources.processorrun.types.ProcessorRunListResponse;
 import ai.extend.types.Error;
 import ai.extend.types.ExtendError;
 import ai.extend.types.TooManyRequestsErrorBody;
@@ -38,6 +41,108 @@ public class RawProcessorRunClient {
 
     public RawProcessorRunClient(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
+    }
+
+    /**
+     * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
+     */
+    public ExtendClientHttpResponse<ProcessorRunListResponse> list() {
+        return list(ProcessorRunListRequest.builder().build());
+    }
+
+    /**
+     * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
+     */
+    public ExtendClientHttpResponse<ProcessorRunListResponse> list(ProcessorRunListRequest request) {
+        return list(request, null);
+    }
+
+    /**
+     * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
+     */
+    public ExtendClientHttpResponse<ProcessorRunListResponse> list(
+            ProcessorRunListRequest request, RequestOptions requestOptions) {
+        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("processor_runs");
+        if (request.getStatus().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "status", request.getStatus().get(), false);
+        }
+        if (request.getProcessorId().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "processorId", request.getProcessorId().get(), false);
+        }
+        if (request.getProcessorType().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "processorType", request.getProcessorType().get(), false);
+        }
+        if (request.getSourceId().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "sourceId", request.getSourceId().get(), false);
+        }
+        if (request.getSource().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "source", request.getSource().get(), false);
+        }
+        if (request.getFileNameContains().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "fileNameContains", request.getFileNameContains().get(), false);
+        }
+        if (request.getSortBy().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "sortBy", request.getSortBy().get(), false);
+        }
+        if (request.getSortDir().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "sortDir", request.getSortDir().get(), false);
+        }
+        if (request.getNextPageToken().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "nextPageToken", request.getNextPageToken().get(), false);
+        }
+        if (request.getMaxPageSize().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "maxPageSize", request.getMaxPageSize().get(), false);
+        }
+        Request.Builder _requestBuilder = new Request.Builder()
+                .url(httpUrl.build())
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Accept", "application/json");
+        Request okhttpRequest = _requestBuilder.build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            if (response.isSuccessful()) {
+                return new ExtendClientHttpResponse<>(
+                        ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), ProcessorRunListResponse.class),
+                        response);
+            }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            try {
+                switch (response.code()) {
+                    case 400:
+                        throw new BadRequestError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 401:
+                        throw new UnauthorizedError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class), response);
+                }
+            } catch (JsonProcessingException ignored) {
+                // unable to map error response, throwing generic error
+            }
+            throw new ExtendClientApiException(
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
+        } catch (IOException e) {
+            throw new ExtendClientException("Network error executing HTTP request", e);
+        }
     }
 
     /**

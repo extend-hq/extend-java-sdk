@@ -6,10 +6,12 @@ package ai.extend.resources.processorrun;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.processorrun.requests.ProcessorRunCreateRequest;
+import ai.extend.resources.processorrun.requests.ProcessorRunListRequest;
 import ai.extend.resources.processorrun.types.ProcessorRunCancelResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunCreateResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunDeleteResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunGetResponse;
+import ai.extend.resources.processorrun.types.ProcessorRunListResponse;
 
 public class ProcessorRunClient {
     protected final ClientOptions clientOptions;
@@ -26,6 +28,27 @@ public class ProcessorRunClient {
      */
     public RawProcessorRunClient withRawResponse() {
         return this.rawClient;
+    }
+
+    /**
+     * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
+     */
+    public ProcessorRunListResponse list() {
+        return this.rawClient.list().body();
+    }
+
+    /**
+     * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
+     */
+    public ProcessorRunListResponse list(ProcessorRunListRequest request) {
+        return this.rawClient.list(request).body();
+    }
+
+    /**
+     * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
+     */
+    public ProcessorRunListResponse list(ProcessorRunListRequest request, RequestOptions requestOptions) {
+        return this.rawClient.list(request, requestOptions).body();
     }
 
     /**

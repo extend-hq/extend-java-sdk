@@ -18,6 +18,7 @@ import ai.extend.errors.UnauthorizedError;
 import ai.extend.resources.workflowrun.requests.WorkflowRunCreateRequest;
 import ai.extend.resources.workflowrun.requests.WorkflowRunListRequest;
 import ai.extend.resources.workflowrun.requests.WorkflowRunUpdateRequest;
+import ai.extend.resources.workflowrun.types.WorkflowRunCancelResponse;
 import ai.extend.resources.workflowrun.types.WorkflowRunCreateResponse;
 import ai.extend.resources.workflowrun.types.WorkflowRunDeleteResponse;
 import ai.extend.resources.workflowrun.types.WorkflowRunGetResponse;
@@ -374,6 +375,72 @@ public class RawWorkflowRunClient {
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             try {
                 switch (response.code()) {
+                    case 404:
+                        throw new NotFoundError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 500:
+                        throw new InternalServerError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtendError.class), response);
+                }
+            } catch (JsonProcessingException ignored) {
+                // unable to map error response, throwing generic error
+            }
+            throw new ExtendClientApiException(
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
+        } catch (IOException e) {
+            throw new ExtendClientException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
+     * Cancel a running workflow run by its ID. This endpoint allows you to stop a workflow run that is currently in progress.
+     * <p>Note: Only workflow runs with a status of <code>PROCESSING</code> or <code>PENDING</code> can be cancelled. Workflow runs that are completed, failed, in review, rejected, or already cancelled cannot be cancelled.</p>
+     */
+    public ExtendClientHttpResponse<WorkflowRunCancelResponse> cancel(String workflowRunId) {
+        return cancel(workflowRunId, null);
+    }
+
+    /**
+     * Cancel a running workflow run by its ID. This endpoint allows you to stop a workflow run that is currently in progress.
+     * <p>Note: Only workflow runs with a status of <code>PROCESSING</code> or <code>PENDING</code> can be cancelled. Workflow runs that are completed, failed, in review, rejected, or already cancelled cannot be cancelled.</p>
+     */
+    public ExtendClientHttpResponse<WorkflowRunCancelResponse> cancel(
+            String workflowRunId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("workflow_runs")
+                .addPathSegment(workflowRunId)
+                .addPathSegments("cancel")
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("POST", RequestBody.create("", null))
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            if (response.isSuccessful()) {
+                return new ExtendClientHttpResponse<>(
+                        ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), WorkflowRunCancelResponse.class),
+                        response);
+            }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            try {
+                switch (response.code()) {
+                    case 400:
+                        throw new BadRequestError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 401:
+                        throw new UnauthorizedError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class), response);
                     case 404:
                         throw new NotFoundError(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);

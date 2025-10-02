@@ -64,7 +64,7 @@ public final class WorkflowRunCreateRequest {
     }
 
     /**
-     * @return An array of files to process through the workflow. Either the <code>files</code> array or <code>rawTexts</code> array must be provided. Supported file types can be found <a href="/product/supported-file-types">here</a>. There is a limit if 50 files that can be processed at once using this endpoint. If you wish to process more at a time, consider using the <a href="/developers/api-reference/workflow-endpoints/batch-run-workflow">Batch Run Workflow</a> endpoint.
+     * @return An array of files to process through the workflow. Either the <code>files</code> array or <code>rawTexts</code> array must be provided. Supported file types can be found <a href="/product/general/supported-file-types">here</a>. There is a limit if 50 files that can be processed at once using this endpoint. If you wish to process more at a time, consider using the <a href="/developers/api-reference/workflow-endpoints/batch-run-workflow">Batch Run Workflow</a> endpoint.
      */
     @JsonProperty("files")
     public Optional<List<WorkflowRunFileInput>> getFiles() {
@@ -156,7 +156,7 @@ public final class WorkflowRunCreateRequest {
         WorkflowRunCreateRequest build();
 
         /**
-         * <p>An array of files to process through the workflow. Either the <code>files</code> array or <code>rawTexts</code> array must be provided. Supported file types can be found <a href="/product/supported-file-types">here</a>. There is a limit if 50 files that can be processed at once using this endpoint. If you wish to process more at a time, consider using the <a href="/developers/api-reference/workflow-endpoints/batch-run-workflow">Batch Run Workflow</a> endpoint.</p>
+         * <p>An array of files to process through the workflow. Either the <code>files</code> array or <code>rawTexts</code> array must be provided. Supported file types can be found <a href="/product/general/supported-file-types">here</a>. There is a limit if 50 files that can be processed at once using this endpoint. If you wish to process more at a time, consider using the <a href="/developers/api-reference/workflow-endpoints/batch-run-workflow">Batch Run Workflow</a> endpoint.</p>
          */
         _FinalStage files(Optional<List<WorkflowRunFileInput>> files);
 
@@ -331,7 +331,7 @@ public final class WorkflowRunCreateRequest {
         }
 
         /**
-         * <p>An array of files to process through the workflow. Either the <code>files</code> array or <code>rawTexts</code> array must be provided. Supported file types can be found <a href="/product/supported-file-types">here</a>. There is a limit if 50 files that can be processed at once using this endpoint. If you wish to process more at a time, consider using the <a href="/developers/api-reference/workflow-endpoints/batch-run-workflow">Batch Run Workflow</a> endpoint.</p>
+         * <p>An array of files to process through the workflow. Either the <code>files</code> array or <code>rawTexts</code> array must be provided. Supported file types can be found <a href="/product/general/supported-file-types">here</a>. There is a limit if 50 files that can be processed at once using this endpoint. If you wish to process more at a time, consider using the <a href="/developers/api-reference/workflow-endpoints/batch-run-workflow">Batch Run Workflow</a> endpoint.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -341,7 +341,7 @@ public final class WorkflowRunCreateRequest {
         }
 
         /**
-         * <p>An array of files to process through the workflow. Either the <code>files</code> array or <code>rawTexts</code> array must be provided. Supported file types can be found <a href="/product/supported-file-types">here</a>. There is a limit if 50 files that can be processed at once using this endpoint. If you wish to process more at a time, consider using the <a href="/developers/api-reference/workflow-endpoints/batch-run-workflow">Batch Run Workflow</a> endpoint.</p>
+         * <p>An array of files to process through the workflow. Either the <code>files</code> array or <code>rawTexts</code> array must be provided. Supported file types can be found <a href="/product/general/supported-file-types">here</a>. There is a limit if 50 files that can be processed at once using this endpoint. If you wish to process more at a time, consider using the <a href="/developers/api-reference/workflow-endpoints/batch-run-workflow">Batch Run Workflow</a> endpoint.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "files", nulls = Nulls.SKIP)

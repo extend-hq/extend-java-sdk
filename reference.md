@@ -38,6 +38,7 @@ client.parse(
                 .builder()
                 .build()
         )
+        .responseType(ParseRequestResponseType.JSON)
         .build()
 );
 ```
@@ -198,7 +199,14 @@ List runs of a Workflow. Workflows are sequences of steps that process files and
 client.workflowRun().list(
     WorkflowRunListRequest
         .builder()
+        .status(WorkflowStatus.PENDING)
+        .workflowId("workflowId")
+        .batchId("batchId")
+        .fileNameContains("fileNameContains")
+        .sortBy(SortByEnum.UPDATED_AT)
+        .sortDir(SortDirEnum.ASC)
         .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .maxPageSize(1)
         .build()
 );
 ```
@@ -226,6 +234,8 @@ Filters workflow runs by their status. If not provided, no filter is applied.
  * `"REJECTED"` - The workflow run was rejected during manual review
  * `"PROCESSED"` - The workflow run completed successfully
  * `"FAILED"` - The workflow run encountered an error
+ * `"CANCELLED"` - The workflow run was cancelled
+ * `"CANCELLING"` - The workflow run is being cancelled
     
 </dd>
 </dl>
@@ -364,7 +374,7 @@ Example: `"workflow_BMdfq_yWM3sT-ZzvCnA3f"`
 <dl>
 <dd>
 
-**files:** `Optional<List<WorkflowRunFileInput>>` — An array of files to process through the workflow. Either the `files` array or `rawTexts` array must be provided. Supported file types can be found [here](/product/supported-file-types). There is a limit if 50 files that can be processed at once using this endpoint. If you wish to process more at a time, consider using the [Batch Run Workflow](/developers/api-reference/workflow-endpoints/batch-run-workflow) endpoint.
+**files:** `Optional<List<WorkflowRunFileInput>>` — An array of files to process through the workflow. Either the `files` array or `rawTexts` array must be provided. Supported file types can be found [here](/product/general/supported-file-types). There is a limit if 50 files that can be processed at once using this endpoint. If you wish to process more at a time, consider using the [Batch Run Workflow](/developers/api-reference/workflow-endpoints/batch-run-workflow) endpoint.
     
 </dd>
 </dl>
@@ -615,6 +625,66 @@ Example: `"workflow_run_xKm9pNv3qWsY_jL2tR5Dh"`
 </dl>
 </details>
 
+<details><summary><code>client.workflowRun.cancel(workflowRunId) -> WorkflowRunCancelResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Cancel a running workflow run by its ID. This endpoint allows you to stop a workflow run that is currently in progress.
+
+Note: Only workflow runs with a status of `PROCESSING` or `PENDING` can be cancelled. Workflow runs that are completed, failed, in review, rejected, or already cancelled cannot be cancelled.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.workflowRun().cancel("workflow_run_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**workflowRunId:** `String` 
+
+The ID of the workflow run to cancel.
+
+Example: `"workflow_run_xKm9pNv3qWsY_jL2tR5Dh"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## BatchWorkflowRun
 <details><summary><code>client.batchWorkflowRun.create(request) -> BatchWorkflowRunCreateResponse</code></summary>
 <dl>
@@ -717,6 +787,183 @@ Example: `"workflow_BMdfq_yWM3sT-ZzvCnA3f"`
 </details>
 
 ## ProcessorRun
+<details><summary><code>client.processorRun.list() -> ProcessorRunListResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.processorRun().list(
+    ProcessorRunListRequest
+        .builder()
+        .status(ProcessorStatus.PENDING)
+        .processorId("processorId")
+        .processorType(ProcessorType.EXTRACT)
+        .sourceId("sourceId")
+        .source(ProcessorRunListRequestSource.ADMIN)
+        .fileNameContains("fileNameContains")
+        .sortBy(SortByEnum.UPDATED_AT)
+        .sortDir(SortDirEnum.ASC)
+        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .maxPageSize(1)
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**status:** `Optional<ProcessorStatus>` 
+
+Filters processor runs by their status. If not provided, no filter is applied.
+
+ The status of a processor run:
+ * `"PENDING"` - The processor run has not started yet
+ * `"PROCESSING"` - The processor run is in progress
+ * `"PROCESSED"` - The processor run completed successfully
+ * `"FAILED"` - The processor run encountered an error
+ * `"CANCELLED"` - The processor run was cancelled
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**processorId:** `Optional<String>` 
+
+Filters processor runs by the processor ID. If not provided, runs for all processors are returned.
+
+Example: `"dp_BMdfq_yWM3sT-ZzvCnA3f"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**processorType:** `Optional<ProcessorType>` 
+
+Filters processor runs by the processor type. If not provided, runs for all processor types are returned.
+
+Example: `"EXTRACT"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sourceId:** `Optional<String>` 
+
+Filters processor runs by the source ID. The source ID corresponds to the entity that created the processor run.
+
+Example: `"workflow_run_123"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**source:** `Optional<ProcessorRunListRequestSource>` 
+
+Filters processor runs by the source that created them. If not provided, runs from all sources are returned.
+
+The source of the processor run:
+* `"ADMIN"` - Created by admin
+* `"BATCH_PROCESSOR_RUN"` - Created from a batch processor run
+* `"PLAYGROUND"` - Created from playground
+* `"WORKFLOW_CONFIGURATION"` - Created from workflow configuration
+* `"WORKFLOW_RUN"` - Created from a workflow run
+* `"STUDIO"` - Created from Studio
+* `"API"` - Created via API
+ 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fileNameContains:** `Optional<String>` 
+
+Filters processor runs by the name of the file. Only returns processor runs where the file name contains this string.
+
+Example: `"invoice"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortBy:** `Optional<SortByEnum>` — Sorts the processor runs by the given field.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortDir:** `Optional<SortDirEnum>` — Sorts the processor runs in ascending or descending order. Ascending order means the earliest processor run is returned first.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**nextPageToken:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.processorRun.create(request) -> ProcessorRunCreateResponse</code></summary>
 <dl>
 <dd>
@@ -793,7 +1040,7 @@ An optional version of the processor to use. When not supplied, the most recent 
 <dl>
 <dd>
 
-**file:** `Optional<ProcessorRunFileInput>` — The file to be processed. One of `file` or `rawText` must be provided. Supported file types can be found [here](/product/supported-file-types).
+**file:** `Optional<ProcessorRunFileInput>` — The file to be processed. One of `file` or `rawText` must be provided. Supported file types can be found [here](/product/general/supported-file-types).
     
 </dd>
 </dl>
@@ -1460,6 +1707,7 @@ client.parserRun().get(
     "parser_run_id_here",
     ParserRunGetRequest
         .builder()
+        .responseType(ParserRunGetRequestResponseType.JSON)
         .build()
 );
 ```
@@ -1595,7 +1843,10 @@ List files in your account. Files represent documents that have been uploaded to
 client.file().list(
     FileListRequest
         .builder()
+        .nameContains("nameContains")
+        .sortDir(SortDirEnum.ASC)
         .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .maxPageSize(1)
         .build()
 );
 ```
@@ -1683,6 +1934,9 @@ client.file().get(
     "file_id_here",
     FileGetRequest
         .builder()
+        .rawText(true)
+        .markdown(true)
+        .html(true)
         .build()
 );
 ```
@@ -1825,7 +2079,7 @@ This endpoint accepts file contents and registers them as a File in Extend, whic
 
 If an uploaded file is detected as a Word or PowerPoint document, it will be automatically converted to a PDF.
 
-Supported file types can be found [here](/product/supported-file-types).
+Supported file types can be found [here](/product/general/supported-file-types).
 
 This endpoint requires multipart form encoding. Most HTTP clients will handle this encoding automatically (see the examples).
 </dd>
@@ -1892,7 +2146,10 @@ client.evaluationSet().list(
     EvaluationSetListRequest
         .builder()
         .processorId("processor_id_here")
+        .sortBy(SortByEnum.UPDATED_AT)
+        .sortDir(SortDirEnum.ASC)
         .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .maxPageSize(1)
         .build()
 );
 ```
@@ -2140,7 +2397,10 @@ client.evaluationSetItem().list(
     "evaluation_set_id_here",
     EvaluationSetItemListRequest
         .builder()
+        .sortBy(SortByEnum.UPDATED_AT)
+        .sortDir(SortDirEnum.ASC)
         .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .maxPageSize(1)
         .build()
 );
 ```

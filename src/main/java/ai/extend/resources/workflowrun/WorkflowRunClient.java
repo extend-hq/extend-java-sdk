@@ -8,6 +8,7 @@ import ai.extend.core.RequestOptions;
 import ai.extend.resources.workflowrun.requests.WorkflowRunCreateRequest;
 import ai.extend.resources.workflowrun.requests.WorkflowRunListRequest;
 import ai.extend.resources.workflowrun.requests.WorkflowRunUpdateRequest;
+import ai.extend.resources.workflowrun.types.WorkflowRunCancelResponse;
 import ai.extend.resources.workflowrun.types.WorkflowRunCreateResponse;
 import ai.extend.resources.workflowrun.types.WorkflowRunDeleteResponse;
 import ai.extend.resources.workflowrun.types.WorkflowRunGetResponse;
@@ -116,5 +117,21 @@ public class WorkflowRunClient {
      */
     public WorkflowRunDeleteResponse delete(String workflowRunId, RequestOptions requestOptions) {
         return this.rawClient.delete(workflowRunId, requestOptions).body();
+    }
+
+    /**
+     * Cancel a running workflow run by its ID. This endpoint allows you to stop a workflow run that is currently in progress.
+     * <p>Note: Only workflow runs with a status of <code>PROCESSING</code> or <code>PENDING</code> can be cancelled. Workflow runs that are completed, failed, in review, rejected, or already cancelled cannot be cancelled.</p>
+     */
+    public WorkflowRunCancelResponse cancel(String workflowRunId) {
+        return this.rawClient.cancel(workflowRunId).body();
+    }
+
+    /**
+     * Cancel a running workflow run by its ID. This endpoint allows you to stop a workflow run that is currently in progress.
+     * <p>Note: Only workflow runs with a status of <code>PROCESSING</code> or <code>PENDING</code> can be cancelled. Workflow runs that are completed, failed, in review, rejected, or already cancelled cannot be cancelled.</p>
+     */
+    public WorkflowRunCancelResponse cancel(String workflowRunId, RequestOptions requestOptions) {
+        return this.rawClient.cancel(workflowRunId, requestOptions).body();
     }
 }

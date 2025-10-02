@@ -5,7 +5,9 @@ package ai.extend.types;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum ProcessorRunStatus {
+public enum ProcessorStatus {
+    PENDING("PENDING"),
+
     PROCESSING("PROCESSING"),
 
     PROCESSED("PROCESSED"),
@@ -16,7 +18,7 @@ public enum ProcessorRunStatus {
 
     private final String value;
 
-    ProcessorRunStatus(String value) {
+    ProcessorStatus(String value) {
         this.value = value;
     }
 

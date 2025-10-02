@@ -34,7 +34,7 @@ public final class ProcessorRun {
 
     private final String processorName;
 
-    private final ProcessorRunStatus status;
+    private final ProcessorStatus status;
 
     private final ProcessorOutput output;
 
@@ -72,7 +72,7 @@ public final class ProcessorRun {
             String processorId,
             String processorVersionId,
             String processorName,
-            ProcessorRunStatus status,
+            ProcessorStatus status,
             ProcessorOutput output,
             Optional<String> failureReason,
             Optional<String> failureMessage,
@@ -154,17 +154,8 @@ public final class ProcessorRun {
         return processorName;
     }
 
-    /**
-     * @return The current status of the processor run:
-     * <ul>
-     * <li><code>&quot;PROCESSING&quot;</code> - The processor is currently running</li>
-     * <li><code>&quot;PROCESSED&quot;</code> - The processor has completed successfully</li>
-     * <li><code>&quot;FAILED&quot;</code> - The processor encountered an error</li>
-     * <li><code>&quot;CANCELLED&quot;</code> - The processor run was cancelled</li>
-     * </ul>
-     */
     @JsonProperty("status")
-    public ProcessorRunStatus getStatus() {
+    public ProcessorStatus getStatus() {
         return status;
     }
 
@@ -394,16 +385,7 @@ public final class ProcessorRun {
     }
 
     public interface StatusStage {
-        /**
-         * <p>The current status of the processor run:</p>
-         * <ul>
-         * <li><code>&quot;PROCESSING&quot;</code> - The processor is currently running</li>
-         * <li><code>&quot;PROCESSED&quot;</code> - The processor has completed successfully</li>
-         * <li><code>&quot;FAILED&quot;</code> - The processor encountered an error</li>
-         * <li><code>&quot;CANCELLED&quot;</code> - The processor run was cancelled</li>
-         * </ul>
-         */
-        OutputStage status(@NotNull ProcessorRunStatus status);
+        OutputStage status(@NotNull ProcessorStatus status);
     }
 
     public interface OutputStage {
@@ -544,7 +526,7 @@ public final class ProcessorRun {
 
         private String processorName;
 
-        private ProcessorRunStatus status;
+        private ProcessorStatus status;
 
         private ProcessorOutput output;
 
@@ -670,26 +652,9 @@ public final class ProcessorRun {
             return this;
         }
 
-        /**
-         * <p>The current status of the processor run:</p>
-         * <ul>
-         * <li><code>&quot;PROCESSING&quot;</code> - The processor is currently running</li>
-         * <li><code>&quot;PROCESSED&quot;</code> - The processor has completed successfully</li>
-         * <li><code>&quot;FAILED&quot;</code> - The processor encountered an error</li>
-         * <li><code>&quot;CANCELLED&quot;</code> - The processor run was cancelled</li>
-         * </ul>
-         * <p>The current status of the processor run:</p>
-         * <ul>
-         * <li><code>&quot;PROCESSING&quot;</code> - The processor is currently running</li>
-         * <li><code>&quot;PROCESSED&quot;</code> - The processor has completed successfully</li>
-         * <li><code>&quot;FAILED&quot;</code> - The processor encountered an error</li>
-         * <li><code>&quot;CANCELLED&quot;</code> - The processor run was cancelled</li>
-         * </ul>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
         @java.lang.Override
         @JsonSetter("status")
-        public OutputStage status(@NotNull ProcessorRunStatus status) {
+        public OutputStage status(@NotNull ProcessorStatus status) {
             this.status = Objects.requireNonNull(status, "status must not be null");
             return this;
         }
