@@ -16,7 +16,11 @@ public enum WorkflowStatus {
 
     PROCESSED("PROCESSED"),
 
-    FAILED("FAILED");
+    FAILED("FAILED"),
+
+    CANCELLED("CANCELLED"),
+
+    CANCELLING("CANCELLING");
 
     private final String value;
 

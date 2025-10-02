@@ -72,6 +72,8 @@ public final class WorkflowRunListRequest {
      * <li><code>&quot;REJECTED&quot;</code> - The workflow run was rejected during manual review</li>
      * <li><code>&quot;PROCESSED&quot;</code> - The workflow run completed successfully</li>
      * <li><code>&quot;FAILED&quot;</code> - The workflow run encountered an error</li>
+     * <li><code>&quot;CANCELLED&quot;</code> - The workflow run was cancelled</li>
+     * <li><code>&quot;CANCELLING&quot;</code> - The workflow run is being cancelled</li>
      * </ul>
      */
     @JsonProperty("status")
@@ -221,6 +223,8 @@ public final class WorkflowRunListRequest {
          * <li><code>&quot;REJECTED&quot;</code> - The workflow run was rejected during manual review</li>
          * <li><code>&quot;PROCESSED&quot;</code> - The workflow run completed successfully</li>
          * <li><code>&quot;FAILED&quot;</code> - The workflow run encountered an error</li>
+         * <li><code>&quot;CANCELLED&quot;</code> - The workflow run was cancelled</li>
+         * <li><code>&quot;CANCELLING&quot;</code> - The workflow run is being cancelled</li>
          * </ul>
          */
         @JsonSetter(value = "status", nulls = Nulls.SKIP)

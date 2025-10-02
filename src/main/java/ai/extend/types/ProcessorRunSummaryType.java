@@ -5,20 +5,16 @@ package ai.extend.types;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum StepRunStatus {
-    PENDING("PENDING"),
+public enum ProcessorRunSummaryType {
+    EXTRACT("EXTRACT"),
 
-    PROCESSING("PROCESSING"),
+    SPLITTER("SPLITTER"),
 
-    PROCESSED("PROCESSED"),
-
-    FAILED("FAILED"),
-
-    CANCELLED("CANCELLED");
+    CLASSIFY("CLASSIFY");
 
     private final String value;
 
-    StepRunStatus(String value) {
+    ProcessorRunSummaryType(String value) {
         this.value = value;
     }
 

@@ -6,10 +6,12 @@ package ai.extend.resources.processorrun;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.processorrun.requests.ProcessorRunCreateRequest;
+import ai.extend.resources.processorrun.requests.ProcessorRunListRequest;
 import ai.extend.resources.processorrun.types.ProcessorRunCancelResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunCreateResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunDeleteResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunGetResponse;
+import ai.extend.resources.processorrun.types.ProcessorRunListResponse;
 import java.util.concurrent.CompletableFuture;
 
 public class AsyncProcessorRunClient {
@@ -27,6 +29,28 @@ public class AsyncProcessorRunClient {
      */
     public AsyncRawProcessorRunClient withRawResponse() {
         return this.rawClient;
+    }
+
+    /**
+     * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
+     */
+    public CompletableFuture<ProcessorRunListResponse> list() {
+        return this.rawClient.list().thenApply(response -> response.body());
+    }
+
+    /**
+     * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
+     */
+    public CompletableFuture<ProcessorRunListResponse> list(ProcessorRunListRequest request) {
+        return this.rawClient.list(request).thenApply(response -> response.body());
+    }
+
+    /**
+     * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
+     */
+    public CompletableFuture<ProcessorRunListResponse> list(
+            ProcessorRunListRequest request, RequestOptions requestOptions) {
+        return this.rawClient.list(request, requestOptions).thenApply(response -> response.body());
     }
 
     /**
