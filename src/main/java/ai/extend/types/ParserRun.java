@@ -37,6 +37,8 @@ public final class ParserRun {
 
     private final ParseConfig config;
 
+    private final Optional<ParserRunCredits> usage;
+
     private final Map<String, Object> additionalProperties;
 
     private ParserRun(
@@ -47,6 +49,7 @@ public final class ParserRun {
             Optional<String> failureReason,
             ParserRunMetrics metrics,
             ParseConfig config,
+            Optional<ParserRunCredits> usage,
             Map<String, Object> additionalProperties) {
         this.id = id;
         this.fileId = fileId;
@@ -55,6 +58,7 @@ public final class ParserRun {
         this.failureReason = failureReason;
         this.metrics = metrics;
         this.config = config;
+        this.usage = usage;
         this.additionalProperties = additionalProperties;
     }
 
@@ -119,6 +123,11 @@ public final class ParserRun {
         return config;
     }
 
+    @JsonProperty("usage")
+    public Optional<ParserRunCredits> getUsage() {
+        return usage;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -137,13 +146,21 @@ public final class ParserRun {
                 && status.equals(other.status)
                 && failureReason.equals(other.failureReason)
                 && metrics.equals(other.metrics)
-                && config.equals(other.config);
+                && config.equals(other.config)
+                && usage.equals(other.usage);
     }
 
     @java.lang.Override
     public int hashCode() {
         return Objects.hash(
-                this.id, this.fileId, this.chunks, this.status, this.failureReason, this.metrics, this.config);
+                this.id,
+                this.fileId,
+                this.chunks,
+                this.status,
+                this.failureReason,
+                this.metrics,
+                this.config,
+                this.usage);
     }
 
     @java.lang.Override
@@ -215,6 +232,10 @@ public final class ParserRun {
         _FinalStage failureReason(Optional<String> failureReason);
 
         _FinalStage failureReason(String failureReason);
+
+        _FinalStage usage(Optional<ParserRunCredits> usage);
+
+        _FinalStage usage(ParserRunCredits usage);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -229,6 +250,8 @@ public final class ParserRun {
         private ParserRunMetrics metrics;
 
         private ParseConfig config;
+
+        private Optional<ParserRunCredits> usage = Optional.empty();
 
         private Optional<String> failureReason = Optional.empty();
 
@@ -248,6 +271,7 @@ public final class ParserRun {
             failureReason(other.getFailureReason());
             metrics(other.getMetrics());
             config(other.getConfig());
+            usage(other.getUsage());
             return this;
         }
 
@@ -321,6 +345,19 @@ public final class ParserRun {
             return this;
         }
 
+        @java.lang.Override
+        public _FinalStage usage(ParserRunCredits usage) {
+            this.usage = Optional.ofNullable(usage);
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter(value = "usage", nulls = Nulls.SKIP)
+        public _FinalStage usage(Optional<ParserRunCredits> usage) {
+            this.usage = usage;
+            return this;
+        }
+
         /**
          * <p>The reason for failure if status is &quot;FAILED&quot;.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
@@ -374,7 +411,8 @@ public final class ParserRun {
 
         @java.lang.Override
         public ParserRun build() {
-            return new ParserRun(id, fileId, chunks, status, failureReason, metrics, config, additionalProperties);
+            return new ParserRun(
+                    id, fileId, chunks, status, failureReason, metrics, config, usage, additionalProperties);
         }
     }
 }

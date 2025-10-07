@@ -64,6 +64,8 @@ public final class ProcessorRun {
 
     private final String url;
 
+    private final Optional<DocumentProcessorRunCredits> usage;
+
     private final Map<String, Object> additionalProperties;
 
     private ProcessorRun(
@@ -87,6 +89,7 @@ public final class ProcessorRun {
             List<File> files,
             List<ProcessorRunMergedProcessorsItem> mergedProcessors,
             String url,
+            Optional<DocumentProcessorRunCredits> usage,
             Map<String, Object> additionalProperties) {
         this.object = object;
         this.id = id;
@@ -108,6 +111,7 @@ public final class ProcessorRun {
         this.files = files;
         this.mergedProcessors = mergedProcessors;
         this.url = url;
+        this.usage = usage;
         this.additionalProperties = additionalProperties;
     }
 
@@ -276,6 +280,11 @@ public final class ProcessorRun {
         return url;
     }
 
+    @JsonProperty("usage")
+    public Optional<DocumentProcessorRunCredits> getUsage() {
+        return usage;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -307,7 +316,8 @@ public final class ProcessorRun {
                 && reviewedOutput.equals(other.reviewedOutput)
                 && files.equals(other.files)
                 && mergedProcessors.equals(other.mergedProcessors)
-                && url.equals(other.url);
+                && url.equals(other.url)
+                && usage.equals(other.usage);
     }
 
     @java.lang.Override
@@ -332,7 +342,8 @@ public final class ProcessorRun {
                 this.reviewedOutput,
                 this.files,
                 this.mergedProcessors,
-                this.url);
+                this.url,
+                this.usage);
     }
 
     @java.lang.Override
@@ -499,6 +510,10 @@ public final class ProcessorRun {
         _FinalStage addMergedProcessors(ProcessorRunMergedProcessorsItem mergedProcessors);
 
         _FinalStage addAllMergedProcessors(List<ProcessorRunMergedProcessorsItem> mergedProcessors);
+
+        _FinalStage usage(Optional<DocumentProcessorRunCredits> usage);
+
+        _FinalStage usage(DocumentProcessorRunCredits usage);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -539,6 +554,8 @@ public final class ProcessorRun {
         private ProcessorRunConfig config;
 
         private String url;
+
+        private Optional<DocumentProcessorRunCredits> usage = Optional.empty();
 
         private List<ProcessorRunMergedProcessorsItem> mergedProcessors = new ArrayList<>();
 
@@ -583,6 +600,7 @@ public final class ProcessorRun {
             files(other.getFiles());
             mergedProcessors(other.getMergedProcessors());
             url(other.getUrl());
+            usage(other.getUsage());
             return this;
         }
 
@@ -740,6 +758,19 @@ public final class ProcessorRun {
         @JsonSetter("url")
         public _FinalStage url(@NotNull String url) {
             this.url = Objects.requireNonNull(url, "url must not be null");
+            return this;
+        }
+
+        @java.lang.Override
+        public _FinalStage usage(DocumentProcessorRunCredits usage) {
+            this.usage = Optional.ofNullable(usage);
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter(value = "usage", nulls = Nulls.SKIP)
+        public _FinalStage usage(Optional<DocumentProcessorRunCredits> usage) {
+            this.usage = usage;
             return this;
         }
 
@@ -954,6 +985,7 @@ public final class ProcessorRun {
                     files,
                     mergedProcessors,
                     url,
+                    usage,
                     additionalProperties);
         }
     }
