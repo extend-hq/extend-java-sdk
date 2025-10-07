@@ -65,6 +65,8 @@ public final class WorkflowRun {
 
     private final Workflow workflow;
 
+    private final Optional<WorkflowRunCredits> usage;
+
     private final Map<String, Object> additionalProperties;
 
     private WorkflowRun(
@@ -88,6 +90,7 @@ public final class WorkflowRun {
             List<ProcessorRun> outputs,
             List<StepRun> stepRuns,
             Workflow workflow,
+            Optional<WorkflowRunCredits> usage,
             Map<String, Object> additionalProperties) {
         this.object = object;
         this.id = id;
@@ -109,6 +112,7 @@ public final class WorkflowRun {
         this.outputs = outputs;
         this.stepRuns = stepRuns;
         this.workflow = workflow;
+        this.usage = usage;
         this.additionalProperties = additionalProperties;
     }
 
@@ -271,6 +275,11 @@ public final class WorkflowRun {
         return workflow;
     }
 
+    @JsonProperty("usage")
+    public Optional<WorkflowRunCredits> getUsage() {
+        return usage;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -302,7 +311,8 @@ public final class WorkflowRun {
                 && endTime.equals(other.endTime)
                 && outputs.equals(other.outputs)
                 && stepRuns.equals(other.stepRuns)
-                && workflow.equals(other.workflow);
+                && workflow.equals(other.workflow)
+                && usage.equals(other.usage);
     }
 
     @java.lang.Override
@@ -327,7 +337,8 @@ public final class WorkflowRun {
                 this.endTime,
                 this.outputs,
                 this.stepRuns,
-                this.workflow);
+                this.workflow,
+                this.usage);
     }
 
     @java.lang.Override
@@ -490,6 +501,10 @@ public final class WorkflowRun {
         _FinalStage addStepRuns(StepRun stepRuns);
 
         _FinalStage addAllStepRuns(List<StepRun> stepRuns);
+
+        _FinalStage usage(Optional<WorkflowRunCredits> usage);
+
+        _FinalStage usage(WorkflowRunCredits usage);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -518,6 +533,8 @@ public final class WorkflowRun {
         private boolean reviewed;
 
         private Workflow workflow;
+
+        private Optional<WorkflowRunCredits> usage = Optional.empty();
 
         private List<StepRun> stepRuns = new ArrayList<>();
 
@@ -570,6 +587,7 @@ public final class WorkflowRun {
             outputs(other.getOutputs());
             stepRuns(other.getStepRuns());
             workflow(other.getWorkflow());
+            usage(other.getUsage());
             return this;
         }
 
@@ -664,6 +682,19 @@ public final class WorkflowRun {
         @JsonSetter("workflow")
         public _FinalStage workflow(@NotNull Workflow workflow) {
             this.workflow = Objects.requireNonNull(workflow, "workflow must not be null");
+            return this;
+        }
+
+        @java.lang.Override
+        public _FinalStage usage(WorkflowRunCredits usage) {
+            this.usage = Optional.ofNullable(usage);
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter(value = "usage", nulls = Nulls.SKIP)
+        public _FinalStage usage(Optional<WorkflowRunCredits> usage) {
+            this.usage = usage;
             return this;
         }
 
@@ -967,6 +998,7 @@ public final class WorkflowRun {
                     outputs,
                     stepRuns,
                     workflow,
+                    usage,
                     additionalProperties);
         }
     }

@@ -8,6 +8,7 @@ import ai.extend.types.File;
 import ai.extend.types.ProcessorRun;
 import ai.extend.types.StepRun;
 import ai.extend.types.Workflow;
+import ai.extend.types.WorkflowRunCredits;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -69,6 +70,8 @@ public final class WorkflowRunCancelResponseWorkflowRun {
 
     private final Workflow workflow;
 
+    private final Optional<WorkflowRunCredits> usage;
+
     private final Map<String, Object> additionalProperties;
 
     private WorkflowRunCancelResponseWorkflowRun(
@@ -92,6 +95,7 @@ public final class WorkflowRunCancelResponseWorkflowRun {
             List<ProcessorRun> outputs,
             List<StepRun> stepRuns,
             Workflow workflow,
+            Optional<WorkflowRunCredits> usage,
             Map<String, Object> additionalProperties) {
         this.status = status;
         this.object = object;
@@ -113,6 +117,7 @@ public final class WorkflowRunCancelResponseWorkflowRun {
         this.outputs = outputs;
         this.stepRuns = stepRuns;
         this.workflow = workflow;
+        this.usage = usage;
         this.additionalProperties = additionalProperties;
     }
 
@@ -275,6 +280,11 @@ public final class WorkflowRunCancelResponseWorkflowRun {
         return workflow;
     }
 
+    @JsonProperty("usage")
+    public Optional<WorkflowRunCredits> getUsage() {
+        return usage;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -307,7 +317,8 @@ public final class WorkflowRunCancelResponseWorkflowRun {
                 && endTime.equals(other.endTime)
                 && outputs.equals(other.outputs)
                 && stepRuns.equals(other.stepRuns)
-                && workflow.equals(other.workflow);
+                && workflow.equals(other.workflow)
+                && usage.equals(other.usage);
     }
 
     @java.lang.Override
@@ -332,7 +343,8 @@ public final class WorkflowRunCancelResponseWorkflowRun {
                 this.endTime,
                 this.outputs,
                 this.stepRuns,
-                this.workflow);
+                this.workflow,
+                this.usage);
     }
 
     @java.lang.Override
@@ -495,6 +507,10 @@ public final class WorkflowRunCancelResponseWorkflowRun {
         _FinalStage addStepRuns(StepRun stepRuns);
 
         _FinalStage addAllStepRuns(List<StepRun> stepRuns);
+
+        _FinalStage usage(Optional<WorkflowRunCredits> usage);
+
+        _FinalStage usage(WorkflowRunCredits usage);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -520,6 +536,8 @@ public final class WorkflowRunCancelResponseWorkflowRun {
         private boolean reviewed;
 
         private Workflow workflow;
+
+        private Optional<WorkflowRunCredits> usage = Optional.empty();
 
         private List<StepRun> stepRuns = new ArrayList<>();
 
@@ -574,6 +592,7 @@ public final class WorkflowRunCancelResponseWorkflowRun {
             outputs(other.getOutputs());
             stepRuns(other.getStepRuns());
             workflow(other.getWorkflow());
+            usage(other.getUsage());
             return this;
         }
 
@@ -661,6 +680,19 @@ public final class WorkflowRunCancelResponseWorkflowRun {
         @JsonSetter("workflow")
         public _FinalStage workflow(@NotNull Workflow workflow) {
             this.workflow = Objects.requireNonNull(workflow, "workflow must not be null");
+            return this;
+        }
+
+        @java.lang.Override
+        public _FinalStage usage(WorkflowRunCredits usage) {
+            this.usage = Optional.ofNullable(usage);
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter(value = "usage", nulls = Nulls.SKIP)
+        public _FinalStage usage(Optional<WorkflowRunCredits> usage) {
+            this.usage = usage;
             return this;
         }
 
@@ -977,6 +1009,7 @@ public final class WorkflowRunCancelResponseWorkflowRun {
                     outputs,
                     stepRuns,
                     workflow,
+                    usage,
                     additionalProperties);
         }
     }

@@ -50,6 +50,8 @@ public final class WorkflowRunSummary {
 
     private final OffsetDateTime updatedAt;
 
+    private final Optional<WorkflowRunCredits> usage;
+
     private final Map<String, Object> additionalProperties;
 
     private WorkflowRunSummary(
@@ -67,6 +69,7 @@ public final class WorkflowRunSummary {
             Optional<String> rejectionNote,
             OffsetDateTime createdAt,
             OffsetDateTime updatedAt,
+            Optional<WorkflowRunCredits> usage,
             Map<String, Object> additionalProperties) {
         this.id = id;
         this.status = status;
@@ -82,6 +85,7 @@ public final class WorkflowRunSummary {
         this.rejectionNote = rejectionNote;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.usage = usage;
         this.additionalProperties = additionalProperties;
     }
 
@@ -207,6 +211,11 @@ public final class WorkflowRunSummary {
         return updatedAt;
     }
 
+    @JsonProperty("usage")
+    public Optional<WorkflowRunCredits> getUsage() {
+        return usage;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -232,7 +241,8 @@ public final class WorkflowRunSummary {
                 && batchId.equals(other.batchId)
                 && rejectionNote.equals(other.rejectionNote)
                 && createdAt.equals(other.createdAt)
-                && updatedAt.equals(other.updatedAt);
+                && updatedAt.equals(other.updatedAt)
+                && usage.equals(other.usage);
     }
 
     @java.lang.Override
@@ -251,7 +261,8 @@ public final class WorkflowRunSummary {
                 this.batchId,
                 this.rejectionNote,
                 this.createdAt,
-                this.updatedAt);
+                this.updatedAt,
+                this.usage);
     }
 
     @java.lang.Override
@@ -375,6 +386,10 @@ public final class WorkflowRunSummary {
         _FinalStage rejectionNote(Optional<String> rejectionNote);
 
         _FinalStage rejectionNote(String rejectionNote);
+
+        _FinalStage usage(Optional<WorkflowRunCredits> usage);
+
+        _FinalStage usage(WorkflowRunCredits usage);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -400,6 +415,8 @@ public final class WorkflowRunSummary {
         private OffsetDateTime createdAt;
 
         private OffsetDateTime updatedAt;
+
+        private Optional<WorkflowRunCredits> usage = Optional.empty();
 
         private Optional<String> rejectionNote = Optional.empty();
 
@@ -436,6 +453,7 @@ public final class WorkflowRunSummary {
             rejectionNote(other.getRejectionNote());
             createdAt(other.getCreatedAt());
             updatedAt(other.getUpdatedAt());
+            usage(other.getUsage());
             return this;
         }
 
@@ -527,6 +545,19 @@ public final class WorkflowRunSummary {
         @JsonSetter("updatedAt")
         public _FinalStage updatedAt(@NotNull OffsetDateTime updatedAt) {
             this.updatedAt = Objects.requireNonNull(updatedAt, "updatedAt must not be null");
+            return this;
+        }
+
+        @java.lang.Override
+        public _FinalStage usage(WorkflowRunCredits usage) {
+            this.usage = Optional.ofNullable(usage);
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter(value = "usage", nulls = Nulls.SKIP)
+        public _FinalStage usage(Optional<WorkflowRunCredits> usage) {
+            this.usage = usage;
             return this;
         }
 
@@ -701,6 +732,7 @@ public final class WorkflowRunSummary {
                     rejectionNote,
                     createdAt,
                     updatedAt,
+                    usage,
                     additionalProperties);
         }
     }

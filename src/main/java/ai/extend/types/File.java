@@ -42,6 +42,8 @@ public final class File {
 
     private final OffsetDateTime updatedAt;
 
+    private final Optional<FileCredits> usage;
+
     private final Map<String, Object> additionalProperties;
 
     private File(
@@ -55,6 +57,7 @@ public final class File {
             FileMetadata metadata,
             OffsetDateTime createdAt,
             OffsetDateTime updatedAt,
+            Optional<FileCredits> usage,
             Map<String, Object> additionalProperties) {
         this.object = object;
         this.id = id;
@@ -66,6 +69,7 @@ public final class File {
         this.metadata = metadata;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.usage = usage;
         this.additionalProperties = additionalProperties;
     }
 
@@ -147,6 +151,11 @@ public final class File {
         return updatedAt;
     }
 
+    @JsonProperty("usage")
+    public Optional<FileCredits> getUsage() {
+        return usage;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -168,7 +177,8 @@ public final class File {
                 && contents.equals(other.contents)
                 && metadata.equals(other.metadata)
                 && createdAt.equals(other.createdAt)
-                && updatedAt.equals(other.updatedAt);
+                && updatedAt.equals(other.updatedAt)
+                && usage.equals(other.usage);
     }
 
     @java.lang.Override
@@ -183,7 +193,8 @@ public final class File {
                 this.contents,
                 this.metadata,
                 this.createdAt,
-                this.updatedAt);
+                this.updatedAt,
+                this.usage);
     }
 
     @java.lang.Override
@@ -267,6 +278,10 @@ public final class File {
         _FinalStage contents(Optional<FileContents> contents);
 
         _FinalStage contents(FileContents contents);
+
+        _FinalStage usage(Optional<FileCredits> usage);
+
+        _FinalStage usage(FileCredits usage);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -283,6 +298,8 @@ public final class File {
         private OffsetDateTime createdAt;
 
         private OffsetDateTime updatedAt;
+
+        private Optional<FileCredits> usage = Optional.empty();
 
         private Optional<FileContents> contents = Optional.empty();
 
@@ -309,6 +326,7 @@ public final class File {
             metadata(other.getMetadata());
             createdAt(other.getCreatedAt());
             updatedAt(other.getUpdatedAt());
+            usage(other.getUsage());
             return this;
         }
 
@@ -384,6 +402,19 @@ public final class File {
         @JsonSetter("updatedAt")
         public _FinalStage updatedAt(@NotNull OffsetDateTime updatedAt) {
             this.updatedAt = Objects.requireNonNull(updatedAt, "updatedAt must not be null");
+            return this;
+        }
+
+        @java.lang.Override
+        public _FinalStage usage(FileCredits usage) {
+            this.usage = Optional.ofNullable(usage);
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter(value = "usage", nulls = Nulls.SKIP)
+        public _FinalStage usage(Optional<FileCredits> usage) {
+            this.usage = usage;
             return this;
         }
 
@@ -473,6 +504,7 @@ public final class File {
                     metadata,
                     createdAt,
                     updatedAt,
+                    usage,
                     additionalProperties);
         }
     }
