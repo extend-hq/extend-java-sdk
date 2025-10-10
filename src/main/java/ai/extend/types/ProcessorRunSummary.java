@@ -38,6 +38,8 @@ public final class ProcessorRunSummary {
 
     private final OffsetDateTime updatedAt;
 
+    private final Optional<DocumentProcessorRunCredits> usage;
+
     private final Map<String, Object> additionalProperties;
 
     private ProcessorRunSummary(
@@ -49,6 +51,7 @@ public final class ProcessorRunSummary {
             Optional<ProcessorRunSummaryType> type,
             OffsetDateTime createdAt,
             OffsetDateTime updatedAt,
+            Optional<DocumentProcessorRunCredits> usage,
             Map<String, Object> additionalProperties) {
         this.id = id;
         this.status = status;
@@ -58,6 +61,7 @@ public final class ProcessorRunSummary {
         this.type = type;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.usage = usage;
         this.additionalProperties = additionalProperties;
     }
 
@@ -133,6 +137,11 @@ public final class ProcessorRunSummary {
         return updatedAt;
     }
 
+    @JsonProperty("usage")
+    public Optional<DocumentProcessorRunCredits> getUsage() {
+        return usage;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -152,7 +161,8 @@ public final class ProcessorRunSummary {
                 && processorVersionId.equals(other.processorVersionId)
                 && type.equals(other.type)
                 && createdAt.equals(other.createdAt)
-                && updatedAt.equals(other.updatedAt);
+                && updatedAt.equals(other.updatedAt)
+                && usage.equals(other.usage);
     }
 
     @java.lang.Override
@@ -165,7 +175,8 @@ public final class ProcessorRunSummary {
                 this.processorVersionId,
                 this.type,
                 this.createdAt,
-                this.updatedAt);
+                this.updatedAt,
+                this.usage);
     }
 
     @java.lang.Override
@@ -245,6 +256,10 @@ public final class ProcessorRunSummary {
         _FinalStage type(Optional<ProcessorRunSummaryType> type);
 
         _FinalStage type(ProcessorRunSummaryType type);
+
+        _FinalStage usage(Optional<DocumentProcessorRunCredits> usage);
+
+        _FinalStage usage(DocumentProcessorRunCredits usage);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -271,6 +286,8 @@ public final class ProcessorRunSummary {
 
         private OffsetDateTime updatedAt;
 
+        private Optional<DocumentProcessorRunCredits> usage = Optional.empty();
+
         private Optional<ProcessorRunSummaryType> type = Optional.empty();
 
         @JsonAnySetter
@@ -288,6 +305,7 @@ public final class ProcessorRunSummary {
             type(other.getType());
             createdAt(other.getCreatedAt());
             updatedAt(other.getUpdatedAt());
+            usage(other.getUsage());
             return this;
         }
 
@@ -382,6 +400,19 @@ public final class ProcessorRunSummary {
             return this;
         }
 
+        @java.lang.Override
+        public _FinalStage usage(DocumentProcessorRunCredits usage) {
+            this.usage = Optional.ofNullable(usage);
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter(value = "usage", nulls = Nulls.SKIP)
+        public _FinalStage usage(Optional<DocumentProcessorRunCredits> usage) {
+            this.usage = usage;
+            return this;
+        }
+
         /**
          * <p>The type of processor that was run:</p>
          * <ul>
@@ -423,6 +454,7 @@ public final class ProcessorRunSummary {
                     type,
                     createdAt,
                     updatedAt,
+                    usage,
                     additionalProperties);
         }
     }
