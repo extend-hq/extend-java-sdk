@@ -12,6 +12,7 @@ import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
 import ai.extend.core.RequestOptions;
 import ai.extend.errors.BadRequestError;
+import ai.extend.errors.InternalServerError;
 import ai.extend.errors.NotFoundError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.resources.evaluationsetitem.requests.EvaluationSetItemCreateBatchRequest;
@@ -20,9 +21,11 @@ import ai.extend.resources.evaluationsetitem.requests.EvaluationSetItemListReque
 import ai.extend.resources.evaluationsetitem.requests.EvaluationSetItemUpdateRequest;
 import ai.extend.resources.evaluationsetitem.types.EvaluationSetItemCreateBatchResponse;
 import ai.extend.resources.evaluationsetitem.types.EvaluationSetItemCreateResponse;
+import ai.extend.resources.evaluationsetitem.types.EvaluationSetItemDeleteResponse;
 import ai.extend.resources.evaluationsetitem.types.EvaluationSetItemListResponse;
 import ai.extend.resources.evaluationsetitem.types.EvaluationSetItemUpdateResponse;
 import ai.extend.types.Error;
+import ai.extend.types.ExtendError;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -350,6 +353,83 @@ public class AsyncRawEvaluationSetItemClient {
                             case 404:
                                 future.completeExceptionally(new NotFoundError(
                                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                        }
+                    } catch (JsonProcessingException ignored) {
+                        // unable to map error response, throwing generic error
+                    }
+                    future.completeExceptionally(new ExtendClientApiException(
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
+    }
+
+    /**
+     * Delete an evaluation set item from an evaluation set. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used to remove individual items from an evaluation set when they are no longer needed or if they were added in error.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItemDeleteResponse>> delete(String id) {
+        return delete(id, null);
+    }
+
+    /**
+     * Delete an evaluation set item from an evaluation set. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used to remove individual items from an evaluation set when they are no longer needed or if they were added in error.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItemDeleteResponse>> delete(
+            String id, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("evaluation_set_items")
+                .addPathSegment(id)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("DELETE", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<ExtendClientHttpResponse<EvaluationSetItemDeleteResponse>> future = new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful()) {
+                        future.complete(new ExtendClientHttpResponse<>(
+                                ObjectMappers.JSON_MAPPER.readValue(
+                                        responseBody.string(), EvaluationSetItemDeleteResponse.class),
+                                response));
+                        return;
+                    }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    try {
+                        switch (response.code()) {
+                            case 404:
+                                future.completeExceptionally(new NotFoundError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                            case 500:
+                                future.completeExceptionally(new InternalServerError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtendError.class),
                                         response));
                                 return;
                         }

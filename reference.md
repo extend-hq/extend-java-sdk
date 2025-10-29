@@ -2660,6 +2660,66 @@ Example: `"evi_kR9mNP12Qw4yTv8BdR3H"`
 </dl>
 </details>
 
+<details><summary><code>client.evaluationSetItem.delete(id) -> EvaluationSetItemDeleteResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete an evaluation set item from an evaluation set. This operation is permanent and cannot be undone.
+
+This endpoint can be used to remove individual items from an evaluation set when they are no longer needed or if they were added in error.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.evaluationSetItem().delete("evaluation_set_item_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the evaluation set item to delete.
+
+Example: `"evi_kR9mNP12Qw4yTv8BdR3H"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.evaluationSetItem.createBatch(request) -> EvaluationSetItemCreateBatchResponse</code></summary>
 <dl>
 <dd>

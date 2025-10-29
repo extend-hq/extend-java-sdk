@@ -11,6 +11,7 @@ import ai.extend.resources.evaluationsetitem.requests.EvaluationSetItemListReque
 import ai.extend.resources.evaluationsetitem.requests.EvaluationSetItemUpdateRequest;
 import ai.extend.resources.evaluationsetitem.types.EvaluationSetItemCreateBatchResponse;
 import ai.extend.resources.evaluationsetitem.types.EvaluationSetItemCreateResponse;
+import ai.extend.resources.evaluationsetitem.types.EvaluationSetItemDeleteResponse;
 import ai.extend.resources.evaluationsetitem.types.EvaluationSetItemListResponse;
 import ai.extend.resources.evaluationsetitem.types.EvaluationSetItemUpdateResponse;
 import java.util.concurrent.CompletableFuture;
@@ -138,6 +139,22 @@ public class AsyncEvaluationSetItemClient {
     public CompletableFuture<EvaluationSetItemUpdateResponse> update(
             String id, EvaluationSetItemUpdateRequest request, RequestOptions requestOptions) {
         return this.rawClient.update(id, request, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Delete an evaluation set item from an evaluation set. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used to remove individual items from an evaluation set when they are no longer needed or if they were added in error.</p>
+     */
+    public CompletableFuture<EvaluationSetItemDeleteResponse> delete(String id) {
+        return this.rawClient.delete(id).thenApply(response -> response.body());
+    }
+
+    /**
+     * Delete an evaluation set item from an evaluation set. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used to remove individual items from an evaluation set when they are no longer needed or if they were added in error.</p>
+     */
+    public CompletableFuture<EvaluationSetItemDeleteResponse> delete(String id, RequestOptions requestOptions) {
+        return this.rawClient.delete(id, requestOptions).thenApply(response -> response.body());
     }
 
     /**
