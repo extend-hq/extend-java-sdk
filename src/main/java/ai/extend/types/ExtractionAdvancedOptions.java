@@ -33,7 +33,13 @@ public final class ExtractionAdvancedOptions {
 
     private final Optional<Boolean> advancedFigureParsingEnabled;
 
+    private final Optional<ArrayStrategy> arrayStrategy;
+
     private final Optional<ExtractChunkingOptions> chunkingOptions;
+
+    private final Optional<List<ExcelSheetRange>> excelSheetRanges;
+
+    private final Optional<ExtractionAdvancedOptionsExcelSheetSelectionStrategy> excelSheetSelectionStrategy;
 
     private final Optional<Integer> fixedPageLimit;
 
@@ -48,7 +54,10 @@ public final class ExtractionAdvancedOptions {
             Optional<Boolean> advancedMultimodalEnabled,
             Optional<Boolean> citationsEnabled,
             Optional<Boolean> advancedFigureParsingEnabled,
+            Optional<ArrayStrategy> arrayStrategy,
             Optional<ExtractChunkingOptions> chunkingOptions,
+            Optional<List<ExcelSheetRange>> excelSheetRanges,
+            Optional<ExtractionAdvancedOptionsExcelSheetSelectionStrategy> excelSheetSelectionStrategy,
             Optional<Integer> fixedPageLimit,
             Optional<List<PageRangesItem>> pageRanges,
             Map<String, Object> additionalProperties) {
@@ -58,14 +67,17 @@ public final class ExtractionAdvancedOptions {
         this.advancedMultimodalEnabled = advancedMultimodalEnabled;
         this.citationsEnabled = citationsEnabled;
         this.advancedFigureParsingEnabled = advancedFigureParsingEnabled;
+        this.arrayStrategy = arrayStrategy;
         this.chunkingOptions = chunkingOptions;
+        this.excelSheetRanges = excelSheetRanges;
+        this.excelSheetSelectionStrategy = excelSheetSelectionStrategy;
         this.fixedPageLimit = fixedPageLimit;
         this.pageRanges = pageRanges;
         this.additionalProperties = additionalProperties;
     }
 
     /**
-     * @return The kind of document being processed.
+     * @return DEPRECATED - use extractionRules for all system prompts.
      */
     @JsonProperty("documentKind")
     public Optional<String> getDocumentKind() {
@@ -73,7 +85,7 @@ public final class ExtractionAdvancedOptions {
     }
 
     /**
-     * @return Custom key definitions for extraction.
+     * @return DEPRECATED - use extractionRules for all system prompts.
      */
     @JsonProperty("keyDefinitions")
     public Optional<String> getKeyDefinitions() {
@@ -112,13 +124,37 @@ public final class ExtractionAdvancedOptions {
         return advancedFigureParsingEnabled;
     }
 
+    /**
+     * @return Strategy for handling large arrays in documents.
+     */
+    @JsonProperty("arrayStrategy")
+    public Optional<ArrayStrategy> getArrayStrategy() {
+        return arrayStrategy;
+    }
+
     @JsonProperty("chunkingOptions")
     public Optional<ExtractChunkingOptions> getChunkingOptions() {
         return chunkingOptions;
     }
 
     /**
-     * @return Optional fixed limit on the number of pages to process. See <a href="/product/page-ranges">Page Ranges</a>.
+     * @return Ranges of sheet indices to extract from Excel documents.
+     */
+    @JsonProperty("excelSheetRanges")
+    public Optional<List<ExcelSheetRange>> getExcelSheetRanges() {
+        return excelSheetRanges;
+    }
+
+    /**
+     * @return Strategy for selecting sheets from Excel documents.
+     */
+    @JsonProperty("excelSheetSelectionStrategy")
+    public Optional<ExtractionAdvancedOptionsExcelSheetSelectionStrategy> getExcelSheetSelectionStrategy() {
+        return excelSheetSelectionStrategy;
+    }
+
+    /**
+     * @return DEPRECATED - See <a href="/product/page-ranges">Page Ranges</a>.
      */
     @JsonProperty("fixedPageLimit")
     public Optional<Integer> getFixedPageLimit() {
@@ -148,7 +184,10 @@ public final class ExtractionAdvancedOptions {
                 && advancedMultimodalEnabled.equals(other.advancedMultimodalEnabled)
                 && citationsEnabled.equals(other.citationsEnabled)
                 && advancedFigureParsingEnabled.equals(other.advancedFigureParsingEnabled)
+                && arrayStrategy.equals(other.arrayStrategy)
                 && chunkingOptions.equals(other.chunkingOptions)
+                && excelSheetRanges.equals(other.excelSheetRanges)
+                && excelSheetSelectionStrategy.equals(other.excelSheetSelectionStrategy)
                 && fixedPageLimit.equals(other.fixedPageLimit)
                 && pageRanges.equals(other.pageRanges);
     }
@@ -162,7 +201,10 @@ public final class ExtractionAdvancedOptions {
                 this.advancedMultimodalEnabled,
                 this.citationsEnabled,
                 this.advancedFigureParsingEnabled,
+                this.arrayStrategy,
                 this.chunkingOptions,
+                this.excelSheetRanges,
+                this.excelSheetSelectionStrategy,
                 this.fixedPageLimit,
                 this.pageRanges);
     }
@@ -190,7 +232,14 @@ public final class ExtractionAdvancedOptions {
 
         private Optional<Boolean> advancedFigureParsingEnabled = Optional.empty();
 
+        private Optional<ArrayStrategy> arrayStrategy = Optional.empty();
+
         private Optional<ExtractChunkingOptions> chunkingOptions = Optional.empty();
+
+        private Optional<List<ExcelSheetRange>> excelSheetRanges = Optional.empty();
+
+        private Optional<ExtractionAdvancedOptionsExcelSheetSelectionStrategy> excelSheetSelectionStrategy =
+                Optional.empty();
 
         private Optional<Integer> fixedPageLimit = Optional.empty();
 
@@ -208,14 +257,17 @@ public final class ExtractionAdvancedOptions {
             advancedMultimodalEnabled(other.getAdvancedMultimodalEnabled());
             citationsEnabled(other.getCitationsEnabled());
             advancedFigureParsingEnabled(other.getAdvancedFigureParsingEnabled());
+            arrayStrategy(other.getArrayStrategy());
             chunkingOptions(other.getChunkingOptions());
+            excelSheetRanges(other.getExcelSheetRanges());
+            excelSheetSelectionStrategy(other.getExcelSheetSelectionStrategy());
             fixedPageLimit(other.getFixedPageLimit());
             pageRanges(other.getPageRanges());
             return this;
         }
 
         /**
-         * <p>The kind of document being processed.</p>
+         * <p>DEPRECATED - use extractionRules for all system prompts.</p>
          */
         @JsonSetter(value = "documentKind", nulls = Nulls.SKIP)
         public Builder documentKind(Optional<String> documentKind) {
@@ -229,7 +281,7 @@ public final class ExtractionAdvancedOptions {
         }
 
         /**
-         * <p>Custom key definitions for extraction.</p>
+         * <p>DEPRECATED - use extractionRules for all system prompts.</p>
          */
         @JsonSetter(value = "keyDefinitions", nulls = Nulls.SKIP)
         public Builder keyDefinitions(Optional<String> keyDefinitions) {
@@ -298,6 +350,20 @@ public final class ExtractionAdvancedOptions {
             return this;
         }
 
+        /**
+         * <p>Strategy for handling large arrays in documents.</p>
+         */
+        @JsonSetter(value = "arrayStrategy", nulls = Nulls.SKIP)
+        public Builder arrayStrategy(Optional<ArrayStrategy> arrayStrategy) {
+            this.arrayStrategy = arrayStrategy;
+            return this;
+        }
+
+        public Builder arrayStrategy(ArrayStrategy arrayStrategy) {
+            this.arrayStrategy = Optional.ofNullable(arrayStrategy);
+            return this;
+        }
+
         @JsonSetter(value = "chunkingOptions", nulls = Nulls.SKIP)
         public Builder chunkingOptions(Optional<ExtractChunkingOptions> chunkingOptions) {
             this.chunkingOptions = chunkingOptions;
@@ -310,7 +376,37 @@ public final class ExtractionAdvancedOptions {
         }
 
         /**
-         * <p>Optional fixed limit on the number of pages to process. See <a href="/product/page-ranges">Page Ranges</a>.</p>
+         * <p>Ranges of sheet indices to extract from Excel documents.</p>
+         */
+        @JsonSetter(value = "excelSheetRanges", nulls = Nulls.SKIP)
+        public Builder excelSheetRanges(Optional<List<ExcelSheetRange>> excelSheetRanges) {
+            this.excelSheetRanges = excelSheetRanges;
+            return this;
+        }
+
+        public Builder excelSheetRanges(List<ExcelSheetRange> excelSheetRanges) {
+            this.excelSheetRanges = Optional.ofNullable(excelSheetRanges);
+            return this;
+        }
+
+        /**
+         * <p>Strategy for selecting sheets from Excel documents.</p>
+         */
+        @JsonSetter(value = "excelSheetSelectionStrategy", nulls = Nulls.SKIP)
+        public Builder excelSheetSelectionStrategy(
+                Optional<ExtractionAdvancedOptionsExcelSheetSelectionStrategy> excelSheetSelectionStrategy) {
+            this.excelSheetSelectionStrategy = excelSheetSelectionStrategy;
+            return this;
+        }
+
+        public Builder excelSheetSelectionStrategy(
+                ExtractionAdvancedOptionsExcelSheetSelectionStrategy excelSheetSelectionStrategy) {
+            this.excelSheetSelectionStrategy = Optional.ofNullable(excelSheetSelectionStrategy);
+            return this;
+        }
+
+        /**
+         * <p>DEPRECATED - See <a href="/product/page-ranges">Page Ranges</a>.</p>
          */
         @JsonSetter(value = "fixedPageLimit", nulls = Nulls.SKIP)
         public Builder fixedPageLimit(Optional<Integer> fixedPageLimit) {
@@ -342,7 +438,10 @@ public final class ExtractionAdvancedOptions {
                     advancedMultimodalEnabled,
                     citationsEnabled,
                     advancedFigureParsingEnabled,
+                    arrayStrategy,
                     chunkingOptions,
+                    excelSheetRanges,
+                    excelSheetSelectionStrategy,
                     fixedPageLimit,
                     pageRanges,
                     additionalProperties);
