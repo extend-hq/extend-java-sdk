@@ -18,7 +18,6 @@ import ai.extend.resources.parserrun.requests.ParserRunGetRequest;
 import ai.extend.resources.parserrun.types.ParserRunDeleteResponse;
 import ai.extend.resources.parserrun.types.ParserRunGetResponse;
 import ai.extend.types.Error;
-import ai.extend.types.ExtendError;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import okhttp3.Headers;
@@ -154,7 +153,7 @@ public class RawParserRunClient {
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                     case 500:
                         throw new InternalServerError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtendError.class), response);
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                 }
             } catch (JsonProcessingException ignored) {
                 // unable to map error response, throwing generic error

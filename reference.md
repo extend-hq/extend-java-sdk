@@ -1276,6 +1276,101 @@ Example: `"dpr_Xj8mK2pL9nR4vT7qY5wZ"`
 </details>
 
 ## Processor
+<details><summary><code>client.processor.list() -> ListProcessorsResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all processors in your organization
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.processor().list(
+    ProcessorListRequest
+        .builder()
+        .type(ProcessorType.EXTRACT)
+        .nextPageToken("nextPageToken")
+        .maxPageSize(1)
+        .sortBy(ProcessorListRequestSortBy.CREATED_AT)
+        .sortDir(ProcessorListRequestSortDir.ASC)
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**type:** `Optional<ProcessorType>` — Filter processors by type
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**nextPageToken:** `Optional<String>` — Token for retrieving the next page of results
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**maxPageSize:** `Optional<Integer>` — Maximum number of processors to return per page
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortBy:** `Optional<ProcessorListRequestSortBy>` — Field to sort by
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortDir:** `Optional<ProcessorListRequestSortDir>` — Sort direction
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.processor.create(request) -> ProcessorCreateResponse</code></summary>
 <dl>
 <dd>

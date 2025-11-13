@@ -25,7 +25,6 @@ import ai.extend.resources.evaluationsetitem.types.EvaluationSetItemDeleteRespon
 import ai.extend.resources.evaluationsetitem.types.EvaluationSetItemListResponse;
 import ai.extend.resources.evaluationsetitem.types.EvaluationSetItemUpdateResponse;
 import ai.extend.types.Error;
-import ai.extend.types.ExtendError;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -429,7 +428,7 @@ public class AsyncRawEvaluationSetItemClient {
                                 return;
                             case 500:
                                 future.completeExceptionally(new InternalServerError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtendError.class),
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
                                         response));
                                 return;
                         }

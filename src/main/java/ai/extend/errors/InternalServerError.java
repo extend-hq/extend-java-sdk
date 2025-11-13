@@ -4,21 +4,20 @@
 package ai.extend.errors;
 
 import ai.extend.core.ExtendClientApiException;
-import ai.extend.types.ExtendError;
 import okhttp3.Response;
 
 public final class InternalServerError extends ExtendClientApiException {
     /**
      * The body of the response that triggered the exception.
      */
-    private final ExtendError body;
+    private final Object body;
 
-    public InternalServerError(ExtendError body) {
+    public InternalServerError(Object body) {
         super("InternalServerError", 500, body);
         this.body = body;
     }
 
-    public InternalServerError(ExtendError body, Response rawResponse) {
+    public InternalServerError(Object body, Response rawResponse) {
         super("InternalServerError", 500, body, rawResponse);
         this.body = body;
     }
@@ -27,7 +26,7 @@ public final class InternalServerError extends ExtendClientApiException {
      * @return the body
      */
     @java.lang.Override
-    public ExtendError body() {
+    public Object body() {
         return this.body;
     }
 }

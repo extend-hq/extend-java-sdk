@@ -24,8 +24,6 @@ import ai.extend.resources.processorrun.types.ProcessorRunDeleteResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunGetResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunListResponse;
 import ai.extend.types.Error;
-import ai.extend.types.ExtendError;
-import ai.extend.types.TooManyRequestsErrorBody;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -254,8 +252,7 @@ public class AsyncRawProcessorRunClient {
                                 return;
                             case 429:
                                 future.completeExceptionally(new TooManyRequestsError(
-                                        ObjectMappers.JSON_MAPPER.readValue(
-                                                responseBodyString, TooManyRequestsErrorBody.class),
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
                                         response));
                                 return;
                         }
@@ -414,7 +411,7 @@ public class AsyncRawProcessorRunClient {
                                 return;
                             case 500:
                                 future.completeExceptionally(new InternalServerError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtendError.class),
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
                                         response));
                                 return;
                         }
