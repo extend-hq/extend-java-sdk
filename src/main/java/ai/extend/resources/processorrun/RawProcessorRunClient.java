@@ -24,8 +24,6 @@ import ai.extend.resources.processorrun.types.ProcessorRunDeleteResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunGetResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunListResponse;
 import ai.extend.types.Error;
-import ai.extend.types.ExtendError;
-import ai.extend.types.TooManyRequestsErrorBody;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import okhttp3.Headers;
@@ -220,8 +218,7 @@ public class RawProcessorRunClient {
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                     case 429:
                         throw new TooManyRequestsError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, TooManyRequestsErrorBody.class),
-                                response);
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                 }
             } catch (JsonProcessingException ignored) {
                 // unable to map error response, throwing generic error
@@ -340,7 +337,7 @@ public class RawProcessorRunClient {
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                     case 500:
                         throw new InternalServerError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtendError.class), response);
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                 }
             } catch (JsonProcessingException ignored) {
                 // unable to map error response, throwing generic error

@@ -25,7 +25,6 @@ import ai.extend.resources.workflowrun.types.WorkflowRunGetResponse;
 import ai.extend.resources.workflowrun.types.WorkflowRunListResponse;
 import ai.extend.resources.workflowrun.types.WorkflowRunUpdateResponse;
 import ai.extend.types.Error;
-import ai.extend.types.ExtendError;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -469,7 +468,7 @@ public class AsyncRawWorkflowRunClient {
                                 return;
                             case 500:
                                 future.completeExceptionally(new InternalServerError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtendError.class),
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
                                         response));
                                 return;
                         }
@@ -557,7 +556,7 @@ public class AsyncRawWorkflowRunClient {
                                 return;
                             case 500:
                                 future.completeExceptionally(new InternalServerError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtendError.class),
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
                                         response));
                                 return;
                         }

@@ -9,15 +9,20 @@ import ai.extend.core.ExtendClientException;
 import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
+import ai.extend.core.QueryStringMapper;
 import ai.extend.core.RequestOptions;
 import ai.extend.errors.BadRequestError;
+import ai.extend.errors.InternalServerError;
 import ai.extend.errors.NotFoundError;
+import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.resources.processor.requests.ProcessorCreateRequest;
+import ai.extend.resources.processor.requests.ProcessorListRequest;
 import ai.extend.resources.processor.requests.ProcessorUpdateRequest;
 import ai.extend.resources.processor.types.ProcessorCreateResponse;
 import ai.extend.resources.processor.types.ProcessorUpdateResponse;
 import ai.extend.types.Error;
+import ai.extend.types.ListProcessorsResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -37,6 +42,116 @@ public class AsyncRawProcessorClient {
 
     public AsyncRawProcessorClient(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
+    }
+
+    /**
+     * List all processors in your organization
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ListProcessorsResponse>> list() {
+        return list(ProcessorListRequest.builder().build());
+    }
+
+    /**
+     * List all processors in your organization
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ListProcessorsResponse>> list(ProcessorListRequest request) {
+        return list(request, null);
+    }
+
+    /**
+     * List all processors in your organization
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ListProcessorsResponse>> list(
+            ProcessorListRequest request, RequestOptions requestOptions) {
+        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("processors");
+        if (request.getType().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "type", request.getType().get(), false);
+        }
+        if (request.getNextPageToken().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "nextPageToken", request.getNextPageToken().get(), false);
+        }
+        if (request.getMaxPageSize().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "maxPageSize", request.getMaxPageSize().get(), false);
+        }
+        if (request.getSortBy().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "sortBy", request.getSortBy().get(), false);
+        }
+        if (request.getSortDir().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "sortDir", request.getSortDir().get(), false);
+        }
+        Request.Builder _requestBuilder = new Request.Builder()
+                .url(httpUrl.build())
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Accept", "application/json");
+        Request okhttpRequest = _requestBuilder.build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<ExtendClientHttpResponse<ListProcessorsResponse>> future = new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful()) {
+                        future.complete(new ExtendClientHttpResponse<>(
+                                ObjectMappers.JSON_MAPPER.readValue(
+                                        responseBody.string(), ListProcessorsResponse.class),
+                                response));
+                        return;
+                    }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    try {
+                        switch (response.code()) {
+                            case 400:
+                                future.completeExceptionally(new BadRequestError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                            case 401:
+                                future.completeExceptionally(new UnauthorizedError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class),
+                                        response));
+                                return;
+                            case 429:
+                                future.completeExceptionally(new TooManyRequestsError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                            case 500:
+                                future.completeExceptionally(new InternalServerError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                        }
+                    } catch (JsonProcessingException ignored) {
+                        // unable to map error response, throwing generic error
+                    }
+                    future.completeExceptionally(new ExtendClientApiException(
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
     }
 
     /**

@@ -22,7 +22,6 @@ import ai.extend.resources.file.types.FileGetResponse;
 import ai.extend.resources.file.types.FileListResponse;
 import ai.extend.resources.file.types.FileUploadResponse;
 import ai.extend.types.Error;
-import ai.extend.types.ExtendError;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.File;
 import java.io.IOException;
@@ -236,7 +235,7 @@ public class RawFileClient {
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                     case 500:
                         throw new InternalServerError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtendError.class), response);
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                 }
             } catch (JsonProcessingException ignored) {
                 // unable to map error response, throwing generic error

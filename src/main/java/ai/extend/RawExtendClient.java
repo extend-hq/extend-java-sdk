@@ -113,7 +113,7 @@ public class RawExtendClient {
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtendError.class), response);
                     case 500:
                         throw new InternalServerError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtendError.class), response);
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                 }
             } catch (JsonProcessingException ignored) {
                 // unable to map error response, throwing generic error

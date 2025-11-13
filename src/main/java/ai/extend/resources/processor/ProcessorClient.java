@@ -6,9 +6,11 @@ package ai.extend.resources.processor;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.processor.requests.ProcessorCreateRequest;
+import ai.extend.resources.processor.requests.ProcessorListRequest;
 import ai.extend.resources.processor.requests.ProcessorUpdateRequest;
 import ai.extend.resources.processor.types.ProcessorCreateResponse;
 import ai.extend.resources.processor.types.ProcessorUpdateResponse;
+import ai.extend.types.ListProcessorsResponse;
 
 public class ProcessorClient {
     protected final ClientOptions clientOptions;
@@ -25,6 +27,27 @@ public class ProcessorClient {
      */
     public RawProcessorClient withRawResponse() {
         return this.rawClient;
+    }
+
+    /**
+     * List all processors in your organization
+     */
+    public ListProcessorsResponse list() {
+        return this.rawClient.list().body();
+    }
+
+    /**
+     * List all processors in your organization
+     */
+    public ListProcessorsResponse list(ProcessorListRequest request) {
+        return this.rawClient.list(request).body();
+    }
+
+    /**
+     * List all processors in your organization
+     */
+    public ListProcessorsResponse list(ProcessorListRequest request, RequestOptions requestOptions) {
+        return this.rawClient.list(request, requestOptions).body();
     }
 
     /**

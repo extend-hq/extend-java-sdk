@@ -18,7 +18,6 @@ import ai.extend.resources.parserrun.requests.ParserRunGetRequest;
 import ai.extend.resources.parserrun.types.ParserRunDeleteResponse;
 import ai.extend.resources.parserrun.types.ParserRunGetResponse;
 import ai.extend.types.Error;
-import ai.extend.types.ExtendError;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -186,7 +185,7 @@ public class AsyncRawParserRunClient {
                                 return;
                             case 500:
                                 future.completeExceptionally(new InternalServerError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtendError.class),
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
                                         response));
                                 return;
                         }

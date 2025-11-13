@@ -6,9 +6,11 @@ package ai.extend.resources.processor;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.processor.requests.ProcessorCreateRequest;
+import ai.extend.resources.processor.requests.ProcessorListRequest;
 import ai.extend.resources.processor.requests.ProcessorUpdateRequest;
 import ai.extend.resources.processor.types.ProcessorCreateResponse;
 import ai.extend.resources.processor.types.ProcessorUpdateResponse;
+import ai.extend.types.ListProcessorsResponse;
 import java.util.concurrent.CompletableFuture;
 
 public class AsyncProcessorClient {
@@ -26,6 +28,27 @@ public class AsyncProcessorClient {
      */
     public AsyncRawProcessorClient withRawResponse() {
         return this.rawClient;
+    }
+
+    /**
+     * List all processors in your organization
+     */
+    public CompletableFuture<ListProcessorsResponse> list() {
+        return this.rawClient.list().thenApply(response -> response.body());
+    }
+
+    /**
+     * List all processors in your organization
+     */
+    public CompletableFuture<ListProcessorsResponse> list(ProcessorListRequest request) {
+        return this.rawClient.list(request).thenApply(response -> response.body());
+    }
+
+    /**
+     * List all processors in your organization
+     */
+    public CompletableFuture<ListProcessorsResponse> list(ProcessorListRequest request, RequestOptions requestOptions) {
+        return this.rawClient.list(request, requestOptions).thenApply(response -> response.body());
     }
 
     /**

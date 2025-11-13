@@ -31,6 +31,8 @@ public final class ExtractionAdvancedOptions {
 
     private final Optional<Boolean> citationsEnabled;
 
+    private final Optional<ExtractionAdvancedOptionsArrayCitationStrategy> arrayCitationStrategy;
+
     private final Optional<Boolean> advancedFigureParsingEnabled;
 
     private final Optional<ArrayStrategy> arrayStrategy;
@@ -53,6 +55,7 @@ public final class ExtractionAdvancedOptions {
             Optional<Boolean> modelReasoningInsightsEnabled,
             Optional<Boolean> advancedMultimodalEnabled,
             Optional<Boolean> citationsEnabled,
+            Optional<ExtractionAdvancedOptionsArrayCitationStrategy> arrayCitationStrategy,
             Optional<Boolean> advancedFigureParsingEnabled,
             Optional<ArrayStrategy> arrayStrategy,
             Optional<ExtractChunkingOptions> chunkingOptions,
@@ -66,6 +69,7 @@ public final class ExtractionAdvancedOptions {
         this.modelReasoningInsightsEnabled = modelReasoningInsightsEnabled;
         this.advancedMultimodalEnabled = advancedMultimodalEnabled;
         this.citationsEnabled = citationsEnabled;
+        this.arrayCitationStrategy = arrayCitationStrategy;
         this.advancedFigureParsingEnabled = advancedFigureParsingEnabled;
         this.arrayStrategy = arrayStrategy;
         this.chunkingOptions = chunkingOptions;
@@ -114,6 +118,14 @@ public final class ExtractionAdvancedOptions {
     @JsonProperty("citationsEnabled")
     public Optional<Boolean> getCitationsEnabled() {
         return citationsEnabled;
+    }
+
+    /**
+     * @return Granularity for array citations. This requires citationsEnabled=true and a base processor version that supports property-level array citations (extraction_performance ≥ 4.4.0).
+     */
+    @JsonProperty("arrayCitationStrategy")
+    public Optional<ExtractionAdvancedOptionsArrayCitationStrategy> getArrayCitationStrategy() {
+        return arrayCitationStrategy;
     }
 
     /**
@@ -183,6 +195,7 @@ public final class ExtractionAdvancedOptions {
                 && modelReasoningInsightsEnabled.equals(other.modelReasoningInsightsEnabled)
                 && advancedMultimodalEnabled.equals(other.advancedMultimodalEnabled)
                 && citationsEnabled.equals(other.citationsEnabled)
+                && arrayCitationStrategy.equals(other.arrayCitationStrategy)
                 && advancedFigureParsingEnabled.equals(other.advancedFigureParsingEnabled)
                 && arrayStrategy.equals(other.arrayStrategy)
                 && chunkingOptions.equals(other.chunkingOptions)
@@ -200,6 +213,7 @@ public final class ExtractionAdvancedOptions {
                 this.modelReasoningInsightsEnabled,
                 this.advancedMultimodalEnabled,
                 this.citationsEnabled,
+                this.arrayCitationStrategy,
                 this.advancedFigureParsingEnabled,
                 this.arrayStrategy,
                 this.chunkingOptions,
@@ -230,6 +244,8 @@ public final class ExtractionAdvancedOptions {
 
         private Optional<Boolean> citationsEnabled = Optional.empty();
 
+        private Optional<ExtractionAdvancedOptionsArrayCitationStrategy> arrayCitationStrategy = Optional.empty();
+
         private Optional<Boolean> advancedFigureParsingEnabled = Optional.empty();
 
         private Optional<ArrayStrategy> arrayStrategy = Optional.empty();
@@ -256,6 +272,7 @@ public final class ExtractionAdvancedOptions {
             modelReasoningInsightsEnabled(other.getModelReasoningInsightsEnabled());
             advancedMultimodalEnabled(other.getAdvancedMultimodalEnabled());
             citationsEnabled(other.getCitationsEnabled());
+            arrayCitationStrategy(other.getArrayCitationStrategy());
             advancedFigureParsingEnabled(other.getAdvancedFigureParsingEnabled());
             arrayStrategy(other.getArrayStrategy());
             chunkingOptions(other.getChunkingOptions());
@@ -333,6 +350,21 @@ public final class ExtractionAdvancedOptions {
 
         public Builder citationsEnabled(Boolean citationsEnabled) {
             this.citationsEnabled = Optional.ofNullable(citationsEnabled);
+            return this;
+        }
+
+        /**
+         * <p>Granularity for array citations. This requires citationsEnabled=true and a base processor version that supports property-level array citations (extraction_performance ≥ 4.4.0).</p>
+         */
+        @JsonSetter(value = "arrayCitationStrategy", nulls = Nulls.SKIP)
+        public Builder arrayCitationStrategy(
+                Optional<ExtractionAdvancedOptionsArrayCitationStrategy> arrayCitationStrategy) {
+            this.arrayCitationStrategy = arrayCitationStrategy;
+            return this;
+        }
+
+        public Builder arrayCitationStrategy(ExtractionAdvancedOptionsArrayCitationStrategy arrayCitationStrategy) {
+            this.arrayCitationStrategy = Optional.ofNullable(arrayCitationStrategy);
             return this;
         }
 
@@ -437,6 +469,7 @@ public final class ExtractionAdvancedOptions {
                     modelReasoningInsightsEnabled,
                     advancedMultimodalEnabled,
                     citationsEnabled,
+                    arrayCitationStrategy,
                     advancedFigureParsingEnabled,
                     arrayStrategy,
                     chunkingOptions,

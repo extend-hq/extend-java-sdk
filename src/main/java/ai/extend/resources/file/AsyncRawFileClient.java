@@ -22,7 +22,6 @@ import ai.extend.resources.file.types.FileGetResponse;
 import ai.extend.resources.file.types.FileListResponse;
 import ai.extend.resources.file.types.FileUploadResponse;
 import ai.extend.types.Error;
-import ai.extend.types.ExtendError;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.File;
 import java.io.IOException;
@@ -285,7 +284,7 @@ public class AsyncRawFileClient {
                                 return;
                             case 500:
                                 future.completeExceptionally(new InternalServerError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtendError.class),
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
                                         response));
                                 return;
                         }

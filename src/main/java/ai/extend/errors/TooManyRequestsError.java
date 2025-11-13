@@ -4,21 +4,20 @@
 package ai.extend.errors;
 
 import ai.extend.core.ExtendClientApiException;
-import ai.extend.types.TooManyRequestsErrorBody;
 import okhttp3.Response;
 
 public final class TooManyRequestsError extends ExtendClientApiException {
     /**
      * The body of the response that triggered the exception.
      */
-    private final TooManyRequestsErrorBody body;
+    private final Object body;
 
-    public TooManyRequestsError(TooManyRequestsErrorBody body) {
+    public TooManyRequestsError(Object body) {
         super("TooManyRequestsError", 429, body);
         this.body = body;
     }
 
-    public TooManyRequestsError(TooManyRequestsErrorBody body, Response rawResponse) {
+    public TooManyRequestsError(Object body, Response rawResponse) {
         super("TooManyRequestsError", 429, body, rawResponse);
         this.body = body;
     }
@@ -27,7 +26,7 @@ public final class TooManyRequestsError extends ExtendClientApiException {
      * @return the body
      */
     @java.lang.Override
-    public TooManyRequestsErrorBody body() {
+    public Object body() {
         return this.body;
     }
 }
