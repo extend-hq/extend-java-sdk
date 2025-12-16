@@ -19,19 +19,19 @@ import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-@JsonDeserialize(builder = ParserRunStatus.Builder.class)
-public final class ParserRunStatus {
+@JsonDeserialize(builder = EditRunStatus.Builder.class)
+public final class EditRunStatus {
     private final String id;
 
-    private final ParserRunStatusStatus status;
+    private final EditRunStatusStatus status;
 
     private final Optional<String> failureReason;
 
     private final Map<String, Object> additionalProperties;
 
-    private ParserRunStatus(
+    private EditRunStatus(
             String id,
-            ParserRunStatusStatus status,
+            EditRunStatusStatus status,
             Optional<String> failureReason,
             Map<String, Object> additionalProperties) {
         this.id = id;
@@ -41,16 +41,16 @@ public final class ParserRunStatus {
     }
 
     /**
-     * @return The type of object. Will always be <code>&quot;parser_run_status&quot;</code>.
+     * @return The type of object. Will always be <code>&quot;edit_run_status&quot;</code>.
      */
     @JsonProperty("object")
     public String getObject() {
-        return "parser_run_status";
+        return "edit_run_status";
     }
 
     /**
-     * @return A unique identifier for the parser run. Will always start with <code>&quot;parser_run_&quot;</code>
-     * <p>Example: <code>&quot;parser_run_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+     * @return A unique identifier for the edit run. Will always start with <code>&quot;edit_run_&quot;</code>
+     * <p>Example: <code>&quot;edit_run_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
      */
     @JsonProperty("id")
     public String getId() {
@@ -58,10 +58,10 @@ public final class ParserRunStatus {
     }
 
     /**
-     * @return The status of the parser run.
+     * @return The status of the edit run.
      */
     @JsonProperty("status")
-    public ParserRunStatusStatus getStatus() {
+    public EditRunStatusStatus getStatus() {
         return status;
     }
 
@@ -76,7 +76,7 @@ public final class ParserRunStatus {
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        return other instanceof ParserRunStatus && equalTo((ParserRunStatus) other);
+        return other instanceof EditRunStatus && equalTo((EditRunStatus) other);
     }
 
     @JsonAnyGetter
@@ -84,7 +84,7 @@ public final class ParserRunStatus {
         return this.additionalProperties;
     }
 
-    private boolean equalTo(ParserRunStatus other) {
+    private boolean equalTo(EditRunStatus other) {
         return id.equals(other.id) && status.equals(other.status) && failureReason.equals(other.failureReason);
     }
 
@@ -104,23 +104,23 @@ public final class ParserRunStatus {
 
     public interface IdStage {
         /**
-         * <p>A unique identifier for the parser run. Will always start with <code>&quot;parser_run_&quot;</code></p>
-         * <p>Example: <code>&quot;parser_run_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         * <p>A unique identifier for the edit run. Will always start with <code>&quot;edit_run_&quot;</code></p>
+         * <p>Example: <code>&quot;edit_run_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
          */
         StatusStage id(@NotNull String id);
 
-        Builder from(ParserRunStatus other);
+        Builder from(EditRunStatus other);
     }
 
     public interface StatusStage {
         /**
-         * <p>The status of the parser run.</p>
+         * <p>The status of the edit run.</p>
          */
-        _FinalStage status(@NotNull ParserRunStatusStatus status);
+        _FinalStage status(@NotNull EditRunStatusStatus status);
     }
 
     public interface _FinalStage {
-        ParserRunStatus build();
+        EditRunStatus build();
 
         /**
          * <p>The reason for failure if status is &quot;FAILED&quot;.</p>
@@ -134,7 +134,7 @@ public final class ParserRunStatus {
     public static final class Builder implements IdStage, StatusStage, _FinalStage {
         private String id;
 
-        private ParserRunStatusStatus status;
+        private EditRunStatusStatus status;
 
         private Optional<String> failureReason = Optional.empty();
 
@@ -144,7 +144,7 @@ public final class ParserRunStatus {
         private Builder() {}
 
         @java.lang.Override
-        public Builder from(ParserRunStatus other) {
+        public Builder from(EditRunStatus other) {
             id(other.getId());
             status(other.getStatus());
             failureReason(other.getFailureReason());
@@ -152,10 +152,10 @@ public final class ParserRunStatus {
         }
 
         /**
-         * <p>A unique identifier for the parser run. Will always start with <code>&quot;parser_run_&quot;</code></p>
-         * <p>Example: <code>&quot;parser_run_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
-         * <p>A unique identifier for the parser run. Will always start with <code>&quot;parser_run_&quot;</code></p>
-         * <p>Example: <code>&quot;parser_run_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         * <p>A unique identifier for the edit run. Will always start with <code>&quot;edit_run_&quot;</code></p>
+         * <p>Example: <code>&quot;edit_run_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         * <p>A unique identifier for the edit run. Will always start with <code>&quot;edit_run_&quot;</code></p>
+         * <p>Example: <code>&quot;edit_run_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -166,13 +166,13 @@ public final class ParserRunStatus {
         }
 
         /**
-         * <p>The status of the parser run.</p>
-         * <p>The status of the parser run.</p>
+         * <p>The status of the edit run.</p>
+         * <p>The status of the edit run.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
         @JsonSetter("status")
-        public _FinalStage status(@NotNull ParserRunStatusStatus status) {
+        public _FinalStage status(@NotNull EditRunStatusStatus status) {
             this.status = Objects.requireNonNull(status, "status must not be null");
             return this;
         }
@@ -198,8 +198,8 @@ public final class ParserRunStatus {
         }
 
         @java.lang.Override
-        public ParserRunStatus build() {
-            return new ParserRunStatus(id, status, failureReason, additionalProperties);
+        public EditRunStatus build() {
+            return new EditRunStatus(id, status, failureReason, additionalProperties);
         }
     }
 }

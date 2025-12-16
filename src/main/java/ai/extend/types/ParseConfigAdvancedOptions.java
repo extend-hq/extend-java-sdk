@@ -27,16 +27,20 @@ public final class ParseConfigAdvancedOptions {
 
     private final Optional<List<PageRangesItem>> pageRanges;
 
+    private final Optional<Double> verticalGroupingThreshold;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseConfigAdvancedOptions(
             Optional<Boolean> pageRotationEnabled,
             Optional<Boolean> agenticOcrEnabled,
             Optional<List<PageRangesItem>> pageRanges,
+            Optional<Double> verticalGroupingThreshold,
             Map<String, Object> additionalProperties) {
         this.pageRotationEnabled = pageRotationEnabled;
         this.agenticOcrEnabled = agenticOcrEnabled;
         this.pageRanges = pageRanges;
+        this.verticalGroupingThreshold = verticalGroupingThreshold;
         this.additionalProperties = additionalProperties;
     }
 
@@ -61,6 +65,14 @@ public final class ParseConfigAdvancedOptions {
         return pageRanges;
     }
 
+    /**
+     * @return Multiplier for the Y-axis threshold used to determine if text blocks should be placed on the same line or not (0.1-5.0, default 1.0). Higher values group elements that are further apart vertically. Only applies when the spatial target is set.
+     */
+    @JsonProperty("verticalGroupingThreshold")
+    public Optional<Double> getVerticalGroupingThreshold() {
+        return verticalGroupingThreshold;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -75,12 +87,14 @@ public final class ParseConfigAdvancedOptions {
     private boolean equalTo(ParseConfigAdvancedOptions other) {
         return pageRotationEnabled.equals(other.pageRotationEnabled)
                 && agenticOcrEnabled.equals(other.agenticOcrEnabled)
-                && pageRanges.equals(other.pageRanges);
+                && pageRanges.equals(other.pageRanges)
+                && verticalGroupingThreshold.equals(other.verticalGroupingThreshold);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.pageRotationEnabled, this.agenticOcrEnabled, this.pageRanges);
+        return Objects.hash(
+                this.pageRotationEnabled, this.agenticOcrEnabled, this.pageRanges, this.verticalGroupingThreshold);
     }
 
     @java.lang.Override
@@ -100,6 +114,8 @@ public final class ParseConfigAdvancedOptions {
 
         private Optional<List<PageRangesItem>> pageRanges = Optional.empty();
 
+        private Optional<Double> verticalGroupingThreshold = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -109,6 +125,7 @@ public final class ParseConfigAdvancedOptions {
             pageRotationEnabled(other.getPageRotationEnabled());
             agenticOcrEnabled(other.getAgenticOcrEnabled());
             pageRanges(other.getPageRanges());
+            verticalGroupingThreshold(other.getVerticalGroupingThreshold());
             return this;
         }
 
@@ -151,9 +168,27 @@ public final class ParseConfigAdvancedOptions {
             return this;
         }
 
+        /**
+         * <p>Multiplier for the Y-axis threshold used to determine if text blocks should be placed on the same line or not (0.1-5.0, default 1.0). Higher values group elements that are further apart vertically. Only applies when the spatial target is set.</p>
+         */
+        @JsonSetter(value = "verticalGroupingThreshold", nulls = Nulls.SKIP)
+        public Builder verticalGroupingThreshold(Optional<Double> verticalGroupingThreshold) {
+            this.verticalGroupingThreshold = verticalGroupingThreshold;
+            return this;
+        }
+
+        public Builder verticalGroupingThreshold(Double verticalGroupingThreshold) {
+            this.verticalGroupingThreshold = Optional.ofNullable(verticalGroupingThreshold);
+            return this;
+        }
+
         public ParseConfigAdvancedOptions build() {
             return new ParseConfigAdvancedOptions(
-                    pageRotationEnabled, agenticOcrEnabled, pageRanges, additionalProperties);
+                    pageRotationEnabled,
+                    agenticOcrEnabled,
+                    pageRanges,
+                    verticalGroupingThreshold,
+                    additionalProperties);
         }
     }
 }
