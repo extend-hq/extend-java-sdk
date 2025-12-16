@@ -9,34 +9,51 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ArrayStrategy.Builder.class)
 public final class ArrayStrategy {
+    private final ArrayStrategyType type;
+
     private final Map<String, Object> additionalProperties;
 
-    private ArrayStrategy(Map<String, Object> additionalProperties) {
+    private ArrayStrategy(ArrayStrategyType type, Map<String, Object> additionalProperties) {
+        this.type = type;
         this.additionalProperties = additionalProperties;
     }
 
     /**
-     * @return The strategy type for handling arrays.
+     * @return The strategy type for handling large array use cases. For most use cases this should be left null, or should be set to <code>large_array_heuristics</code>. If you're unsure of what your use case needs, reach out to the Extend team for help.
      * <ul>
-     * <li><code>large_array_heuristics</code>: Optimized for documents with very large arrays. Uses specialized heuristics around chunking, tables, and merging to handle large arrays efficiently over large documents.</li>
+     * <li>
+     * <p><code>large_array_heuristics</code>: Optimized for documents with very large arrays, but where latency matters.</p>
+     * <p>This strategy uses specialized heuristics around chunking, tables, and merging to handle large arrays efficiently over large documents.</p>
+     * </li>
+     * <li>
+     * <p><code>large_array_max_context</code>: Optimizes for accuracy over latency in documents with very large arrays.</p>
+     * <p>This strategy will do multiple passes through the entire document to ensure there is no context loss across any chunks/pages, maximizing accuracy for complex array extraction, but adding material latency.</p>
+     * </li>
+     * <li>
+     * <p><code>large_array_overlap_context</code>: Balances accuracy and latency in documents with very large arrays.</p>
+     * <p>This strategy will always maintain surrounding/overlapping page context for every chunk/page that is extracted, eliminating array failure modes from context loss across page boundaries.</p>
+     * </li>
      * </ul>
      */
     @JsonProperty("type")
-    public String getType() {
-        return "large_array_heuristics";
+    public ArrayStrategyType getType() {
+        return type;
     }
 
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        return other instanceof ArrayStrategy;
+        return other instanceof ArrayStrategy && equalTo((ArrayStrategy) other);
     }
 
     @JsonAnyGetter
@@ -44,28 +61,109 @@ public final class ArrayStrategy {
         return this.additionalProperties;
     }
 
+    private boolean equalTo(ArrayStrategy other) {
+        return type.equals(other.type);
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+        return Objects.hash(this.type);
+    }
+
     @java.lang.Override
     public String toString() {
         return ObjectMappers.stringify(this);
     }
 
-    public static Builder builder() {
+    public static TypeStage builder() {
         return new Builder();
     }
 
+    public interface TypeStage {
+        /**
+         * <p>The strategy type for handling large array use cases. For most use cases this should be left null, or should be set to <code>large_array_heuristics</code>. If you're unsure of what your use case needs, reach out to the Extend team for help.</p>
+         * <ul>
+         * <li>
+         * <p><code>large_array_heuristics</code>: Optimized for documents with very large arrays, but where latency matters.</p>
+         * <p>This strategy uses specialized heuristics around chunking, tables, and merging to handle large arrays efficiently over large documents.</p>
+         * </li>
+         * <li>
+         * <p><code>large_array_max_context</code>: Optimizes for accuracy over latency in documents with very large arrays.</p>
+         * <p>This strategy will do multiple passes through the entire document to ensure there is no context loss across any chunks/pages, maximizing accuracy for complex array extraction, but adding material latency.</p>
+         * </li>
+         * <li>
+         * <p><code>large_array_overlap_context</code>: Balances accuracy and latency in documents with very large arrays.</p>
+         * <p>This strategy will always maintain surrounding/overlapping page context for every chunk/page that is extracted, eliminating array failure modes from context loss across page boundaries.</p>
+         * </li>
+         * </ul>
+         */
+        _FinalStage type(@NotNull ArrayStrategyType type);
+
+        Builder from(ArrayStrategy other);
+    }
+
+    public interface _FinalStage {
+        ArrayStrategy build();
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder {
+    public static final class Builder implements TypeStage, _FinalStage {
+        private ArrayStrategyType type;
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
+        @java.lang.Override
         public Builder from(ArrayStrategy other) {
+            type(other.getType());
             return this;
         }
 
+        /**
+         * <p>The strategy type for handling large array use cases. For most use cases this should be left null, or should be set to <code>large_array_heuristics</code>. If you're unsure of what your use case needs, reach out to the Extend team for help.</p>
+         * <ul>
+         * <li>
+         * <p><code>large_array_heuristics</code>: Optimized for documents with very large arrays, but where latency matters.</p>
+         * <p>This strategy uses specialized heuristics around chunking, tables, and merging to handle large arrays efficiently over large documents.</p>
+         * </li>
+         * <li>
+         * <p><code>large_array_max_context</code>: Optimizes for accuracy over latency in documents with very large arrays.</p>
+         * <p>This strategy will do multiple passes through the entire document to ensure there is no context loss across any chunks/pages, maximizing accuracy for complex array extraction, but adding material latency.</p>
+         * </li>
+         * <li>
+         * <p><code>large_array_overlap_context</code>: Balances accuracy and latency in documents with very large arrays.</p>
+         * <p>This strategy will always maintain surrounding/overlapping page context for every chunk/page that is extracted, eliminating array failure modes from context loss across page boundaries.</p>
+         * </li>
+         * </ul>
+         * <p>The strategy type for handling large array use cases. For most use cases this should be left null, or should be set to <code>large_array_heuristics</code>. If you're unsure of what your use case needs, reach out to the Extend team for help.</p>
+         * <ul>
+         * <li>
+         * <p><code>large_array_heuristics</code>: Optimized for documents with very large arrays, but where latency matters.</p>
+         * <p>This strategy uses specialized heuristics around chunking, tables, and merging to handle large arrays efficiently over large documents.</p>
+         * </li>
+         * <li>
+         * <p><code>large_array_max_context</code>: Optimizes for accuracy over latency in documents with very large arrays.</p>
+         * <p>This strategy will do multiple passes through the entire document to ensure there is no context loss across any chunks/pages, maximizing accuracy for complex array extraction, but adding material latency.</p>
+         * </li>
+         * <li>
+         * <p><code>large_array_overlap_context</code>: Balances accuracy and latency in documents with very large arrays.</p>
+         * <p>This strategy will always maintain surrounding/overlapping page context for every chunk/page that is extracted, eliminating array failure modes from context loss across page boundaries.</p>
+         * </li>
+         * </ul>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        @JsonSetter("type")
+        public _FinalStage type(@NotNull ArrayStrategyType type) {
+            this.type = Objects.requireNonNull(type, "type must not be null");
+            return this;
+        }
+
+        @java.lang.Override
         public ArrayStrategy build() {
-            return new ArrayStrategy(additionalProperties);
+            return new ArrayStrategy(type, additionalProperties);
         }
     }
 }

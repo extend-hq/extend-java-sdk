@@ -47,11 +47,17 @@ public final class ExtractionOutputEdits {
         this.additionalProperties = additionalProperties;
     }
 
+    /**
+     * @return The original value before editing.
+     */
     @JsonProperty("originalValue")
     public Optional<Object> getOriginalValue() {
         return originalValue;
     }
 
+    /**
+     * @return The value after editing.
+     */
     @JsonProperty("editedValue")
     public Optional<Object> getEditedValue() {
         return editedValue;
@@ -140,6 +146,9 @@ public final class ExtractionOutputEdits {
             return this;
         }
 
+        /**
+         * <p>The original value before editing.</p>
+         */
         @JsonSetter(value = "originalValue", nulls = Nulls.SKIP)
         public Builder originalValue(Optional<Object> originalValue) {
             this.originalValue = originalValue;
@@ -151,6 +160,9 @@ public final class ExtractionOutputEdits {
             return this;
         }
 
+        /**
+         * <p>The value after editing.</p>
+         */
         @JsonSetter(value = "editedValue", nulls = Nulls.SKIP)
         public Builder editedValue(Optional<Object> editedValue) {
             this.editedValue = editedValue;

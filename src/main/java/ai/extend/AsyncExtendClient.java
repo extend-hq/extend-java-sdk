@@ -10,6 +10,7 @@ import ai.extend.requests.ParseAsyncRequest;
 import ai.extend.requests.ParseRequest;
 import ai.extend.resources.batchprocessorrun.AsyncBatchProcessorRunClient;
 import ai.extend.resources.batchworkflowrun.AsyncBatchWorkflowRunClient;
+import ai.extend.resources.edit.AsyncEditClient;
 import ai.extend.resources.evaluationset.AsyncEvaluationSetClient;
 import ai.extend.resources.evaluationsetitem.AsyncEvaluationSetItemClient;
 import ai.extend.resources.file.AsyncFileClient;
@@ -42,6 +43,8 @@ public class AsyncExtendClient {
 
     protected final Supplier<AsyncParserRunClient> parserRunClient;
 
+    protected final Supplier<AsyncEditClient> editClient;
+
     protected final Supplier<AsyncFileClient> fileClient;
 
     protected final Supplier<AsyncEvaluationSetClient> evaluationSetClient;
@@ -63,6 +66,7 @@ public class AsyncExtendClient {
         this.processorClient = Suppliers.memoize(() -> new AsyncProcessorClient(clientOptions));
         this.processorVersionClient = Suppliers.memoize(() -> new AsyncProcessorVersionClient(clientOptions));
         this.parserRunClient = Suppliers.memoize(() -> new AsyncParserRunClient(clientOptions));
+        this.editClient = Suppliers.memoize(() -> new AsyncEditClient(clientOptions));
         this.fileClient = Suppliers.memoize(() -> new AsyncFileClient(clientOptions));
         this.evaluationSetClient = Suppliers.memoize(() -> new AsyncEvaluationSetClient(clientOptions));
         this.evaluationSetItemClient = Suppliers.memoize(() -> new AsyncEvaluationSetItemClient(clientOptions));
@@ -148,6 +152,10 @@ public class AsyncExtendClient {
 
     public AsyncParserRunClient parserRun() {
         return this.parserRunClient.get();
+    }
+
+    public AsyncEditClient edit() {
+        return this.editClient.get();
     }
 
     public AsyncFileClient file() {

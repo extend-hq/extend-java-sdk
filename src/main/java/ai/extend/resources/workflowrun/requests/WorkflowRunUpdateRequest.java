@@ -44,6 +44,7 @@ public final class WorkflowRunUpdateRequest {
     /**
      * @return A metadata object that can be assigned to a specific WorkflowRun. If metadata already exists on this WorkflowRun, the newly incoming metadata will be merged with the existing metadata, with the incoming metadata taking field precedence.
      * <p>You can include any arbitrary <code>key : value</code> pairs in this object.</p>
+     * <p>To categorize workflow runs for billing and usage tracking, include <code>extend:usage_tags</code> with an array of string values (e.g., <code>{&quot;extend:usage_tags&quot;: [&quot;production&quot;, &quot;team-eng&quot;, &quot;customer-123&quot;]}</code>). Tags must contain only alphanumeric characters, hyphens, and underscores; any special characters will be automatically removed.</p>
      */
     @JsonProperty("metadata")
     public Optional<Map<String, Object>> getMetadata() {
@@ -113,6 +114,7 @@ public final class WorkflowRunUpdateRequest {
         /**
          * <p>A metadata object that can be assigned to a specific WorkflowRun. If metadata already exists on this WorkflowRun, the newly incoming metadata will be merged with the existing metadata, with the incoming metadata taking field precedence.</p>
          * <p>You can include any arbitrary <code>key : value</code> pairs in this object.</p>
+         * <p>To categorize workflow runs for billing and usage tracking, include <code>extend:usage_tags</code> with an array of string values (e.g., <code>{&quot;extend:usage_tags&quot;: [&quot;production&quot;, &quot;team-eng&quot;, &quot;customer-123&quot;]}</code>). Tags must contain only alphanumeric characters, hyphens, and underscores; any special characters will be automatically removed.</p>
          */
         @JsonSetter(value = "metadata", nulls = Nulls.SKIP)
         public Builder metadata(Optional<Map<String, Object>> metadata) {

@@ -115,6 +115,7 @@ public final class ProcessorRunCreateRequest {
 
     /**
      * @return An optional object that can be passed in to identify the run of the document processor. It will be returned back to you in the response and webhooks.
+     * <p>To categorize processor runs for billing and usage tracking, include <code>extend:usage_tags</code> with an array of string values (e.g., <code>{&quot;extend:usage_tags&quot;: [&quot;production&quot;, &quot;team-eng&quot;, &quot;customer-123&quot;]}</code>). Tags must contain only alphanumeric characters, hyphens, and underscores; any special characters will be automatically removed.</p>
      */
     @JsonProperty("metadata")
     public Optional<Map<String, Object>> getMetadata() {
@@ -225,6 +226,7 @@ public final class ProcessorRunCreateRequest {
 
         /**
          * <p>An optional object that can be passed in to identify the run of the document processor. It will be returned back to you in the response and webhooks.</p>
+         * <p>To categorize processor runs for billing and usage tracking, include <code>extend:usage_tags</code> with an array of string values (e.g., <code>{&quot;extend:usage_tags&quot;: [&quot;production&quot;, &quot;team-eng&quot;, &quot;customer-123&quot;]}</code>). Tags must contain only alphanumeric characters, hyphens, and underscores; any special characters will be automatically removed.</p>
          */
         _FinalStage metadata(Optional<Map<String, Object>> metadata);
 
@@ -303,6 +305,7 @@ public final class ProcessorRunCreateRequest {
 
         /**
          * <p>An optional object that can be passed in to identify the run of the document processor. It will be returned back to you in the response and webhooks.</p>
+         * <p>To categorize processor runs for billing and usage tracking, include <code>extend:usage_tags</code> with an array of string values (e.g., <code>{&quot;extend:usage_tags&quot;: [&quot;production&quot;, &quot;team-eng&quot;, &quot;customer-123&quot;]}</code>). Tags must contain only alphanumeric characters, hyphens, and underscores; any special characters will be automatically removed.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -313,6 +316,7 @@ public final class ProcessorRunCreateRequest {
 
         /**
          * <p>An optional object that can be passed in to identify the run of the document processor. It will be returned back to you in the response and webhooks.</p>
+         * <p>To categorize processor runs for billing and usage tracking, include <code>extend:usage_tags</code> with an array of string values (e.g., <code>{&quot;extend:usage_tags&quot;: [&quot;production&quot;, &quot;team-eng&quot;, &quot;customer-123&quot;]}</code>). Tags must contain only alphanumeric characters, hyphens, and underscores; any special characters will be automatically removed.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "metadata", nulls = Nulls.SKIP)

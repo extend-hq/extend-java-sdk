@@ -101,7 +101,8 @@ public final class WorkflowRunCreateRequest {
     }
 
     /**
-     * @return A optional metadata object that can be assigned to a specific WorkflowRun to help identify it. It will be returned in the response and webhooks. You can place any arbitrary <code>key : value</code> pairs in this object.
+     * @return An optional metadata object that can be assigned to a specific WorkflowRun to help identify it. It will be returned in the response and webhooks. You can place any arbitrary <code>key : value</code> pairs in this object.
+     * <p>To categorize workflow runs for billing and usage tracking, include <code>extend:usage_tags</code> with an array of string values (e.g., <code>{&quot;extend:usage_tags&quot;: [&quot;production&quot;, &quot;team-eng&quot;, &quot;customer-123&quot;]}</code>). Tags must contain only alphanumeric characters, hyphens, and underscores; any special characters will be automatically removed.</p>
      */
     @JsonProperty("metadata")
     public Optional<Map<String, Object>> getMetadata() {
@@ -189,7 +190,8 @@ public final class WorkflowRunCreateRequest {
         _FinalStage priority(Integer priority);
 
         /**
-         * <p>A optional metadata object that can be assigned to a specific WorkflowRun to help identify it. It will be returned in the response and webhooks. You can place any arbitrary <code>key : value</code> pairs in this object.</p>
+         * <p>An optional metadata object that can be assigned to a specific WorkflowRun to help identify it. It will be returned in the response and webhooks. You can place any arbitrary <code>key : value</code> pairs in this object.</p>
+         * <p>To categorize workflow runs for billing and usage tracking, include <code>extend:usage_tags</code> with an array of string values (e.g., <code>{&quot;extend:usage_tags&quot;: [&quot;production&quot;, &quot;team-eng&quot;, &quot;customer-123&quot;]}</code>). Tags must contain only alphanumeric characters, hyphens, and underscores; any special characters will be automatically removed.</p>
          */
         _FinalStage metadata(Optional<Map<String, Object>> metadata);
 
@@ -241,7 +243,8 @@ public final class WorkflowRunCreateRequest {
         }
 
         /**
-         * <p>A optional metadata object that can be assigned to a specific WorkflowRun to help identify it. It will be returned in the response and webhooks. You can place any arbitrary <code>key : value</code> pairs in this object.</p>
+         * <p>An optional metadata object that can be assigned to a specific WorkflowRun to help identify it. It will be returned in the response and webhooks. You can place any arbitrary <code>key : value</code> pairs in this object.</p>
+         * <p>To categorize workflow runs for billing and usage tracking, include <code>extend:usage_tags</code> with an array of string values (e.g., <code>{&quot;extend:usage_tags&quot;: [&quot;production&quot;, &quot;team-eng&quot;, &quot;customer-123&quot;]}</code>). Tags must contain only alphanumeric characters, hyphens, and underscores; any special characters will be automatically removed.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -251,7 +254,8 @@ public final class WorkflowRunCreateRequest {
         }
 
         /**
-         * <p>A optional metadata object that can be assigned to a specific WorkflowRun to help identify it. It will be returned in the response and webhooks. You can place any arbitrary <code>key : value</code> pairs in this object.</p>
+         * <p>An optional metadata object that can be assigned to a specific WorkflowRun to help identify it. It will be returned in the response and webhooks. You can place any arbitrary <code>key : value</code> pairs in this object.</p>
+         * <p>To categorize workflow runs for billing and usage tracking, include <code>extend:usage_tags</code> with an array of string values (e.g., <code>{&quot;extend:usage_tags&quot;: [&quot;production&quot;, &quot;team-eng&quot;, &quot;customer-123&quot;]}</code>). Tags must contain only alphanumeric characters, hyphens, and underscores; any special characters will be automatically removed.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "metadata", nulls = Nulls.SKIP)

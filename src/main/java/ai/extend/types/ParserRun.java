@@ -63,6 +63,14 @@ public final class ParserRun {
     }
 
     /**
+     * @return The type of object. Will always be <code>&quot;parser_run&quot;</code>.
+     */
+    @JsonProperty("object")
+    public String getObject() {
+        return "parser_run";
+    }
+
+    /**
      * @return A unique identifier for the parser run. Will always start with <code>&quot;parser_run_&quot;</code>
      * <p>Example: <code>&quot;parser_run_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
      */
