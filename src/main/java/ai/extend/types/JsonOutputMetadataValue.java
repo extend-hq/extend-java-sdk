@@ -25,20 +25,24 @@ public final class JsonOutputMetadataValue {
 
     private final Optional<Double> logprobsConfidence;
 
+    private final Optional<Integer> reviewAgentScore;
+
     private final Optional<List<JsonOutputMetadataValueCitationsItem>> citations;
 
-    private final Optional<List<JsonOutputMetadataValueInsightsItem>> insights;
+    private final Optional<List<Insight>> insights;
 
     private final Map<String, Object> additionalProperties;
 
     private JsonOutputMetadataValue(
             Optional<Double> ocrConfidence,
             Optional<Double> logprobsConfidence,
+            Optional<Integer> reviewAgentScore,
             Optional<List<JsonOutputMetadataValueCitationsItem>> citations,
-            Optional<List<JsonOutputMetadataValueInsightsItem>> insights,
+            Optional<List<Insight>> insights,
             Map<String, Object> additionalProperties) {
         this.ocrConfidence = ocrConfidence;
         this.logprobsConfidence = logprobsConfidence;
+        this.reviewAgentScore = reviewAgentScore;
         this.citations = citations;
         this.insights = insights;
         this.additionalProperties = additionalProperties;
@@ -60,13 +64,30 @@ public final class JsonOutputMetadataValue {
         return logprobsConfidence;
     }
 
+    /**
+     * @return A 1-5 score indicating the review agent's confidence in the extracted value.
+     * <ul>
+     * <li>5: High confidence, no issues detected</li>
+     * <li>4: Good confidence, minor observations</li>
+     * <li>3: Moderate confidence, some uncertainty</li>
+     * <li>2: Low confidence, likely issues</li>
+     * <li>1: Very low confidence, significant problems detected</li>
+     * </ul>
+     * <p>These scores will be present when the <code>reviewAgent.enabled</code> flag is set to <code>true</code> in the processor config.
+     * To learn more, view the <a href="https://docs.extend.ai/product/extraction/review-agent">Review Agent Documentation</a></p>
+     */
+    @JsonProperty("reviewAgentScore")
+    public Optional<Integer> getReviewAgentScore() {
+        return reviewAgentScore;
+    }
+
     @JsonProperty("citations")
     public Optional<List<JsonOutputMetadataValueCitationsItem>> getCitations() {
         return citations;
     }
 
     @JsonProperty("insights")
-    public Optional<List<JsonOutputMetadataValueInsightsItem>> getInsights() {
+    public Optional<List<Insight>> getInsights() {
         return insights;
     }
 
@@ -84,13 +105,15 @@ public final class JsonOutputMetadataValue {
     private boolean equalTo(JsonOutputMetadataValue other) {
         return ocrConfidence.equals(other.ocrConfidence)
                 && logprobsConfidence.equals(other.logprobsConfidence)
+                && reviewAgentScore.equals(other.reviewAgentScore)
                 && citations.equals(other.citations)
                 && insights.equals(other.insights);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.ocrConfidence, this.logprobsConfidence, this.citations, this.insights);
+        return Objects.hash(
+                this.ocrConfidence, this.logprobsConfidence, this.reviewAgentScore, this.citations, this.insights);
     }
 
     @java.lang.Override
@@ -108,9 +131,11 @@ public final class JsonOutputMetadataValue {
 
         private Optional<Double> logprobsConfidence = Optional.empty();
 
+        private Optional<Integer> reviewAgentScore = Optional.empty();
+
         private Optional<List<JsonOutputMetadataValueCitationsItem>> citations = Optional.empty();
 
-        private Optional<List<JsonOutputMetadataValueInsightsItem>> insights = Optional.empty();
+        private Optional<List<Insight>> insights = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -120,6 +145,7 @@ public final class JsonOutputMetadataValue {
         public Builder from(JsonOutputMetadataValue other) {
             ocrConfidence(other.getOcrConfidence());
             logprobsConfidence(other.getLogprobsConfidence());
+            reviewAgentScore(other.getReviewAgentScore());
             citations(other.getCitations());
             insights(other.getInsights());
             return this;
@@ -153,6 +179,29 @@ public final class JsonOutputMetadataValue {
             return this;
         }
 
+        /**
+         * <p>A 1-5 score indicating the review agent's confidence in the extracted value.</p>
+         * <ul>
+         * <li>5: High confidence, no issues detected</li>
+         * <li>4: Good confidence, minor observations</li>
+         * <li>3: Moderate confidence, some uncertainty</li>
+         * <li>2: Low confidence, likely issues</li>
+         * <li>1: Very low confidence, significant problems detected</li>
+         * </ul>
+         * <p>These scores will be present when the <code>reviewAgent.enabled</code> flag is set to <code>true</code> in the processor config.
+         * To learn more, view the <a href="https://docs.extend.ai/product/extraction/review-agent">Review Agent Documentation</a></p>
+         */
+        @JsonSetter(value = "reviewAgentScore", nulls = Nulls.SKIP)
+        public Builder reviewAgentScore(Optional<Integer> reviewAgentScore) {
+            this.reviewAgentScore = reviewAgentScore;
+            return this;
+        }
+
+        public Builder reviewAgentScore(Integer reviewAgentScore) {
+            this.reviewAgentScore = Optional.ofNullable(reviewAgentScore);
+            return this;
+        }
+
         @JsonSetter(value = "citations", nulls = Nulls.SKIP)
         public Builder citations(Optional<List<JsonOutputMetadataValueCitationsItem>> citations) {
             this.citations = citations;
@@ -165,19 +214,19 @@ public final class JsonOutputMetadataValue {
         }
 
         @JsonSetter(value = "insights", nulls = Nulls.SKIP)
-        public Builder insights(Optional<List<JsonOutputMetadataValueInsightsItem>> insights) {
+        public Builder insights(Optional<List<Insight>> insights) {
             this.insights = insights;
             return this;
         }
 
-        public Builder insights(List<JsonOutputMetadataValueInsightsItem> insights) {
+        public Builder insights(List<Insight> insights) {
             this.insights = Optional.ofNullable(insights);
             return this;
         }
 
         public JsonOutputMetadataValue build() {
             return new JsonOutputMetadataValue(
-                    ocrConfidence, logprobsConfidence, citations, insights, additionalProperties);
+                    ocrConfidence, logprobsConfidence, reviewAgentScore, citations, insights, additionalProperties);
         }
     }
 }

@@ -35,6 +35,8 @@ public final class ExtractionAdvancedOptions {
 
     private final Optional<Boolean> advancedFigureParsingEnabled;
 
+    private final Optional<ExtractionAdvancedOptionsReviewAgent> reviewAgent;
+
     private final Optional<ArrayStrategy> arrayStrategy;
 
     private final Optional<ExtractChunkingOptions> chunkingOptions;
@@ -57,6 +59,7 @@ public final class ExtractionAdvancedOptions {
             Optional<Boolean> citationsEnabled,
             Optional<ExtractionAdvancedOptionsArrayCitationStrategy> arrayCitationStrategy,
             Optional<Boolean> advancedFigureParsingEnabled,
+            Optional<ExtractionAdvancedOptionsReviewAgent> reviewAgent,
             Optional<ArrayStrategy> arrayStrategy,
             Optional<ExtractChunkingOptions> chunkingOptions,
             Optional<List<ExcelSheetRange>> excelSheetRanges,
@@ -71,6 +74,7 @@ public final class ExtractionAdvancedOptions {
         this.citationsEnabled = citationsEnabled;
         this.arrayCitationStrategy = arrayCitationStrategy;
         this.advancedFigureParsingEnabled = advancedFigureParsingEnabled;
+        this.reviewAgent = reviewAgent;
         this.arrayStrategy = arrayStrategy;
         this.chunkingOptions = chunkingOptions;
         this.excelSheetRanges = excelSheetRanges;
@@ -137,6 +141,18 @@ public final class ExtractionAdvancedOptions {
     }
 
     /**
+     * @return Configuration for the review agent that analyzes extraction results.
+     * When enabled, each field in the output metadata will include a <code>reviewAgentScore</code> (1-5)
+     * and may include additional <code>insights</code> of type <code>issue</code> or <code>review_summary</code> to help identify
+     * fields that may need manual review.
+     * <p>To learn more, view the <a href="https://docs.extend.ai/product/extraction/review-agent">Review Agent Documentation</a></p>
+     */
+    @JsonProperty("reviewAgent")
+    public Optional<ExtractionAdvancedOptionsReviewAgent> getReviewAgent() {
+        return reviewAgent;
+    }
+
+    /**
      * @return Strategy for handling large arrays in documents.
      */
     @JsonProperty("arrayStrategy")
@@ -197,6 +213,7 @@ public final class ExtractionAdvancedOptions {
                 && citationsEnabled.equals(other.citationsEnabled)
                 && arrayCitationStrategy.equals(other.arrayCitationStrategy)
                 && advancedFigureParsingEnabled.equals(other.advancedFigureParsingEnabled)
+                && reviewAgent.equals(other.reviewAgent)
                 && arrayStrategy.equals(other.arrayStrategy)
                 && chunkingOptions.equals(other.chunkingOptions)
                 && excelSheetRanges.equals(other.excelSheetRanges)
@@ -215,6 +232,7 @@ public final class ExtractionAdvancedOptions {
                 this.citationsEnabled,
                 this.arrayCitationStrategy,
                 this.advancedFigureParsingEnabled,
+                this.reviewAgent,
                 this.arrayStrategy,
                 this.chunkingOptions,
                 this.excelSheetRanges,
@@ -248,6 +266,8 @@ public final class ExtractionAdvancedOptions {
 
         private Optional<Boolean> advancedFigureParsingEnabled = Optional.empty();
 
+        private Optional<ExtractionAdvancedOptionsReviewAgent> reviewAgent = Optional.empty();
+
         private Optional<ArrayStrategy> arrayStrategy = Optional.empty();
 
         private Optional<ExtractChunkingOptions> chunkingOptions = Optional.empty();
@@ -274,6 +294,7 @@ public final class ExtractionAdvancedOptions {
             citationsEnabled(other.getCitationsEnabled());
             arrayCitationStrategy(other.getArrayCitationStrategy());
             advancedFigureParsingEnabled(other.getAdvancedFigureParsingEnabled());
+            reviewAgent(other.getReviewAgent());
             arrayStrategy(other.getArrayStrategy());
             chunkingOptions(other.getChunkingOptions());
             excelSheetRanges(other.getExcelSheetRanges());
@@ -383,6 +404,24 @@ public final class ExtractionAdvancedOptions {
         }
 
         /**
+         * <p>Configuration for the review agent that analyzes extraction results.
+         * When enabled, each field in the output metadata will include a <code>reviewAgentScore</code> (1-5)
+         * and may include additional <code>insights</code> of type <code>issue</code> or <code>review_summary</code> to help identify
+         * fields that may need manual review.</p>
+         * <p>To learn more, view the <a href="https://docs.extend.ai/product/extraction/review-agent">Review Agent Documentation</a></p>
+         */
+        @JsonSetter(value = "reviewAgent", nulls = Nulls.SKIP)
+        public Builder reviewAgent(Optional<ExtractionAdvancedOptionsReviewAgent> reviewAgent) {
+            this.reviewAgent = reviewAgent;
+            return this;
+        }
+
+        public Builder reviewAgent(ExtractionAdvancedOptionsReviewAgent reviewAgent) {
+            this.reviewAgent = Optional.ofNullable(reviewAgent);
+            return this;
+        }
+
+        /**
          * <p>Strategy for handling large arrays in documents.</p>
          */
         @JsonSetter(value = "arrayStrategy", nulls = Nulls.SKIP)
@@ -471,6 +510,7 @@ public final class ExtractionAdvancedOptions {
                     citationsEnabled,
                     arrayCitationStrategy,
                     advancedFigureParsingEnabled,
+                    reviewAgent,
                     arrayStrategy,
                     chunkingOptions,
                     excelSheetRanges,

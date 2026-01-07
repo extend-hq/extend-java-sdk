@@ -25,6 +25,8 @@ public final class OutputMetadataValue {
 
     private final Optional<Double> logprobsConfidence;
 
+    private final Optional<Integer> reviewAgentScore;
+
     private final Optional<List<Citation>> citations;
 
     private final Optional<List<Insight>> insights;
@@ -34,11 +36,13 @@ public final class OutputMetadataValue {
     private OutputMetadataValue(
             Optional<Double> ocrConfidence,
             Optional<Double> logprobsConfidence,
+            Optional<Integer> reviewAgentScore,
             Optional<List<Citation>> citations,
             Optional<List<Insight>> insights,
             Map<String, Object> additionalProperties) {
         this.ocrConfidence = ocrConfidence;
         this.logprobsConfidence = logprobsConfidence;
+        this.reviewAgentScore = reviewAgentScore;
         this.citations = citations;
         this.insights = insights;
         this.additionalProperties = additionalProperties;
@@ -58,6 +62,21 @@ public final class OutputMetadataValue {
     @JsonProperty("logprobsConfidence")
     public Optional<Double> getLogprobsConfidence() {
         return logprobsConfidence;
+    }
+
+    /**
+     * @return A 1-5 score indicating the review agent's confidence in the extracted value.
+     * <ul>
+     * <li>5: High confidence, no issues detected</li>
+     * <li>4: Good confidence, minor observations</li>
+     * <li>3: Moderate confidence, some uncertainty</li>
+     * <li>2: Low confidence, likely issues</li>
+     * <li>1: Very low confidence, significant problems detected</li>
+     * </ul>
+     */
+    @JsonProperty("reviewAgentScore")
+    public Optional<Integer> getReviewAgentScore() {
+        return reviewAgentScore;
     }
 
     @JsonProperty("citations")
@@ -84,13 +103,15 @@ public final class OutputMetadataValue {
     private boolean equalTo(OutputMetadataValue other) {
         return ocrConfidence.equals(other.ocrConfidence)
                 && logprobsConfidence.equals(other.logprobsConfidence)
+                && reviewAgentScore.equals(other.reviewAgentScore)
                 && citations.equals(other.citations)
                 && insights.equals(other.insights);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.ocrConfidence, this.logprobsConfidence, this.citations, this.insights);
+        return Objects.hash(
+                this.ocrConfidence, this.logprobsConfidence, this.reviewAgentScore, this.citations, this.insights);
     }
 
     @java.lang.Override
@@ -108,6 +129,8 @@ public final class OutputMetadataValue {
 
         private Optional<Double> logprobsConfidence = Optional.empty();
 
+        private Optional<Integer> reviewAgentScore = Optional.empty();
+
         private Optional<List<Citation>> citations = Optional.empty();
 
         private Optional<List<Insight>> insights = Optional.empty();
@@ -120,6 +143,7 @@ public final class OutputMetadataValue {
         public Builder from(OutputMetadataValue other) {
             ocrConfidence(other.getOcrConfidence());
             logprobsConfidence(other.getLogprobsConfidence());
+            reviewAgentScore(other.getReviewAgentScore());
             citations(other.getCitations());
             insights(other.getInsights());
             return this;
@@ -153,6 +177,27 @@ public final class OutputMetadataValue {
             return this;
         }
 
+        /**
+         * <p>A 1-5 score indicating the review agent's confidence in the extracted value.</p>
+         * <ul>
+         * <li>5: High confidence, no issues detected</li>
+         * <li>4: Good confidence, minor observations</li>
+         * <li>3: Moderate confidence, some uncertainty</li>
+         * <li>2: Low confidence, likely issues</li>
+         * <li>1: Very low confidence, significant problems detected</li>
+         * </ul>
+         */
+        @JsonSetter(value = "reviewAgentScore", nulls = Nulls.SKIP)
+        public Builder reviewAgentScore(Optional<Integer> reviewAgentScore) {
+            this.reviewAgentScore = reviewAgentScore;
+            return this;
+        }
+
+        public Builder reviewAgentScore(Integer reviewAgentScore) {
+            this.reviewAgentScore = Optional.ofNullable(reviewAgentScore);
+            return this;
+        }
+
         @JsonSetter(value = "citations", nulls = Nulls.SKIP)
         public Builder citations(Optional<List<Citation>> citations) {
             this.citations = citations;
@@ -177,7 +222,7 @@ public final class OutputMetadataValue {
 
         public OutputMetadataValue build() {
             return new OutputMetadataValue(
-                    ocrConfidence, logprobsConfidence, citations, insights, additionalProperties);
+                    ocrConfidence, logprobsConfidence, reviewAgentScore, citations, insights, additionalProperties);
         }
     }
 }
