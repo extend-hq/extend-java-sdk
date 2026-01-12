@@ -74,6 +74,7 @@ public final class JsonOutputMetadataValue {
      * <li>1: Very low confidence, significant problems detected</li>
      * </ul>
      * <p>These scores will be present when the <code>reviewAgent.enabled</code> flag is set to <code>true</code> in the processor config.
+     * If the review agent is enabled but a score is not returned for a field, this value will be <code>null</code>.
      * To learn more, view the <a href="https://docs.extend.ai/product/extraction/review-agent">Review Agent Documentation</a></p>
      */
     @JsonProperty("reviewAgentScore")
@@ -189,6 +190,7 @@ public final class JsonOutputMetadataValue {
          * <li>1: Very low confidence, significant problems detected</li>
          * </ul>
          * <p>These scores will be present when the <code>reviewAgent.enabled</code> flag is set to <code>true</code> in the processor config.
+         * If the review agent is enabled but a score is not returned for a field, this value will be <code>null</code>.
          * To learn more, view the <a href="https://docs.extend.ai/product/extraction/review-agent">Review Agent Documentation</a></p>
          */
         @JsonSetter(value = "reviewAgentScore", nulls = Nulls.SKIP)

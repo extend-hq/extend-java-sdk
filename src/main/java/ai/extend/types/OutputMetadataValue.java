@@ -71,7 +71,8 @@ public final class OutputMetadataValue {
      * <li>4: Good confidence, minor observations</li>
      * <li>3: Moderate confidence, some uncertainty</li>
      * <li>2: Low confidence, likely issues</li>
-     * <li>1: Very low confidence, significant problems detected</li>
+     * <li>1: Very low confidence, significant problems detected
+     * If the review agent is enabled but a score is not returned for a field, this value will be <code>null</code>.</li>
      * </ul>
      */
     @JsonProperty("reviewAgentScore")
@@ -184,7 +185,8 @@ public final class OutputMetadataValue {
          * <li>4: Good confidence, minor observations</li>
          * <li>3: Moderate confidence, some uncertainty</li>
          * <li>2: Low confidence, likely issues</li>
-         * <li>1: Very low confidence, significant problems detected</li>
+         * <li>1: Very low confidence, significant problems detected
+         * If the review agent is enabled but a score is not returned for a field, this value will be <code>null</code>.</li>
          * </ul>
          */
         @JsonSetter(value = "reviewAgentScore", nulls = Nulls.SKIP)
