@@ -3,8 +3,12 @@
  */
 package ai.extend.wrapper.resources;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
 import ai.extend.resources.extractruns.ExtractRunsClient;
-import ai.extend.resources.extractruns.requests.ExtractRunsCreateRequest;
 import ai.extend.resources.extractruns.types.ExtractRunsCreateResponse;
 import ai.extend.resources.extractruns.types.ExtractRunsRetrieveResponse;
 import ai.extend.types.ExtractRun;
@@ -20,11 +24,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests for ExtractRunsWrapper.createAndPoll method.
@@ -56,34 +55,34 @@ class ExtractRunsWrapperTest {
         @DisplayName("should create and poll until PROCESSED")
         void shouldCreateAndPollUntilProcessed() {
             String runId = "extract_run_test123";
-            
+
             // Set up create response
             ExtractRun createRun = mock(ExtractRun.class);
             when(createRun.getId()).thenReturn(runId);
             ExtractRunsCreateResponse createResponse = mock(ExtractRunsCreateResponse.class);
             when(createResponse.getExtractRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             // Set up retrieve responses - processing then processed
             ExtractRun processingRun = mock(ExtractRun.class);
             when(processingRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
             ExtractRunsRetrieveResponse processingResponse = mock(ExtractRunsRetrieveResponse.class);
             when(processingResponse.getExtractRun()).thenReturn(processingRun);
-            
+
             ExtractRun processedRun = mock(ExtractRun.class);
             when(processedRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
             ExtractRunsRetrieveResponse processedResponse = mock(ExtractRunsRetrieveResponse.class);
             when(processedResponse.getExtractRun()).thenReturn(processedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any()))
-                .thenReturn(processingResponse)
-                .thenReturn(processedResponse);
+                    .thenReturn(processingResponse)
+                    .thenReturn(processedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             ExtractRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -96,25 +95,25 @@ class ExtractRunsWrapperTest {
         @DisplayName("should return immediately if already PROCESSED on first retrieve")
         void shouldReturnImmediatelyIfAlreadyProcessed() {
             String runId = "extract_run_test123";
-            
+
             ExtractRun createRun = mock(ExtractRun.class);
             when(createRun.getId()).thenReturn(runId);
             ExtractRunsCreateResponse createResponse = mock(ExtractRunsCreateResponse.class);
             when(createResponse.getExtractRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             ExtractRun processedRun = mock(ExtractRun.class);
             when(processedRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
             ExtractRunsRetrieveResponse processedResponse = mock(ExtractRunsRetrieveResponse.class);
             when(processedResponse.getExtractRun()).thenReturn(processedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             ExtractRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -126,25 +125,25 @@ class ExtractRunsWrapperTest {
         @DisplayName("should handle FAILED status as terminal")
         void shouldHandleFailedAsTerminal() {
             String runId = "extract_run_test123";
-            
+
             ExtractRun createRun = mock(ExtractRun.class);
             when(createRun.getId()).thenReturn(runId);
             ExtractRunsCreateResponse createResponse = mock(ExtractRunsCreateResponse.class);
             when(createResponse.getExtractRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             ExtractRun failedRun = mock(ExtractRun.class);
             when(failedRun.getStatus()).thenReturn(ProcessorRunStatus.FAILED);
             ExtractRunsRetrieveResponse failedResponse = mock(ExtractRunsRetrieveResponse.class);
             when(failedResponse.getExtractRun()).thenReturn(failedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(failedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             ExtractRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -155,25 +154,25 @@ class ExtractRunsWrapperTest {
         @DisplayName("should handle CANCELLED status as terminal")
         void shouldHandleCancelledAsTerminal() {
             String runId = "extract_run_test123";
-            
+
             ExtractRun createRun = mock(ExtractRun.class);
             when(createRun.getId()).thenReturn(runId);
             ExtractRunsCreateResponse createResponse = mock(ExtractRunsCreateResponse.class);
             when(createResponse.getExtractRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             ExtractRun cancelledRun = mock(ExtractRun.class);
             when(cancelledRun.getStatus()).thenReturn(ProcessorRunStatus.CANCELLED);
             ExtractRunsRetrieveResponse cancelledResponse = mock(ExtractRunsRetrieveResponse.class);
             when(cancelledResponse.getExtractRun()).thenReturn(cancelledRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(cancelledResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             ExtractRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -184,25 +183,25 @@ class ExtractRunsWrapperTest {
         @DisplayName("should throw PollingTimeoutError when timeout exceeded")
         void shouldThrowTimeoutError() {
             String runId = "extract_run_test123";
-            
+
             ExtractRun createRun = mock(ExtractRun.class);
             when(createRun.getId()).thenReturn(runId);
             ExtractRunsCreateResponse createResponse = mock(ExtractRunsCreateResponse.class);
             when(createResponse.getExtractRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             ExtractRun processingRun = mock(ExtractRun.class);
             when(processingRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
             ExtractRunsRetrieveResponse processingResponse = mock(ExtractRunsRetrieveResponse.class);
             when(processingResponse.getExtractRun()).thenReturn(processingRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processingResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(10)
-                .maxWaitMs(50)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(10)
+                    .maxWaitMs(50)
+                    .jitterFraction(0)
+                    .build();
 
             assertThrows(PollingTimeoutError.class, () -> {
                 wrapper.createAndPoll(null, options);
@@ -213,38 +212,38 @@ class ExtractRunsWrapperTest {
         @DisplayName("should continue polling while PROCESSING")
         void shouldContinuePollingWhileProcessing() {
             String runId = "extract_run_test123";
-            
+
             ExtractRun createRun = mock(ExtractRun.class);
             when(createRun.getId()).thenReturn(runId);
             ExtractRunsCreateResponse createResponse = mock(ExtractRunsCreateResponse.class);
             when(createResponse.getExtractRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             ExtractRun processingRun1 = mock(ExtractRun.class);
             when(processingRun1.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
             ExtractRunsRetrieveResponse processingResponse1 = mock(ExtractRunsRetrieveResponse.class);
             when(processingResponse1.getExtractRun()).thenReturn(processingRun1);
-            
+
             ExtractRun processingRun2 = mock(ExtractRun.class);
             when(processingRun2.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
             ExtractRunsRetrieveResponse processingResponse2 = mock(ExtractRunsRetrieveResponse.class);
             when(processingResponse2.getExtractRun()).thenReturn(processingRun2);
-            
+
             ExtractRun processedRun = mock(ExtractRun.class);
             when(processedRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
             ExtractRunsRetrieveResponse processedResponse = mock(ExtractRunsRetrieveResponse.class);
             when(processedResponse.getExtractRun()).thenReturn(processedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any()))
-                .thenReturn(processingResponse1)
-                .thenReturn(processingResponse2)
-                .thenReturn(processedResponse);
+                    .thenReturn(processingResponse1)
+                    .thenReturn(processingResponse2)
+                    .thenReturn(processedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             ExtractRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -256,18 +255,18 @@ class ExtractRunsWrapperTest {
         @DisplayName("should use default polling options when not specified")
         void shouldUseDefaultOptions() {
             String runId = "extract_run_test123";
-            
+
             ExtractRun createRun = mock(ExtractRun.class);
             when(createRun.getId()).thenReturn(runId);
             ExtractRunsCreateResponse createResponse = mock(ExtractRunsCreateResponse.class);
             when(createResponse.getExtractRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             ExtractRun processedRun = mock(ExtractRun.class);
             when(processedRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
             ExtractRunsRetrieveResponse processedResponse = mock(ExtractRunsRetrieveResponse.class);
             when(processedResponse.getExtractRun()).thenReturn(processedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
 
             // Should not throw - uses default options

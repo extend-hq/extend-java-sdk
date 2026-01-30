@@ -3,23 +3,22 @@
  */
 package ai.extend.wrapper.resources;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import ai.extend.types.EditRunStatus;
 import ai.extend.types.ParseRunStatusEnum;
 import ai.extend.types.ProcessorRunStatus;
 import ai.extend.types.WorkflowRunStatus;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Tests for resource wrapper terminal status logic.
- * 
+ *
  * Note: Full integration tests for createAndPoll require API mocking
  * and are located in the playground repository.
  */
@@ -33,9 +32,8 @@ class ResourceWrappersTest {
     @DisplayName("ProcessorRunStatus terminal states")
     class ProcessorRunStatusTests {
 
-        private final Set<ProcessorRunStatus> NON_TERMINAL = new HashSet<ProcessorRunStatus>(
-            Arrays.asList(ProcessorRunStatus.PROCESSING)
-        );
+        private final Set<ProcessorRunStatus> NON_TERMINAL =
+                new HashSet<ProcessorRunStatus>(Arrays.asList(ProcessorRunStatus.PROCESSING));
 
         private boolean isTerminal(ProcessorRunStatus status) {
             return !NON_TERMINAL.contains(status);
@@ -74,9 +72,8 @@ class ResourceWrappersTest {
     @DisplayName("EditRunStatus terminal states")
     class EditRunStatusTests {
 
-        private final Set<EditRunStatus> NON_TERMINAL = new HashSet<EditRunStatus>(
-            Arrays.asList(EditRunStatus.PROCESSING)
-        );
+        private final Set<EditRunStatus> NON_TERMINAL =
+                new HashSet<EditRunStatus>(Arrays.asList(EditRunStatus.PROCESSING));
 
         private boolean isTerminal(EditRunStatus status) {
             return !NON_TERMINAL.contains(status);
@@ -109,9 +106,8 @@ class ResourceWrappersTest {
     @DisplayName("ParseRunStatusEnum terminal states")
     class ParseRunStatusEnumTests {
 
-        private final Set<ParseRunStatusEnum> NON_TERMINAL = new HashSet<ParseRunStatusEnum>(
-            Arrays.asList(ParseRunStatusEnum.PROCESSING)
-        );
+        private final Set<ParseRunStatusEnum> NON_TERMINAL =
+                new HashSet<ParseRunStatusEnum>(Arrays.asList(ParseRunStatusEnum.PROCESSING));
 
         private boolean isTerminal(ParseRunStatusEnum status) {
             return !NON_TERMINAL.contains(status);
@@ -145,12 +141,7 @@ class ResourceWrappersTest {
     class WorkflowRunStatusTests {
 
         private final Set<WorkflowRunStatus> NON_TERMINAL = new HashSet<WorkflowRunStatus>(
-            Arrays.asList(
-                WorkflowRunStatus.PENDING,
-                WorkflowRunStatus.PROCESSING,
-                WorkflowRunStatus.CANCELLING
-            )
-        );
+                Arrays.asList(WorkflowRunStatus.PENDING, WorkflowRunStatus.PROCESSING, WorkflowRunStatus.CANCELLING));
 
         private boolean isTerminal(WorkflowRunStatus status) {
             return !NON_TERMINAL.contains(status);

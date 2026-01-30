@@ -3,6 +3,11 @@
  */
 package ai.extend.wrapper.resources;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
 import ai.extend.resources.classifyruns.ClassifyRunsClient;
 import ai.extend.resources.classifyruns.types.ClassifyRunsCreateResponse;
 import ai.extend.resources.classifyruns.types.ClassifyRunsRetrieveResponse;
@@ -19,11 +24,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests for ClassifyRunsWrapper.createAndPoll method.
@@ -50,32 +50,32 @@ class ClassifyRunsWrapperTest {
         @DisplayName("should create and poll until PROCESSED")
         void shouldCreateAndPollUntilProcessed() {
             String runId = "classify_run_test123";
-            
+
             ClassifyRun createRun = mock(ClassifyRun.class);
             when(createRun.getId()).thenReturn(runId);
             ClassifyRunsCreateResponse createResponse = mock(ClassifyRunsCreateResponse.class);
             when(createResponse.getClassifyRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             ClassifyRun processingRun = mock(ClassifyRun.class);
             when(processingRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
             ClassifyRunsRetrieveResponse processingResponse = mock(ClassifyRunsRetrieveResponse.class);
             when(processingResponse.getClassifyRun()).thenReturn(processingRun);
-            
+
             ClassifyRun processedRun = mock(ClassifyRun.class);
             when(processedRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
             ClassifyRunsRetrieveResponse processedResponse = mock(ClassifyRunsRetrieveResponse.class);
             when(processedResponse.getClassifyRun()).thenReturn(processedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any()))
-                .thenReturn(processingResponse)
-                .thenReturn(processedResponse);
+                    .thenReturn(processingResponse)
+                    .thenReturn(processedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             ClassifyRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -88,25 +88,25 @@ class ClassifyRunsWrapperTest {
         @DisplayName("should return immediately if already PROCESSED")
         void shouldReturnImmediatelyIfAlreadyProcessed() {
             String runId = "classify_run_test123";
-            
+
             ClassifyRun createRun = mock(ClassifyRun.class);
             when(createRun.getId()).thenReturn(runId);
             ClassifyRunsCreateResponse createResponse = mock(ClassifyRunsCreateResponse.class);
             when(createResponse.getClassifyRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             ClassifyRun processedRun = mock(ClassifyRun.class);
             when(processedRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
             ClassifyRunsRetrieveResponse processedResponse = mock(ClassifyRunsRetrieveResponse.class);
             when(processedResponse.getClassifyRun()).thenReturn(processedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             ClassifyRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -118,25 +118,25 @@ class ClassifyRunsWrapperTest {
         @DisplayName("should handle FAILED status as terminal")
         void shouldHandleFailedAsTerminal() {
             String runId = "classify_run_test123";
-            
+
             ClassifyRun createRun = mock(ClassifyRun.class);
             when(createRun.getId()).thenReturn(runId);
             ClassifyRunsCreateResponse createResponse = mock(ClassifyRunsCreateResponse.class);
             when(createResponse.getClassifyRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             ClassifyRun failedRun = mock(ClassifyRun.class);
             when(failedRun.getStatus()).thenReturn(ProcessorRunStatus.FAILED);
             ClassifyRunsRetrieveResponse failedResponse = mock(ClassifyRunsRetrieveResponse.class);
             when(failedResponse.getClassifyRun()).thenReturn(failedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(failedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             ClassifyRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -147,25 +147,25 @@ class ClassifyRunsWrapperTest {
         @DisplayName("should handle CANCELLED status as terminal")
         void shouldHandleCancelledAsTerminal() {
             String runId = "classify_run_test123";
-            
+
             ClassifyRun createRun = mock(ClassifyRun.class);
             when(createRun.getId()).thenReturn(runId);
             ClassifyRunsCreateResponse createResponse = mock(ClassifyRunsCreateResponse.class);
             when(createResponse.getClassifyRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             ClassifyRun cancelledRun = mock(ClassifyRun.class);
             when(cancelledRun.getStatus()).thenReturn(ProcessorRunStatus.CANCELLED);
             ClassifyRunsRetrieveResponse cancelledResponse = mock(ClassifyRunsRetrieveResponse.class);
             when(cancelledResponse.getClassifyRun()).thenReturn(cancelledRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(cancelledResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             ClassifyRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -176,25 +176,25 @@ class ClassifyRunsWrapperTest {
         @DisplayName("should throw PollingTimeoutError when timeout exceeded")
         void shouldThrowTimeoutError() {
             String runId = "classify_run_test123";
-            
+
             ClassifyRun createRun = mock(ClassifyRun.class);
             when(createRun.getId()).thenReturn(runId);
             ClassifyRunsCreateResponse createResponse = mock(ClassifyRunsCreateResponse.class);
             when(createResponse.getClassifyRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             ClassifyRun processingRun = mock(ClassifyRun.class);
             when(processingRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
             ClassifyRunsRetrieveResponse processingResponse = mock(ClassifyRunsRetrieveResponse.class);
             when(processingResponse.getClassifyRun()).thenReturn(processingRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processingResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(10)
-                .maxWaitMs(50)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(10)
+                    .maxWaitMs(50)
+                    .jitterFraction(0)
+                    .build();
 
             assertThrows(PollingTimeoutError.class, () -> {
                 wrapper.createAndPoll(null, options);
@@ -205,18 +205,18 @@ class ClassifyRunsWrapperTest {
         @DisplayName("should use default polling options when not specified")
         void shouldUseDefaultOptions() {
             String runId = "classify_run_test123";
-            
+
             ClassifyRun createRun = mock(ClassifyRun.class);
             when(createRun.getId()).thenReturn(runId);
             ClassifyRunsCreateResponse createResponse = mock(ClassifyRunsCreateResponse.class);
             when(createResponse.getClassifyRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             ClassifyRun processedRun = mock(ClassifyRun.class);
             when(processedRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
             ClassifyRunsRetrieveResponse processedResponse = mock(ClassifyRunsRetrieveResponse.class);
             when(processedResponse.getClassifyRun()).thenReturn(processedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
 
             ClassifyRunsRetrieveResponse result = wrapper.createAndPoll(null);

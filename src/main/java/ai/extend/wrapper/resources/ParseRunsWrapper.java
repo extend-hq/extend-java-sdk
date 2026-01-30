@@ -19,51 +19,50 @@ import java.util.Set;
  * Wrapper for ParseRunsClient that adds polling functionality.
  */
 public class ParseRunsWrapper {
-    
+
     private static final Set<ParseRunStatusEnum> NON_TERMINAL_STATUSES;
-    
+
     static {
         NON_TERMINAL_STATUSES = new HashSet<ParseRunStatusEnum>();
         NON_TERMINAL_STATUSES.add(ParseRunStatusEnum.PROCESSING);
     }
-    
+
     private final ParseRunsClient client;
-    
+
     public ParseRunsWrapper(ClientOptions clientOptions) {
         this.client = new ParseRunsClient(clientOptions);
     }
-    
+
     /**
      * Package-private constructor for testing with a mock client.
      */
     ParseRunsWrapper(ParseRunsClient client) {
         this.client = client;
     }
-    
+
     /**
      * Returns the underlying ParseRunsClient for direct API access.
      */
     public ParseRunsClient getClient() {
         return client;
     }
-    
+
     /**
      * Creates a parse run and polls until it reaches a terminal state.
-     * 
+     *
      * <p>Terminal states: PROCESSED, FAILED</p>
      *
      * @param request The create request
      * @return The final response when a terminal state is reached
      * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public ParseRunsRetrieveResponse createAndPoll(ParseRunsCreateRequest request) 
-            throws PollingTimeoutError {
+    public ParseRunsRetrieveResponse createAndPoll(ParseRunsCreateRequest request) throws PollingTimeoutError {
         return createAndPoll(request, PollingOptions.defaults());
     }
-    
+
     /**
      * Creates a parse run and polls until it reaches a terminal state.
-     * 
+     *
      * <p>Terminal states: PROCESSED, FAILED</p>
      *
      * @param request The create request
@@ -71,23 +70,21 @@ public class ParseRunsWrapper {
      * @return The final response when a terminal state is reached
      * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public ParseRunsRetrieveResponse createAndPoll(
-            ParseRunsCreateRequest request,
-            PollingOptions options) throws PollingTimeoutError {
-        
+    public ParseRunsRetrieveResponse createAndPoll(ParseRunsCreateRequest request, PollingOptions options)
+            throws PollingTimeoutError {
+
         // Create the parse run
         ParseRunsCreateResponse createResponse = client.create(request);
         final String runId = createResponse.getParseRun().getId();
-        
+
         // Poll until terminal state
         // Note: ParseRunsClient.retrieve() does not take RequestOptions directly
         return Polling.pollUntilDone(
-            () -> client.retrieve(runId),
-            response -> isTerminalStatus(response.getParseRun().getStatus()),
-            options
-        );
+                () -> client.retrieve(runId),
+                response -> isTerminalStatus(response.getParseRun().getStatus()),
+                options);
     }
-    
+
     private boolean isTerminalStatus(ParseRunStatusEnum status) {
         return !NON_TERMINAL_STATUSES.contains(status);
     }

@@ -20,51 +20,50 @@ import java.util.Set;
  * Wrapper for SplitRunsClient that adds polling functionality.
  */
 public class SplitRunsWrapper {
-    
+
     private static final Set<ProcessorRunStatus> NON_TERMINAL_STATUSES;
-    
+
     static {
         NON_TERMINAL_STATUSES = new HashSet<ProcessorRunStatus>();
         NON_TERMINAL_STATUSES.add(ProcessorRunStatus.PROCESSING);
     }
-    
+
     private final SplitRunsClient client;
-    
+
     public SplitRunsWrapper(ClientOptions clientOptions) {
         this.client = new SplitRunsClient(clientOptions);
     }
-    
+
     /**
      * Package-private constructor for testing with a mock client.
      */
     SplitRunsWrapper(SplitRunsClient client) {
         this.client = client;
     }
-    
+
     /**
      * Returns the underlying SplitRunsClient for direct API access.
      */
     public SplitRunsClient getClient() {
         return client;
     }
-    
+
     /**
      * Creates a split run and polls until it reaches a terminal state.
-     * 
+     *
      * <p>Terminal states: PROCESSED, FAILED, CANCELLED</p>
      *
      * @param request The create request
      * @return The final response when a terminal state is reached
      * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public SplitRunsRetrieveResponse createAndPoll(SplitRunsCreateRequest request) 
-            throws PollingTimeoutError {
+    public SplitRunsRetrieveResponse createAndPoll(SplitRunsCreateRequest request) throws PollingTimeoutError {
         return createAndPoll(request, PollingOptions.defaults());
     }
-    
+
     /**
      * Creates a split run and polls until it reaches a terminal state.
-     * 
+     *
      * <p>Terminal states: PROCESSED, FAILED, CANCELLED</p>
      *
      * @param request The create request
@@ -72,24 +71,22 @@ public class SplitRunsWrapper {
      * @return The final response when a terminal state is reached
      * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public SplitRunsRetrieveResponse createAndPoll(
-            SplitRunsCreateRequest request,
-            PollingOptions options) throws PollingTimeoutError {
-        
+    public SplitRunsRetrieveResponse createAndPoll(SplitRunsCreateRequest request, PollingOptions options)
+            throws PollingTimeoutError {
+
         RequestOptions requestOptions = options.getRequestOptions();
-        
+
         // Create the split run
         SplitRunsCreateResponse createResponse = client.create(request, requestOptions);
         final String runId = createResponse.getSplitRun().getId();
-        
+
         // Poll until terminal state
         return Polling.pollUntilDone(
-            () -> client.retrieve(runId, requestOptions),
-            response -> isTerminalStatus(response.getSplitRun().getStatus()),
-            options
-        );
+                () -> client.retrieve(runId, requestOptions),
+                response -> isTerminalStatus(response.getSplitRun().getStatus()),
+                options);
     }
-    
+
     private boolean isTerminalStatus(ProcessorRunStatus status) {
         return !NON_TERMINAL_STATUSES.contains(status);
     }

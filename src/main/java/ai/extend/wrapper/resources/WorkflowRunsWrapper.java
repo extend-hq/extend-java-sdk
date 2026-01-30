@@ -18,65 +18,64 @@ import java.util.Set;
 
 /**
  * Wrapper for WorkflowRunsClient that adds polling functionality.
- * 
+ *
  * <p><strong>Note:</strong> Workflow runs can take significantly longer than processor runs
  * (p99 ~2.5 hours). The default timeout for this wrapper is 2 hours.</p>
  */
 public class WorkflowRunsWrapper {
-    
+
     /**
      * Default max wait for workflows: 2 hours (7,200,000 ms).
      */
     public static final int DEFAULT_WORKFLOW_MAX_WAIT_MS = 2 * 60 * 60 * 1000;
-    
+
     private static final Set<WorkflowRunStatus> NON_TERMINAL_STATUSES;
-    
+
     static {
         NON_TERMINAL_STATUSES = new HashSet<WorkflowRunStatus>();
         NON_TERMINAL_STATUSES.add(WorkflowRunStatus.PENDING);
         NON_TERMINAL_STATUSES.add(WorkflowRunStatus.PROCESSING);
         NON_TERMINAL_STATUSES.add(WorkflowRunStatus.CANCELLING);
     }
-    
+
     private final WorkflowRunsClient client;
-    
+
     public WorkflowRunsWrapper(ClientOptions clientOptions) {
         this.client = new WorkflowRunsClient(clientOptions);
     }
-    
+
     /**
      * Package-private constructor for testing with a mock client.
      */
     WorkflowRunsWrapper(WorkflowRunsClient client) {
         this.client = client;
     }
-    
+
     /**
      * Returns the underlying WorkflowRunsClient for direct API access.
      */
     public WorkflowRunsClient getClient() {
         return client;
     }
-    
+
     /**
      * Creates a workflow run and polls until it reaches a terminal state.
-     * 
+     *
      * <p>Terminal states: PROCESSED, FAILED, CANCELLED, NEEDS_REVIEW, REJECTED</p>
-     * 
+     *
      * <p>Uses a default timeout of 2 hours.</p>
      *
      * @param request The create request
      * @return The final response when a terminal state is reached
      * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public WorkflowRunsRetrieveResponse createAndPoll(WorkflowRunsCreateRequest request) 
-            throws PollingTimeoutError {
+    public WorkflowRunsRetrieveResponse createAndPoll(WorkflowRunsCreateRequest request) throws PollingTimeoutError {
         return createAndPoll(request, PollingOptions.workflowDefaults());
     }
-    
+
     /**
      * Creates a workflow run and polls until it reaches a terminal state.
-     * 
+     *
      * <p>Terminal states: PROCESSED, FAILED, CANCELLED, NEEDS_REVIEW, REJECTED</p>
      *
      * @param request The create request
@@ -84,24 +83,22 @@ public class WorkflowRunsWrapper {
      * @return The final response when a terminal state is reached
      * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public WorkflowRunsRetrieveResponse createAndPoll(
-            WorkflowRunsCreateRequest request,
-            PollingOptions options) throws PollingTimeoutError {
-        
+    public WorkflowRunsRetrieveResponse createAndPoll(WorkflowRunsCreateRequest request, PollingOptions options)
+            throws PollingTimeoutError {
+
         RequestOptions requestOptions = options.getRequestOptions();
-        
+
         // Create the workflow run
         WorkflowRunsCreateResponse createResponse = client.create(request, requestOptions);
         final String runId = createResponse.getWorkflowRun().getId();
-        
+
         // Poll until terminal state
         return Polling.pollUntilDone(
-            () -> client.retrieve(runId, requestOptions),
-            response -> isTerminalStatus(response.getWorkflowRun().getStatus()),
-            options
-        );
+                () -> client.retrieve(runId, requestOptions),
+                response -> isTerminalStatus(response.getWorkflowRun().getStatus()),
+                options);
     }
-    
+
     /**
      * Check if status is terminal.
      * Terminal states: PROCESSED, FAILED, CANCELLED, NEEDS_REVIEW, REJECTED

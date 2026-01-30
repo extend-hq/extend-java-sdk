@@ -5,16 +5,16 @@ package ai.extend.wrapper.errors;
 
 /**
  * Exception thrown when webhook signature verification fails.
- * 
+ *
  * <p>This error is thrown by the webhook utilities when the signature
  * provided in the request headers does not match the expected signature
  * computed from the request body and signing secret.</p>
- * 
+ *
  * @see ai.extend.wrapper.webhooks.Webhooks#verifyAndParse
  * @see ai.extend.wrapper.webhooks.Webhooks#verify
  */
 public class WebhookSignatureVerificationError extends RuntimeException {
-    
+
     /**
      * Creates a new WebhookSignatureVerificationError.
      *

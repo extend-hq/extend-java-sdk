@@ -7,18 +7,18 @@ package ai.extend.wrapper.webhooks;
  * Options for webhook signature verification.
  */
 public class VerifyOptions {
-    
+
     /**
      * Default maximum age of requests: 5 minutes (300 seconds).
      */
     public static final int DEFAULT_MAX_AGE_SECONDS = 300;
-    
+
     private final int maxAgeSeconds;
-    
+
     private VerifyOptions(Builder builder) {
         this.maxAgeSeconds = builder.maxAgeSeconds;
     }
-    
+
     /**
      * Returns the maximum age of the request in seconds.
      * Set to 0 to disable timestamp validation.
@@ -26,27 +26,27 @@ public class VerifyOptions {
     public int getMaxAgeSeconds() {
         return maxAgeSeconds;
     }
-    
+
     /**
      * Creates a new builder with default values.
      */
     public static Builder builder() {
         return new Builder();
     }
-    
+
     /**
      * Creates default verify options.
      */
     public static VerifyOptions defaults() {
         return new Builder().build();
     }
-    
+
     /**
      * Builder for {@link VerifyOptions}.
      */
     public static class Builder {
         private int maxAgeSeconds = DEFAULT_MAX_AGE_SECONDS;
-        
+
         /**
          * Sets the maximum age of the request in seconds.
          * Default: 300 (5 minutes)
@@ -56,7 +56,7 @@ public class VerifyOptions {
             this.maxAgeSeconds = maxAgeSeconds;
             return this;
         }
-        
+
         /**
          * Builds the {@link VerifyOptions} instance.
          */
