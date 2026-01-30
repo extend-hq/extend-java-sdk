@@ -317,7 +317,8 @@ class WebhooksTest {
                 });
 
                 // Should succeed with 900s
-                Map<String, Object> event = webhooks.verifyAndParse(body, headers, SECRET,
+                @SuppressWarnings("unchecked")
+                Map<String, Object> event = (Map<String, Object>) webhooks.verifyAndParse(body, headers, SECRET,
                     VerifyAndParseOptions.builder().maxAgeSeconds(900).build());
                 assertEquals("evt_123", event.get("eventId"));
             }
@@ -329,7 +330,8 @@ class WebhooksTest {
                 long veryOldTimestamp = System.currentTimeMillis() / 1000 - 86400; // 1 day ago
                 Map<String, String> headers = createValidHeaders(body, SECRET, veryOldTimestamp);
 
-                Map<String, Object> event = webhooks.verifyAndParse(body, headers, SECRET,
+                @SuppressWarnings("unchecked")
+                Map<String, Object> event = (Map<String, Object>) webhooks.verifyAndParse(body, headers, SECRET,
                     VerifyAndParseOptions.builder().maxAgeSeconds(0).build());
                 assertEquals("evt_123", event.get("eventId"));
             }
