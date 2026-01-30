@@ -21,7 +21,7 @@ public class PollingOptions {
     /**
      * Default maximum wait time: 5 minutes (300,000 ms).
      *
-     * <p>Note: Workflow runs can take significantly longer (p99 ~2.5 hours).
+     * <p>Note: Workflow runs can take significantly longer.
      * Consider using {@link #DEFAULT_WORKFLOW_MAX_WAIT_MS} for workflow runs.</p>
      */
     public static final int DEFAULT_MAX_WAIT_MS = 300_000;
