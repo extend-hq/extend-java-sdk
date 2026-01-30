@@ -19,8 +19,8 @@ import java.util.Set;
 /**
  * Wrapper for WorkflowRunsClient that adds polling functionality.
  *
- * <p><strong>Note:</strong> Workflow runs can take significantly longer than processor runs
- * (p99 ~2.5 hours). The default timeout for this wrapper is 2 hours.</p>
+ * <p><strong>Note:</strong> Workflow runs can take significantly longer than processor runs.
+ * The default timeout for this wrapper is 2 hours.</p>
  */
 public class WorkflowRunsWrapper {
 
