@@ -7,7 +7,7 @@ The Extend Java library provides convenient access to the Extend APIs from Java.
 
 ## Documentation
 
-API reference documentation is available [here](https://docs.extend.ai/2025-04-21/developers).
+API reference documentation is available [here](https://docs.extend.ai/2026-01-01/developers).
 
 ## Installation
 
@@ -89,6 +89,147 @@ ExtendClient client = ExtendClient
     .builder()
     .url("https://example.com")
     .build();
+```
+
+## Wrapper Client with Polling and Webhooks
+
+The SDK includes a wrapper client (`ExtendClientWrapper`) that provides convenient methods for common patterns like polling and webhook verification.
+
+### Using the Wrapper Client
+
+```java
+import ai.extend.wrapper.ExtendClientWrapper;
+import ai.extend.resources.extractruns.requests.ExtractRunsCreateRequest;
+
+ExtendClientWrapper client = ExtendClientWrapper.builder()
+    .apiKey("your-api-key")
+    .build();
+```
+
+### Create and Poll
+
+The wrapper adds `createAndPoll()` methods to all run resources. This creates a run and polls until it reaches a terminal state:
+
+```java
+import ai.extend.resources.extractruns.types.ExtractRunsRetrieveResponse;
+import ai.extend.types.ProcessorRunStatus;
+
+// Create an extract run and wait for completion
+ExtractRunsRetrieveResponse response = client.extractRuns().createAndPoll(
+    ExtractRunsCreateRequest.builder()
+        .file(...)
+        .extractor(...)
+        .build()
+);
+
+if (response.getExtractRun().getStatus() == ProcessorRunStatus.PROCESSED) {
+    // Handle successful extraction
+    var output = response.getExtractRun().getOutput();
+}
+```
+
+#### Custom Polling Options
+
+```java
+import ai.extend.wrapper.utilities.polling.PollingOptions;
+
+// Customize polling behavior
+ExtractRunsRetrieveResponse response = client.extractRuns().createAndPoll(
+    request,
+    PollingOptions.builder()
+        .maxWaitMs(600000)      // 10 minutes (default: 5 minutes)
+        .initialDelayMs(2000)   // Start with 2 second delay (default: 1 second)
+        .maxDelayMs(30000)      // Cap at 30 seconds (default: 30 seconds)
+        .jitterFraction(0.25)   // ±25% randomization (default: 0.25)
+        .build()
+);
+```
+
+#### Workflow Runs (Extended Timeout)
+
+Workflow runs can take significantly longer. The wrapper uses a 2-hour default timeout for workflows:
+
+```java
+// Default 2-hour timeout for workflows
+var response = client.workflowRuns().createAndPoll(
+    WorkflowRunsCreateRequest.builder()
+        .file(...)
+        .workflow(...)
+        .build()
+);
+```
+
+### Webhook Verification
+
+The wrapper includes utilities for verifying webhook signatures:
+
+```java
+import ai.extend.wrapper.webhooks.Webhooks;
+import java.util.Map;
+
+// In your webhook handler
+String body = request.getBody();
+Map<String, String> headers = request.getHeaders();
+String signingSecret = "wss_your_signing_secret";
+
+Webhooks webhooks = client.webhooks();
+
+// Verify and parse the webhook
+Map<String, Object> event = webhooks.verifyAndParse(body, headers, signingSecret);
+
+String eventType = (String) event.get("eventType");
+Map<String, Object> payload = (Map<String, Object>) event.get("payload");
+```
+
+#### Handling Signed URL Payloads
+
+For large payloads, Extend may send a signed URL instead of the full data:
+
+```java
+import ai.extend.wrapper.webhooks.VerifyAndParseOptions;
+import ai.extend.wrapper.webhooks.WebhookEventWithSignedUrl;
+
+// Allow signed URL payloads
+Object result = webhooks.verifyAndParse(body, headers, signingSecret,
+    VerifyAndParseOptions.builder().allowSignedUrl(true).build());
+
+if (webhooks.isSignedUrlEvent(result)) {
+    WebhookEventWithSignedUrl signedEvent = (WebhookEventWithSignedUrl) result;
+    
+    // Fetch the full payload
+    Map<String, Object> fullEvent = webhooks.fetchSignedPayload(signedEvent);
+}
+```
+
+#### Verify Without Parsing
+
+```java
+// Just verify signature (returns true/false)
+boolean isValid = webhooks.verify(body, headers, signingSecret);
+```
+
+### Error Handling
+
+The wrapper defines custom exceptions for common scenarios:
+
+```java
+import ai.extend.wrapper.errors.PollingTimeoutError;
+import ai.extend.wrapper.errors.WebhookSignatureVerificationError;
+import ai.extend.wrapper.errors.SignedUrlNotAllowedError;
+
+try {
+    client.extractRuns().createAndPoll(request);
+} catch (PollingTimeoutError e) {
+    System.out.println("Polling timed out after " + e.getElapsedMs() + "ms");
+}
+
+try {
+    webhooks.verifyAndParse(body, headers, secret);
+} catch (WebhookSignatureVerificationError e) {
+    System.out.println("Invalid webhook signature: " + e.getMessage());
+} catch (SignedUrlNotAllowedError e) {
+    System.out.println("Received signed URL but not enabled");
+}
 ```
 
 ## Exception Handling
