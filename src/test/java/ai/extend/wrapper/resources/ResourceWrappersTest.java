@@ -196,18 +196,4 @@ class ResourceWrappersTest {
         }
     }
 
-    // ============================================================================
-    // WorkflowRunsWrapper default timeout tests
-    // ============================================================================
-
-    @Nested
-    @DisplayName("WorkflowRunsWrapper defaults")
-    class WorkflowRunsWrapperDefaultsTests {
-
-        @Test
-        @DisplayName("DEFAULT_WORKFLOW_MAX_WAIT_MS should be 2 hours")
-        void defaultTimeoutShouldBeTwoHours() {
-            assertEquals(2 * 60 * 60 * 1000, WorkflowRunsWrapper.DEFAULT_WORKFLOW_MAX_WAIT_MS);
-        }
-    }
 }

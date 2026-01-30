@@ -10,7 +10,6 @@ import ai.extend.resources.extractruns.requests.ExtractRunsCreateRequest;
 import ai.extend.resources.extractruns.types.ExtractRunsCreateResponse;
 import ai.extend.resources.extractruns.types.ExtractRunsRetrieveResponse;
 import ai.extend.types.ProcessorRunStatus;
-import ai.extend.wrapper.errors.PollingTimeoutError;
 import ai.extend.wrapper.utilities.polling.Polling;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
 import java.util.HashSet;
@@ -19,15 +18,24 @@ import java.util.Set;
 /**
  * Wrapper for ExtractRunsClient that adds polling functionality.
  *
+ * <p>Polls indefinitely until a terminal state is reached.</p>
+ *
  * <h3>Usage</h3>
  * <pre>{@code
  * ExtendClientWrapper client = new ExtendClientWrapper("your-api-key");
  *
+ * // Polls indefinitely (suitable for development/testing)
  * ExtractRunsRetrieveResponse response = client.extractRuns().createAndPoll(
  *     ExtractRunsCreateRequest.builder()
  *         .file(...)
  *         .extractor(...)
  *         .build()
+ * );
+ *
+ * // With custom timeout
+ * ExtractRunsRetrieveResponse response = client.extractRuns().createAndPoll(
+ *     request,
+ *     PollingOptions.builder().maxWaitMs(300000).build() // 5 minute timeout
  * );
  *
  * if (response.getExtractRun().getStatus() == ProcessorRunStatus.PROCESSED) {
@@ -69,11 +77,12 @@ public class ExtractRunsWrapper {
      *
      * <p>Terminal states: PROCESSED, FAILED, CANCELLED</p>
      *
+     * <p>Polls indefinitely until complete.</p>
+     *
      * @param request The create request
      * @return The final response when a terminal state is reached
-     * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public ExtractRunsRetrieveResponse createAndPoll(ExtractRunsCreateRequest request) throws PollingTimeoutError {
+    public ExtractRunsRetrieveResponse createAndPoll(ExtractRunsCreateRequest request) {
         return createAndPoll(request, PollingOptions.defaults());
     }
 
@@ -85,10 +94,8 @@ public class ExtractRunsWrapper {
      * @param request The create request
      * @param options Polling options
      * @return The final response when a terminal state is reached
-     * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public ExtractRunsRetrieveResponse createAndPoll(ExtractRunsCreateRequest request, PollingOptions options)
-            throws PollingTimeoutError {
+    public ExtractRunsRetrieveResponse createAndPoll(ExtractRunsCreateRequest request, PollingOptions options) {
 
         RequestOptions requestOptions = options.getRequestOptions();
 

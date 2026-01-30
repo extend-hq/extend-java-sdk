@@ -214,7 +214,7 @@ class PollingTest {
         class TimeoutTests {
 
             @Test
-            @DisplayName("should throw PollingTimeoutError when maxWaitMs is exceeded")
+            @DisplayName("should throw PollingTimeoutError when maxWaitMs is set and exceeded")
             void shouldThrowTimeoutError() {
                 assertThrows(PollingTimeoutError.class, () -> {
                     Polling.pollUntilDone(
@@ -266,6 +266,27 @@ class PollingTest {
                 long elapsed = System.currentTimeMillis() - startTime;
                 assertTrue(elapsed >= 100, "Should have waited at least 100ms, waited: " + elapsed);
                 assertTrue(elapsed < 500, "Should not have waited too long, waited: " + elapsed);
+            }
+
+            @Test
+            @DisplayName("should poll indefinitely when maxWaitMs is not set")
+            void shouldPollIndefinitelyWhenNoTimeout() {
+                AtomicInteger callCount = new AtomicInteger(0);
+
+                // Poll with no timeout - should complete when terminal without timeout error
+                TestResult result = Polling.pollUntilDone(
+                        () -> {
+                            int count = callCount.incrementAndGet();
+                            return new TestResult(count >= 3 ? "DONE" : "PROCESSING", count);
+                        },
+                        r -> r.status.equals("DONE"),
+                        PollingOptions.builder()
+                                .initialDelayMs(1)
+                                .jitterFraction(0)
+                                .build());  // No maxWaitMs set
+
+                assertEquals(3, callCount.get());
+                assertEquals("DONE", result.status);
             }
         }
 
@@ -355,12 +376,13 @@ class PollingTest {
     class PollingOptionsTests {
 
         @Test
-        @DisplayName("should have correct default values")
-        void shouldHaveCorrectDefaults() {
+        @DisplayName("should poll indefinitely by default (no timeout)")
+        void shouldPollIndefinitelyByDefault() {
             PollingOptions options = PollingOptions.defaults();
-            assertEquals(300_000, options.getMaxWaitMs());
+            assertNull(options.getMaxWaitMs());
+            assertFalse(options.hasTimeout());
             assertEquals(1_000, options.getInitialDelayMs());
-            assertEquals(30_000, options.getMaxDelayMs());
+            assertEquals(60_000, options.getMaxDelayMs());
             assertEquals(0.25, options.getJitterFraction());
             assertNull(options.getRequestOptions());
         }
@@ -375,17 +397,11 @@ class PollingTest {
                     .jitterFraction(0.5)
                     .build();
 
-            assertEquals(60000, options.getMaxWaitMs());
+            assertEquals(Integer.valueOf(60000), options.getMaxWaitMs());
+            assertTrue(options.hasTimeout());
             assertEquals(500, options.getInitialDelayMs());
             assertEquals(10000, options.getMaxDelayMs());
             assertEquals(0.5, options.getJitterFraction());
-        }
-
-        @Test
-        @DisplayName("workflowDefaults should have 2-hour timeout")
-        void workflowDefaultsShouldHaveTwoHourTimeout() {
-            PollingOptions options = PollingOptions.workflowDefaults();
-            assertEquals(2 * 60 * 60 * 1000, options.getMaxWaitMs());
         }
     }
 

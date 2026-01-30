@@ -133,24 +133,21 @@ if (response.getExtractRun().getStatus() == ProcessorRunStatus.PROCESSED) {
 ```java
 import ai.extend.wrapper.utilities.polling.PollingOptions;
 
-// Customize polling behavior
+// With custom timeout
 ExtractRunsRetrieveResponse response = client.extractRuns().createAndPoll(
     request,
     PollingOptions.builder()
-        .maxWaitMs(600000)      // 10 minutes (default: 5 minutes)
-        .initialDelayMs(2000)   // Start with 2 second delay (default: 1 second)
-        .maxDelayMs(30000)      // Cap at 30 seconds (default: 30 seconds)
-        .jitterFraction(0.25)   // ±25% randomization (default: 0.25)
+        .maxWaitMs(300000)      // 5 minute timeout (default: no timeout)
+        .initialDelayMs(1000)   // Start with 1 second delay (default)
+        .maxDelayMs(60000)      // Cap at 60 seconds (default)
+        .jitterFraction(0.25)   // ±25% randomization (default)
         .build()
 );
 ```
 
-#### Workflow Runs (Extended Timeout)
-
-Workflow runs can take significantly longer. The wrapper uses a 2-hour default timeout for workflows:
+#### Workflow Runs
 
 ```java
-// Default 2-hour timeout for workflows
 var response = client.workflowRuns().createAndPoll(
     WorkflowRunsCreateRequest.builder()
         .file(...)

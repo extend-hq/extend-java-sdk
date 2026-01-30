@@ -8,28 +8,20 @@ import ai.extend.core.RequestOptions;
 /**
  * Configuration options for polling operations.
  *
+ * <p>By default, polling runs indefinitely until a terminal state is reached.</p>
+ *
  * <p>Use the builder pattern to create instances with custom values:</p>
  * <pre>{@code
+ * // Polls indefinitely
+ * PollingOptions options = PollingOptions.builder().build();
+ *
+ * // With custom timeout
  * PollingOptions options = PollingOptions.builder()
- *     .maxWaitMs(600000)  // 10 minutes
- *     .initialDelayMs(2000)
+ *     .maxWaitMs(300000)  // 5 minutes
  *     .build();
  * }</pre>
  */
 public class PollingOptions {
-
-    /**
-     * Default maximum wait time: 5 minutes (300,000 ms).
-     *
-     * <p>Note: Workflow runs can take significantly longer.
-     * Consider using {@link #DEFAULT_WORKFLOW_MAX_WAIT_MS} for workflow runs.</p>
-     */
-    public static final int DEFAULT_MAX_WAIT_MS = 300_000;
-
-    /**
-     * Default maximum wait time for workflow runs: 2 hours (7,200,000 ms).
-     */
-    public static final int DEFAULT_WORKFLOW_MAX_WAIT_MS = 2 * 60 * 60 * 1000;
 
     /**
      * Default initial delay between polls: 1 second (1,000 ms).
@@ -37,16 +29,16 @@ public class PollingOptions {
     public static final int DEFAULT_INITIAL_DELAY_MS = 1_000;
 
     /**
-     * Default maximum delay between polls: 30 seconds (30,000 ms).
+     * Default maximum delay between polls: 60 seconds (60,000 ms).
      */
-    public static final int DEFAULT_MAX_DELAY_MS = 30_000;
+    public static final int DEFAULT_MAX_DELAY_MS = 60_000;
 
     /**
      * Default jitter fraction: 0.25 (±25% randomization).
      */
     public static final double DEFAULT_JITTER_FRACTION = 0.25;
 
-    private final int maxWaitMs;
+    private final Integer maxWaitMs;  // null = poll indefinitely
     private final int initialDelayMs;
     private final int maxDelayMs;
     private final double jitterFraction;
@@ -61,10 +53,17 @@ public class PollingOptions {
     }
 
     /**
-     * Returns the maximum total wait time in milliseconds.
+     * Returns the maximum total wait time in milliseconds, or null if polling indefinitely.
      */
-    public int getMaxWaitMs() {
+    public Integer getMaxWaitMs() {
         return maxWaitMs;
+    }
+
+    /**
+     * Returns whether a timeout is configured.
+     */
+    public boolean hasTimeout() {
+        return maxWaitMs != null;
     }
 
     /**
@@ -103,24 +102,17 @@ public class PollingOptions {
     }
 
     /**
-     * Creates default polling options.
+     * Creates default polling options (polls indefinitely).
      */
     public static PollingOptions defaults() {
         return new Builder().build();
     }
 
     /**
-     * Creates default polling options for workflow runs (2-hour timeout).
-     */
-    public static PollingOptions workflowDefaults() {
-        return new Builder().maxWaitMs(DEFAULT_WORKFLOW_MAX_WAIT_MS).build();
-    }
-
-    /**
      * Builder for {@link PollingOptions}.
      */
     public static class Builder {
-        private int maxWaitMs = DEFAULT_MAX_WAIT_MS;
+        private Integer maxWaitMs = null;  // null = poll indefinitely
         private int initialDelayMs = DEFAULT_INITIAL_DELAY_MS;
         private int maxDelayMs = DEFAULT_MAX_DELAY_MS;
         private double jitterFraction = DEFAULT_JITTER_FRACTION;
@@ -128,7 +120,7 @@ public class PollingOptions {
 
         /**
          * Sets the maximum total wait time in milliseconds.
-         * Default: 300000 (5 minutes)
+         * Default: null (polls indefinitely)
          */
         public Builder maxWaitMs(int maxWaitMs) {
             this.maxWaitMs = maxWaitMs;
@@ -146,7 +138,7 @@ public class PollingOptions {
 
         /**
          * Sets the maximum delay between polls in milliseconds.
-         * Default: 30000 (30 seconds)
+         * Default: 60000 (60 seconds)
          */
         public Builder maxDelayMs(int maxDelayMs) {
             this.maxDelayMs = maxDelayMs;
