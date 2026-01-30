@@ -20,51 +20,50 @@ import java.util.Set;
  * Wrapper for ClassifyRunsClient that adds polling functionality.
  */
 public class ClassifyRunsWrapper {
-    
+
     private static final Set<ProcessorRunStatus> NON_TERMINAL_STATUSES;
-    
+
     static {
         NON_TERMINAL_STATUSES = new HashSet<ProcessorRunStatus>();
         NON_TERMINAL_STATUSES.add(ProcessorRunStatus.PROCESSING);
     }
-    
+
     private final ClassifyRunsClient client;
-    
+
     public ClassifyRunsWrapper(ClientOptions clientOptions) {
         this.client = new ClassifyRunsClient(clientOptions);
     }
-    
+
     /**
      * Package-private constructor for testing with a mock client.
      */
     ClassifyRunsWrapper(ClassifyRunsClient client) {
         this.client = client;
     }
-    
+
     /**
      * Returns the underlying ClassifyRunsClient for direct API access.
      */
     public ClassifyRunsClient getClient() {
         return client;
     }
-    
+
     /**
      * Creates a classify run and polls until it reaches a terminal state.
-     * 
+     *
      * <p>Terminal states: PROCESSED, FAILED, CANCELLED</p>
      *
      * @param request The create request
      * @return The final response when a terminal state is reached
      * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public ClassifyRunsRetrieveResponse createAndPoll(ClassifyRunsCreateRequest request) 
-            throws PollingTimeoutError {
+    public ClassifyRunsRetrieveResponse createAndPoll(ClassifyRunsCreateRequest request) throws PollingTimeoutError {
         return createAndPoll(request, PollingOptions.defaults());
     }
-    
+
     /**
      * Creates a classify run and polls until it reaches a terminal state.
-     * 
+     *
      * <p>Terminal states: PROCESSED, FAILED, CANCELLED</p>
      *
      * @param request The create request
@@ -72,24 +71,22 @@ public class ClassifyRunsWrapper {
      * @return The final response when a terminal state is reached
      * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public ClassifyRunsRetrieveResponse createAndPoll(
-            ClassifyRunsCreateRequest request,
-            PollingOptions options) throws PollingTimeoutError {
-        
+    public ClassifyRunsRetrieveResponse createAndPoll(ClassifyRunsCreateRequest request, PollingOptions options)
+            throws PollingTimeoutError {
+
         RequestOptions requestOptions = options.getRequestOptions();
-        
+
         // Create the classify run
         ClassifyRunsCreateResponse createResponse = client.create(request, requestOptions);
         final String runId = createResponse.getClassifyRun().getId();
-        
+
         // Poll until terminal state
         return Polling.pollUntilDone(
-            () -> client.retrieve(runId, requestOptions),
-            response -> isTerminalStatus(response.getClassifyRun().getStatus()),
-            options
-        );
+                () -> client.retrieve(runId, requestOptions),
+                response -> isTerminalStatus(response.getClassifyRun().getStatus()),
+                options);
     }
-    
+
     private boolean isTerminalStatus(ProcessorRunStatus status) {
         return !NON_TERMINAL_STATUSES.contains(status);
     }

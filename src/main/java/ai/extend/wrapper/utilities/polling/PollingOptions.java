@@ -7,7 +7,7 @@ import ai.extend.core.RequestOptions;
 
 /**
  * Configuration options for polling operations.
- * 
+ *
  * <p>Use the builder pattern to create instances with custom values:</p>
  * <pre>{@code
  * PollingOptions options = PollingOptions.builder()
@@ -17,41 +17,41 @@ import ai.extend.core.RequestOptions;
  * }</pre>
  */
 public class PollingOptions {
-    
+
     /**
      * Default maximum wait time: 5 minutes (300,000 ms).
-     * 
+     *
      * <p>Note: Workflow runs can take significantly longer (p99 ~2.5 hours).
      * Consider using {@link #DEFAULT_WORKFLOW_MAX_WAIT_MS} for workflow runs.</p>
      */
     public static final int DEFAULT_MAX_WAIT_MS = 300_000;
-    
+
     /**
      * Default maximum wait time for workflow runs: 2 hours (7,200,000 ms).
      */
     public static final int DEFAULT_WORKFLOW_MAX_WAIT_MS = 2 * 60 * 60 * 1000;
-    
+
     /**
      * Default initial delay between polls: 1 second (1,000 ms).
      */
     public static final int DEFAULT_INITIAL_DELAY_MS = 1_000;
-    
+
     /**
      * Default maximum delay between polls: 30 seconds (30,000 ms).
      */
     public static final int DEFAULT_MAX_DELAY_MS = 30_000;
-    
+
     /**
      * Default jitter fraction: 0.25 (±25% randomization).
      */
     public static final double DEFAULT_JITTER_FRACTION = 0.25;
-    
+
     private final int maxWaitMs;
     private final int initialDelayMs;
     private final int maxDelayMs;
     private final double jitterFraction;
     private final RequestOptions requestOptions;
-    
+
     private PollingOptions(Builder builder) {
         this.maxWaitMs = builder.maxWaitMs;
         this.initialDelayMs = builder.initialDelayMs;
@@ -59,63 +59,63 @@ public class PollingOptions {
         this.jitterFraction = builder.jitterFraction;
         this.requestOptions = builder.requestOptions;
     }
-    
+
     /**
      * Returns the maximum total wait time in milliseconds.
      */
     public int getMaxWaitMs() {
         return maxWaitMs;
     }
-    
+
     /**
      * Returns the initial delay between polls in milliseconds.
      */
     public int getInitialDelayMs() {
         return initialDelayMs;
     }
-    
+
     /**
      * Returns the maximum delay between polls in milliseconds.
      */
     public int getMaxDelayMs() {
         return maxDelayMs;
     }
-    
+
     /**
      * Returns the jitter fraction for delay randomization.
      */
     public double getJitterFraction() {
         return jitterFraction;
     }
-    
+
     /**
      * Returns the request options to pass to API calls.
      */
     public RequestOptions getRequestOptions() {
         return requestOptions;
     }
-    
+
     /**
      * Creates a new builder with default values.
      */
     public static Builder builder() {
         return new Builder();
     }
-    
+
     /**
      * Creates default polling options.
      */
     public static PollingOptions defaults() {
         return new Builder().build();
     }
-    
+
     /**
      * Creates default polling options for workflow runs (2-hour timeout).
      */
     public static PollingOptions workflowDefaults() {
         return new Builder().maxWaitMs(DEFAULT_WORKFLOW_MAX_WAIT_MS).build();
     }
-    
+
     /**
      * Builder for {@link PollingOptions}.
      */
@@ -125,7 +125,7 @@ public class PollingOptions {
         private int maxDelayMs = DEFAULT_MAX_DELAY_MS;
         private double jitterFraction = DEFAULT_JITTER_FRACTION;
         private RequestOptions requestOptions;
-        
+
         /**
          * Sets the maximum total wait time in milliseconds.
          * Default: 300000 (5 minutes)
@@ -134,7 +134,7 @@ public class PollingOptions {
             this.maxWaitMs = maxWaitMs;
             return this;
         }
-        
+
         /**
          * Sets the initial delay between polls in milliseconds.
          * Default: 1000 (1 second)
@@ -143,7 +143,7 @@ public class PollingOptions {
             this.initialDelayMs = initialDelayMs;
             return this;
         }
-        
+
         /**
          * Sets the maximum delay between polls in milliseconds.
          * Default: 30000 (30 seconds)
@@ -152,7 +152,7 @@ public class PollingOptions {
             this.maxDelayMs = maxDelayMs;
             return this;
         }
-        
+
         /**
          * Sets the jitter fraction for delay randomization.
          * A value of 0.25 means delays will be randomized by ±25%.
@@ -162,7 +162,7 @@ public class PollingOptions {
             this.jitterFraction = jitterFraction;
             return this;
         }
-        
+
         /**
          * Sets the request options to pass to API calls.
          */
@@ -170,7 +170,7 @@ public class PollingOptions {
             this.requestOptions = requestOptions;
             return this;
         }
-        
+
         /**
          * Builds the {@link PollingOptions} instance.
          */

@@ -20,51 +20,50 @@ import java.util.Set;
  * Wrapper for EditRunsClient that adds polling functionality.
  */
 public class EditRunsWrapper {
-    
+
     private static final Set<EditRunStatus> NON_TERMINAL_STATUSES;
-    
+
     static {
         NON_TERMINAL_STATUSES = new HashSet<EditRunStatus>();
         NON_TERMINAL_STATUSES.add(EditRunStatus.PROCESSING);
     }
-    
+
     private final EditRunsClient client;
-    
+
     public EditRunsWrapper(ClientOptions clientOptions) {
         this.client = new EditRunsClient(clientOptions);
     }
-    
+
     /**
      * Package-private constructor for testing with a mock client.
      */
     EditRunsWrapper(EditRunsClient client) {
         this.client = client;
     }
-    
+
     /**
      * Returns the underlying EditRunsClient for direct API access.
      */
     public EditRunsClient getClient() {
         return client;
     }
-    
+
     /**
      * Creates an edit run and polls until it reaches a terminal state.
-     * 
+     *
      * <p>Terminal states: PROCESSED, FAILED</p>
      *
      * @param request The create request
      * @return The final response when a terminal state is reached
      * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public EditRunsRetrieveResponse createAndPoll(EditRunsCreateRequest request) 
-            throws PollingTimeoutError {
+    public EditRunsRetrieveResponse createAndPoll(EditRunsCreateRequest request) throws PollingTimeoutError {
         return createAndPoll(request, PollingOptions.defaults());
     }
-    
+
     /**
      * Creates an edit run and polls until it reaches a terminal state.
-     * 
+     *
      * <p>Terminal states: PROCESSED, FAILED</p>
      *
      * @param request The create request
@@ -72,24 +71,22 @@ public class EditRunsWrapper {
      * @return The final response when a terminal state is reached
      * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public EditRunsRetrieveResponse createAndPoll(
-            EditRunsCreateRequest request,
-            PollingOptions options) throws PollingTimeoutError {
-        
+    public EditRunsRetrieveResponse createAndPoll(EditRunsCreateRequest request, PollingOptions options)
+            throws PollingTimeoutError {
+
         RequestOptions requestOptions = options.getRequestOptions();
-        
+
         // Create the edit run
         EditRunsCreateResponse createResponse = client.create(request, requestOptions);
         final String runId = createResponse.getEditRun().getId();
-        
+
         // Poll until terminal state
         return Polling.pollUntilDone(
-            () -> client.retrieve(runId, requestOptions),
-            response -> isTerminalStatus(response.getEditRun().getStatus()),
-            options
-        );
+                () -> client.retrieve(runId, requestOptions),
+                response -> isTerminalStatus(response.getEditRun().getStatus()),
+                options);
     }
-    
+
     private boolean isTerminalStatus(EditRunStatus status) {
         return !NON_TERMINAL_STATUSES.contains(status);
     }

@@ -5,14 +5,14 @@ package ai.extend.wrapper.errors;
 
 /**
  * Exception thrown when fetching a signed URL payload fails.
- * 
+ *
  * <p>This error is thrown by {@code fetchSignedPayload()} when the HTTP
  * request to retrieve the full payload from the signed URL fails.</p>
- * 
+ *
  * @see ai.extend.wrapper.webhooks.Webhooks#fetchSignedPayload
  */
 public class WebhookPayloadFetchError extends RuntimeException {
-    
+
     /**
      * Creates a new WebhookPayloadFetchError.
      *
@@ -21,7 +21,7 @@ public class WebhookPayloadFetchError extends RuntimeException {
     public WebhookPayloadFetchError(String message) {
         super(message);
     }
-    
+
     /**
      * Creates a new WebhookPayloadFetchError with a cause.
      *

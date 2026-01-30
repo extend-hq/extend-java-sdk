@@ -5,26 +5,26 @@ package ai.extend.wrapper.errors;
 
 /**
  * Exception thrown when a signed URL payload is received but not allowed.
- * 
+ *
  * <p>This error is thrown when {@code verifyAndParse()} receives a webhook
  * with a signed URL payload but the {@code allowSignedUrl} option is not enabled.</p>
- * 
+ *
  * <p>To handle signed URL payloads, either:</p>
  * <ul>
  *   <li>Pass {@code allowSignedUrl=true} to {@code verifyAndParse()}</li>
  *   <li>Configure your webhook endpoint in the Extend dashboard to not use signed URLs</li>
  * </ul>
- * 
+ *
  * @see ai.extend.wrapper.webhooks.Webhooks#verifyAndParse
  */
 public class SignedUrlNotAllowedError extends RuntimeException {
-    
+
     /**
      * Creates a new SignedUrlNotAllowedError with a default message.
      */
     public SignedUrlNotAllowedError() {
-        super("Received signed URL payload but allowSignedUrl option is not enabled. " +
-              "Either pass allowSignedUrl=true to verifyAndParse() to handle signed URL payloads, " +
-              "or configure your webhook endpoint in the Extend dashboard to not use signed URLs.");
+        super("Received signed URL payload but allowSignedUrl option is not enabled. "
+                + "Either pass allowSignedUrl=true to verifyAndParse() to handle signed URL payloads, "
+                + "or configure your webhook endpoint in the Extend dashboard to not use signed URLs.");
     }
 }

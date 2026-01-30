@@ -5,10 +5,10 @@ package ai.extend.wrapper.errors;
 
 /**
  * Exception thrown when polling exceeds the maximum wait time.
- * 
+ *
  * <p>This error is thrown by the polling utilities when a run doesn't reach
  * a terminal state within the configured {@code maxWaitMs} duration.</p>
- * 
+ *
  * @see ai.extend.wrapper.utilities.polling.Polling#pollUntilDone
  */
 public class PollingTimeoutError extends RuntimeException {

@@ -3,6 +3,11 @@
  */
 package ai.extend.wrapper.resources;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
 import ai.extend.resources.editruns.EditRunsClient;
 import ai.extend.resources.editruns.types.EditRunsCreateResponse;
 import ai.extend.resources.editruns.types.EditRunsRetrieveResponse;
@@ -19,11 +24,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests for EditRunsWrapper.createAndPoll method.
@@ -50,32 +50,32 @@ class EditRunsWrapperTest {
         @DisplayName("should create and poll until PROCESSED")
         void shouldCreateAndPollUntilProcessed() {
             String runId = "edit_run_test123";
-            
+
             EditRun createRun = mock(EditRun.class);
             when(createRun.getId()).thenReturn(runId);
             EditRunsCreateResponse createResponse = mock(EditRunsCreateResponse.class);
             when(createResponse.getEditRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             EditRun processingRun = mock(EditRun.class);
             when(processingRun.getStatus()).thenReturn(EditRunStatus.PROCESSING);
             EditRunsRetrieveResponse processingResponse = mock(EditRunsRetrieveResponse.class);
             when(processingResponse.getEditRun()).thenReturn(processingRun);
-            
+
             EditRun processedRun = mock(EditRun.class);
             when(processedRun.getStatus()).thenReturn(EditRunStatus.PROCESSED);
             EditRunsRetrieveResponse processedResponse = mock(EditRunsRetrieveResponse.class);
             when(processedResponse.getEditRun()).thenReturn(processedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any()))
-                .thenReturn(processingResponse)
-                .thenReturn(processedResponse);
+                    .thenReturn(processingResponse)
+                    .thenReturn(processedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             EditRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -88,25 +88,25 @@ class EditRunsWrapperTest {
         @DisplayName("should return immediately if already PROCESSED")
         void shouldReturnImmediatelyIfAlreadyProcessed() {
             String runId = "edit_run_test123";
-            
+
             EditRun createRun = mock(EditRun.class);
             when(createRun.getId()).thenReturn(runId);
             EditRunsCreateResponse createResponse = mock(EditRunsCreateResponse.class);
             when(createResponse.getEditRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             EditRun processedRun = mock(EditRun.class);
             when(processedRun.getStatus()).thenReturn(EditRunStatus.PROCESSED);
             EditRunsRetrieveResponse processedResponse = mock(EditRunsRetrieveResponse.class);
             when(processedResponse.getEditRun()).thenReturn(processedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             EditRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -118,25 +118,25 @@ class EditRunsWrapperTest {
         @DisplayName("should handle FAILED status as terminal")
         void shouldHandleFailedAsTerminal() {
             String runId = "edit_run_test123";
-            
+
             EditRun createRun = mock(EditRun.class);
             when(createRun.getId()).thenReturn(runId);
             EditRunsCreateResponse createResponse = mock(EditRunsCreateResponse.class);
             when(createResponse.getEditRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             EditRun failedRun = mock(EditRun.class);
             when(failedRun.getStatus()).thenReturn(EditRunStatus.FAILED);
             EditRunsRetrieveResponse failedResponse = mock(EditRunsRetrieveResponse.class);
             when(failedResponse.getEditRun()).thenReturn(failedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(failedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             EditRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -147,25 +147,25 @@ class EditRunsWrapperTest {
         @DisplayName("should throw PollingTimeoutError when timeout exceeded")
         void shouldThrowTimeoutError() {
             String runId = "edit_run_test123";
-            
+
             EditRun createRun = mock(EditRun.class);
             when(createRun.getId()).thenReturn(runId);
             EditRunsCreateResponse createResponse = mock(EditRunsCreateResponse.class);
             when(createResponse.getEditRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             EditRun processingRun = mock(EditRun.class);
             when(processingRun.getStatus()).thenReturn(EditRunStatus.PROCESSING);
             EditRunsRetrieveResponse processingResponse = mock(EditRunsRetrieveResponse.class);
             when(processingResponse.getEditRun()).thenReturn(processingRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processingResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(10)
-                .maxWaitMs(50)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(10)
+                    .maxWaitMs(50)
+                    .jitterFraction(0)
+                    .build();
 
             assertThrows(PollingTimeoutError.class, () -> {
                 wrapper.createAndPoll(null, options);
@@ -176,18 +176,18 @@ class EditRunsWrapperTest {
         @DisplayName("should use default polling options when not specified")
         void shouldUseDefaultOptions() {
             String runId = "edit_run_test123";
-            
+
             EditRun createRun = mock(EditRun.class);
             when(createRun.getId()).thenReturn(runId);
             EditRunsCreateResponse createResponse = mock(EditRunsCreateResponse.class);
             when(createResponse.getEditRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             EditRun processedRun = mock(EditRun.class);
             when(processedRun.getStatus()).thenReturn(EditRunStatus.PROCESSED);
             EditRunsRetrieveResponse processedResponse = mock(EditRunsRetrieveResponse.class);
             when(processedResponse.getEditRun()).thenReturn(processedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
 
             EditRunsRetrieveResponse result = wrapper.createAndPoll(null);

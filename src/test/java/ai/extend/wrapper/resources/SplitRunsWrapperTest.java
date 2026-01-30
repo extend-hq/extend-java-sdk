@@ -3,6 +3,11 @@
  */
 package ai.extend.wrapper.resources;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
 import ai.extend.resources.splitruns.SplitRunsClient;
 import ai.extend.resources.splitruns.types.SplitRunsCreateResponse;
 import ai.extend.resources.splitruns.types.SplitRunsRetrieveResponse;
@@ -19,11 +24,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests for SplitRunsWrapper.createAndPoll method.
@@ -50,32 +50,32 @@ class SplitRunsWrapperTest {
         @DisplayName("should create and poll until PROCESSED")
         void shouldCreateAndPollUntilProcessed() {
             String runId = "split_run_test123";
-            
+
             SplitRun createRun = mock(SplitRun.class);
             when(createRun.getId()).thenReturn(runId);
             SplitRunsCreateResponse createResponse = mock(SplitRunsCreateResponse.class);
             when(createResponse.getSplitRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             SplitRun processingRun = mock(SplitRun.class);
             when(processingRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
             SplitRunsRetrieveResponse processingResponse = mock(SplitRunsRetrieveResponse.class);
             when(processingResponse.getSplitRun()).thenReturn(processingRun);
-            
+
             SplitRun processedRun = mock(SplitRun.class);
             when(processedRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
             SplitRunsRetrieveResponse processedResponse = mock(SplitRunsRetrieveResponse.class);
             when(processedResponse.getSplitRun()).thenReturn(processedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any()))
-                .thenReturn(processingResponse)
-                .thenReturn(processedResponse);
+                    .thenReturn(processingResponse)
+                    .thenReturn(processedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             SplitRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -88,25 +88,25 @@ class SplitRunsWrapperTest {
         @DisplayName("should return immediately if already PROCESSED")
         void shouldReturnImmediatelyIfAlreadyProcessed() {
             String runId = "split_run_test123";
-            
+
             SplitRun createRun = mock(SplitRun.class);
             when(createRun.getId()).thenReturn(runId);
             SplitRunsCreateResponse createResponse = mock(SplitRunsCreateResponse.class);
             when(createResponse.getSplitRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             SplitRun processedRun = mock(SplitRun.class);
             when(processedRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
             SplitRunsRetrieveResponse processedResponse = mock(SplitRunsRetrieveResponse.class);
             when(processedResponse.getSplitRun()).thenReturn(processedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             SplitRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -118,25 +118,25 @@ class SplitRunsWrapperTest {
         @DisplayName("should handle FAILED status as terminal")
         void shouldHandleFailedAsTerminal() {
             String runId = "split_run_test123";
-            
+
             SplitRun createRun = mock(SplitRun.class);
             when(createRun.getId()).thenReturn(runId);
             SplitRunsCreateResponse createResponse = mock(SplitRunsCreateResponse.class);
             when(createResponse.getSplitRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             SplitRun failedRun = mock(SplitRun.class);
             when(failedRun.getStatus()).thenReturn(ProcessorRunStatus.FAILED);
             SplitRunsRetrieveResponse failedResponse = mock(SplitRunsRetrieveResponse.class);
             when(failedResponse.getSplitRun()).thenReturn(failedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(failedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             SplitRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -147,25 +147,25 @@ class SplitRunsWrapperTest {
         @DisplayName("should handle CANCELLED status as terminal")
         void shouldHandleCancelledAsTerminal() {
             String runId = "split_run_test123";
-            
+
             SplitRun createRun = mock(SplitRun.class);
             when(createRun.getId()).thenReturn(runId);
             SplitRunsCreateResponse createResponse = mock(SplitRunsCreateResponse.class);
             when(createResponse.getSplitRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             SplitRun cancelledRun = mock(SplitRun.class);
             when(cancelledRun.getStatus()).thenReturn(ProcessorRunStatus.CANCELLED);
             SplitRunsRetrieveResponse cancelledResponse = mock(SplitRunsRetrieveResponse.class);
             when(cancelledResponse.getSplitRun()).thenReturn(cancelledRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(cancelledResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             SplitRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -176,25 +176,25 @@ class SplitRunsWrapperTest {
         @DisplayName("should throw PollingTimeoutError when timeout exceeded")
         void shouldThrowTimeoutError() {
             String runId = "split_run_test123";
-            
+
             SplitRun createRun = mock(SplitRun.class);
             when(createRun.getId()).thenReturn(runId);
             SplitRunsCreateResponse createResponse = mock(SplitRunsCreateResponse.class);
             when(createResponse.getSplitRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             SplitRun processingRun = mock(SplitRun.class);
             when(processingRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
             SplitRunsRetrieveResponse processingResponse = mock(SplitRunsRetrieveResponse.class);
             when(processingResponse.getSplitRun()).thenReturn(processingRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processingResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(10)
-                .maxWaitMs(50)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(10)
+                    .maxWaitMs(50)
+                    .jitterFraction(0)
+                    .build();
 
             assertThrows(PollingTimeoutError.class, () -> {
                 wrapper.createAndPoll(null, options);
@@ -205,18 +205,18 @@ class SplitRunsWrapperTest {
         @DisplayName("should use default polling options when not specified")
         void shouldUseDefaultOptions() {
             String runId = "split_run_test123";
-            
+
             SplitRun createRun = mock(SplitRun.class);
             when(createRun.getId()).thenReturn(runId);
             SplitRunsCreateResponse createResponse = mock(SplitRunsCreateResponse.class);
             when(createResponse.getSplitRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             SplitRun processedRun = mock(SplitRun.class);
             when(processedRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
             SplitRunsRetrieveResponse processedResponse = mock(SplitRunsRetrieveResponse.class);
             when(processedResponse.getSplitRun()).thenReturn(processedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
 
             SplitRunsRetrieveResponse result = wrapper.createAndPoll(null);

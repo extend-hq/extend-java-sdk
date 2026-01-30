@@ -3,20 +3,19 @@
  */
 package ai.extend.wrapper.webhooks;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import ai.extend.wrapper.errors.SignedUrlNotAllowedError;
 import ai.extend.wrapper.errors.WebhookSignatureVerificationError;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class WebhooksTest {
 
@@ -61,40 +60,37 @@ class WebhooksTest {
     }
 
     private String createWorkflowRunEventBody() {
-        return "{" +
-            "\"eventId\": \"evt_123\"," +
-            "\"eventType\": \"workflow_run.completed\"," +
-            "\"payload\": {" +
-                "\"object\": \"workflow_run\"," +
-                "\"id\": \"workflow_run_abc123\"," +
-                "\"status\": \"PROCESSED\"" +
-            "}" +
-        "}";
+        return "{" + "\"eventId\": \"evt_123\","
+                + "\"eventType\": \"workflow_run.completed\","
+                + "\"payload\": {"
+                + "\"object\": \"workflow_run\","
+                + "\"id\": \"workflow_run_abc123\","
+                + "\"status\": \"PROCESSED\""
+                + "}"
+                + "}";
     }
 
     private String createExtractRunEventBody() {
-        return "{" +
-            "\"eventId\": \"evt_456\"," +
-            "\"eventType\": \"extract_run.processed\"," +
-            "\"payload\": {" +
-                "\"object\": \"extract_run\"," +
-                "\"id\": \"extract_run_def456\"," +
-                "\"status\": \"PROCESSED\"" +
-            "}" +
-        "}";
+        return "{" + "\"eventId\": \"evt_456\","
+                + "\"eventType\": \"extract_run.processed\","
+                + "\"payload\": {"
+                + "\"object\": \"extract_run\","
+                + "\"id\": \"extract_run_def456\","
+                + "\"status\": \"PROCESSED\""
+                + "}"
+                + "}";
     }
 
     private String createSignedUrlEventBody() {
-        return "{" +
-            "\"eventId\": \"evt_789\"," +
-            "\"eventType\": \"workflow_run.completed\"," +
-            "\"payload\": {" +
-                "\"object\": \"signed_data_url\"," +
-                "\"data\": \"https://storage.example.com/signed-payload?token=abc123\"," +
-                "\"id\": \"wr_xyz\"," +
-                "\"metadata\": {\"env\": \"production\"}" +
-            "}" +
-        "}";
+        return "{" + "\"eventId\": \"evt_789\","
+                + "\"eventType\": \"workflow_run.completed\","
+                + "\"payload\": {"
+                + "\"object\": \"signed_data_url\","
+                + "\"data\": \"https://storage.example.com/signed-payload?token=abc123\","
+                + "\"id\": \"wr_xyz\","
+                + "\"metadata\": {\"env\": \"production\"}"
+                + "}"
+                + "}";
     }
 
     // ============================================================================
@@ -164,15 +160,20 @@ class WebhooksTest {
                 String body = createSignedUrlEventBody();
                 Map<String, String> headers = createValidHeaders(body, SECRET);
 
-                VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(body, headers, SECRET,
-                    VerifyAndParseOptions.builder().allowSignedUrl(true).build());
+                VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(
+                        body,
+                        headers,
+                        SECRET,
+                        VerifyAndParseOptions.builder().allowSignedUrl(true).build());
 
                 assertTrue(result.isSignedUrlEvent());
                 WebhookEventWithSignedUrl signedEvent = result.getSignedUrlEvent();
                 assertEquals("evt_789", signedEvent.getEventId());
                 assertEquals("workflow_run.completed", signedEvent.getEventType());
                 assertEquals("signed_data_url", signedEvent.getPayload().getObject());
-                assertEquals("https://storage.example.com/signed-payload?token=abc123", signedEvent.getPayload().getData());
+                assertEquals(
+                        "https://storage.example.com/signed-payload?token=abc123",
+                        signedEvent.getPayload().getData());
             }
 
             @Test
@@ -181,8 +182,11 @@ class WebhooksTest {
                 String body = createWorkflowRunEventBody();
                 Map<String, String> headers = createValidHeaders(body, SECRET);
 
-                VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(body, headers, SECRET,
-                    VerifyAndParseOptions.builder().allowSignedUrl(true).build());
+                VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(
+                        body,
+                        headers,
+                        SECRET,
+                        VerifyAndParseOptions.builder().allowSignedUrl(true).build());
 
                 assertFalse(result.isSignedUrlEvent());
                 Map<String, Object> event = result.getEvent();
@@ -314,8 +318,11 @@ class WebhooksTest {
                 });
 
                 // Should succeed with 900s
-                VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(body, headers, SECRET,
-                    VerifyAndParseOptions.builder().maxAgeSeconds(900).build());
+                VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(
+                        body,
+                        headers,
+                        SECRET,
+                        VerifyAndParseOptions.builder().maxAgeSeconds(900).build());
                 assertEquals("evt_123", result.getEvent().get("eventId"));
             }
 
@@ -326,8 +333,11 @@ class WebhooksTest {
                 long veryOldTimestamp = System.currentTimeMillis() / 1000 - 86400; // 1 day ago
                 Map<String, String> headers = createValidHeaders(body, SECRET, veryOldTimestamp);
 
-                VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(body, headers, SECRET,
-                    VerifyAndParseOptions.builder().maxAgeSeconds(0).build());
+                VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(
+                        body,
+                        headers,
+                        SECRET,
+                        VerifyAndParseOptions.builder().maxAgeSeconds(0).build());
                 assertEquals("evt_123", result.getEvent().get("eventId"));
             }
 
@@ -461,7 +471,11 @@ class WebhooksTest {
             Map<String, String> headers = createValidHeaders(body, SECRET, oldTimestamp);
 
             assertFalse(webhooks.verify(body, headers, SECRET));
-            assertTrue(webhooks.verify(body, headers, SECRET, VerifyOptions.builder().maxAgeSeconds(900).build()));
+            assertTrue(webhooks.verify(
+                    body,
+                    headers,
+                    SECRET,
+                    VerifyOptions.builder().maxAgeSeconds(900).build()));
         }
     }
 
@@ -479,7 +493,7 @@ class WebhooksTest {
             String body = createWorkflowRunEventBody();
 
             VerifyAndParseResult result = webhooks.parse(body);
-            
+
             assertFalse(result.isSignedUrlEvent());
             Map<String, Object> event = result.getEvent();
             assertEquals("evt_123", event.get("eventId"));

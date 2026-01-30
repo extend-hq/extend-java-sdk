@@ -3,14 +3,13 @@
  */
 package ai.extend.wrapper.utilities.polling;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import ai.extend.wrapper.errors.PollingTimeoutError;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class PollingTest {
 
@@ -72,13 +71,13 @@ class PollingTest {
                 // Run multiple times to test jitter is applied
                 int minSeen = Integer.MAX_VALUE;
                 int maxSeen = Integer.MIN_VALUE;
-                
+
                 for (int i = 0; i < 100; i++) {
                     int delay = Polling.calculateBackoffDelay(0, 1000, 30000, 0.25);
                     minSeen = Math.min(minSeen, delay);
                     maxSeen = Math.max(maxSeen, delay);
                 }
-                
+
                 // With 25% jitter, delays should be between 750 and 1250
                 assertTrue(minSeen >= 750, "Min delay should be >= 750, was: " + minSeen);
                 assertTrue(maxSeen <= 1250, "Max delay should be <= 1250, was: " + maxSeen);
@@ -97,13 +96,13 @@ class PollingTest {
                 // Run multiple times to test larger jitter
                 int minSeen = Integer.MAX_VALUE;
                 int maxSeen = Integer.MIN_VALUE;
-                
+
                 for (int i = 0; i < 100; i++) {
                     int delay = Polling.calculateBackoffDelay(0, 1000, 30000, 0.5);
                     minSeen = Math.min(minSeen, delay);
                     maxSeen = Math.max(maxSeen, delay);
                 }
-                
+
                 // With 50% jitter, delays should be between 500 and 1500
                 assertTrue(minSeen >= 500, "Min delay should be >= 500, was: " + minSeen);
                 assertTrue(maxSeen <= 1500, "Max delay should be <= 1500, was: " + maxSeen);
@@ -154,16 +153,15 @@ class PollingTest {
             @DisplayName("should return immediately when isTerminal returns true on first call")
             void shouldReturnImmediatelyWhenTerminalOnFirstCall() {
                 AtomicInteger callCount = new AtomicInteger(0);
-                
+
                 TestResult result = Polling.pollUntilDone(
-                    () -> {
-                        callCount.incrementAndGet();
-                        return new TestResult("DONE", 42);
-                    },
-                    r -> true,
-                    PollingOptions.defaults()
-                );
-                
+                        () -> {
+                            callCount.incrementAndGet();
+                            return new TestResult("DONE", 42);
+                        },
+                        r -> true,
+                        PollingOptions.defaults());
+
                 assertEquals("DONE", result.status);
                 assertEquals(42, result.value);
                 assertEquals(1, callCount.get());
@@ -173,20 +171,19 @@ class PollingTest {
             @DisplayName("should poll until isTerminal returns true")
             void shouldPollUntilTerminal() {
                 AtomicInteger callCount = new AtomicInteger(0);
-                
+
                 TestResult result = Polling.pollUntilDone(
-                    () -> {
-                        int count = callCount.incrementAndGet();
-                        return new TestResult(count >= 3 ? "DONE" : "PROCESSING", count);
-                    },
-                    r -> r.status.equals("DONE"),
-                    PollingOptions.builder()
-                        .initialDelayMs(1)
-                        .maxWaitMs(10000)
-                        .jitterFraction(0)
-                        .build()
-                );
-                
+                        () -> {
+                            int count = callCount.incrementAndGet();
+                            return new TestResult(count >= 3 ? "DONE" : "PROCESSING", count);
+                        },
+                        r -> r.status.equals("DONE"),
+                        PollingOptions.builder()
+                                .initialDelayMs(1)
+                                .maxWaitMs(10000)
+                                .jitterFraction(0)
+                                .build());
+
                 assertEquals(3, callCount.get());
                 assertEquals("DONE", result.status);
                 assertEquals(3, result.value);
@@ -197,18 +194,17 @@ class PollingTest {
             void shouldPassResultToIsTerminal() {
                 TestResult expectedResult = new TestResult("DONE", 123);
                 AtomicInteger terminalCallCount = new AtomicInteger(0);
-                
+
                 Polling.pollUntilDone(
-                    () -> expectedResult,
-                    r -> {
-                        terminalCallCount.incrementAndGet();
-                        assertEquals(expectedResult.status, r.status);
-                        assertEquals(expectedResult.value, r.value);
-                        return true;
-                    },
-                    PollingOptions.defaults()
-                );
-                
+                        () -> expectedResult,
+                        r -> {
+                            terminalCallCount.incrementAndGet();
+                            assertEquals(expectedResult.status, r.status);
+                            assertEquals(expectedResult.value, r.value);
+                            return true;
+                        },
+                        PollingOptions.defaults());
+
                 assertEquals(1, terminalCallCount.get());
             }
         }
@@ -222,14 +218,13 @@ class PollingTest {
             void shouldThrowTimeoutError() {
                 assertThrows(PollingTimeoutError.class, () -> {
                     Polling.pollUntilDone(
-                        () -> new TestResult("PROCESSING", 0),
-                        r -> false,
-                        PollingOptions.builder()
-                            .maxWaitMs(50)
-                            .initialDelayMs(10)
-                            .jitterFraction(0)
-                            .build()
-                    );
+                            () -> new TestResult("PROCESSING", 0),
+                            r -> false,
+                            PollingOptions.builder()
+                                    .maxWaitMs(50)
+                                    .initialDelayMs(10)
+                                    .jitterFraction(0)
+                                    .build());
                 });
             }
 
@@ -238,14 +233,13 @@ class PollingTest {
             void shouldIncludeElapsedTimeInError() {
                 try {
                     Polling.pollUntilDone(
-                        () -> new TestResult("PROCESSING", 0),
-                        r -> false,
-                        PollingOptions.builder()
-                            .maxWaitMs(50)
-                            .initialDelayMs(10)
-                            .jitterFraction(0)
-                            .build()
-                    );
+                            () -> new TestResult("PROCESSING", 0),
+                            r -> false,
+                            PollingOptions.builder()
+                                    .maxWaitMs(50)
+                                    .initialDelayMs(10)
+                                    .jitterFraction(0)
+                                    .build());
                     fail("Expected PollingTimeoutError");
                 } catch (PollingTimeoutError e) {
                     assertEquals(50, e.getMaxWaitMs());
@@ -257,19 +251,18 @@ class PollingTest {
             @DisplayName("should respect maxWaitMs option")
             void shouldRespectMaxWaitMs() {
                 long startTime = System.currentTimeMillis();
-                
+
                 assertThrows(PollingTimeoutError.class, () -> {
                     Polling.pollUntilDone(
-                        () -> new TestResult("PROCESSING", 0),
-                        r -> false,
-                        PollingOptions.builder()
-                            .maxWaitMs(100)
-                            .initialDelayMs(10)
-                            .jitterFraction(0)
-                            .build()
-                    );
+                            () -> new TestResult("PROCESSING", 0),
+                            r -> false,
+                            PollingOptions.builder()
+                                    .maxWaitMs(100)
+                                    .initialDelayMs(10)
+                                    .jitterFraction(0)
+                                    .build());
                 });
-                
+
                 long elapsed = System.currentTimeMillis() - startTime;
                 assertTrue(elapsed >= 100, "Should have waited at least 100ms, waited: " + elapsed);
                 assertTrue(elapsed < 500, "Should not have waited too long, waited: " + elapsed);
@@ -284,15 +277,16 @@ class PollingTest {
             @DisplayName("should propagate errors from retrieve function")
             void shouldPropagateRetrieveErrors() {
                 RuntimeException expected = new RuntimeException("API Error");
-                
+
                 RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
                     Polling.pollUntilDone(
-                        () -> { throw expected; },
-                        r -> true,
-                        PollingOptions.defaults()
-                    );
+                            () -> {
+                                throw expected;
+                            },
+                            r -> true,
+                            PollingOptions.defaults());
                 });
-                
+
                 assertEquals("API Error", thrown.getMessage());
             }
 
@@ -300,15 +294,16 @@ class PollingTest {
             @DisplayName("should propagate errors from isTerminal function")
             void shouldPropagateIsTerminalErrors() {
                 RuntimeException expected = new RuntimeException("isTerminal Error");
-                
+
                 RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
                     Polling.pollUntilDone(
-                        () -> new TestResult("DONE", 0),
-                        r -> { throw expected; },
-                        PollingOptions.defaults()
-                    );
+                            () -> new TestResult("DONE", 0),
+                            r -> {
+                                throw expected;
+                            },
+                            PollingOptions.defaults());
                 });
-                
+
                 assertEquals("isTerminal Error", thrown.getMessage());
             }
         }
@@ -374,12 +369,12 @@ class PollingTest {
         @DisplayName("should allow custom values via builder")
         void shouldAllowCustomValues() {
             PollingOptions options = PollingOptions.builder()
-                .maxWaitMs(60000)
-                .initialDelayMs(500)
-                .maxDelayMs(10000)
-                .jitterFraction(0.5)
-                .build();
-            
+                    .maxWaitMs(60000)
+                    .initialDelayMs(500)
+                    .maxDelayMs(10000)
+                    .jitterFraction(0.5)
+                    .build();
+
             assertEquals(60000, options.getMaxWaitMs());
             assertEquals(500, options.getInitialDelayMs());
             assertEquals(10000, options.getMaxDelayMs());
@@ -401,7 +396,7 @@ class PollingTest {
     private static class TestResult {
         final String status;
         final int value;
-        
+
         TestResult(String status, int value) {
             this.status = status;
             this.value = value;

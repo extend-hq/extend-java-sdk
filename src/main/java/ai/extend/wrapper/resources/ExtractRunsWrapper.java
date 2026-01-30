@@ -18,69 +18,68 @@ import java.util.Set;
 
 /**
  * Wrapper for ExtractRunsClient that adds polling functionality.
- * 
+ *
  * <h3>Usage</h3>
  * <pre>{@code
  * ExtendClientWrapper client = new ExtendClientWrapper("your-api-key");
- * 
+ *
  * ExtractRunsRetrieveResponse response = client.extractRuns().createAndPoll(
  *     ExtractRunsCreateRequest.builder()
  *         .file(...)
  *         .extractor(...)
  *         .build()
  * );
- * 
+ *
  * if (response.getExtractRun().getStatus() == ProcessorRunStatus.PROCESSED) {
  *     // Handle successful extraction
  * }
  * }</pre>
  */
 public class ExtractRunsWrapper {
-    
+
     private static final Set<ProcessorRunStatus> NON_TERMINAL_STATUSES;
-    
+
     static {
         NON_TERMINAL_STATUSES = new HashSet<ProcessorRunStatus>();
         NON_TERMINAL_STATUSES.add(ProcessorRunStatus.PROCESSING);
     }
-    
+
     private final ExtractRunsClient client;
-    
+
     public ExtractRunsWrapper(ClientOptions clientOptions) {
         this.client = new ExtractRunsClient(clientOptions);
     }
-    
+
     /**
      * Package-private constructor for testing with a mock client.
      */
     ExtractRunsWrapper(ExtractRunsClient client) {
         this.client = client;
     }
-    
+
     /**
      * Returns the underlying ExtractRunsClient for direct API access.
      */
     public ExtractRunsClient getClient() {
         return client;
     }
-    
+
     /**
      * Creates an extract run and polls until it reaches a terminal state.
-     * 
+     *
      * <p>Terminal states: PROCESSED, FAILED, CANCELLED</p>
      *
      * @param request The create request
      * @return The final response when a terminal state is reached
      * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public ExtractRunsRetrieveResponse createAndPoll(ExtractRunsCreateRequest request) 
-            throws PollingTimeoutError {
+    public ExtractRunsRetrieveResponse createAndPoll(ExtractRunsCreateRequest request) throws PollingTimeoutError {
         return createAndPoll(request, PollingOptions.defaults());
     }
-    
+
     /**
      * Creates an extract run and polls until it reaches a terminal state.
-     * 
+     *
      * <p>Terminal states: PROCESSED, FAILED, CANCELLED</p>
      *
      * @param request The create request
@@ -88,24 +87,22 @@ public class ExtractRunsWrapper {
      * @return The final response when a terminal state is reached
      * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public ExtractRunsRetrieveResponse createAndPoll(
-            ExtractRunsCreateRequest request,
-            PollingOptions options) throws PollingTimeoutError {
-        
+    public ExtractRunsRetrieveResponse createAndPoll(ExtractRunsCreateRequest request, PollingOptions options)
+            throws PollingTimeoutError {
+
         RequestOptions requestOptions = options.getRequestOptions();
-        
+
         // Create the extract run
         ExtractRunsCreateResponse createResponse = client.create(request, requestOptions);
         final String runId = createResponse.getExtractRun().getId();
-        
+
         // Poll until terminal state
         return Polling.pollUntilDone(
-            () -> client.retrieve(runId, requestOptions),
-            response -> isTerminalStatus(response.getExtractRun().getStatus()),
-            options
-        );
+                () -> client.retrieve(runId, requestOptions),
+                response -> isTerminalStatus(response.getExtractRun().getStatus()),
+                options);
     }
-    
+
     /**
      * Check if status is terminal (NOT processing).
      * We check for non-terminal states so new terminal states are handled correctly.

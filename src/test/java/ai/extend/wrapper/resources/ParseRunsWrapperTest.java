@@ -3,6 +3,11 @@
  */
 package ai.extend.wrapper.resources;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
 import ai.extend.resources.parseruns.ParseRunsClient;
 import ai.extend.resources.parseruns.types.ParseRunsCreateResponse;
 import ai.extend.resources.parseruns.types.ParseRunsRetrieveResponse;
@@ -19,11 +24,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests for ParseRunsWrapper.createAndPoll method.
@@ -50,32 +50,30 @@ class ParseRunsWrapperTest {
         @DisplayName("should create and poll until PROCESSED")
         void shouldCreateAndPollUntilProcessed() {
             String runId = "parse_run_test123";
-            
+
             ParseRun createRun = mock(ParseRun.class);
             when(createRun.getId()).thenReturn(runId);
             ParseRunsCreateResponse createResponse = mock(ParseRunsCreateResponse.class);
             when(createResponse.getParseRun()).thenReturn(createRun);
             when(mockClient.create(any())).thenReturn(createResponse);
-            
+
             ParseRun processingRun = mock(ParseRun.class);
             when(processingRun.getStatus()).thenReturn(ParseRunStatusEnum.PROCESSING);
             ParseRunsRetrieveResponse processingResponse = mock(ParseRunsRetrieveResponse.class);
             when(processingResponse.getParseRun()).thenReturn(processingRun);
-            
+
             ParseRun processedRun = mock(ParseRun.class);
             when(processedRun.getStatus()).thenReturn(ParseRunStatusEnum.PROCESSED);
             ParseRunsRetrieveResponse processedResponse = mock(ParseRunsRetrieveResponse.class);
             when(processedResponse.getParseRun()).thenReturn(processedRun);
-            
-            when(mockClient.retrieve(eq(runId)))
-                .thenReturn(processingResponse)
-                .thenReturn(processedResponse);
+
+            when(mockClient.retrieve(eq(runId))).thenReturn(processingResponse).thenReturn(processedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             ParseRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -88,25 +86,25 @@ class ParseRunsWrapperTest {
         @DisplayName("should return immediately if already PROCESSED")
         void shouldReturnImmediatelyIfAlreadyProcessed() {
             String runId = "parse_run_test123";
-            
+
             ParseRun createRun = mock(ParseRun.class);
             when(createRun.getId()).thenReturn(runId);
             ParseRunsCreateResponse createResponse = mock(ParseRunsCreateResponse.class);
             when(createResponse.getParseRun()).thenReturn(createRun);
             when(mockClient.create(any())).thenReturn(createResponse);
-            
+
             ParseRun processedRun = mock(ParseRun.class);
             when(processedRun.getStatus()).thenReturn(ParseRunStatusEnum.PROCESSED);
             ParseRunsRetrieveResponse processedResponse = mock(ParseRunsRetrieveResponse.class);
             when(processedResponse.getParseRun()).thenReturn(processedRun);
-            
+
             when(mockClient.retrieve(eq(runId))).thenReturn(processedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             ParseRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -118,25 +116,25 @@ class ParseRunsWrapperTest {
         @DisplayName("should handle FAILED status as terminal")
         void shouldHandleFailedAsTerminal() {
             String runId = "parse_run_test123";
-            
+
             ParseRun createRun = mock(ParseRun.class);
             when(createRun.getId()).thenReturn(runId);
             ParseRunsCreateResponse createResponse = mock(ParseRunsCreateResponse.class);
             when(createResponse.getParseRun()).thenReturn(createRun);
             when(mockClient.create(any())).thenReturn(createResponse);
-            
+
             ParseRun failedRun = mock(ParseRun.class);
             when(failedRun.getStatus()).thenReturn(ParseRunStatusEnum.FAILED);
             ParseRunsRetrieveResponse failedResponse = mock(ParseRunsRetrieveResponse.class);
             when(failedResponse.getParseRun()).thenReturn(failedRun);
-            
+
             when(mockClient.retrieve(eq(runId))).thenReturn(failedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             ParseRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -147,25 +145,25 @@ class ParseRunsWrapperTest {
         @DisplayName("should throw PollingTimeoutError when timeout exceeded")
         void shouldThrowTimeoutError() {
             String runId = "parse_run_test123";
-            
+
             ParseRun createRun = mock(ParseRun.class);
             when(createRun.getId()).thenReturn(runId);
             ParseRunsCreateResponse createResponse = mock(ParseRunsCreateResponse.class);
             when(createResponse.getParseRun()).thenReturn(createRun);
             when(mockClient.create(any())).thenReturn(createResponse);
-            
+
             ParseRun processingRun = mock(ParseRun.class);
             when(processingRun.getStatus()).thenReturn(ParseRunStatusEnum.PROCESSING);
             ParseRunsRetrieveResponse processingResponse = mock(ParseRunsRetrieveResponse.class);
             when(processingResponse.getParseRun()).thenReturn(processingRun);
-            
+
             when(mockClient.retrieve(eq(runId))).thenReturn(processingResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(10)
-                .maxWaitMs(50)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(10)
+                    .maxWaitMs(50)
+                    .jitterFraction(0)
+                    .build();
 
             assertThrows(PollingTimeoutError.class, () -> {
                 wrapper.createAndPoll(null, options);
@@ -176,18 +174,18 @@ class ParseRunsWrapperTest {
         @DisplayName("should use default polling options when not specified")
         void shouldUseDefaultOptions() {
             String runId = "parse_run_test123";
-            
+
             ParseRun createRun = mock(ParseRun.class);
             when(createRun.getId()).thenReturn(runId);
             ParseRunsCreateResponse createResponse = mock(ParseRunsCreateResponse.class);
             when(createResponse.getParseRun()).thenReturn(createRun);
             when(mockClient.create(any())).thenReturn(createResponse);
-            
+
             ParseRun processedRun = mock(ParseRun.class);
             when(processedRun.getStatus()).thenReturn(ParseRunStatusEnum.PROCESSED);
             ParseRunsRetrieveResponse processedResponse = mock(ParseRunsRetrieveResponse.class);
             when(processedResponse.getParseRun()).thenReturn(processedRun);
-            
+
             when(mockClient.retrieve(eq(runId))).thenReturn(processedResponse);
 
             ParseRunsRetrieveResponse result = wrapper.createAndPoll(null);

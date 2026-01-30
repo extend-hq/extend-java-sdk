@@ -7,25 +7,25 @@ import java.util.Map;
 
 /**
  * Represents a signed URL payload from a webhook event.
- * 
+ *
  * <p>When webhooks are configured to use signed URLs, the payload contains
  * a URL to fetch the full data rather than the data itself. This is used
  * for large payloads that exceed webhook size limits.</p>
  */
 public class SignedDataUrlPayload {
-    
+
     private final String data;
     private final String id;
     private final String object;
     private final Map<String, Object> metadata;
-    
+
     public SignedDataUrlPayload(String data, String id, String object, Map<String, Object> metadata) {
         this.data = data;
         this.id = id;
         this.object = object;
         this.metadata = metadata;
     }
-    
+
     /**
      * Returns the signed URL to fetch the full payload.
      * This URL expires in 1 hour.
@@ -33,14 +33,14 @@ public class SignedDataUrlPayload {
     public String getData() {
         return data;
     }
-    
+
     /**
      * Returns the ID of the run/resource.
      */
     public String getId() {
         return id;
     }
-    
+
     /**
      * Returns the object type discriminator.
      * Always "signed_data_url" for signed URL payloads.
@@ -48,7 +48,7 @@ public class SignedDataUrlPayload {
     public String getObject() {
         return object;
     }
-    
+
     /**
      * Returns optional metadata passed when the run was created.
      */

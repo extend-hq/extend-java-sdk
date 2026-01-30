@@ -29,13 +29,13 @@ import java.util.function.Supplier;
 
 /**
  * Wrapper for the Extend API client with additional polling and webhook utilities.
- * 
+ *
  * <h3>Basic Usage</h3>
  * <pre>{@code
  * ExtendClientWrapper client = ExtendClientWrapper.builder()
  *     .apiKey("your-api-key")
  *     .build();
- * 
+ *
  * // Create and poll an extract run
  * var response = client.extractRuns().createAndPoll(
  *     ExtractRunsCreateRequest.builder()
@@ -44,7 +44,7 @@ import java.util.function.Supplier;
  *         .build()
  * );
  * }</pre>
- * 
+ *
  * <h3>Webhook Verification</h3>
  * <pre>{@code
  * Map<String, Object> event = client.webhooks().verifyAndParse(
@@ -55,10 +55,10 @@ import java.util.function.Supplier;
  * }</pre>
  */
 public class ExtendClientWrapper {
-    
+
     private final ExtendClient client;
     private final Webhooks webhooks;
-    
+
     // Lazy-initialized wrappers
     private final Supplier<ExtractRunsWrapper> extractRunsWrapper;
     private final Supplier<ClassifyRunsWrapper> classifyRunsWrapper;
@@ -66,11 +66,11 @@ public class ExtendClientWrapper {
     private final Supplier<ParseRunsWrapper> parseRunsWrapper;
     private final Supplier<EditRunsWrapper> editRunsWrapper;
     private final Supplier<WorkflowRunsWrapper> workflowRunsWrapper;
-    
+
     private ExtendClientWrapper(ClientOptions clientOptions) {
         this.client = new ExtendClient(clientOptions);
         this.webhooks = new Webhooks();
-        
+
         // Lazy initialization of wrappers
         this.extractRunsWrapper = Suppliers.memoize(() -> new ExtractRunsWrapper(clientOptions));
         this.classifyRunsWrapper = Suppliers.memoize(() -> new ClassifyRunsWrapper(clientOptions));
@@ -79,151 +79,151 @@ public class ExtendClientWrapper {
         this.editRunsWrapper = Suppliers.memoize(() -> new EditRunsWrapper(clientOptions));
         this.workflowRunsWrapper = Suppliers.memoize(() -> new WorkflowRunsWrapper(clientOptions));
     }
-    
+
     /**
      * Returns the underlying ExtendClient for direct API access.
      */
     public ExtendClient getClient() {
         return client;
     }
-    
+
     /**
      * Returns the webhook utilities for signature verification.
      */
     public Webhooks webhooks() {
         return webhooks;
     }
-    
+
     // ========== Run Wrappers with createAndPoll ==========
-    
+
     /**
      * Returns the extract runs wrapper with createAndPoll support.
      */
     public ExtractRunsWrapper extractRuns() {
         return extractRunsWrapper.get();
     }
-    
+
     /**
      * Returns the classify runs wrapper with createAndPoll support.
      */
     public ClassifyRunsWrapper classifyRuns() {
         return classifyRunsWrapper.get();
     }
-    
+
     /**
      * Returns the split runs wrapper with createAndPoll support.
      */
     public SplitRunsWrapper splitRuns() {
         return splitRunsWrapper.get();
     }
-    
+
     /**
      * Returns the parse runs wrapper with createAndPoll support.
      */
     public ParseRunsWrapper parseRuns() {
         return parseRunsWrapper.get();
     }
-    
+
     /**
      * Returns the edit runs wrapper with createAndPoll support.
      */
     public EditRunsWrapper editRuns() {
         return editRunsWrapper.get();
     }
-    
+
     /**
      * Returns the workflow runs wrapper with createAndPoll support.
      */
     public WorkflowRunsWrapper workflowRuns() {
         return workflowRunsWrapper.get();
     }
-    
+
     // ========== Pass-through clients (no wrapper needed) ==========
-    
+
     /**
      * Returns the files client.
      */
     public FilesClient files() {
         return client.files();
     }
-    
+
     /**
      * Returns the extractors client.
      */
     public ExtractorsClient extractors() {
         return client.extractors();
     }
-    
+
     /**
      * Returns the extractor versions client.
      */
     public ExtractorVersionsClient extractorVersions() {
         return client.extractorVersions();
     }
-    
+
     /**
      * Returns the classifiers client.
      */
     public ClassifiersClient classifiers() {
         return client.classifiers();
     }
-    
+
     /**
      * Returns the classifier versions client.
      */
     public ClassifierVersionsClient classifierVersions() {
         return client.classifierVersions();
     }
-    
+
     /**
      * Returns the splitters client.
      */
     public SplittersClient splitters() {
         return client.splitters();
     }
-    
+
     /**
      * Returns the splitter versions client.
      */
     public SplitterVersionsClient splitterVersions() {
         return client.splitterVersions();
     }
-    
+
     /**
      * Returns the workflows client.
      */
     public WorkflowsClient workflows() {
         return client.workflows();
     }
-    
+
     /**
      * Returns the evaluation sets client.
      */
     public EvaluationSetsClient evaluationSets() {
         return client.evaluationSets();
     }
-    
+
     /**
      * Returns the evaluation set items client.
      */
     public EvaluationSetItemsClient evaluationSetItems() {
         return client.evaluationSetItems();
     }
-    
+
     /**
      * Returns the evaluation set runs client.
      */
     public EvaluationSetRunsClient evaluationSetRuns() {
         return client.evaluationSetRuns();
     }
-    
+
     /**
      * Creates a new builder for ExtendClientWrapper.
      */
     public static Builder builder() {
         return new Builder();
     }
-    
+
     /**
      * Builder for {@link ExtendClientWrapper}.
      */
@@ -231,7 +231,7 @@ public class ExtendClientWrapper {
         private String apiKey;
         private Environment environment = Environment.PRODUCTION;
         private String baseUrl;
-        
+
         /**
          * Sets the API key.
          */
@@ -239,7 +239,7 @@ public class ExtendClientWrapper {
             this.apiKey = apiKey;
             return this;
         }
-        
+
         /**
          * Sets the environment.
          * Default: PRODUCTION
@@ -248,7 +248,7 @@ public class ExtendClientWrapper {
             this.environment = environment;
             return this;
         }
-        
+
         /**
          * Sets a custom base URL (overrides environment).
          */
@@ -256,23 +256,23 @@ public class ExtendClientWrapper {
             this.baseUrl = baseUrl;
             return this;
         }
-        
+
         /**
          * Builds the ExtendClientWrapper.
          */
         public ExtendClientWrapper build() {
             ClientOptions.Builder optionsBuilder = ClientOptions.builder();
-            
+
             if (apiKey != null) {
                 optionsBuilder.addHeader("Authorization", "Bearer " + apiKey);
             }
-            
+
             if (baseUrl != null) {
                 optionsBuilder.environment(Environment.custom(baseUrl));
             } else {
                 optionsBuilder.environment(environment);
             }
-            
+
             return new ExtendClientWrapper(optionsBuilder.build());
         }
     }

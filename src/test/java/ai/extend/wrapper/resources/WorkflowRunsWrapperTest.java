@@ -3,6 +3,11 @@
  */
 package ai.extend.wrapper.resources;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
 import ai.extend.resources.workflowruns.WorkflowRunsClient;
 import ai.extend.resources.workflowruns.types.WorkflowRunsCreateResponse;
 import ai.extend.resources.workflowruns.types.WorkflowRunsRetrieveResponse;
@@ -19,11 +24,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests for WorkflowRunsWrapper.createAndPoll method.
@@ -50,32 +50,32 @@ class WorkflowRunsWrapperTest {
         @DisplayName("should create and poll until PROCESSED")
         void shouldCreateAndPollUntilProcessed() {
             String runId = "workflow_run_test123";
-            
+
             WorkflowRun createRun = mock(WorkflowRun.class);
             when(createRun.getId()).thenReturn(runId);
             WorkflowRunsCreateResponse createResponse = mock(WorkflowRunsCreateResponse.class);
             when(createResponse.getWorkflowRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             WorkflowRun processingRun = mock(WorkflowRun.class);
             when(processingRun.getStatus()).thenReturn(WorkflowRunStatus.PROCESSING);
             WorkflowRunsRetrieveResponse processingResponse = mock(WorkflowRunsRetrieveResponse.class);
             when(processingResponse.getWorkflowRun()).thenReturn(processingRun);
-            
+
             WorkflowRun processedRun = mock(WorkflowRun.class);
             when(processedRun.getStatus()).thenReturn(WorkflowRunStatus.PROCESSED);
             WorkflowRunsRetrieveResponse processedResponse = mock(WorkflowRunsRetrieveResponse.class);
             when(processedResponse.getWorkflowRun()).thenReturn(processedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any()))
-                .thenReturn(processingResponse)
-                .thenReturn(processedResponse);
+                    .thenReturn(processingResponse)
+                    .thenReturn(processedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             WorkflowRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -88,25 +88,25 @@ class WorkflowRunsWrapperTest {
         @DisplayName("should return immediately if already PROCESSED")
         void shouldReturnImmediatelyIfAlreadyProcessed() {
             String runId = "workflow_run_test123";
-            
+
             WorkflowRun createRun = mock(WorkflowRun.class);
             when(createRun.getId()).thenReturn(runId);
             WorkflowRunsCreateResponse createResponse = mock(WorkflowRunsCreateResponse.class);
             when(createResponse.getWorkflowRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             WorkflowRun processedRun = mock(WorkflowRun.class);
             when(processedRun.getStatus()).thenReturn(WorkflowRunStatus.PROCESSED);
             WorkflowRunsRetrieveResponse processedResponse = mock(WorkflowRunsRetrieveResponse.class);
             when(processedResponse.getWorkflowRun()).thenReturn(processedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             WorkflowRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -118,25 +118,25 @@ class WorkflowRunsWrapperTest {
         @DisplayName("should handle FAILED status as terminal")
         void shouldHandleFailedAsTerminal() {
             String runId = "workflow_run_test123";
-            
+
             WorkflowRun createRun = mock(WorkflowRun.class);
             when(createRun.getId()).thenReturn(runId);
             WorkflowRunsCreateResponse createResponse = mock(WorkflowRunsCreateResponse.class);
             when(createResponse.getWorkflowRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             WorkflowRun failedRun = mock(WorkflowRun.class);
             when(failedRun.getStatus()).thenReturn(WorkflowRunStatus.FAILED);
             WorkflowRunsRetrieveResponse failedResponse = mock(WorkflowRunsRetrieveResponse.class);
             when(failedResponse.getWorkflowRun()).thenReturn(failedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(failedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             WorkflowRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -147,25 +147,25 @@ class WorkflowRunsWrapperTest {
         @DisplayName("should handle CANCELLED status as terminal")
         void shouldHandleCancelledAsTerminal() {
             String runId = "workflow_run_test123";
-            
+
             WorkflowRun createRun = mock(WorkflowRun.class);
             when(createRun.getId()).thenReturn(runId);
             WorkflowRunsCreateResponse createResponse = mock(WorkflowRunsCreateResponse.class);
             when(createResponse.getWorkflowRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             WorkflowRun cancelledRun = mock(WorkflowRun.class);
             when(cancelledRun.getStatus()).thenReturn(WorkflowRunStatus.CANCELLED);
             WorkflowRunsRetrieveResponse cancelledResponse = mock(WorkflowRunsRetrieveResponse.class);
             when(cancelledResponse.getWorkflowRun()).thenReturn(cancelledRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(cancelledResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             WorkflowRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -176,25 +176,25 @@ class WorkflowRunsWrapperTest {
         @DisplayName("should handle NEEDS_REVIEW status as terminal")
         void shouldHandleNeedsReviewAsTerminal() {
             String runId = "workflow_run_test123";
-            
+
             WorkflowRun createRun = mock(WorkflowRun.class);
             when(createRun.getId()).thenReturn(runId);
             WorkflowRunsCreateResponse createResponse = mock(WorkflowRunsCreateResponse.class);
             when(createResponse.getWorkflowRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             WorkflowRun needsReviewRun = mock(WorkflowRun.class);
             when(needsReviewRun.getStatus()).thenReturn(WorkflowRunStatus.NEEDS_REVIEW);
             WorkflowRunsRetrieveResponse needsReviewResponse = mock(WorkflowRunsRetrieveResponse.class);
             when(needsReviewResponse.getWorkflowRun()).thenReturn(needsReviewRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(needsReviewResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             WorkflowRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -205,25 +205,25 @@ class WorkflowRunsWrapperTest {
         @DisplayName("should handle REJECTED status as terminal")
         void shouldHandleRejectedAsTerminal() {
             String runId = "workflow_run_test123";
-            
+
             WorkflowRun createRun = mock(WorkflowRun.class);
             when(createRun.getId()).thenReturn(runId);
             WorkflowRunsCreateResponse createResponse = mock(WorkflowRunsCreateResponse.class);
             when(createResponse.getWorkflowRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             WorkflowRun rejectedRun = mock(WorkflowRun.class);
             when(rejectedRun.getStatus()).thenReturn(WorkflowRunStatus.REJECTED);
             WorkflowRunsRetrieveResponse rejectedResponse = mock(WorkflowRunsRetrieveResponse.class);
             when(rejectedResponse.getWorkflowRun()).thenReturn(rejectedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(rejectedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             WorkflowRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -234,38 +234,38 @@ class WorkflowRunsWrapperTest {
         @DisplayName("should continue polling during PENDING status")
         void shouldContinuePollingDuringPending() {
             String runId = "workflow_run_test123";
-            
+
             WorkflowRun createRun = mock(WorkflowRun.class);
             when(createRun.getId()).thenReturn(runId);
             WorkflowRunsCreateResponse createResponse = mock(WorkflowRunsCreateResponse.class);
             when(createResponse.getWorkflowRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             WorkflowRun pendingRun = mock(WorkflowRun.class);
             when(pendingRun.getStatus()).thenReturn(WorkflowRunStatus.PENDING);
             WorkflowRunsRetrieveResponse pendingResponse = mock(WorkflowRunsRetrieveResponse.class);
             when(pendingResponse.getWorkflowRun()).thenReturn(pendingRun);
-            
+
             WorkflowRun processingRun = mock(WorkflowRun.class);
             when(processingRun.getStatus()).thenReturn(WorkflowRunStatus.PROCESSING);
             WorkflowRunsRetrieveResponse processingResponse = mock(WorkflowRunsRetrieveResponse.class);
             when(processingResponse.getWorkflowRun()).thenReturn(processingRun);
-            
+
             WorkflowRun processedRun = mock(WorkflowRun.class);
             when(processedRun.getStatus()).thenReturn(WorkflowRunStatus.PROCESSED);
             WorkflowRunsRetrieveResponse processedResponse = mock(WorkflowRunsRetrieveResponse.class);
             when(processedResponse.getWorkflowRun()).thenReturn(processedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any()))
-                .thenReturn(pendingResponse)
-                .thenReturn(processingResponse)
-                .thenReturn(processedResponse);
+                    .thenReturn(pendingResponse)
+                    .thenReturn(processingResponse)
+                    .thenReturn(processedResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             WorkflowRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -277,32 +277,32 @@ class WorkflowRunsWrapperTest {
         @DisplayName("should continue polling during CANCELLING status")
         void shouldContinuePollingDuringCancelling() {
             String runId = "workflow_run_test123";
-            
+
             WorkflowRun createRun = mock(WorkflowRun.class);
             when(createRun.getId()).thenReturn(runId);
             WorkflowRunsCreateResponse createResponse = mock(WorkflowRunsCreateResponse.class);
             when(createResponse.getWorkflowRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             WorkflowRun cancellingRun = mock(WorkflowRun.class);
             when(cancellingRun.getStatus()).thenReturn(WorkflowRunStatus.CANCELLING);
             WorkflowRunsRetrieveResponse cancellingResponse = mock(WorkflowRunsRetrieveResponse.class);
             when(cancellingResponse.getWorkflowRun()).thenReturn(cancellingRun);
-            
+
             WorkflowRun cancelledRun = mock(WorkflowRun.class);
             when(cancelledRun.getStatus()).thenReturn(WorkflowRunStatus.CANCELLED);
             WorkflowRunsRetrieveResponse cancelledResponse = mock(WorkflowRunsRetrieveResponse.class);
             when(cancelledResponse.getWorkflowRun()).thenReturn(cancelledRun);
-            
+
             when(mockClient.retrieve(eq(runId), any()))
-                .thenReturn(cancellingResponse)
-                .thenReturn(cancelledResponse);
+                    .thenReturn(cancellingResponse)
+                    .thenReturn(cancelledResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(1)
-                .maxWaitMs(10000)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
 
             WorkflowRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
 
@@ -314,25 +314,25 @@ class WorkflowRunsWrapperTest {
         @DisplayName("should throw PollingTimeoutError when timeout exceeded")
         void shouldThrowTimeoutError() {
             String runId = "workflow_run_test123";
-            
+
             WorkflowRun createRun = mock(WorkflowRun.class);
             when(createRun.getId()).thenReturn(runId);
             WorkflowRunsCreateResponse createResponse = mock(WorkflowRunsCreateResponse.class);
             when(createResponse.getWorkflowRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             WorkflowRun processingRun = mock(WorkflowRun.class);
             when(processingRun.getStatus()).thenReturn(WorkflowRunStatus.PROCESSING);
             WorkflowRunsRetrieveResponse processingResponse = mock(WorkflowRunsRetrieveResponse.class);
             when(processingResponse.getWorkflowRun()).thenReturn(processingRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processingResponse);
 
             PollingOptions options = PollingOptions.builder()
-                .initialDelayMs(10)
-                .maxWaitMs(50)
-                .jitterFraction(0)
-                .build();
+                    .initialDelayMs(10)
+                    .maxWaitMs(50)
+                    .jitterFraction(0)
+                    .build();
 
             assertThrows(PollingTimeoutError.class, () -> {
                 wrapper.createAndPoll(null, options);
@@ -349,18 +349,18 @@ class WorkflowRunsWrapperTest {
         @DisplayName("should use workflow defaults when not specifying options")
         void shouldUseWorkflowDefaults() {
             String runId = "workflow_run_test123";
-            
+
             WorkflowRun createRun = mock(WorkflowRun.class);
             when(createRun.getId()).thenReturn(runId);
             WorkflowRunsCreateResponse createResponse = mock(WorkflowRunsCreateResponse.class);
             when(createResponse.getWorkflowRun()).thenReturn(createRun);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
-            
+
             WorkflowRun processedRun = mock(WorkflowRun.class);
             when(processedRun.getStatus()).thenReturn(WorkflowRunStatus.PROCESSED);
             WorkflowRunsRetrieveResponse processedResponse = mock(WorkflowRunsRetrieveResponse.class);
             when(processedResponse.getWorkflowRun()).thenReturn(processedRun);
-            
+
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
 
             // Should not throw - uses workflow defaults (2 hour timeout)
