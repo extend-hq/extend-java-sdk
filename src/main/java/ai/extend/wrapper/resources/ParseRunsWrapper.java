@@ -4,14 +4,15 @@
 package ai.extend.wrapper.resources;
 
 import ai.extend.core.ClientOptions;
-import ai.extend.core.RequestOptions;
 import ai.extend.resources.parseruns.ParseRunsClient;
 import ai.extend.resources.parseruns.requests.ParseRunsCreateRequest;
+import ai.extend.resources.parseruns.types.ParseRunsCreateResponse;
 import ai.extend.resources.parseruns.types.ParseRunsRetrieveResponse;
 import ai.extend.types.ParseRunStatusEnum;
 import ai.extend.wrapper.errors.PollingTimeoutError;
 import ai.extend.wrapper.utilities.polling.Polling;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -19,9 +20,12 @@ import java.util.Set;
  */
 public class ParseRunsWrapper {
     
-    private static final Set<ParseRunStatusEnum> NON_TERMINAL_STATUSES = Set.of(
-        ParseRunStatusEnum.PROCESSING
-    );
+    private static final Set<ParseRunStatusEnum> NON_TERMINAL_STATUSES;
+    
+    static {
+        NON_TERMINAL_STATUSES = new HashSet<ParseRunStatusEnum>();
+        NON_TERMINAL_STATUSES.add(ParseRunStatusEnum.PROCESSING);
+    }
     
     private final ParseRunsClient client;
     
@@ -64,15 +68,14 @@ public class ParseRunsWrapper {
             ParseRunsCreateRequest request,
             PollingOptions options) throws PollingTimeoutError {
         
-        RequestOptions requestOptions = options.getRequestOptions();
-        
         // Create the parse run
-        var createResponse = client.create(request, requestOptions);
-        String runId = createResponse.getParseRun().getId();
+        ParseRunsCreateResponse createResponse = client.create(request);
+        final String runId = createResponse.getParseRun().getId();
         
         // Poll until terminal state
+        // Note: ParseRunsClient.retrieve() does not take RequestOptions directly
         return Polling.pollUntilDone(
-            () -> client.retrieve(runId, requestOptions),
+            () -> client.retrieve(runId),
             response -> isTerminalStatus(response.getParseRun().getStatus()),
             options
         );

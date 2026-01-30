@@ -8,16 +8,15 @@ import ai.extend.wrapper.errors.SignedUrlNotAllowedError;
 import ai.extend.wrapper.errors.WebhookPayloadFetchError;
 import ai.extend.wrapper.errors.WebhookSignatureVerificationError;
 import com.fasterxml.jackson.core.type.TypeReference;
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.util.HashMap;
 import java.util.Map;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Utility class for verifying and parsing webhook events.
@@ -50,6 +49,12 @@ public class Webhooks {
     private static final String SIGNATURE_HEADER = "x-extend-request-signature";
     private static final int CLOCK_SKEW_TOLERANCE_SECONDS = 60;
     
+    private final OkHttpClient httpClient;
+    
+    public Webhooks() {
+        this.httpClient = new OkHttpClient();
+    }
+    
     /**
      * Verifies the webhook signature and parses the event.
      * 
@@ -62,11 +67,13 @@ public class Webhooks {
      * @throws WebhookSignatureVerificationError if signature verification fails
      * @throws SignedUrlNotAllowedError if a signed URL payload is received
      */
+    @SuppressWarnings("unchecked")
     public Map<String, Object> verifyAndParse(
             String body,
             Map<String, String> headers,
             String signingSecret) throws WebhookSignatureVerificationError, SignedUrlNotAllowedError {
-        return verifyAndParse(body, headers, signingSecret, VerifyAndParseOptions.defaults());
+        Object result = verifyAndParse(body, headers, signingSecret, VerifyAndParseOptions.defaults());
+        return (Map<String, Object>) result;
     }
     
     /**
@@ -172,37 +179,34 @@ public class Webhooks {
             throws WebhookPayloadFetchError {
         String url = event.getPayload().getData();
         
+        Request request = new Request.Builder()
+            .url(url)
+            .get()
+            .build();
+        
         try {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .GET()
-                .build();
+            Response response = httpClient.newCall(request).execute();
             
-            HttpResponse<String> response = client.send(request, 
-                HttpResponse.BodyHandlers.ofString());
-            
-            if (response.statusCode() != 200) {
+            if (!response.isSuccessful()) {
                 throw new WebhookPayloadFetchError(
-                    String.format("Failed to fetch signed payload: HTTP %d", response.statusCode()));
+                    String.format("Failed to fetch signed payload: HTTP %d", response.code()));
             }
             
+            String responseBody = response.body() != null ? response.body().string() : "";
+            
             Map<String, Object> fullPayload = ObjectMappers.JSON_MAPPER.readValue(
-                response.body(), new TypeReference<Map<String, Object>>() {});
+                responseBody, new TypeReference<Map<String, Object>>() {});
             
             // Return full event with resolved payload
-            return Map.of(
-                "eventId", event.getEventId(),
-                "eventType", event.getEventType(),
-                "payload", fullPayload
-            );
+            Map<String, Object> result = new HashMap<String, Object>();
+            result.put("eventId", event.getEventId());
+            result.put("eventType", event.getEventType());
+            result.put("payload", fullPayload);
+            return result;
             
         } catch (WebhookPayloadFetchError e) {
             throw e;
-        } catch (IOException | InterruptedException e) {
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
+        } catch (Exception e) {
             throw new WebhookPayloadFetchError("Failed to fetch signed payload: " + e.getMessage(), e);
         }
     }

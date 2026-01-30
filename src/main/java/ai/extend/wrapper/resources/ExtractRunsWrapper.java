@@ -7,11 +7,13 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.extractruns.ExtractRunsClient;
 import ai.extend.resources.extractruns.requests.ExtractRunsCreateRequest;
+import ai.extend.resources.extractruns.types.ExtractRunsCreateResponse;
 import ai.extend.resources.extractruns.types.ExtractRunsRetrieveResponse;
 import ai.extend.types.ProcessorRunStatus;
 import ai.extend.wrapper.errors.PollingTimeoutError;
 import ai.extend.wrapper.utilities.polling.Polling;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -35,9 +37,12 @@ import java.util.Set;
  */
 public class ExtractRunsWrapper {
     
-    private static final Set<ProcessorRunStatus> NON_TERMINAL_STATUSES = Set.of(
-        ProcessorRunStatus.PROCESSING
-    );
+    private static final Set<ProcessorRunStatus> NON_TERMINAL_STATUSES;
+    
+    static {
+        NON_TERMINAL_STATUSES = new HashSet<ProcessorRunStatus>();
+        NON_TERMINAL_STATUSES.add(ProcessorRunStatus.PROCESSING);
+    }
     
     private final ExtractRunsClient client;
     
@@ -83,8 +88,8 @@ public class ExtractRunsWrapper {
         RequestOptions requestOptions = options.getRequestOptions();
         
         // Create the extract run
-        var createResponse = client.create(request, requestOptions);
-        String runId = createResponse.getExtractRun().getId();
+        ExtractRunsCreateResponse createResponse = client.create(request, requestOptions);
+        final String runId = createResponse.getExtractRun().getId();
         
         // Poll until terminal state
         return Polling.pollUntilDone(

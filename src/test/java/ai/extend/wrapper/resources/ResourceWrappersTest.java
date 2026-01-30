@@ -11,6 +11,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,8 +33,8 @@ class ResourceWrappersTest {
     @DisplayName("ProcessorRunStatus terminal states")
     class ProcessorRunStatusTests {
 
-        private final Set<ProcessorRunStatus> NON_TERMINAL = Set.of(
-            ProcessorRunStatus.PROCESSING
+        private final Set<ProcessorRunStatus> NON_TERMINAL = new HashSet<ProcessorRunStatus>(
+            Arrays.asList(ProcessorRunStatus.PROCESSING)
         );
 
         private boolean isTerminal(ProcessorRunStatus status) {
@@ -72,8 +74,8 @@ class ResourceWrappersTest {
     @DisplayName("EditRunStatus terminal states")
     class EditRunStatusTests {
 
-        private final Set<EditRunStatus> NON_TERMINAL = Set.of(
-            EditRunStatus.PROCESSING
+        private final Set<EditRunStatus> NON_TERMINAL = new HashSet<EditRunStatus>(
+            Arrays.asList(EditRunStatus.PROCESSING)
         );
 
         private boolean isTerminal(EditRunStatus status) {
@@ -107,8 +109,8 @@ class ResourceWrappersTest {
     @DisplayName("ParseRunStatusEnum terminal states")
     class ParseRunStatusEnumTests {
 
-        private final Set<ParseRunStatusEnum> NON_TERMINAL = Set.of(
-            ParseRunStatusEnum.PROCESSING
+        private final Set<ParseRunStatusEnum> NON_TERMINAL = new HashSet<ParseRunStatusEnum>(
+            Arrays.asList(ParseRunStatusEnum.PROCESSING)
         );
 
         private boolean isTerminal(ParseRunStatusEnum status) {
@@ -142,10 +144,12 @@ class ResourceWrappersTest {
     @DisplayName("WorkflowRunStatus terminal states")
     class WorkflowRunStatusTests {
 
-        private final Set<WorkflowRunStatus> NON_TERMINAL = Set.of(
-            WorkflowRunStatus.PENDING,
-            WorkflowRunStatus.PROCESSING,
-            WorkflowRunStatus.CANCELLING
+        private final Set<WorkflowRunStatus> NON_TERMINAL = new HashSet<WorkflowRunStatus>(
+            Arrays.asList(
+                WorkflowRunStatus.PENDING,
+                WorkflowRunStatus.PROCESSING,
+                WorkflowRunStatus.CANCELLING
+            )
         );
 
         private boolean isTerminal(WorkflowRunStatus status) {
