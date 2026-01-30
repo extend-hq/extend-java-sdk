@@ -51,6 +51,13 @@ public class ExtractRunsWrapper {
     }
     
     /**
+     * Package-private constructor for testing with a mock client.
+     */
+    ExtractRunsWrapper(ExtractRunsClient client) {
+        this.client = client;
+    }
+    
+    /**
      * Returns the underlying ExtractRunsClient for direct API access.
      */
     public ExtractRunsClient getClient() {

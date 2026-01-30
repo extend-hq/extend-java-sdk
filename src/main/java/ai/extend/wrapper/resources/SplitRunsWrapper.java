@@ -35,6 +35,13 @@ public class SplitRunsWrapper {
     }
     
     /**
+     * Package-private constructor for testing with a mock client.
+     */
+    SplitRunsWrapper(SplitRunsClient client) {
+        this.client = client;
+    }
+    
+    /**
      * Returns the underlying SplitRunsClient for direct API access.
      */
     public SplitRunsClient getClient() {

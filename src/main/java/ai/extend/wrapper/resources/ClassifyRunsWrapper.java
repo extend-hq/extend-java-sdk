@@ -35,6 +35,13 @@ public class ClassifyRunsWrapper {
     }
     
     /**
+     * Package-private constructor for testing with a mock client.
+     */
+    ClassifyRunsWrapper(ClassifyRunsClient client) {
+        this.client = client;
+    }
+    
+    /**
      * Returns the underlying ClassifyRunsClient for direct API access.
      */
     public ClassifyRunsClient getClient() {

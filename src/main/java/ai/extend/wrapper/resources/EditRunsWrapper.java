@@ -35,6 +35,13 @@ public class EditRunsWrapper {
     }
     
     /**
+     * Package-private constructor for testing with a mock client.
+     */
+    EditRunsWrapper(EditRunsClient client) {
+        this.client = client;
+    }
+    
+    /**
      * Returns the underlying EditRunsClient for direct API access.
      */
     public EditRunsClient getClient() {
