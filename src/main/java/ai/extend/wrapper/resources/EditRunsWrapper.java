@@ -7,11 +7,13 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.editruns.EditRunsClient;
 import ai.extend.resources.editruns.requests.EditRunsCreateRequest;
+import ai.extend.resources.editruns.types.EditRunsCreateResponse;
 import ai.extend.resources.editruns.types.EditRunsRetrieveResponse;
 import ai.extend.types.EditRunStatus;
 import ai.extend.wrapper.errors.PollingTimeoutError;
 import ai.extend.wrapper.utilities.polling.Polling;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -19,9 +21,12 @@ import java.util.Set;
  */
 public class EditRunsWrapper {
     
-    private static final Set<EditRunStatus> NON_TERMINAL_STATUSES = Set.of(
-        EditRunStatus.PROCESSING
-    );
+    private static final Set<EditRunStatus> NON_TERMINAL_STATUSES;
+    
+    static {
+        NON_TERMINAL_STATUSES = new HashSet<EditRunStatus>();
+        NON_TERMINAL_STATUSES.add(EditRunStatus.PROCESSING);
+    }
     
     private final EditRunsClient client;
     
@@ -67,8 +72,8 @@ public class EditRunsWrapper {
         RequestOptions requestOptions = options.getRequestOptions();
         
         // Create the edit run
-        var createResponse = client.create(request, requestOptions);
-        String runId = createResponse.getEditRun().getId();
+        EditRunsCreateResponse createResponse = client.create(request, requestOptions);
+        final String runId = createResponse.getEditRun().getId();
         
         // Poll until terminal state
         return Polling.pollUntilDone(

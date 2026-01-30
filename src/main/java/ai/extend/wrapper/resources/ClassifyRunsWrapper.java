@@ -7,11 +7,13 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.classifyruns.ClassifyRunsClient;
 import ai.extend.resources.classifyruns.requests.ClassifyRunsCreateRequest;
+import ai.extend.resources.classifyruns.types.ClassifyRunsCreateResponse;
 import ai.extend.resources.classifyruns.types.ClassifyRunsRetrieveResponse;
 import ai.extend.types.ProcessorRunStatus;
 import ai.extend.wrapper.errors.PollingTimeoutError;
 import ai.extend.wrapper.utilities.polling.Polling;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -19,9 +21,12 @@ import java.util.Set;
  */
 public class ClassifyRunsWrapper {
     
-    private static final Set<ProcessorRunStatus> NON_TERMINAL_STATUSES = Set.of(
-        ProcessorRunStatus.PROCESSING
-    );
+    private static final Set<ProcessorRunStatus> NON_TERMINAL_STATUSES;
+    
+    static {
+        NON_TERMINAL_STATUSES = new HashSet<ProcessorRunStatus>();
+        NON_TERMINAL_STATUSES.add(ProcessorRunStatus.PROCESSING);
+    }
     
     private final ClassifyRunsClient client;
     
@@ -67,8 +72,8 @@ public class ClassifyRunsWrapper {
         RequestOptions requestOptions = options.getRequestOptions();
         
         // Create the classify run
-        var createResponse = client.create(request, requestOptions);
-        String runId = createResponse.getClassifyRun().getId();
+        ClassifyRunsCreateResponse createResponse = client.create(request, requestOptions);
+        final String runId = createResponse.getClassifyRun().getId();
         
         // Poll until terminal state
         return Polling.pollUntilDone(

@@ -7,11 +7,13 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.splitruns.SplitRunsClient;
 import ai.extend.resources.splitruns.requests.SplitRunsCreateRequest;
+import ai.extend.resources.splitruns.types.SplitRunsCreateResponse;
 import ai.extend.resources.splitruns.types.SplitRunsRetrieveResponse;
 import ai.extend.types.ProcessorRunStatus;
 import ai.extend.wrapper.errors.PollingTimeoutError;
 import ai.extend.wrapper.utilities.polling.Polling;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -19,9 +21,12 @@ import java.util.Set;
  */
 public class SplitRunsWrapper {
     
-    private static final Set<ProcessorRunStatus> NON_TERMINAL_STATUSES = Set.of(
-        ProcessorRunStatus.PROCESSING
-    );
+    private static final Set<ProcessorRunStatus> NON_TERMINAL_STATUSES;
+    
+    static {
+        NON_TERMINAL_STATUSES = new HashSet<ProcessorRunStatus>();
+        NON_TERMINAL_STATUSES.add(ProcessorRunStatus.PROCESSING);
+    }
     
     private final SplitRunsClient client;
     
@@ -67,8 +72,8 @@ public class SplitRunsWrapper {
         RequestOptions requestOptions = options.getRequestOptions();
         
         // Create the split run
-        var createResponse = client.create(request, requestOptions);
-        String runId = createResponse.getSplitRun().getId();
+        SplitRunsCreateResponse createResponse = client.create(request, requestOptions);
+        final String runId = createResponse.getSplitRun().getId();
         
         // Poll until terminal state
         return Polling.pollUntilDone(

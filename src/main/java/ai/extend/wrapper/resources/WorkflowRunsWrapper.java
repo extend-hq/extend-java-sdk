@@ -7,11 +7,13 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.workflowruns.WorkflowRunsClient;
 import ai.extend.resources.workflowruns.requests.WorkflowRunsCreateRequest;
+import ai.extend.resources.workflowruns.types.WorkflowRunsCreateResponse;
 import ai.extend.resources.workflowruns.types.WorkflowRunsRetrieveResponse;
 import ai.extend.types.WorkflowRunStatus;
 import ai.extend.wrapper.errors.PollingTimeoutError;
 import ai.extend.wrapper.utilities.polling.Polling;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -27,11 +29,14 @@ public class WorkflowRunsWrapper {
      */
     public static final int DEFAULT_WORKFLOW_MAX_WAIT_MS = 2 * 60 * 60 * 1000;
     
-    private static final Set<WorkflowRunStatus> NON_TERMINAL_STATUSES = Set.of(
-        WorkflowRunStatus.PENDING,
-        WorkflowRunStatus.PROCESSING,
-        WorkflowRunStatus.CANCELLING
-    );
+    private static final Set<WorkflowRunStatus> NON_TERMINAL_STATUSES;
+    
+    static {
+        NON_TERMINAL_STATUSES = new HashSet<WorkflowRunStatus>();
+        NON_TERMINAL_STATUSES.add(WorkflowRunStatus.PENDING);
+        NON_TERMINAL_STATUSES.add(WorkflowRunStatus.PROCESSING);
+        NON_TERMINAL_STATUSES.add(WorkflowRunStatus.CANCELLING);
+    }
     
     private final WorkflowRunsClient client;
     
@@ -79,8 +84,8 @@ public class WorkflowRunsWrapper {
         RequestOptions requestOptions = options.getRequestOptions();
         
         // Create the workflow run
-        var createResponse = client.create(request, requestOptions);
-        String runId = createResponse.getWorkflowRun().getId();
+        WorkflowRunsCreateResponse createResponse = client.create(request, requestOptions);
+        final String runId = createResponse.getWorkflowRun().getId();
         
         // Poll until terminal state
         return Polling.pollUntilDone(
