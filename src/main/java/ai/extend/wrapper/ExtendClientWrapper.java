@@ -228,7 +228,10 @@ public class ExtendClientWrapper {
      * Builder for {@link ExtendClientWrapper}.
      */
     public static class Builder {
+        private static final String DEFAULT_API_VERSION = "2026-01-01";
+
         private String apiKey;
+        private String apiVersion = DEFAULT_API_VERSION;
         private Environment environment = Environment.PRODUCTION;
         private String baseUrl;
 
@@ -237,6 +240,15 @@ public class ExtendClientWrapper {
          */
         public Builder apiKey(String apiKey) {
             this.apiKey = apiKey;
+            return this;
+        }
+
+        /**
+         * Sets the API version.
+         * Default: 2026-01-01
+         */
+        public Builder apiVersion(String apiVersion) {
+            this.apiVersion = apiVersion;
             return this;
         }
 
@@ -266,6 +278,9 @@ public class ExtendClientWrapper {
             if (apiKey != null) {
                 optionsBuilder.addHeader("Authorization", "Bearer " + apiKey);
             }
+
+            // Add API version header
+            optionsBuilder.addHeader("x-extend-api-version", apiVersion);
 
             if (baseUrl != null) {
                 optionsBuilder.environment(Environment.custom(baseUrl));
