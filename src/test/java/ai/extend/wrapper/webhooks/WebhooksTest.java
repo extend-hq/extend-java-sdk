@@ -61,46 +61,40 @@ class WebhooksTest {
     }
 
     private String createWorkflowRunEventBody() {
-        return """
-            {
-                "eventId": "evt_123",
-                "eventType": "workflow_run.completed",
-                "payload": {
-                    "object": "workflow_run",
-                    "id": "workflow_run_abc123",
-                    "status": "PROCESSED"
-                }
-            }
-            """;
+        return "{" +
+            "\"eventId\": \"evt_123\"," +
+            "\"eventType\": \"workflow_run.completed\"," +
+            "\"payload\": {" +
+                "\"object\": \"workflow_run\"," +
+                "\"id\": \"workflow_run_abc123\"," +
+                "\"status\": \"PROCESSED\"" +
+            "}" +
+        "}";
     }
 
     private String createExtractRunEventBody() {
-        return """
-            {
-                "eventId": "evt_456",
-                "eventType": "extract_run.processed",
-                "payload": {
-                    "object": "extract_run",
-                    "id": "extract_run_def456",
-                    "status": "PROCESSED"
-                }
-            }
-            """;
+        return "{" +
+            "\"eventId\": \"evt_456\"," +
+            "\"eventType\": \"extract_run.processed\"," +
+            "\"payload\": {" +
+                "\"object\": \"extract_run\"," +
+                "\"id\": \"extract_run_def456\"," +
+                "\"status\": \"PROCESSED\"" +
+            "}" +
+        "}";
     }
 
     private String createSignedUrlEventBody() {
-        return """
-            {
-                "eventId": "evt_789",
-                "eventType": "workflow_run.completed",
-                "payload": {
-                    "object": "signed_data_url",
-                    "data": "https://storage.example.com/signed-payload?token=abc123",
-                    "id": "wr_xyz",
-                    "metadata": {"env": "production"}
-                }
-            }
-            """;
+        return "{" +
+            "\"eventId\": \"evt_789\"," +
+            "\"eventType\": \"workflow_run.completed\"," +
+            "\"payload\": {" +
+                "\"object\": \"signed_data_url\"," +
+                "\"data\": \"https://storage.example.com/signed-payload?token=abc123\"," +
+                "\"id\": \"wr_xyz\"," +
+                "\"metadata\": {\"env\": \"production\"}" +
+            "}" +
+        "}";
     }
 
     // ============================================================================
