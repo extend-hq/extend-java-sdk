@@ -57,7 +57,6 @@ import java.util.function.Supplier;
 public class ExtendClientWrapper {
     
     private final ExtendClient client;
-    private final ClientOptions clientOptions;
     private final Webhooks webhooks;
     
     // Lazy-initialized wrappers
@@ -69,7 +68,6 @@ public class ExtendClientWrapper {
     private final Supplier<WorkflowRunsWrapper> workflowRunsWrapper;
     
     private ExtendClientWrapper(ClientOptions clientOptions) {
-        this.clientOptions = clientOptions;
         this.client = new ExtendClient(clientOptions);
         this.webhooks = new Webhooks();
         
