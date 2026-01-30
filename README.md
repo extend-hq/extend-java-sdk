@@ -187,17 +187,20 @@ For large payloads, Extend may send a signed URL instead of the full data:
 
 ```java
 import ai.extend.wrapper.webhooks.VerifyAndParseOptions;
+import ai.extend.wrapper.webhooks.VerifyAndParseResult;
 import ai.extend.wrapper.webhooks.WebhookEventWithSignedUrl;
 
 // Allow signed URL payloads
-Object result = webhooks.verifyAndParse(body, headers, signingSecret,
+VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(body, headers, signingSecret,
     VerifyAndParseOptions.builder().allowSignedUrl(true).build());
 
-if (webhooks.isSignedUrlEvent(result)) {
-    WebhookEventWithSignedUrl signedEvent = (WebhookEventWithSignedUrl) result;
+if (result.isSignedUrlEvent()) {
+    WebhookEventWithSignedUrl signedEvent = result.getSignedUrlEvent();
     
     // Fetch the full payload
     Map<String, Object> fullEvent = webhooks.fetchSignedPayload(signedEvent);
+} else {
+    Map<String, Object> event = result.getEvent();
 }
 ```
 

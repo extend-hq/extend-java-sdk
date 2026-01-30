@@ -111,7 +111,6 @@ class WebhooksTest {
 
             @Test
             @DisplayName("should return event for normal payload")
-            @SuppressWarnings("unchecked")
             void shouldReturnEventForNormalPayload() {
                 String body = createWorkflowRunEventBody();
                 Map<String, String> headers = createValidHeaders(body, SECRET);
@@ -125,7 +124,6 @@ class WebhooksTest {
 
             @Test
             @DisplayName("should return event for extract_run.processed")
-            @SuppressWarnings("unchecked")
             void shouldReturnEventForExtractRun() {
                 String body = createExtractRunEventBody();
                 Map<String, String> headers = createValidHeaders(body, SECRET);
@@ -166,11 +164,11 @@ class WebhooksTest {
                 String body = createSignedUrlEventBody();
                 Map<String, String> headers = createValidHeaders(body, SECRET);
 
-                Object result = webhooks.verifyAndParse(body, headers, SECRET,
+                VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(body, headers, SECRET,
                     VerifyAndParseOptions.builder().allowSignedUrl(true).build());
 
-                assertTrue(webhooks.isSignedUrlEvent(result));
-                WebhookEventWithSignedUrl signedEvent = (WebhookEventWithSignedUrl) result;
+                assertTrue(result.isSignedUrlEvent());
+                WebhookEventWithSignedUrl signedEvent = result.getSignedUrlEvent();
                 assertEquals("evt_789", signedEvent.getEventId());
                 assertEquals("workflow_run.completed", signedEvent.getEventType());
                 assertEquals("signed_data_url", signedEvent.getPayload().getObject());
@@ -179,16 +177,15 @@ class WebhooksTest {
 
             @Test
             @DisplayName("should return normal event with allowSignedUrl: true when not signed URL")
-            @SuppressWarnings("unchecked")
             void shouldReturnNormalEventEvenWithAllowSignedUrl() {
                 String body = createWorkflowRunEventBody();
                 Map<String, String> headers = createValidHeaders(body, SECRET);
 
-                Object result = webhooks.verifyAndParse(body, headers, SECRET,
+                VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(body, headers, SECRET,
                     VerifyAndParseOptions.builder().allowSignedUrl(true).build());
 
-                assertFalse(webhooks.isSignedUrlEvent(result));
-                Map<String, Object> event = (Map<String, Object>) result;
+                assertFalse(result.isSignedUrlEvent());
+                Map<String, Object> event = result.getEvent();
                 assertEquals("workflow_run.completed", event.get("eventType"));
             }
         }
@@ -317,10 +314,9 @@ class WebhooksTest {
                 });
 
                 // Should succeed with 900s
-                @SuppressWarnings("unchecked")
-                Map<String, Object> event = (Map<String, Object>) webhooks.verifyAndParse(body, headers, SECRET,
+                VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(body, headers, SECRET,
                     VerifyAndParseOptions.builder().maxAgeSeconds(900).build());
-                assertEquals("evt_123", event.get("eventId"));
+                assertEquals("evt_123", result.getEvent().get("eventId"));
             }
 
             @Test
@@ -330,10 +326,9 @@ class WebhooksTest {
                 long veryOldTimestamp = System.currentTimeMillis() / 1000 - 86400; // 1 day ago
                 Map<String, String> headers = createValidHeaders(body, SECRET, veryOldTimestamp);
 
-                @SuppressWarnings("unchecked")
-                Map<String, Object> event = (Map<String, Object>) webhooks.verifyAndParse(body, headers, SECRET,
+                VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(body, headers, SECRET,
                     VerifyAndParseOptions.builder().maxAgeSeconds(0).build());
-                assertEquals("evt_123", event.get("eventId"));
+                assertEquals("evt_123", result.getEvent().get("eventId"));
             }
 
             @Test
@@ -480,13 +475,13 @@ class WebhooksTest {
 
         @Test
         @DisplayName("should parse normal webhook event")
-        @SuppressWarnings("unchecked")
         void shouldParseNormalEvent() {
             String body = createWorkflowRunEventBody();
 
-            Object result = webhooks.parse(body);
-            Map<String, Object> event = (Map<String, Object>) result;
-
+            VerifyAndParseResult result = webhooks.parse(body);
+            
+            assertFalse(result.isSignedUrlEvent());
+            Map<String, Object> event = result.getEvent();
             assertEquals("evt_123", event.get("eventId"));
             assertEquals("workflow_run.completed", event.get("eventType"));
         }
@@ -496,10 +491,10 @@ class WebhooksTest {
         void shouldParseSignedUrlEvent() {
             String body = createSignedUrlEventBody();
 
-            Object result = webhooks.parse(body);
+            VerifyAndParseResult result = webhooks.parse(body);
 
-            assertTrue(webhooks.isSignedUrlEvent(result));
-            WebhookEventWithSignedUrl signedEvent = (WebhookEventWithSignedUrl) result;
+            assertTrue(result.isSignedUrlEvent());
+            WebhookEventWithSignedUrl signedEvent = result.getSignedUrlEvent();
             assertEquals("evt_789", signedEvent.getEventId());
         }
 
@@ -513,29 +508,57 @@ class WebhooksTest {
     }
 
     // ============================================================================
-    // isSignedUrlEvent tests
+    // VerifyAndParseResult tests
     // ============================================================================
 
     @Nested
-    @DisplayName("isSignedUrlEvent")
-    class IsSignedUrlEventTests {
+    @DisplayName("VerifyAndParseResult")
+    class VerifyAndParseResultTests {
 
         @Test
-        @DisplayName("should return true for signed URL events")
-        void shouldReturnTrueForSignedUrl() {
-            String body = createSignedUrlEventBody();
-            Object event = webhooks.parse(body);
+        @DisplayName("should return event for normal events")
+        void shouldReturnEventForNormalEvents() {
+            String body = createWorkflowRunEventBody();
+            VerifyAndParseResult result = webhooks.parse(body);
 
-            assertTrue(webhooks.isSignedUrlEvent(event));
+            assertFalse(result.isSignedUrlEvent());
+            assertNotNull(result.getEvent());
+            assertEquals("evt_123", result.getEventId());
+            assertEquals("workflow_run.completed", result.getEventType());
         }
 
         @Test
-        @DisplayName("should return false for normal events")
-        void shouldReturnFalseForNormalEvents() {
-            String body = createWorkflowRunEventBody();
-            Object event = webhooks.parse(body);
+        @DisplayName("should return signedUrlEvent for signed URL events")
+        void shouldReturnSignedUrlEventForSignedUrl() {
+            String body = createSignedUrlEventBody();
+            VerifyAndParseResult result = webhooks.parse(body);
 
-            assertFalse(webhooks.isSignedUrlEvent(event));
+            assertTrue(result.isSignedUrlEvent());
+            assertNotNull(result.getSignedUrlEvent());
+            assertEquals("evt_789", result.getEventId());
+            assertEquals("workflow_run.completed", result.getEventType());
+        }
+
+        @Test
+        @DisplayName("should throw when calling getEvent on signed URL event")
+        void shouldThrowWhenCallingGetEventOnSignedUrl() {
+            String body = createSignedUrlEventBody();
+            VerifyAndParseResult result = webhooks.parse(body);
+
+            assertThrows(IllegalStateException.class, () -> {
+                result.getEvent();
+            });
+        }
+
+        @Test
+        @DisplayName("should throw when calling getSignedUrlEvent on normal event")
+        void shouldThrowWhenCallingGetSignedUrlEventOnNormal() {
+            String body = createWorkflowRunEventBody();
+            VerifyAndParseResult result = webhooks.parse(body);
+
+            assertThrows(IllegalStateException.class, () -> {
+                result.getSignedUrlEvent();
+            });
         }
     }
 
