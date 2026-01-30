@@ -9,7 +9,6 @@ import ai.extend.resources.parseruns.requests.ParseRunsCreateRequest;
 import ai.extend.resources.parseruns.types.ParseRunsCreateResponse;
 import ai.extend.resources.parseruns.types.ParseRunsRetrieveResponse;
 import ai.extend.types.ParseRunStatusEnum;
-import ai.extend.wrapper.errors.PollingTimeoutError;
 import ai.extend.wrapper.utilities.polling.Polling;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
 import java.util.HashSet;
@@ -17,6 +16,8 @@ import java.util.Set;
 
 /**
  * Wrapper for ParseRunsClient that adds polling functionality.
+ *
+ * <p>Polls indefinitely until a terminal state is reached.</p>
  */
 public class ParseRunsWrapper {
 
@@ -52,11 +53,12 @@ public class ParseRunsWrapper {
      *
      * <p>Terminal states: PROCESSED, FAILED</p>
      *
+     * <p>Polls indefinitely until complete.</p>
+     *
      * @param request The create request
      * @return The final response when a terminal state is reached
-     * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public ParseRunsRetrieveResponse createAndPoll(ParseRunsCreateRequest request) throws PollingTimeoutError {
+    public ParseRunsRetrieveResponse createAndPoll(ParseRunsCreateRequest request) {
         return createAndPoll(request, PollingOptions.defaults());
     }
 
@@ -68,10 +70,8 @@ public class ParseRunsWrapper {
      * @param request The create request
      * @param options Polling options
      * @return The final response when a terminal state is reached
-     * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public ParseRunsRetrieveResponse createAndPoll(ParseRunsCreateRequest request, PollingOptions options)
-            throws PollingTimeoutError {
+    public ParseRunsRetrieveResponse createAndPoll(ParseRunsCreateRequest request, PollingOptions options) {
 
         // Create the parse run
         ParseRunsCreateResponse createResponse = client.create(request);

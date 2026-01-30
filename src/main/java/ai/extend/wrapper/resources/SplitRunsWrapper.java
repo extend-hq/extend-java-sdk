@@ -10,7 +10,6 @@ import ai.extend.resources.splitruns.requests.SplitRunsCreateRequest;
 import ai.extend.resources.splitruns.types.SplitRunsCreateResponse;
 import ai.extend.resources.splitruns.types.SplitRunsRetrieveResponse;
 import ai.extend.types.ProcessorRunStatus;
-import ai.extend.wrapper.errors.PollingTimeoutError;
 import ai.extend.wrapper.utilities.polling.Polling;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
 import java.util.HashSet;
@@ -18,6 +17,8 @@ import java.util.Set;
 
 /**
  * Wrapper for SplitRunsClient that adds polling functionality.
+ *
+ * <p>Polls indefinitely until a terminal state is reached.</p>
  */
 public class SplitRunsWrapper {
 
@@ -53,11 +54,12 @@ public class SplitRunsWrapper {
      *
      * <p>Terminal states: PROCESSED, FAILED, CANCELLED</p>
      *
+     * <p>Polls indefinitely until complete.</p>
+     *
      * @param request The create request
      * @return The final response when a terminal state is reached
-     * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public SplitRunsRetrieveResponse createAndPoll(SplitRunsCreateRequest request) throws PollingTimeoutError {
+    public SplitRunsRetrieveResponse createAndPoll(SplitRunsCreateRequest request) {
         return createAndPoll(request, PollingOptions.defaults());
     }
 
@@ -69,10 +71,8 @@ public class SplitRunsWrapper {
      * @param request The create request
      * @param options Polling options
      * @return The final response when a terminal state is reached
-     * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public SplitRunsRetrieveResponse createAndPoll(SplitRunsCreateRequest request, PollingOptions options)
-            throws PollingTimeoutError {
+    public SplitRunsRetrieveResponse createAndPoll(SplitRunsCreateRequest request, PollingOptions options) {
 
         RequestOptions requestOptions = options.getRequestOptions();
 

@@ -10,7 +10,6 @@ import ai.extend.resources.editruns.requests.EditRunsCreateRequest;
 import ai.extend.resources.editruns.types.EditRunsCreateResponse;
 import ai.extend.resources.editruns.types.EditRunsRetrieveResponse;
 import ai.extend.types.EditRunStatus;
-import ai.extend.wrapper.errors.PollingTimeoutError;
 import ai.extend.wrapper.utilities.polling.Polling;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
 import java.util.HashSet;
@@ -18,6 +17,8 @@ import java.util.Set;
 
 /**
  * Wrapper for EditRunsClient that adds polling functionality.
+ *
+ * <p>Polls indefinitely until a terminal state is reached.</p>
  */
 public class EditRunsWrapper {
 
@@ -53,11 +54,12 @@ public class EditRunsWrapper {
      *
      * <p>Terminal states: PROCESSED, FAILED</p>
      *
+     * <p>Polls indefinitely until complete.</p>
+     *
      * @param request The create request
      * @return The final response when a terminal state is reached
-     * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public EditRunsRetrieveResponse createAndPoll(EditRunsCreateRequest request) throws PollingTimeoutError {
+    public EditRunsRetrieveResponse createAndPoll(EditRunsCreateRequest request) {
         return createAndPoll(request, PollingOptions.defaults());
     }
 
@@ -69,10 +71,8 @@ public class EditRunsWrapper {
      * @param request The create request
      * @param options Polling options
      * @return The final response when a terminal state is reached
-     * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public EditRunsRetrieveResponse createAndPoll(EditRunsCreateRequest request, PollingOptions options)
-            throws PollingTimeoutError {
+    public EditRunsRetrieveResponse createAndPoll(EditRunsCreateRequest request, PollingOptions options) {
 
         RequestOptions requestOptions = options.getRequestOptions();
 

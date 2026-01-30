@@ -10,7 +10,6 @@ import ai.extend.resources.classifyruns.requests.ClassifyRunsCreateRequest;
 import ai.extend.resources.classifyruns.types.ClassifyRunsCreateResponse;
 import ai.extend.resources.classifyruns.types.ClassifyRunsRetrieveResponse;
 import ai.extend.types.ProcessorRunStatus;
-import ai.extend.wrapper.errors.PollingTimeoutError;
 import ai.extend.wrapper.utilities.polling.Polling;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
 import java.util.HashSet;
@@ -18,6 +17,8 @@ import java.util.Set;
 
 /**
  * Wrapper for ClassifyRunsClient that adds polling functionality.
+ *
+ * <p>Polls indefinitely until a terminal state is reached.</p>
  */
 public class ClassifyRunsWrapper {
 
@@ -53,11 +54,12 @@ public class ClassifyRunsWrapper {
      *
      * <p>Terminal states: PROCESSED, FAILED, CANCELLED</p>
      *
+     * <p>Polls indefinitely until complete.</p>
+     *
      * @param request The create request
      * @return The final response when a terminal state is reached
-     * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public ClassifyRunsRetrieveResponse createAndPoll(ClassifyRunsCreateRequest request) throws PollingTimeoutError {
+    public ClassifyRunsRetrieveResponse createAndPoll(ClassifyRunsCreateRequest request) {
         return createAndPoll(request, PollingOptions.defaults());
     }
 
@@ -69,10 +71,8 @@ public class ClassifyRunsWrapper {
      * @param request The create request
      * @param options Polling options
      * @return The final response when a terminal state is reached
-     * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public ClassifyRunsRetrieveResponse createAndPoll(ClassifyRunsCreateRequest request, PollingOptions options)
-            throws PollingTimeoutError {
+    public ClassifyRunsRetrieveResponse createAndPoll(ClassifyRunsCreateRequest request, PollingOptions options) {
 
         RequestOptions requestOptions = options.getRequestOptions();
 

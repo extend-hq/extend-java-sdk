@@ -58,12 +58,12 @@ public final class Polling {
      * @param isTerminal A predicate that returns true when polling should stop
      * @param options    Polling configuration options
      * @return The final result when a terminal state is reached
-     * @throws PollingTimeoutError if the maximum wait time is exceeded
+     * @throws PollingTimeoutError if maxWaitMs is set and exceeded
      */
     public static <T> T pollUntilDone(Supplier<T> retrieve, Predicate<T> isTerminal, PollingOptions options)
             throws PollingTimeoutError {
 
-        int maxWaitMs = options.getMaxWaitMs();
+        Integer maxWaitMs = options.getMaxWaitMs();
         int initialDelayMs = options.getInitialDelayMs();
         int maxDelayMs = options.getMaxDelayMs();
         double jitterFraction = options.getJitterFraction();
@@ -80,7 +80,8 @@ public final class Polling {
 
             long elapsedMs = System.currentTimeMillis() - startTime;
 
-            if (elapsedMs >= maxWaitMs) {
+            // Only check timeout if maxWaitMs is set
+            if (maxWaitMs != null && elapsedMs >= maxWaitMs) {
                 throw new PollingTimeoutError(
                         String.format("Polling timed out after %dms (max: %dms)", elapsedMs, maxWaitMs),
                         (int) elapsedMs,
@@ -89,9 +90,14 @@ public final class Polling {
 
             int delay = calculateBackoffDelay(attempt, initialDelayMs, maxDelayMs, jitterFraction);
 
-            // Don't wait longer than remaining time
-            long remainingMs = maxWaitMs - elapsedMs;
-            int actualDelay = (int) Math.min(delay, remainingMs);
+            // If timeout is set, don't wait longer than remaining time
+            int actualDelay;
+            if (maxWaitMs != null) {
+                long remainingMs = maxWaitMs - elapsedMs;
+                actualDelay = (int) Math.min(delay, remainingMs);
+            } else {
+                actualDelay = delay;
+            }
 
             try {
                 Thread.sleep(actualDelay);
@@ -107,13 +113,14 @@ public final class Polling {
     /**
      * Polls a retrieve function until a terminal condition is met, using default options.
      *
+     * <p>Polls indefinitely until a terminal state is reached.</p>
+     *
      * @param <T>        The type of result returned by the retrieve function
      * @param retrieve   A supplier that retrieves the current state
      * @param isTerminal A predicate that returns true when polling should stop
      * @return The final result when a terminal state is reached
-     * @throws PollingTimeoutError if the maximum wait time is exceeded
      */
-    public static <T> T pollUntilDone(Supplier<T> retrieve, Predicate<T> isTerminal) throws PollingTimeoutError {
+    public static <T> T pollUntilDone(Supplier<T> retrieve, Predicate<T> isTerminal) {
         return pollUntilDone(retrieve, isTerminal, PollingOptions.defaults());
     }
 }

@@ -10,7 +10,6 @@ import ai.extend.resources.workflowruns.requests.WorkflowRunsCreateRequest;
 import ai.extend.resources.workflowruns.types.WorkflowRunsCreateResponse;
 import ai.extend.resources.workflowruns.types.WorkflowRunsRetrieveResponse;
 import ai.extend.types.WorkflowRunStatus;
-import ai.extend.wrapper.errors.PollingTimeoutError;
 import ai.extend.wrapper.utilities.polling.Polling;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
 import java.util.HashSet;
@@ -19,15 +18,9 @@ import java.util.Set;
 /**
  * Wrapper for WorkflowRunsClient that adds polling functionality.
  *
- * <p><strong>Note:</strong> Workflow runs can take significantly longer than processor runs.
- * The default timeout for this wrapper is 2 hours.</p>
+ * <p>Polls indefinitely until a terminal state is reached.</p>
  */
 public class WorkflowRunsWrapper {
-
-    /**
-     * Default max wait for workflows: 2 hours (7,200,000 ms).
-     */
-    public static final int DEFAULT_WORKFLOW_MAX_WAIT_MS = 2 * 60 * 60 * 1000;
 
     private static final Set<WorkflowRunStatus> NON_TERMINAL_STATUSES;
 
@@ -63,14 +56,16 @@ public class WorkflowRunsWrapper {
      *
      * <p>Terminal states: PROCESSED, FAILED, CANCELLED, NEEDS_REVIEW, REJECTED</p>
      *
-     * <p>Uses a default timeout of 2 hours.</p>
+     * <p>Polls indefinitely by default. For production use, set an explicit timeout:</p>
+     * <pre>{@code
+     * createAndPoll(request, PollingOptions.builder().maxWaitMs(300000).build());
+     * }</pre>
      *
      * @param request The create request
      * @return The final response when a terminal state is reached
-     * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public WorkflowRunsRetrieveResponse createAndPoll(WorkflowRunsCreateRequest request) throws PollingTimeoutError {
-        return createAndPoll(request, PollingOptions.workflowDefaults());
+    public WorkflowRunsRetrieveResponse createAndPoll(WorkflowRunsCreateRequest request) {
+        return createAndPoll(request, PollingOptions.defaults());
     }
 
     /**
@@ -79,12 +74,10 @@ public class WorkflowRunsWrapper {
      * <p>Terminal states: PROCESSED, FAILED, CANCELLED, NEEDS_REVIEW, REJECTED</p>
      *
      * @param request The create request
-     * @param options Polling options (consider using a longer timeout for workflows)
+     * @param options Polling options (set maxWaitMs for production use)
      * @return The final response when a terminal state is reached
-     * @throws PollingTimeoutError if polling times out before reaching a terminal state
      */
-    public WorkflowRunsRetrieveResponse createAndPoll(WorkflowRunsCreateRequest request, PollingOptions options)
-            throws PollingTimeoutError {
+    public WorkflowRunsRetrieveResponse createAndPoll(WorkflowRunsCreateRequest request, PollingOptions options) {
 
         RequestOptions requestOptions = options.getRequestOptions();
 

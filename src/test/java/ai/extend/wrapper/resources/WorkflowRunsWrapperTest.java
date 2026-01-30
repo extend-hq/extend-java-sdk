@@ -340,14 +340,8 @@ class WorkflowRunsWrapperTest {
         }
 
         @Test
-        @DisplayName("should use 2-hour default timeout for workflows")
-        void shouldUseTwoHourDefaultTimeout() {
-            assertEquals(2 * 60 * 60 * 1000, WorkflowRunsWrapper.DEFAULT_WORKFLOW_MAX_WAIT_MS);
-        }
-
-        @Test
-        @DisplayName("should use workflow defaults when not specifying options")
-        void shouldUseWorkflowDefaults() {
+        @DisplayName("should complete with default options (polls indefinitely)")
+        void shouldCompleteWithDefaultOptions() {
             String runId = "workflow_run_test123";
 
             WorkflowRun createRun = mock(WorkflowRun.class);
@@ -363,7 +357,7 @@ class WorkflowRunsWrapperTest {
 
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
 
-            // Should not throw - uses workflow defaults (2 hour timeout)
+            // Should complete - polls indefinitely by default
             WorkflowRunsRetrieveResponse result = wrapper.createAndPoll(null);
 
             assertEquals(WorkflowRunStatus.PROCESSED, result.getWorkflowRun().getStatus());
