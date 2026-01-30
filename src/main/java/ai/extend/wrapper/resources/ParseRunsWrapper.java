@@ -34,6 +34,13 @@ public class ParseRunsWrapper {
     }
     
     /**
+     * Package-private constructor for testing with a mock client.
+     */
+    ParseRunsWrapper(ParseRunsClient client) {
+        this.client = client;
+    }
+    
+    /**
      * Returns the underlying ParseRunsClient for direct API access.
      */
     public ParseRunsClient getClient() {

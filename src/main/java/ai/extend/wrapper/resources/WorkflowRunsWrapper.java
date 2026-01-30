@@ -45,6 +45,13 @@ public class WorkflowRunsWrapper {
     }
     
     /**
+     * Package-private constructor for testing with a mock client.
+     */
+    WorkflowRunsWrapper(WorkflowRunsClient client) {
+        this.client = client;
+    }
+    
+    /**
      * Returns the underlying WorkflowRunsClient for direct API access.
      */
     public WorkflowRunsClient getClient() {
