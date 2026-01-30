@@ -28,18 +28,20 @@ import okhttp3.Response;
  * <pre>{@code
  * Webhooks webhooks = new Webhooks();
  * 
- * // Verify and parse a webhook
+ * // Verify and parse a webhook (throws if signed URL received)
  * Map<String, Object> event = webhooks.verifyAndParse(body, headers, signingSecret);
  * }</pre>
  * 
  * <h3>Handling Signed URLs</h3>
  * <pre>{@code
- * Object result = webhooks.verifyAndParse(body, headers, signingSecret,
+ * VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(body, headers, signingSecret,
  *     VerifyAndParseOptions.builder().allowSignedUrl(true).build());
  * 
- * if (webhooks.isSignedUrlEvent(result)) {
- *     WebhookEventWithSignedUrl signedEvent = (WebhookEventWithSignedUrl) result;
+ * if (result.isSignedUrlEvent()) {
+ *     WebhookEventWithSignedUrl signedEvent = result.getSignedUrlEvent();
  *     Map<String, Object> fullEvent = webhooks.fetchSignedPayload(signedEvent);
+ * } else {
+ *     Map<String, Object> event = result.getEvent();
  * }
  * }</pre>
  */
@@ -58,7 +60,9 @@ public class Webhooks {
     /**
      * Verifies the webhook signature and parses the event.
      * 
-     * <p>Throws {@link SignedUrlNotAllowedError} if a signed URL payload is received.</p>
+     * <p>Throws {@link SignedUrlNotAllowedError} if a signed URL payload is received.
+     * Use {@link #verifyAndParseWithOptions} with {@code allowSignedUrl=true} to handle
+     * signed URL payloads.</p>
      *
      * @param body          The raw request body as a string
      * @param headers       The request headers (case-insensitive lookup supported)
@@ -67,31 +71,31 @@ public class Webhooks {
      * @throws WebhookSignatureVerificationError if signature verification fails
      * @throws SignedUrlNotAllowedError if a signed URL payload is received
      */
-    @SuppressWarnings("unchecked")
     public Map<String, Object> verifyAndParse(
             String body,
             Map<String, String> headers,
             String signingSecret) throws WebhookSignatureVerificationError, SignedUrlNotAllowedError {
-        Object result = verifyAndParse(body, headers, signingSecret, VerifyAndParseOptions.defaults());
-        return (Map<String, Object>) result;
+        VerifyAndParseResult result = verifyAndParseWithOptions(body, headers, signingSecret, 
+            VerifyAndParseOptions.defaults());
+        return result.getEvent();
     }
     
     /**
      * Verifies the webhook signature and parses the event with options.
      * 
-     * <p>If {@code allowSignedUrl} is true, may return a {@link WebhookEventWithSignedUrl}.
-     * Use {@link #isSignedUrlEvent} to check the return type.</p>
+     * <p>Returns a {@link VerifyAndParseResult} that provides type-safe access to either
+     * a normal event or a signed URL event.</p>
      *
      * @param body          The raw request body as a string
      * @param headers       The request headers (case-insensitive lookup supported)
      * @param signingSecret The webhook signing secret from the Extend dashboard
      * @param options       Verification and parsing options
-     * @return The parsed webhook event, or {@link WebhookEventWithSignedUrl} if signed URL
+     * @return A result containing either the event or signed URL event
      * @throws WebhookSignatureVerificationError if signature verification fails
      * @throws SignedUrlNotAllowedError if signed URL received without allowSignedUrl=true
      */
     @SuppressWarnings("unchecked")
-    public Object verifyAndParse(
+    public VerifyAndParseResult verifyAndParseWithOptions(
             String body,
             Map<String, String> headers,
             String signingSecret,
@@ -106,10 +110,10 @@ public class Webhooks {
             if (!options.isAllowSignedUrl()) {
                 throw new SignedUrlNotAllowedError();
             }
-            return parseAsSignedUrlEvent(event);
+            return VerifyAndParseResult.ofSignedUrlEvent(parseAsSignedUrlEvent(event));
         }
         
-        return event;
+        return VerifyAndParseResult.ofEvent(event);
     }
     
     /**
@@ -153,18 +157,18 @@ public class Webhooks {
      * with {@link #verify}.</p>
      *
      * @param body The raw request body as a string
-     * @return The parsed event, which may be a {@link WebhookEventWithSignedUrl}
+     * @return A result containing either the event or signed URL event
      */
     @SuppressWarnings("unchecked")
-    public Object parse(String body) {
+    public VerifyAndParseResult parse(String body) {
         Map<String, Object> event = parseJsonBody(body);
         Map<String, Object> payload = (Map<String, Object>) event.get("payload");
         
         if (isSignedDataUrlPayload(payload)) {
-            return parseAsSignedUrlEvent(event);
+            return VerifyAndParseResult.ofSignedUrlEvent(parseAsSignedUrlEvent(event));
         }
         
-        return event;
+        return VerifyAndParseResult.ofEvent(event);
     }
     
     /**
@@ -174,7 +178,6 @@ public class Webhooks {
      * @return The full webhook event with resolved payload
      * @throws WebhookPayloadFetchError if the fetch fails
      */
-    @SuppressWarnings("unchecked")
     public Map<String, Object> fetchSignedPayload(WebhookEventWithSignedUrl event) 
             throws WebhookPayloadFetchError {
         String url = event.getPayload().getData();
@@ -209,16 +212,6 @@ public class Webhooks {
         } catch (Exception e) {
             throw new WebhookPayloadFetchError("Failed to fetch signed payload: " + e.getMessage(), e);
         }
-    }
-    
-    /**
-     * Checks if the event is a signed URL event.
-     *
-     * @param event The parsed event (from verifyAndParse or parse)
-     * @return true if the event is a {@link WebhookEventWithSignedUrl}
-     */
-    public boolean isSignedUrlEvent(Object event) {
-        return event instanceof WebhookEventWithSignedUrl;
     }
     
     // ========== Private Methods ==========
