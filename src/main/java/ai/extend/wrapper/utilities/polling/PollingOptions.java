@@ -6,32 +6,55 @@ package ai.extend.wrapper.utilities.polling;
 import ai.extend.core.RequestOptions;
 
 /**
- * Configuration options for polling operations.
+ * Configuration options for polling operations with hybrid polling strategy.
  *
- * <p>By default, polling runs indefinitely until a terminal state is reached.</p>
+ * <p>The default strategy polls at 1-second intervals for the first 30 seconds,
+ * then gradually increases the interval using exponential backoff (1.15x multiplier)
+ * up to a maximum of 30 seconds between polls.</p>
  *
  * <p>Use the builder pattern to create instances with custom values:</p>
  * <pre>{@code
- * // Polls indefinitely
+ * // Polls indefinitely with default hybrid strategy
  * PollingOptions options = PollingOptions.builder().build();
  *
  * // With custom timeout
  * PollingOptions options = PollingOptions.builder()
  *     .maxWaitMs(300000)  // 5 minutes
  *     .build();
+ *
+ * // Custom fast polling phase
+ * PollingOptions options = PollingOptions.builder()
+ *     .fastPollDurationMs(60000)  // Fast poll for 60 seconds
+ *     .fastPollIntervalMs(500)    // Poll every 500ms during fast phase
+ *     .build();
  * }</pre>
  */
 public class PollingOptions {
 
     /**
-     * Default initial delay between polls: 1 second (1,000 ms).
+     * Default fast poll duration: 30 seconds (30,000 ms).
+     */
+    public static final int DEFAULT_FAST_POLL_DURATION_MS = 30_000;
+
+    /**
+     * Default fast poll interval: 1 second (1,000 ms).
+     */
+    public static final int DEFAULT_FAST_POLL_INTERVAL_MS = 1_000;
+
+    /**
+     * Default initial delay for backoff phase: 1 second (1,000 ms).
      */
     public static final int DEFAULT_INITIAL_DELAY_MS = 1_000;
 
     /**
-     * Default maximum delay between polls: 60 seconds (60,000 ms).
+     * Default maximum delay between polls: 30 seconds (30,000 ms).
      */
-    public static final int DEFAULT_MAX_DELAY_MS = 60_000;
+    public static final int DEFAULT_MAX_DELAY_MS = 30_000;
+
+    /**
+     * Default backoff multiplier: 1.15 (15% increase each attempt).
+     */
+    public static final double DEFAULT_BACKOFF_MULTIPLIER = 1.15;
 
     /**
      * Default jitter fraction: 0.25 (±25% randomization).
@@ -39,15 +62,21 @@ public class PollingOptions {
     public static final double DEFAULT_JITTER_FRACTION = 0.25;
 
     private final Integer maxWaitMs;  // null = poll indefinitely
+    private final int fastPollDurationMs;
+    private final int fastPollIntervalMs;
     private final int initialDelayMs;
     private final int maxDelayMs;
+    private final double backoffMultiplier;
     private final double jitterFraction;
     private final RequestOptions requestOptions;
 
     private PollingOptions(Builder builder) {
         this.maxWaitMs = builder.maxWaitMs;
+        this.fastPollDurationMs = builder.fastPollDurationMs;
+        this.fastPollIntervalMs = builder.fastPollIntervalMs;
         this.initialDelayMs = builder.initialDelayMs;
         this.maxDelayMs = builder.maxDelayMs;
+        this.backoffMultiplier = builder.backoffMultiplier;
         this.jitterFraction = builder.jitterFraction;
         this.requestOptions = builder.requestOptions;
     }
@@ -67,7 +96,21 @@ public class PollingOptions {
     }
 
     /**
-     * Returns the initial delay between polls in milliseconds.
+     * Returns the duration of the fast polling phase in milliseconds.
+     */
+    public int getFastPollDurationMs() {
+        return fastPollDurationMs;
+    }
+
+    /**
+     * Returns the interval between polls during the fast polling phase in milliseconds.
+     */
+    public int getFastPollIntervalMs() {
+        return fastPollIntervalMs;
+    }
+
+    /**
+     * Returns the initial delay for the backoff phase in milliseconds.
      */
     public int getInitialDelayMs() {
         return initialDelayMs;
@@ -78,6 +121,13 @@ public class PollingOptions {
      */
     public int getMaxDelayMs() {
         return maxDelayMs;
+    }
+
+    /**
+     * Returns the multiplier for exponential backoff.
+     */
+    public double getBackoffMultiplier() {
+        return backoffMultiplier;
     }
 
     /**
@@ -113,8 +163,11 @@ public class PollingOptions {
      */
     public static class Builder {
         private Integer maxWaitMs = null;  // null = poll indefinitely
+        private int fastPollDurationMs = DEFAULT_FAST_POLL_DURATION_MS;
+        private int fastPollIntervalMs = DEFAULT_FAST_POLL_INTERVAL_MS;
         private int initialDelayMs = DEFAULT_INITIAL_DELAY_MS;
         private int maxDelayMs = DEFAULT_MAX_DELAY_MS;
+        private double backoffMultiplier = DEFAULT_BACKOFF_MULTIPLIER;
         private double jitterFraction = DEFAULT_JITTER_FRACTION;
         private RequestOptions requestOptions;
 
@@ -128,7 +181,26 @@ public class PollingOptions {
         }
 
         /**
-         * Sets the initial delay between polls in milliseconds.
+         * Sets the duration of the fast polling phase in milliseconds.
+         * During this phase, polls occur at a fixed interval (fastPollIntervalMs).
+         * Default: 30000 (30 seconds)
+         */
+        public Builder fastPollDurationMs(int fastPollDurationMs) {
+            this.fastPollDurationMs = fastPollDurationMs;
+            return this;
+        }
+
+        /**
+         * Sets the interval between polls during the fast polling phase in milliseconds.
+         * Default: 1000 (1 second)
+         */
+        public Builder fastPollIntervalMs(int fastPollIntervalMs) {
+            this.fastPollIntervalMs = fastPollIntervalMs;
+            return this;
+        }
+
+        /**
+         * Sets the initial delay for the backoff phase in milliseconds.
          * Default: 1000 (1 second)
          */
         public Builder initialDelayMs(int initialDelayMs) {
@@ -138,10 +210,20 @@ public class PollingOptions {
 
         /**
          * Sets the maximum delay between polls in milliseconds.
-         * Default: 60000 (60 seconds)
+         * Default: 30000 (30 seconds)
          */
         public Builder maxDelayMs(int maxDelayMs) {
             this.maxDelayMs = maxDelayMs;
+            return this;
+        }
+
+        /**
+         * Sets the multiplier for exponential backoff during the backoff phase.
+         * A value of 1.15 means each delay is 1.15x the previous delay.
+         * Default: 1.15
+         */
+        public Builder backoffMultiplier(double backoffMultiplier) {
+            this.backoffMultiplier = backoffMultiplier;
             return this;
         }
 

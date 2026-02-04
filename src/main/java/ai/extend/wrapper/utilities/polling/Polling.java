@@ -8,11 +8,17 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
- * Utility class for polling operations with exponential backoff.
+ * Utility class for polling operations with hybrid polling strategy.
  *
  * <p>This class provides methods to poll an API endpoint until a terminal
- * condition is met, using exponential backoff with jitter to avoid
- * thundering herd problems.</p>
+ * condition is met. The default strategy uses fast polling at fixed intervals
+ * for an initial period, then switches to exponential backoff with jitter.</p>
+ *
+ * <p>Default behavior:</p>
+ * <ul>
+ *   <li>Fast phase: Poll every 1 second for the first 30 seconds</li>
+ *   <li>Backoff phase: Exponential backoff with 1.15x multiplier, max 30 second delay</li>
+ * </ul>
  */
 public final class Polling {
 
@@ -23,18 +29,24 @@ public final class Polling {
     /**
      * Calculates the next delay using exponential backoff with proportional jitter.
      *
-     * <p>Formula: min(initialDelay * 2^attempt, maxDelay) * (1 + random(-jitter, +jitter))</p>
+     * <p>Formula: min(initialDelay * multiplier^attempt, maxDelay) * (1 + random(-jitter, +jitter))</p>
      *
-     * @param attempt         The current attempt number (0-based)
-     * @param initialDelayMs  The initial delay in milliseconds
-     * @param maxDelayMs      The maximum delay in milliseconds
-     * @param jitterFraction  The jitter fraction (e.g., 0.25 for ±25%)
+     * @param attempt           The current attempt number (0-based)
+     * @param initialDelayMs    The initial delay in milliseconds
+     * @param maxDelayMs        The maximum delay in milliseconds
+     * @param jitterFraction    The jitter fraction (e.g., 0.25 for ±25%)
+     * @param backoffMultiplier The multiplier for exponential backoff (default: 2.0)
      * @return The calculated delay in milliseconds
      */
-    public static int calculateBackoffDelay(int attempt, int initialDelayMs, int maxDelayMs, double jitterFraction) {
+    public static int calculateBackoffDelay(
+            int attempt,
+            int initialDelayMs,
+            int maxDelayMs,
+            double jitterFraction,
+            double backoffMultiplier) {
 
-        // Exponential backoff: initialDelay * 2^attempt
-        long exponentialDelay = initialDelayMs * (long) Math.pow(2, attempt);
+        // Exponential backoff: initialDelay * multiplier^attempt
+        long exponentialDelay = (long) (initialDelayMs * Math.pow(backoffMultiplier, attempt));
 
         // Cap at maxDelay
         int cappedDelay = (int) Math.min(exponentialDelay, maxDelayMs);
@@ -47,11 +59,87 @@ public final class Polling {
     }
 
     /**
+     * Calculates the next delay using exponential backoff with default 2x multiplier.
+     *
+     * @param attempt         The current attempt number (0-based)
+     * @param initialDelayMs  The initial delay in milliseconds
+     * @param maxDelayMs      The maximum delay in milliseconds
+     * @param jitterFraction  The jitter fraction (e.g., 0.25 for ±25%)
+     * @return The calculated delay in milliseconds
+     */
+    public static int calculateBackoffDelay(int attempt, int initialDelayMs, int maxDelayMs, double jitterFraction) {
+        return calculateBackoffDelay(attempt, initialDelayMs, maxDelayMs, jitterFraction, 2.0);
+    }
+
+    /**
+     * Calculates the delay for a hybrid polling strategy based on elapsed time.
+     *
+     * <p>During the fast polling phase (elapsed &lt; fastPollDurationMs), returns a fixed
+     * interval with jitter. After the fast phase ends, switches to exponential backoff.</p>
+     *
+     * @param elapsedMs           Total elapsed time since polling started
+     * @param fastPollDurationMs  Duration of fast polling phase in milliseconds
+     * @param fastPollIntervalMs  Interval between polls during fast phase in milliseconds
+     * @param initialDelayMs      Initial delay for backoff phase in milliseconds
+     * @param maxDelayMs          Maximum delay cap in milliseconds
+     * @param backoffMultiplier   Multiplier for exponential backoff
+     * @param jitterFraction      Jitter fraction for randomization
+     * @return The delay in milliseconds until the next poll
+     */
+    public static int calculateHybridDelay(
+            long elapsedMs,
+            int fastPollDurationMs,
+            int fastPollIntervalMs,
+            int initialDelayMs,
+            int maxDelayMs,
+            double backoffMultiplier,
+            double jitterFraction) {
+
+        // Fast polling phase: use fixed interval with jitter
+        if (elapsedMs < fastPollDurationMs) {
+            double jitter = (Math.random() * 2 - 1) * jitterFraction;
+            return (int) Math.round(fastPollIntervalMs * (1 + jitter));
+        }
+
+        // Backoff phase: calculate attempt number based on time since fast phase ended
+        long timeSinceBackoffStart = elapsedMs - fastPollDurationMs;
+
+        // Calculate which "attempt" we're on based on elapsed time in backoff phase
+        // Sum of geometric series: S = a * (r^n - 1) / (r - 1)
+        // Solving for n: n = log((S * (r - 1) / a) + 1) / log(r)
+        int attempt;
+        if (backoffMultiplier == 1.0) {
+            // Linear case: attempt = timeSinceBackoffStart / initialDelayMs
+            attempt = (int) (timeSinceBackoffStart / initialDelayMs);
+        } else {
+            double r = backoffMultiplier;
+            double a = initialDelayMs;
+            double s = timeSinceBackoffStart;
+
+            // Estimate attempt from geometric series sum formula
+            double innerValue = (s * (r - 1)) / a + 1;
+            if (innerValue <= 0) {
+                attempt = 0;
+            } else {
+                attempt = (int) (Math.log(innerValue) / Math.log(r));
+            }
+        }
+
+        return calculateBackoffDelay(attempt, initialDelayMs, maxDelayMs, jitterFraction, backoffMultiplier);
+    }
+
+    /**
      * Polls a retrieve function until a terminal condition is met.
      *
-     * <p>This method repeatedly calls the {@code retrieve} function and checks
-     * if the result satisfies the {@code isTerminal} predicate. It uses exponential
-     * backoff with jitter between calls.</p>
+     * <p>This method uses a hybrid polling strategy: fast polling at fixed intervals
+     * for an initial period, then exponential backoff with jitter. This provides low
+     * latency for quick operations while still reducing server load for longer ones.</p>
+     *
+     * <p>Default behavior:</p>
+     * <ul>
+     *   <li>Fast phase: Poll every 1 second for the first 30 seconds</li>
+     *   <li>Backoff phase: Exponential backoff with 1.15x multiplier, max 30 second delay</li>
+     * </ul>
      *
      * @param <T>        The type of result returned by the retrieve function
      * @param retrieve   A supplier that retrieves the current state
@@ -64,12 +152,14 @@ public final class Polling {
             throws PollingTimeoutError {
 
         Integer maxWaitMs = options.getMaxWaitMs();
+        int fastPollDurationMs = options.getFastPollDurationMs();
+        int fastPollIntervalMs = options.getFastPollIntervalMs();
         int initialDelayMs = options.getInitialDelayMs();
         int maxDelayMs = options.getMaxDelayMs();
+        double backoffMultiplier = options.getBackoffMultiplier();
         double jitterFraction = options.getJitterFraction();
 
         long startTime = System.currentTimeMillis();
-        int attempt = 0;
 
         while (true) {
             T result = retrieve.get();
@@ -88,7 +178,14 @@ public final class Polling {
                         maxWaitMs);
             }
 
-            int delay = calculateBackoffDelay(attempt, initialDelayMs, maxDelayMs, jitterFraction);
+            int delay = calculateHybridDelay(
+                    elapsedMs,
+                    fastPollDurationMs,
+                    fastPollIntervalMs,
+                    initialDelayMs,
+                    maxDelayMs,
+                    backoffMultiplier,
+                    jitterFraction);
 
             // If timeout is set, don't wait longer than remaining time
             int actualDelay;
@@ -105,15 +202,13 @@ public final class Polling {
                 Thread.currentThread().interrupt();
                 throw new RuntimeException("Polling interrupted", e);
             }
-
-            attempt++;
         }
     }
 
     /**
      * Polls a retrieve function until a terminal condition is met, using default options.
      *
-     * <p>Polls indefinitely until a terminal state is reached.</p>
+     * <p>Polls indefinitely until a terminal state is reached using hybrid polling strategy.</p>
      *
      * @param <T>        The type of result returned by the retrieve function
      * @param retrieve   A supplier that retrieves the current state
