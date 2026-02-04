@@ -22,7 +22,7 @@ class PollingTest {
     class CalculateBackoffDelayTests {
 
         @Nested
-        @DisplayName("exponential backoff calculation")
+        @DisplayName("exponential backoff with default 2x multiplier")
         class ExponentialBackoffTests {
 
             @Test
@@ -58,6 +58,36 @@ class PollingTest {
                 assertEquals(500, Polling.calculateBackoffDelay(0, 500, 30000, 0));
                 assertEquals(1000, Polling.calculateBackoffDelay(1, 500, 30000, 0));
                 assertEquals(2000, Polling.calculateBackoffDelay(2, 500, 30000, 0));
+            }
+        }
+
+        @Nested
+        @DisplayName("exponential backoff with custom multiplier")
+        class CustomMultiplierTests {
+
+            @Test
+            @DisplayName("should use 1.5x multiplier when specified")
+            void shouldUse15xMultiplier() {
+                assertEquals(1000, Polling.calculateBackoffDelay(0, 1000, 30000, 0, 1.5));
+                assertEquals(1500, Polling.calculateBackoffDelay(1, 1000, 30000, 0, 1.5));
+                assertEquals(2250, Polling.calculateBackoffDelay(2, 1000, 30000, 0, 1.5));
+                assertEquals(3375, Polling.calculateBackoffDelay(3, 1000, 30000, 0, 1.5));
+            }
+
+            @Test
+            @DisplayName("should cap at maxDelayMs with 1.5x multiplier")
+            void shouldCapAtMaxWithCustomMultiplier() {
+                // 1.5^10 * 1000 ≈ 57665, capped at 30000
+                int delay = Polling.calculateBackoffDelay(10, 1000, 30000, 0, 1.5);
+                assertEquals(30000, delay);
+            }
+
+            @Test
+            @DisplayName("should work with 1x multiplier (constant delay)")
+            void shouldWorkWith1xMultiplier() {
+                assertEquals(1000, Polling.calculateBackoffDelay(0, 1000, 30000, 0, 1.0));
+                assertEquals(1000, Polling.calculateBackoffDelay(5, 1000, 30000, 0, 1.0));
+                assertEquals(1000, Polling.calculateBackoffDelay(10, 1000, 30000, 0, 1.0));
             }
         }
 
@@ -138,6 +168,134 @@ class PollingTest {
     }
 
     // ============================================================================
+    // calculateHybridDelay tests
+    // ============================================================================
+
+    @Nested
+    @DisplayName("calculateHybridDelay")
+    class CalculateHybridDelayTests {
+
+        @Nested
+        @DisplayName("fast polling phase")
+        class FastPollingPhaseTests {
+
+            @Test
+            @DisplayName("should return fastPollIntervalMs during fast phase")
+            void shouldReturnFastPollIntervalDuringFastPhase() {
+                assertEquals(1000, Polling.calculateHybridDelay(0, 30000, 1000, 1000, 30000, 1.15, 0));
+                assertEquals(1000, Polling.calculateHybridDelay(10000, 30000, 1000, 1000, 30000, 1.15, 0));
+                assertEquals(1000, Polling.calculateHybridDelay(29999, 30000, 1000, 1000, 30000, 1.15, 0));
+            }
+
+            @Test
+            @DisplayName("should apply jitter during fast phase")
+            void shouldApplyJitterDuringFastPhase() {
+                int minSeen = Integer.MAX_VALUE;
+                int maxSeen = Integer.MIN_VALUE;
+
+                for (int i = 0; i < 100; i++) {
+                    int delay = Polling.calculateHybridDelay(0, 30000, 1000, 1000, 30000, 1.15, 0.25);
+                    minSeen = Math.min(minSeen, delay);
+                    maxSeen = Math.max(maxSeen, delay);
+                }
+
+                // With 25% jitter, delays should be between 750 and 1250
+                assertTrue(minSeen >= 750, "Min delay should be >= 750, was: " + minSeen);
+                assertTrue(maxSeen <= 1250, "Max delay should be <= 1250, was: " + maxSeen);
+            }
+
+            @Test
+            @DisplayName("should respect custom fastPollIntervalMs")
+            void shouldRespectCustomFastPollIntervalMs() {
+                int delay = Polling.calculateHybridDelay(0, 30000, 500, 1000, 30000, 1.15, 0);
+                assertEquals(500, delay);
+            }
+        }
+
+        @Nested
+        @DisplayName("backoff phase")
+        class BackoffPhaseTests {
+
+            @Test
+            @DisplayName("should switch to backoff after fastPollDurationMs")
+            void shouldSwitchToBackoffAfterFastPhase() {
+                // At exactly 30s, we're in backoff phase, attempt 0
+                int delay = Polling.calculateHybridDelay(30000, 30000, 1000, 1000, 30000, 1.15, 0);
+                assertEquals(1000, delay);
+            }
+
+            @Test
+            @DisplayName("should increase delay during backoff phase with 1.15x multiplier")
+            void shouldIncreaseDelayDuringBackoffPhase() {
+                int delay30s = Polling.calculateHybridDelay(30000, 30000, 1000, 1000, 30000, 1.15, 0);
+                assertEquals(1000, delay30s); // attempt 0
+
+                int delay31s = Polling.calculateHybridDelay(31000, 30000, 1000, 1000, 30000, 1.15, 0);
+                assertEquals(1150, delay31s); // attempt 1
+
+                int delay32_15s = Polling.calculateHybridDelay(32150, 30000, 1000, 1000, 30000, 1.15, 0);
+                assertEquals(1322, delay32_15s); // attempt 2
+            }
+
+            @Test
+            @DisplayName("should cap delay at maxDelayMs")
+            void shouldCapDelayAtMaxDelayMs() {
+                // Far into backoff phase, delay should be capped
+                int delay = Polling.calculateHybridDelay(300000, 30000, 1000, 1000, 30000, 1.15, 0);
+                assertEquals(30000, delay);
+            }
+
+            @Test
+            @DisplayName("should work with 2x multiplier")
+            void shouldWorkWith2xMultiplier() {
+                int delay30s = Polling.calculateHybridDelay(30000, 30000, 1000, 1000, 30000, 2.0, 0);
+                assertEquals(1000, delay30s);
+
+                int delay31s = Polling.calculateHybridDelay(31000, 30000, 1000, 1000, 30000, 2.0, 0);
+                assertEquals(2000, delay31s);
+            }
+
+            @Test
+            @DisplayName("should work with 1x multiplier (constant delay)")
+            void shouldWorkWith1xMultiplier() {
+                assertEquals(1000, Polling.calculateHybridDelay(30000, 30000, 1000, 1000, 30000, 1.0, 0));
+                assertEquals(1000, Polling.calculateHybridDelay(60000, 30000, 1000, 1000, 30000, 1.0, 0));
+                assertEquals(1000, Polling.calculateHybridDelay(120000, 30000, 1000, 1000, 30000, 1.0, 0));
+            }
+        }
+
+        @Nested
+        @DisplayName("edge cases")
+        class EdgeCaseTests {
+
+            @Test
+            @DisplayName("should handle fastPollDurationMs = 0 (pure backoff)")
+            void shouldHandleZeroFastPollDuration() {
+                // Should immediately use backoff
+                int delay = Polling.calculateHybridDelay(0, 0, 1000, 1000, 30000, 1.15, 0);
+                assertEquals(1000, delay);
+            }
+
+            @Test
+            @DisplayName("should handle very long elapsed times")
+            void shouldHandleVeryLongElapsedTimes() {
+                // 1 hour elapsed
+                int delay = Polling.calculateHybridDelay(3600000, 30000, 1000, 1000, 30000, 1.15, 0);
+                assertEquals(30000, delay); // Should be capped
+            }
+
+            @Test
+            @DisplayName("should return positive delay for all inputs")
+            void shouldReturnPositiveDelayForAllInputs() {
+                for (int elapsed = 0; elapsed < 100000; elapsed += 5000) {
+                    int delay = Polling.calculateHybridDelay(elapsed, 30000, 1000, 1000, 30000, 1.15, 0);
+                    assertTrue(delay > 0, "Delay should be positive for elapsed=" + elapsed);
+                }
+            }
+        }
+    }
+
+    // ============================================================================
     // pollUntilDone tests
     // ============================================================================
 
@@ -179,7 +337,7 @@ class PollingTest {
                         },
                         r -> r.status.equals("DONE"),
                         PollingOptions.builder()
-                                .initialDelayMs(1)
+                                .fastPollIntervalMs(1)
                                 .maxWaitMs(10000)
                                 .jitterFraction(0)
                                 .build());
@@ -210,6 +368,69 @@ class PollingTest {
         }
 
         @Nested
+        @DisplayName("hybrid polling strategy")
+        class HybridPollingTests {
+
+            @Test
+            @DisplayName("should use fast polling during fast phase")
+            void shouldUseFastPollingDuringFastPhase() {
+                AtomicInteger callCount = new AtomicInteger(0);
+                long[] callTimes = new long[4];
+
+                TestResult result = Polling.pollUntilDone(
+                        () -> {
+                            int count = callCount.getAndIncrement();
+                            if (count < 4) {
+                                callTimes[count] = System.currentTimeMillis();
+                            }
+                            return new TestResult(count >= 3 ? "DONE" : "PROCESSING", count);
+                        },
+                        r -> r.status.equals("DONE"),
+                        PollingOptions.builder()
+                                .fastPollDurationMs(30000)  // Long fast phase
+                                .fastPollIntervalMs(10)
+                                .jitterFraction(0)
+                                .maxWaitMs(5000)
+                                .build());
+
+                assertEquals(4, callCount.get());
+
+                // All delays should be approximately equal during fast phase
+                for (int i = 1; i < 4; i++) {
+                    long delay = callTimes[i] - callTimes[i - 1];
+                    assertTrue(delay >= 8, "Delay should be >= 8, was: " + delay);
+                    assertTrue(delay < 50, "Delay should be < 50, was: " + delay);
+                }
+            }
+
+            @Test
+            @DisplayName("should support disabling fast phase with fastPollDurationMs=0")
+            void shouldSupportDisablingFastPhase() {
+                AtomicInteger callCount = new AtomicInteger(0);
+
+                long startTime = System.currentTimeMillis();
+
+                TestResult result = Polling.pollUntilDone(
+                        () -> {
+                            int count = callCount.incrementAndGet();
+                            return new TestResult(count >= 2 ? "DONE" : "PROCESSING", count);
+                        },
+                        r -> r.status.equals("DONE"),
+                        PollingOptions.builder()
+                                .fastPollDurationMs(0)  // Pure backoff mode
+                                .initialDelayMs(50)
+                                .jitterFraction(0)
+                                .maxWaitMs(5000)
+                                .build());
+
+                long elapsed = System.currentTimeMillis() - startTime;
+
+                // Should have waited ~50ms (initial delay in backoff mode)
+                assertTrue(elapsed >= 45, "Should have waited at least 45ms, waited: " + elapsed);
+            }
+        }
+
+        @Nested
         @DisplayName("timeout behavior")
         class TimeoutTests {
 
@@ -222,7 +443,7 @@ class PollingTest {
                             r -> false,
                             PollingOptions.builder()
                                     .maxWaitMs(50)
-                                    .initialDelayMs(10)
+                                    .fastPollIntervalMs(10)
                                     .jitterFraction(0)
                                     .build());
                 });
@@ -237,7 +458,7 @@ class PollingTest {
                             r -> false,
                             PollingOptions.builder()
                                     .maxWaitMs(50)
-                                    .initialDelayMs(10)
+                                    .fastPollIntervalMs(10)
                                     .jitterFraction(0)
                                     .build());
                     fail("Expected PollingTimeoutError");
@@ -258,7 +479,7 @@ class PollingTest {
                             r -> false,
                             PollingOptions.builder()
                                     .maxWaitMs(100)
-                                    .initialDelayMs(10)
+                                    .fastPollIntervalMs(10)
                                     .jitterFraction(0)
                                     .build());
                 });
@@ -281,12 +502,28 @@ class PollingTest {
                         },
                         r -> r.status.equals("DONE"),
                         PollingOptions.builder()
-                                .initialDelayMs(1)
+                                .fastPollIntervalMs(1)
                                 .jitterFraction(0)
                                 .build());  // No maxWaitMs set
 
                 assertEquals(3, callCount.get());
                 assertEquals("DONE", result.status);
+            }
+
+            @Test
+            @DisplayName("should timeout during fast polling phase")
+            void shouldTimeoutDuringFastPhase() {
+                assertThrows(PollingTimeoutError.class, () -> {
+                    Polling.pollUntilDone(
+                            () -> new TestResult("PROCESSING", 0),
+                            r -> false,
+                            PollingOptions.builder()
+                                    .fastPollDurationMs(30000)  // Long fast phase
+                                    .fastPollIntervalMs(10)
+                                    .maxWaitMs(50)  // Short timeout
+                                    .jitterFraction(0)
+                                    .build());
+                });
             }
         }
 
@@ -376,13 +613,16 @@ class PollingTest {
     class PollingOptionsTests {
 
         @Test
-        @DisplayName("should poll indefinitely by default (no timeout)")
-        void shouldPollIndefinitelyByDefault() {
+        @DisplayName("should have sensible defaults for hybrid polling")
+        void shouldHaveSensibleDefaults() {
             PollingOptions options = PollingOptions.defaults();
             assertNull(options.getMaxWaitMs());
             assertFalse(options.hasTimeout());
+            assertEquals(30_000, options.getFastPollDurationMs());
+            assertEquals(1_000, options.getFastPollIntervalMs());
             assertEquals(1_000, options.getInitialDelayMs());
-            assertEquals(60_000, options.getMaxDelayMs());
+            assertEquals(30_000, options.getMaxDelayMs());
+            assertEquals(1.15, options.getBackoffMultiplier());
             assertEquals(0.25, options.getJitterFraction());
             assertNull(options.getRequestOptions());
         }
@@ -392,15 +632,21 @@ class PollingTest {
         void shouldAllowCustomValues() {
             PollingOptions options = PollingOptions.builder()
                     .maxWaitMs(60000)
+                    .fastPollDurationMs(15000)
+                    .fastPollIntervalMs(500)
                     .initialDelayMs(500)
                     .maxDelayMs(10000)
+                    .backoffMultiplier(2.0)
                     .jitterFraction(0.5)
                     .build();
 
             assertEquals(Integer.valueOf(60000), options.getMaxWaitMs());
             assertTrue(options.hasTimeout());
+            assertEquals(15000, options.getFastPollDurationMs());
+            assertEquals(500, options.getFastPollIntervalMs());
             assertEquals(500, options.getInitialDelayMs());
             assertEquals(10000, options.getMaxDelayMs());
+            assertEquals(2.0, options.getBackoffMultiplier());
             assertEquals(0.5, options.getJitterFraction());
         }
     }
