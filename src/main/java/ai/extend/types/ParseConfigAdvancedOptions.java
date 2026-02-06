@@ -29,6 +29,8 @@ public final class ParseConfigAdvancedOptions {
 
     private final Optional<Double> verticalGroupingThreshold;
 
+    private final Optional<ParseConfigAdvancedOptionsReturnOcr> returnOcr;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseConfigAdvancedOptions(
@@ -36,11 +38,13 @@ public final class ParseConfigAdvancedOptions {
             Optional<Boolean> agenticOcrEnabled,
             Optional<List<PageRangesItem>> pageRanges,
             Optional<Double> verticalGroupingThreshold,
+            Optional<ParseConfigAdvancedOptionsReturnOcr> returnOcr,
             Map<String, Object> additionalProperties) {
         this.pageRotationEnabled = pageRotationEnabled;
         this.agenticOcrEnabled = agenticOcrEnabled;
         this.pageRanges = pageRanges;
         this.verticalGroupingThreshold = verticalGroupingThreshold;
+        this.returnOcr = returnOcr;
         this.additionalProperties = additionalProperties;
     }
 
@@ -53,7 +57,7 @@ public final class ParseConfigAdvancedOptions {
     }
 
     /**
-     * @return Whether to enable agentic OCR corrections using VLM-based review and correction of OCR errors for messy handwriting and poorly scanned text.
+     * @return Whether to enable agentic OCR corrections using VLM-based review and correction of OCR errors for messy handwriting and poorly scanned text. Deprecated - use <code>blockOptions.text.agentic</code> or <code>blockOptions.tables.agentic</code> instead for more granular control.
      */
     @JsonProperty("agenticOcrEnabled")
     public Optional<Boolean> getAgenticOcrEnabled() {
@@ -73,6 +77,14 @@ public final class ParseConfigAdvancedOptions {
         return verticalGroupingThreshold;
     }
 
+    /**
+     * @return Options for returning raw OCR data in the response.
+     */
+    @JsonProperty("returnOcr")
+    public Optional<ParseConfigAdvancedOptionsReturnOcr> getReturnOcr() {
+        return returnOcr;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -88,13 +100,18 @@ public final class ParseConfigAdvancedOptions {
         return pageRotationEnabled.equals(other.pageRotationEnabled)
                 && agenticOcrEnabled.equals(other.agenticOcrEnabled)
                 && pageRanges.equals(other.pageRanges)
-                && verticalGroupingThreshold.equals(other.verticalGroupingThreshold);
+                && verticalGroupingThreshold.equals(other.verticalGroupingThreshold)
+                && returnOcr.equals(other.returnOcr);
     }
 
     @java.lang.Override
     public int hashCode() {
         return Objects.hash(
-                this.pageRotationEnabled, this.agenticOcrEnabled, this.pageRanges, this.verticalGroupingThreshold);
+                this.pageRotationEnabled,
+                this.agenticOcrEnabled,
+                this.pageRanges,
+                this.verticalGroupingThreshold,
+                this.returnOcr);
     }
 
     @java.lang.Override
@@ -116,6 +133,8 @@ public final class ParseConfigAdvancedOptions {
 
         private Optional<Double> verticalGroupingThreshold = Optional.empty();
 
+        private Optional<ParseConfigAdvancedOptionsReturnOcr> returnOcr = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -126,6 +145,7 @@ public final class ParseConfigAdvancedOptions {
             agenticOcrEnabled(other.getAgenticOcrEnabled());
             pageRanges(other.getPageRanges());
             verticalGroupingThreshold(other.getVerticalGroupingThreshold());
+            returnOcr(other.getReturnOcr());
             return this;
         }
 
@@ -144,7 +164,7 @@ public final class ParseConfigAdvancedOptions {
         }
 
         /**
-         * <p>Whether to enable agentic OCR corrections using VLM-based review and correction of OCR errors for messy handwriting and poorly scanned text.</p>
+         * <p>Whether to enable agentic OCR corrections using VLM-based review and correction of OCR errors for messy handwriting and poorly scanned text. Deprecated - use <code>blockOptions.text.agentic</code> or <code>blockOptions.tables.agentic</code> instead for more granular control.</p>
          */
         @JsonSetter(value = "agenticOcrEnabled", nulls = Nulls.SKIP)
         public Builder agenticOcrEnabled(Optional<Boolean> agenticOcrEnabled) {
@@ -182,12 +202,27 @@ public final class ParseConfigAdvancedOptions {
             return this;
         }
 
+        /**
+         * <p>Options for returning raw OCR data in the response.</p>
+         */
+        @JsonSetter(value = "returnOcr", nulls = Nulls.SKIP)
+        public Builder returnOcr(Optional<ParseConfigAdvancedOptionsReturnOcr> returnOcr) {
+            this.returnOcr = returnOcr;
+            return this;
+        }
+
+        public Builder returnOcr(ParseConfigAdvancedOptionsReturnOcr returnOcr) {
+            this.returnOcr = Optional.ofNullable(returnOcr);
+            return this;
+        }
+
         public ParseConfigAdvancedOptions build() {
             return new ParseConfigAdvancedOptions(
                     pageRotationEnabled,
                     agenticOcrEnabled,
                     pageRanges,
                     verticalGroupingThreshold,
+                    returnOcr,
                     additionalProperties);
         }
     }

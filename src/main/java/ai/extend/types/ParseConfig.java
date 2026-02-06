@@ -24,6 +24,8 @@ public final class ParseConfig {
 
     private final Optional<ParseConfigChunkingStrategy> chunkingStrategy;
 
+    private final Optional<ParseConfigEngine> engine;
+
     private final Optional<ParseConfigBlockOptions> blockOptions;
 
     private final Optional<ParseConfigAdvancedOptions> advancedOptions;
@@ -33,11 +35,13 @@ public final class ParseConfig {
     private ParseConfig(
             Optional<ParseConfigTarget> target,
             Optional<ParseConfigChunkingStrategy> chunkingStrategy,
+            Optional<ParseConfigEngine> engine,
             Optional<ParseConfigBlockOptions> blockOptions,
             Optional<ParseConfigAdvancedOptions> advancedOptions,
             Map<String, Object> additionalProperties) {
         this.target = target;
         this.chunkingStrategy = chunkingStrategy;
+        this.engine = engine;
         this.blockOptions = blockOptions;
         this.advancedOptions = advancedOptions;
         this.additionalProperties = additionalProperties;
@@ -55,7 +59,7 @@ public final class ParseConfig {
      * <li>Prefer <code>markdown</code> for most documents, multi-column reading order, and retrieval use cases</li>
      * <li>Prefer <code>spatial</code> for messy/scanned/handwritten or skewed documents, when you need near 1:1 layout fidelity, or for BOL-like logistics docs</li>
      * </ul>
-     * <p>See “Markdown vs Spatial” in the Parse guide for details: /2025-04-21/developers/guides/parse#markdown-vs-spatial</p>
+     * <p>See &quot;Markdown vs Spatial&quot; in the Parse guide for details: /2025-04-21/developers/guides/parse#markdown-vs-spatial</p>
      */
     @JsonProperty("target")
     public Optional<ParseConfigTarget> getTarget() {
@@ -68,6 +72,18 @@ public final class ParseConfig {
     @JsonProperty("chunkingStrategy")
     public Optional<ParseConfigChunkingStrategy> getChunkingStrategy() {
         return chunkingStrategy;
+    }
+
+    /**
+     * @return The parsing engine to use. Supported values:
+     * <ul>
+     * <li><code>parse_performance</code>: Full-featured parsing engine with highest accuracy (default)</li>
+     * <li><code>parse_light</code>: Lightweight parsing engine optimized for speed. This does not have robust layout support and does not support markdown layout target.</li>
+     * </ul>
+     */
+    @JsonProperty("engine")
+    public Optional<ParseConfigEngine> getEngine() {
+        return engine;
     }
 
     /**
@@ -97,13 +113,14 @@ public final class ParseConfig {
     private boolean equalTo(ParseConfig other) {
         return target.equals(other.target)
                 && chunkingStrategy.equals(other.chunkingStrategy)
+                && engine.equals(other.engine)
                 && blockOptions.equals(other.blockOptions)
                 && advancedOptions.equals(other.advancedOptions);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.target, this.chunkingStrategy, this.blockOptions, this.advancedOptions);
+        return Objects.hash(this.target, this.chunkingStrategy, this.engine, this.blockOptions, this.advancedOptions);
     }
 
     @java.lang.Override
@@ -121,6 +138,8 @@ public final class ParseConfig {
 
         private Optional<ParseConfigChunkingStrategy> chunkingStrategy = Optional.empty();
 
+        private Optional<ParseConfigEngine> engine = Optional.empty();
+
         private Optional<ParseConfigBlockOptions> blockOptions = Optional.empty();
 
         private Optional<ParseConfigAdvancedOptions> advancedOptions = Optional.empty();
@@ -133,6 +152,7 @@ public final class ParseConfig {
         public Builder from(ParseConfig other) {
             target(other.getTarget());
             chunkingStrategy(other.getChunkingStrategy());
+            engine(other.getEngine());
             blockOptions(other.getBlockOptions());
             advancedOptions(other.getAdvancedOptions());
             return this;
@@ -150,7 +170,7 @@ public final class ParseConfig {
          * <li>Prefer <code>markdown</code> for most documents, multi-column reading order, and retrieval use cases</li>
          * <li>Prefer <code>spatial</code> for messy/scanned/handwritten or skewed documents, when you need near 1:1 layout fidelity, or for BOL-like logistics docs</li>
          * </ul>
-         * <p>See “Markdown vs Spatial” in the Parse guide for details: /2025-04-21/developers/guides/parse#markdown-vs-spatial</p>
+         * <p>See &quot;Markdown vs Spatial&quot; in the Parse guide for details: /2025-04-21/developers/guides/parse#markdown-vs-spatial</p>
          */
         @JsonSetter(value = "target", nulls = Nulls.SKIP)
         public Builder target(Optional<ParseConfigTarget> target) {
@@ -174,6 +194,24 @@ public final class ParseConfig {
 
         public Builder chunkingStrategy(ParseConfigChunkingStrategy chunkingStrategy) {
             this.chunkingStrategy = Optional.ofNullable(chunkingStrategy);
+            return this;
+        }
+
+        /**
+         * <p>The parsing engine to use. Supported values:</p>
+         * <ul>
+         * <li><code>parse_performance</code>: Full-featured parsing engine with highest accuracy (default)</li>
+         * <li><code>parse_light</code>: Lightweight parsing engine optimized for speed. This does not have robust layout support and does not support markdown layout target.</li>
+         * </ul>
+         */
+        @JsonSetter(value = "engine", nulls = Nulls.SKIP)
+        public Builder engine(Optional<ParseConfigEngine> engine) {
+            this.engine = engine;
+            return this;
+        }
+
+        public Builder engine(ParseConfigEngine engine) {
+            this.engine = Optional.ofNullable(engine);
             return this;
         }
 
@@ -203,7 +241,8 @@ public final class ParseConfig {
         }
 
         public ParseConfig build() {
-            return new ParseConfig(target, chunkingStrategy, blockOptions, advancedOptions, additionalProperties);
+            return new ParseConfig(
+                    target, chunkingStrategy, engine, blockOptions, advancedOptions, additionalProperties);
         }
     }
 }

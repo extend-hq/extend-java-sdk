@@ -27,16 +27,24 @@ public final class JsonOutputMetadataValueCitationsItem {
 
     private final Optional<List<JsonOutputMetadataValueCitationsItemPolygonItem>> polygon;
 
+    private final Optional<Double> pageWidth;
+
+    private final Optional<Double> pageHeight;
+
     private final Map<String, Object> additionalProperties;
 
     private JsonOutputMetadataValueCitationsItem(
             Optional<Double> page,
             Optional<String> referenceText,
             Optional<List<JsonOutputMetadataValueCitationsItemPolygonItem>> polygon,
+            Optional<Double> pageWidth,
+            Optional<Double> pageHeight,
             Map<String, Object> additionalProperties) {
         this.page = page;
         this.referenceText = referenceText;
         this.polygon = polygon;
+        this.pageWidth = pageWidth;
+        this.pageHeight = pageHeight;
         this.additionalProperties = additionalProperties;
     }
 
@@ -64,6 +72,22 @@ public final class JsonOutputMetadataValueCitationsItem {
         return polygon;
     }
 
+    /**
+     * @return Width of the page in points
+     */
+    @JsonProperty("pageWidth")
+    public Optional<Double> getPageWidth() {
+        return pageWidth;
+    }
+
+    /**
+     * @return Height of the page in points
+     */
+    @JsonProperty("pageHeight")
+    public Optional<Double> getPageHeight() {
+        return pageHeight;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -77,12 +101,16 @@ public final class JsonOutputMetadataValueCitationsItem {
     }
 
     private boolean equalTo(JsonOutputMetadataValueCitationsItem other) {
-        return page.equals(other.page) && referenceText.equals(other.referenceText) && polygon.equals(other.polygon);
+        return page.equals(other.page)
+                && referenceText.equals(other.referenceText)
+                && polygon.equals(other.polygon)
+                && pageWidth.equals(other.pageWidth)
+                && pageHeight.equals(other.pageHeight);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.page, this.referenceText, this.polygon);
+        return Objects.hash(this.page, this.referenceText, this.polygon, this.pageWidth, this.pageHeight);
     }
 
     @java.lang.Override
@@ -102,6 +130,10 @@ public final class JsonOutputMetadataValueCitationsItem {
 
         private Optional<List<JsonOutputMetadataValueCitationsItemPolygonItem>> polygon = Optional.empty();
 
+        private Optional<Double> pageWidth = Optional.empty();
+
+        private Optional<Double> pageHeight = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -111,6 +143,8 @@ public final class JsonOutputMetadataValueCitationsItem {
             page(other.getPage());
             referenceText(other.getReferenceText());
             polygon(other.getPolygon());
+            pageWidth(other.getPageWidth());
+            pageHeight(other.getPageHeight());
             return this;
         }
 
@@ -156,8 +190,37 @@ public final class JsonOutputMetadataValueCitationsItem {
             return this;
         }
 
+        /**
+         * <p>Width of the page in points</p>
+         */
+        @JsonSetter(value = "pageWidth", nulls = Nulls.SKIP)
+        public Builder pageWidth(Optional<Double> pageWidth) {
+            this.pageWidth = pageWidth;
+            return this;
+        }
+
+        public Builder pageWidth(Double pageWidth) {
+            this.pageWidth = Optional.ofNullable(pageWidth);
+            return this;
+        }
+
+        /**
+         * <p>Height of the page in points</p>
+         */
+        @JsonSetter(value = "pageHeight", nulls = Nulls.SKIP)
+        public Builder pageHeight(Optional<Double> pageHeight) {
+            this.pageHeight = pageHeight;
+            return this;
+        }
+
+        public Builder pageHeight(Double pageHeight) {
+            this.pageHeight = Optional.ofNullable(pageHeight);
+            return this;
+        }
+
         public JsonOutputMetadataValueCitationsItem build() {
-            return new JsonOutputMetadataValueCitationsItem(page, referenceText, polygon, additionalProperties);
+            return new JsonOutputMetadataValueCitationsItem(
+                    page, referenceText, polygon, pageWidth, pageHeight, additionalProperties);
         }
     }
 }

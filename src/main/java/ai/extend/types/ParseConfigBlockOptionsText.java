@@ -22,11 +22,16 @@ import java.util.Optional;
 public final class ParseConfigBlockOptionsText {
     private final Optional<Boolean> signatureDetectionEnabled;
 
+    private final Optional<ParseConfigBlockOptionsTextAgentic> agentic;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseConfigBlockOptionsText(
-            Optional<Boolean> signatureDetectionEnabled, Map<String, Object> additionalProperties) {
+            Optional<Boolean> signatureDetectionEnabled,
+            Optional<ParseConfigBlockOptionsTextAgentic> agentic,
+            Map<String, Object> additionalProperties) {
         this.signatureDetectionEnabled = signatureDetectionEnabled;
+        this.agentic = agentic;
         this.additionalProperties = additionalProperties;
     }
 
@@ -36,6 +41,14 @@ public final class ParseConfigBlockOptionsText {
     @JsonProperty("signatureDetectionEnabled")
     public Optional<Boolean> getSignatureDetectionEnabled() {
         return signatureDetectionEnabled;
+    }
+
+    /**
+     * @return Options for agentic text processing using VLM-based review and correction.
+     */
+    @JsonProperty("agentic")
+    public Optional<ParseConfigBlockOptionsTextAgentic> getAgentic() {
+        return agentic;
     }
 
     @java.lang.Override
@@ -50,12 +63,12 @@ public final class ParseConfigBlockOptionsText {
     }
 
     private boolean equalTo(ParseConfigBlockOptionsText other) {
-        return signatureDetectionEnabled.equals(other.signatureDetectionEnabled);
+        return signatureDetectionEnabled.equals(other.signatureDetectionEnabled) && agentic.equals(other.agentic);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.signatureDetectionEnabled);
+        return Objects.hash(this.signatureDetectionEnabled, this.agentic);
     }
 
     @java.lang.Override
@@ -71,6 +84,8 @@ public final class ParseConfigBlockOptionsText {
     public static final class Builder {
         private Optional<Boolean> signatureDetectionEnabled = Optional.empty();
 
+        private Optional<ParseConfigBlockOptionsTextAgentic> agentic = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -78,6 +93,7 @@ public final class ParseConfigBlockOptionsText {
 
         public Builder from(ParseConfigBlockOptionsText other) {
             signatureDetectionEnabled(other.getSignatureDetectionEnabled());
+            agentic(other.getAgentic());
             return this;
         }
 
@@ -95,8 +111,22 @@ public final class ParseConfigBlockOptionsText {
             return this;
         }
 
+        /**
+         * <p>Options for agentic text processing using VLM-based review and correction.</p>
+         */
+        @JsonSetter(value = "agentic", nulls = Nulls.SKIP)
+        public Builder agentic(Optional<ParseConfigBlockOptionsTextAgentic> agentic) {
+            this.agentic = agentic;
+            return this;
+        }
+
+        public Builder agentic(ParseConfigBlockOptionsTextAgentic agentic) {
+            this.agentic = Optional.ofNullable(agentic);
+            return this;
+        }
+
         public ParseConfigBlockOptionsText build() {
-            return new ParseConfigBlockOptionsText(signatureDetectionEnabled, additionalProperties);
+            return new ParseConfigBlockOptionsText(signatureDetectionEnabled, agentic, additionalProperties);
         }
     }
 }

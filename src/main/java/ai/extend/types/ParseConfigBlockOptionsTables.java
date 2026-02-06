@@ -26,21 +26,29 @@ public final class ParseConfigBlockOptionsTables {
 
     private final Optional<Boolean> tableHeaderContinuationEnabled;
 
+    private final Optional<Boolean> cellBlocksEnabled;
+
+    private final Optional<ParseConfigBlockOptionsTablesAgentic> agentic;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseConfigBlockOptionsTables(
             Optional<Boolean> enabled,
             Optional<ParseConfigBlockOptionsTablesTargetFormat> targetFormat,
             Optional<Boolean> tableHeaderContinuationEnabled,
+            Optional<Boolean> cellBlocksEnabled,
+            Optional<ParseConfigBlockOptionsTablesAgentic> agentic,
             Map<String, Object> additionalProperties) {
         this.enabled = enabled;
         this.targetFormat = targetFormat;
         this.tableHeaderContinuationEnabled = tableHeaderContinuationEnabled;
+        this.cellBlocksEnabled = cellBlocksEnabled;
+        this.agentic = agentic;
         this.additionalProperties = additionalProperties;
     }
 
     /**
-     * @return Whether to include tables in the output.
+     * @return This option is deprecated and will have no effect. It will be removed in the next API version.
      */
     @JsonProperty("enabled")
     public Optional<Boolean> getEnabled() {
@@ -67,6 +75,22 @@ public final class ParseConfigBlockOptionsTables {
         return tableHeaderContinuationEnabled;
     }
 
+    /**
+     * @return Whether to include individual table cell blocks in the output. When enabled, each cell in a table will be represented as a separate block with its own bounding box and content and will be <code>children</code> of the table block.
+     */
+    @JsonProperty("cellBlocksEnabled")
+    public Optional<Boolean> getCellBlocksEnabled() {
+        return cellBlocksEnabled;
+    }
+
+    /**
+     * @return Options for agentic table processing using VLM-based review and correction.
+     */
+    @JsonProperty("agentic")
+    public Optional<ParseConfigBlockOptionsTablesAgentic> getAgentic() {
+        return agentic;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -81,12 +105,19 @@ public final class ParseConfigBlockOptionsTables {
     private boolean equalTo(ParseConfigBlockOptionsTables other) {
         return enabled.equals(other.enabled)
                 && targetFormat.equals(other.targetFormat)
-                && tableHeaderContinuationEnabled.equals(other.tableHeaderContinuationEnabled);
+                && tableHeaderContinuationEnabled.equals(other.tableHeaderContinuationEnabled)
+                && cellBlocksEnabled.equals(other.cellBlocksEnabled)
+                && agentic.equals(other.agentic);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.enabled, this.targetFormat, this.tableHeaderContinuationEnabled);
+        return Objects.hash(
+                this.enabled,
+                this.targetFormat,
+                this.tableHeaderContinuationEnabled,
+                this.cellBlocksEnabled,
+                this.agentic);
     }
 
     @java.lang.Override
@@ -106,6 +137,10 @@ public final class ParseConfigBlockOptionsTables {
 
         private Optional<Boolean> tableHeaderContinuationEnabled = Optional.empty();
 
+        private Optional<Boolean> cellBlocksEnabled = Optional.empty();
+
+        private Optional<ParseConfigBlockOptionsTablesAgentic> agentic = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -115,11 +150,13 @@ public final class ParseConfigBlockOptionsTables {
             enabled(other.getEnabled());
             targetFormat(other.getTargetFormat());
             tableHeaderContinuationEnabled(other.getTableHeaderContinuationEnabled());
+            cellBlocksEnabled(other.getCellBlocksEnabled());
+            agentic(other.getAgentic());
             return this;
         }
 
         /**
-         * <p>Whether to include tables in the output.</p>
+         * <p>This option is deprecated and will have no effect. It will be removed in the next API version.</p>
          */
         @JsonSetter(value = "enabled", nulls = Nulls.SKIP)
         public Builder enabled(Optional<Boolean> enabled) {
@@ -164,9 +201,42 @@ public final class ParseConfigBlockOptionsTables {
             return this;
         }
 
+        /**
+         * <p>Whether to include individual table cell blocks in the output. When enabled, each cell in a table will be represented as a separate block with its own bounding box and content and will be <code>children</code> of the table block.</p>
+         */
+        @JsonSetter(value = "cellBlocksEnabled", nulls = Nulls.SKIP)
+        public Builder cellBlocksEnabled(Optional<Boolean> cellBlocksEnabled) {
+            this.cellBlocksEnabled = cellBlocksEnabled;
+            return this;
+        }
+
+        public Builder cellBlocksEnabled(Boolean cellBlocksEnabled) {
+            this.cellBlocksEnabled = Optional.ofNullable(cellBlocksEnabled);
+            return this;
+        }
+
+        /**
+         * <p>Options for agentic table processing using VLM-based review and correction.</p>
+         */
+        @JsonSetter(value = "agentic", nulls = Nulls.SKIP)
+        public Builder agentic(Optional<ParseConfigBlockOptionsTablesAgentic> agentic) {
+            this.agentic = agentic;
+            return this;
+        }
+
+        public Builder agentic(ParseConfigBlockOptionsTablesAgentic agentic) {
+            this.agentic = Optional.ofNullable(agentic);
+            return this;
+        }
+
         public ParseConfigBlockOptionsTables build() {
             return new ParseConfigBlockOptionsTables(
-                    enabled, targetFormat, tableHeaderContinuationEnabled, additionalProperties);
+                    enabled,
+                    targetFormat,
+                    tableHeaderContinuationEnabled,
+                    cellBlocksEnabled,
+                    agentic,
+                    additionalProperties);
         }
     }
 }

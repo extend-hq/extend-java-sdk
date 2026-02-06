@@ -5,24 +5,14 @@ package ai.extend.types;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum BlockType {
-    TEXT("text"),
+public enum ParseConfigEngine {
+    PARSE_PERFORMANCE("parse_performance"),
 
-    HEADING("heading"),
-
-    SECTION_HEADING("section_heading"),
-
-    TABLE("table"),
-
-    FIGURE("figure"),
-
-    TABLE_HEAD("table_head"),
-
-    TABLE_CELL("table_cell");
+    PARSE_LIGHT("parse_light");
 
     private final String value;
 
-    BlockType(String value) {
+    ParseConfigEngine(String value) {
         this.value = value;
     }
 

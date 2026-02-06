@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
@@ -25,6 +26,8 @@ public final class Block {
     private final String object;
 
     private final String id;
+
+    private final Optional<String> parentBlockId;
 
     private final BlockType type;
 
@@ -38,26 +41,32 @@ public final class Block {
 
     private final BlockBoundingBox boundingBox;
 
+    private final Optional<List<Block>> children;
+
     private final Map<String, Object> additionalProperties;
 
     private Block(
             String object,
             String id,
+            Optional<String> parentBlockId,
             BlockType type,
             String content,
             BlockDetails details,
             BlockMetadata metadata,
             List<BlockPolygonItem> polygon,
             BlockBoundingBox boundingBox,
+            Optional<List<Block>> children,
             Map<String, Object> additionalProperties) {
         this.object = object;
         this.id = id;
+        this.parentBlockId = parentBlockId;
         this.type = type;
         this.content = content;
         this.details = details;
         this.metadata = metadata;
         this.polygon = polygon;
         this.boundingBox = boundingBox;
+        this.children = children;
         this.additionalProperties = additionalProperties;
     }
 
@@ -75,6 +84,14 @@ public final class Block {
     @JsonProperty("id")
     public String getId() {
         return id;
+    }
+
+    /**
+     * @return The ID of the parent block. For example, for a table cell block, this would be the ID of the parent table block. Only set if this is a child block.
+     */
+    @JsonProperty("parentBlockId")
+    public Optional<String> getParentBlockId() {
+        return parentBlockId;
     }
 
     /**
@@ -134,6 +151,14 @@ public final class Block {
         return boundingBox;
     }
 
+    /**
+     * @return An array of child blocks. For example, a table block may contain table cell blocks as children when <code>cellBlocksEnabled</code> is set to true.
+     */
+    @JsonProperty("children")
+    public Optional<List<Block>> getChildren() {
+        return children;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -148,12 +173,14 @@ public final class Block {
     private boolean equalTo(Block other) {
         return object.equals(other.object)
                 && id.equals(other.id)
+                && parentBlockId.equals(other.parentBlockId)
                 && type.equals(other.type)
                 && content.equals(other.content)
                 && details.equals(other.details)
                 && metadata.equals(other.metadata)
                 && polygon.equals(other.polygon)
-                && boundingBox.equals(other.boundingBox);
+                && boundingBox.equals(other.boundingBox)
+                && children.equals(other.children);
     }
 
     @java.lang.Override
@@ -161,12 +188,14 @@ public final class Block {
         return Objects.hash(
                 this.object,
                 this.id,
+                this.parentBlockId,
                 this.type,
                 this.content,
                 this.details,
                 this.metadata,
                 this.polygon,
-                this.boundingBox);
+                this.boundingBox,
+                this.children);
     }
 
     @java.lang.Override
@@ -242,6 +271,13 @@ public final class Block {
         Block build();
 
         /**
+         * <p>The ID of the parent block. For example, for a table cell block, this would be the ID of the parent table block. Only set if this is a child block.</p>
+         */
+        _FinalStage parentBlockId(Optional<String> parentBlockId);
+
+        _FinalStage parentBlockId(String parentBlockId);
+
+        /**
          * <p>An array of points defining the polygon that bounds the block.</p>
          */
         _FinalStage polygon(List<BlockPolygonItem> polygon);
@@ -249,6 +285,13 @@ public final class Block {
         _FinalStage addPolygon(BlockPolygonItem polygon);
 
         _FinalStage addAllPolygon(List<BlockPolygonItem> polygon);
+
+        /**
+         * <p>An array of child blocks. For example, a table block may contain table cell blocks as children when <code>cellBlocksEnabled</code> is set to true.</p>
+         */
+        _FinalStage children(Optional<List<Block>> children);
+
+        _FinalStage children(List<Block> children);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -275,7 +318,11 @@ public final class Block {
 
         private BlockBoundingBox boundingBox;
 
+        private Optional<List<Block>> children = Optional.empty();
+
         private List<BlockPolygonItem> polygon = new ArrayList<>();
+
+        private Optional<String> parentBlockId = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -286,12 +333,14 @@ public final class Block {
         public Builder from(Block other) {
             object(other.getObject());
             id(other.getId());
+            parentBlockId(other.getParentBlockId());
             type(other.getType());
             content(other.getContent());
             details(other.getDetails());
             metadata(other.getMetadata());
             polygon(other.getPolygon());
             boundingBox(other.getBoundingBox());
+            children(other.getChildren());
             return this;
         }
 
@@ -398,6 +447,26 @@ public final class Block {
         }
 
         /**
+         * <p>An array of child blocks. For example, a table block may contain table cell blocks as children when <code>cellBlocksEnabled</code> is set to true.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage children(List<Block> children) {
+            this.children = Optional.ofNullable(children);
+            return this;
+        }
+
+        /**
+         * <p>An array of child blocks. For example, a table block may contain table cell blocks as children when <code>cellBlocksEnabled</code> is set to true.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "children", nulls = Nulls.SKIP)
+        public _FinalStage children(Optional<List<Block>> children) {
+            this.children = children;
+            return this;
+        }
+
+        /**
          * <p>An array of points defining the polygon that bounds the block.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
@@ -428,9 +497,40 @@ public final class Block {
             return this;
         }
 
+        /**
+         * <p>The ID of the parent block. For example, for a table cell block, this would be the ID of the parent table block. Only set if this is a child block.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage parentBlockId(String parentBlockId) {
+            this.parentBlockId = Optional.ofNullable(parentBlockId);
+            return this;
+        }
+
+        /**
+         * <p>The ID of the parent block. For example, for a table cell block, this would be the ID of the parent table block. Only set if this is a child block.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "parentBlockId", nulls = Nulls.SKIP)
+        public _FinalStage parentBlockId(Optional<String> parentBlockId) {
+            this.parentBlockId = parentBlockId;
+            return this;
+        }
+
         @java.lang.Override
         public Block build() {
-            return new Block(object, id, type, content, details, metadata, polygon, boundingBox, additionalProperties);
+            return new Block(
+                    object,
+                    id,
+                    parentBlockId,
+                    type,
+                    content,
+                    details,
+                    metadata,
+                    polygon,
+                    boundingBox,
+                    children,
+                    additionalProperties);
         }
     }
 }
