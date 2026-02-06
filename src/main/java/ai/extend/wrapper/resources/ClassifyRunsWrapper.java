@@ -7,8 +7,7 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.classifyruns.ClassifyRunsClient;
 import ai.extend.resources.classifyruns.requests.ClassifyRunsCreateRequest;
-import ai.extend.resources.classifyruns.types.ClassifyRunsCreateResponse;
-import ai.extend.resources.classifyruns.types.ClassifyRunsRetrieveResponse;
+import ai.extend.types.ClassifyRun;
 import ai.extend.types.ProcessorRunStatus;
 import ai.extend.wrapper.utilities.polling.Polling;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
@@ -59,7 +58,7 @@ public class ClassifyRunsWrapper {
      * @param request The create request
      * @return The final response when a terminal state is reached
      */
-    public ClassifyRunsRetrieveResponse createAndPoll(ClassifyRunsCreateRequest request) {
+    public ClassifyRun createAndPoll(ClassifyRunsCreateRequest request) {
         return createAndPoll(request, PollingOptions.defaults());
     }
 
@@ -72,18 +71,18 @@ public class ClassifyRunsWrapper {
      * @param options Polling options
      * @return The final response when a terminal state is reached
      */
-    public ClassifyRunsRetrieveResponse createAndPoll(ClassifyRunsCreateRequest request, PollingOptions options) {
+    public ClassifyRun createAndPoll(ClassifyRunsCreateRequest request, PollingOptions options) {
 
         RequestOptions requestOptions = options.getRequestOptions();
 
         // Create the classify run
-        ClassifyRunsCreateResponse createResponse = client.create(request, requestOptions);
-        final String runId = createResponse.getClassifyRun().getId();
+        ClassifyRun createResponse = client.create(request, requestOptions);
+        final String runId = createResponse.getId();
 
         // Poll until terminal state
         return Polling.pollUntilDone(
                 () -> client.retrieve(runId, requestOptions),
-                response -> isTerminalStatus(response.getClassifyRun().getStatus()),
+                response -> isTerminalStatus(response.getStatus()),
                 options);
     }
 

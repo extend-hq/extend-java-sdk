@@ -7,8 +7,7 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.extractruns.ExtractRunsClient;
 import ai.extend.resources.extractruns.requests.ExtractRunsCreateRequest;
-import ai.extend.resources.extractruns.types.ExtractRunsCreateResponse;
-import ai.extend.resources.extractruns.types.ExtractRunsRetrieveResponse;
+import ai.extend.types.ExtractRun;
 import ai.extend.types.ProcessorRunStatus;
 import ai.extend.wrapper.utilities.polling.Polling;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
@@ -25,7 +24,7 @@ import java.util.Set;
  * ExtendClientWrapper client = new ExtendClientWrapper("your-api-key");
  *
  * // Polls indefinitely (suitable for development/testing)
- * ExtractRunsRetrieveResponse response = client.extractRuns().createAndPoll(
+ * ExtractRun response = client.extractRuns().createAndPoll(
  *     ExtractRunsCreateRequest.builder()
  *         .file(...)
  *         .extractor(...)
@@ -33,12 +32,12 @@ import java.util.Set;
  * );
  *
  * // With custom timeout
- * ExtractRunsRetrieveResponse response = client.extractRuns().createAndPoll(
+ * ExtractRun response = client.extractRuns().createAndPoll(
  *     request,
  *     PollingOptions.builder().maxWaitMs(300000).build() // 5 minute timeout
  * );
  *
- * if (response.getExtractRun().getStatus() == ProcessorRunStatus.PROCESSED) {
+ * if (response.getStatus() == ProcessorRunStatus.PROCESSED) {
  *     // Handle successful extraction
  * }
  * }</pre>
@@ -82,7 +81,7 @@ public class ExtractRunsWrapper {
      * @param request The create request
      * @return The final response when a terminal state is reached
      */
-    public ExtractRunsRetrieveResponse createAndPoll(ExtractRunsCreateRequest request) {
+    public ExtractRun createAndPoll(ExtractRunsCreateRequest request) {
         return createAndPoll(request, PollingOptions.defaults());
     }
 
@@ -95,18 +94,18 @@ public class ExtractRunsWrapper {
      * @param options Polling options
      * @return The final response when a terminal state is reached
      */
-    public ExtractRunsRetrieveResponse createAndPoll(ExtractRunsCreateRequest request, PollingOptions options) {
+    public ExtractRun createAndPoll(ExtractRunsCreateRequest request, PollingOptions options) {
 
         RequestOptions requestOptions = options.getRequestOptions();
 
         // Create the extract run
-        ExtractRunsCreateResponse createResponse = client.create(request, requestOptions);
-        final String runId = createResponse.getExtractRun().getId();
+        ExtractRun createResponse = client.create(request, requestOptions);
+        final String runId = createResponse.getId();
 
         // Poll until terminal state
         return Polling.pollUntilDone(
                 () -> client.retrieve(runId, requestOptions),
-                response -> isTerminalStatus(response.getExtractRun().getStatus()),
+                response -> isTerminalStatus(response.getStatus()),
                 options);
     }
 

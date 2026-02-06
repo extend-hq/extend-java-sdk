@@ -7,9 +7,8 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.splitruns.SplitRunsClient;
 import ai.extend.resources.splitruns.requests.SplitRunsCreateRequest;
-import ai.extend.resources.splitruns.types.SplitRunsCreateResponse;
-import ai.extend.resources.splitruns.types.SplitRunsRetrieveResponse;
 import ai.extend.types.ProcessorRunStatus;
+import ai.extend.types.SplitRun;
 import ai.extend.wrapper.utilities.polling.Polling;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
 import java.util.HashSet;
@@ -59,7 +58,7 @@ public class SplitRunsWrapper {
      * @param request The create request
      * @return The final response when a terminal state is reached
      */
-    public SplitRunsRetrieveResponse createAndPoll(SplitRunsCreateRequest request) {
+    public SplitRun createAndPoll(SplitRunsCreateRequest request) {
         return createAndPoll(request, PollingOptions.defaults());
     }
 
@@ -72,18 +71,18 @@ public class SplitRunsWrapper {
      * @param options Polling options
      * @return The final response when a terminal state is reached
      */
-    public SplitRunsRetrieveResponse createAndPoll(SplitRunsCreateRequest request, PollingOptions options) {
+    public SplitRun createAndPoll(SplitRunsCreateRequest request, PollingOptions options) {
 
         RequestOptions requestOptions = options.getRequestOptions();
 
         // Create the split run
-        SplitRunsCreateResponse createResponse = client.create(request, requestOptions);
-        final String runId = createResponse.getSplitRun().getId();
+        SplitRun createResponse = client.create(request, requestOptions);
+        final String runId = createResponse.getId();
 
         // Poll until terminal state
         return Polling.pollUntilDone(
                 () -> client.retrieve(runId, requestOptions),
-                response -> isTerminalStatus(response.getSplitRun().getStatus()),
+                response -> isTerminalStatus(response.getStatus()),
                 options);
     }
 
