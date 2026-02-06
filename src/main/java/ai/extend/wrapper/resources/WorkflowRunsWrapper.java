@@ -7,8 +7,7 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.workflowruns.WorkflowRunsClient;
 import ai.extend.resources.workflowruns.requests.WorkflowRunsCreateRequest;
-import ai.extend.resources.workflowruns.types.WorkflowRunsCreateResponse;
-import ai.extend.resources.workflowruns.types.WorkflowRunsRetrieveResponse;
+import ai.extend.types.WorkflowRun;
 import ai.extend.types.WorkflowRunStatus;
 import ai.extend.wrapper.utilities.polling.Polling;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
@@ -64,7 +63,7 @@ public class WorkflowRunsWrapper {
      * @param request The create request
      * @return The final response when a terminal state is reached
      */
-    public WorkflowRunsRetrieveResponse createAndPoll(WorkflowRunsCreateRequest request) {
+    public WorkflowRun createAndPoll(WorkflowRunsCreateRequest request) {
         return createAndPoll(request, PollingOptions.defaults());
     }
 
@@ -77,18 +76,18 @@ public class WorkflowRunsWrapper {
      * @param options Polling options (set maxWaitMs for production use)
      * @return The final response when a terminal state is reached
      */
-    public WorkflowRunsRetrieveResponse createAndPoll(WorkflowRunsCreateRequest request, PollingOptions options) {
+    public WorkflowRun createAndPoll(WorkflowRunsCreateRequest request, PollingOptions options) {
 
         RequestOptions requestOptions = options.getRequestOptions();
 
         // Create the workflow run
-        WorkflowRunsCreateResponse createResponse = client.create(request, requestOptions);
-        final String runId = createResponse.getWorkflowRun().getId();
+        WorkflowRun createResponse = client.create(request, requestOptions);
+        final String runId = createResponse.getId();
 
         // Poll until terminal state
         return Polling.pollUntilDone(
                 () -> client.retrieve(runId, requestOptions),
-                response -> isTerminalStatus(response.getWorkflowRun().getStatus()),
+                response -> isTerminalStatus(response.getStatus()),
                 options);
     }
 

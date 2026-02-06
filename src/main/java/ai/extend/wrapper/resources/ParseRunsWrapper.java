@@ -6,8 +6,7 @@ package ai.extend.wrapper.resources;
 import ai.extend.core.ClientOptions;
 import ai.extend.resources.parseruns.ParseRunsClient;
 import ai.extend.resources.parseruns.requests.ParseRunsCreateRequest;
-import ai.extend.resources.parseruns.types.ParseRunsCreateResponse;
-import ai.extend.resources.parseruns.types.ParseRunsRetrieveResponse;
+import ai.extend.types.ParseRun;
 import ai.extend.types.ParseRunStatusEnum;
 import ai.extend.wrapper.utilities.polling.Polling;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
@@ -58,7 +57,7 @@ public class ParseRunsWrapper {
      * @param request The create request
      * @return The final response when a terminal state is reached
      */
-    public ParseRunsRetrieveResponse createAndPoll(ParseRunsCreateRequest request) {
+    public ParseRun createAndPoll(ParseRunsCreateRequest request) {
         return createAndPoll(request, PollingOptions.defaults());
     }
 
@@ -71,17 +70,17 @@ public class ParseRunsWrapper {
      * @param options Polling options
      * @return The final response when a terminal state is reached
      */
-    public ParseRunsRetrieveResponse createAndPoll(ParseRunsCreateRequest request, PollingOptions options) {
+    public ParseRun createAndPoll(ParseRunsCreateRequest request, PollingOptions options) {
 
         // Create the parse run
-        ParseRunsCreateResponse createResponse = client.create(request);
-        final String runId = createResponse.getParseRun().getId();
+        ParseRun createResponse = client.create(request);
+        final String runId = createResponse.getId();
 
         // Poll until terminal state
         // Note: ParseRunsClient.retrieve() does not take RequestOptions directly
         return Polling.pollUntilDone(
                 () -> client.retrieve(runId),
-                response -> isTerminalStatus(response.getParseRun().getStatus()),
+                response -> isTerminalStatus(response.getStatus()),
                 options);
     }
 

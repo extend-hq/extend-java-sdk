@@ -9,8 +9,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import ai.extend.resources.classifyruns.ClassifyRunsClient;
-import ai.extend.resources.classifyruns.types.ClassifyRunsCreateResponse;
-import ai.extend.resources.classifyruns.types.ClassifyRunsRetrieveResponse;
 import ai.extend.types.ClassifyRun;
 import ai.extend.types.ProcessorRunStatus;
 import ai.extend.wrapper.errors.PollingTimeoutError;
@@ -51,21 +49,15 @@ class ClassifyRunsWrapperTest {
         void shouldCreateAndPollUntilProcessed() {
             String runId = "classify_run_test123";
 
-            ClassifyRun createRun = mock(ClassifyRun.class);
-            when(createRun.getId()).thenReturn(runId);
-            ClassifyRunsCreateResponse createResponse = mock(ClassifyRunsCreateResponse.class);
-            when(createResponse.getClassifyRun()).thenReturn(createRun);
+            ClassifyRun createResponse = mock(ClassifyRun.class);
+            when(createResponse.getId()).thenReturn(runId);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
 
-            ClassifyRun processingRun = mock(ClassifyRun.class);
-            when(processingRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
-            ClassifyRunsRetrieveResponse processingResponse = mock(ClassifyRunsRetrieveResponse.class);
-            when(processingResponse.getClassifyRun()).thenReturn(processingRun);
+            ClassifyRun processingResponse = mock(ClassifyRun.class);
+            when(processingResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
 
-            ClassifyRun processedRun = mock(ClassifyRun.class);
-            when(processedRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
-            ClassifyRunsRetrieveResponse processedResponse = mock(ClassifyRunsRetrieveResponse.class);
-            when(processedResponse.getClassifyRun()).thenReturn(processedRun);
+            ClassifyRun processedResponse = mock(ClassifyRun.class);
+            when(processedResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
 
             when(mockClient.retrieve(eq(runId), any()))
                     .thenReturn(processingResponse)
@@ -77,9 +69,9 @@ class ClassifyRunsWrapperTest {
                     .jitterFraction(0)
                     .build();
 
-            ClassifyRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
+            ClassifyRun result = wrapper.createAndPoll(null, options);
 
-            assertEquals(ProcessorRunStatus.PROCESSED, result.getClassifyRun().getStatus());
+            assertEquals(ProcessorRunStatus.PROCESSED, result.getStatus());
             verify(mockClient, times(1)).create(any(), any());
             verify(mockClient, times(2)).retrieve(eq(runId), any());
         }
@@ -89,16 +81,12 @@ class ClassifyRunsWrapperTest {
         void shouldReturnImmediatelyIfAlreadyProcessed() {
             String runId = "classify_run_test123";
 
-            ClassifyRun createRun = mock(ClassifyRun.class);
-            when(createRun.getId()).thenReturn(runId);
-            ClassifyRunsCreateResponse createResponse = mock(ClassifyRunsCreateResponse.class);
-            when(createResponse.getClassifyRun()).thenReturn(createRun);
+            ClassifyRun createResponse = mock(ClassifyRun.class);
+            when(createResponse.getId()).thenReturn(runId);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
 
-            ClassifyRun processedRun = mock(ClassifyRun.class);
-            when(processedRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
-            ClassifyRunsRetrieveResponse processedResponse = mock(ClassifyRunsRetrieveResponse.class);
-            when(processedResponse.getClassifyRun()).thenReturn(processedRun);
+            ClassifyRun processedResponse = mock(ClassifyRun.class);
+            when(processedResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
 
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
 
@@ -108,9 +96,9 @@ class ClassifyRunsWrapperTest {
                     .jitterFraction(0)
                     .build();
 
-            ClassifyRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
+            ClassifyRun result = wrapper.createAndPoll(null, options);
 
-            assertEquals(ProcessorRunStatus.PROCESSED, result.getClassifyRun().getStatus());
+            assertEquals(ProcessorRunStatus.PROCESSED, result.getStatus());
             verify(mockClient, times(1)).retrieve(eq(runId), any());
         }
 
@@ -119,16 +107,12 @@ class ClassifyRunsWrapperTest {
         void shouldHandleFailedAsTerminal() {
             String runId = "classify_run_test123";
 
-            ClassifyRun createRun = mock(ClassifyRun.class);
-            when(createRun.getId()).thenReturn(runId);
-            ClassifyRunsCreateResponse createResponse = mock(ClassifyRunsCreateResponse.class);
-            when(createResponse.getClassifyRun()).thenReturn(createRun);
+            ClassifyRun createResponse = mock(ClassifyRun.class);
+            when(createResponse.getId()).thenReturn(runId);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
 
-            ClassifyRun failedRun = mock(ClassifyRun.class);
-            when(failedRun.getStatus()).thenReturn(ProcessorRunStatus.FAILED);
-            ClassifyRunsRetrieveResponse failedResponse = mock(ClassifyRunsRetrieveResponse.class);
-            when(failedResponse.getClassifyRun()).thenReturn(failedRun);
+            ClassifyRun failedResponse = mock(ClassifyRun.class);
+            when(failedResponse.getStatus()).thenReturn(ProcessorRunStatus.FAILED);
 
             when(mockClient.retrieve(eq(runId), any())).thenReturn(failedResponse);
 
@@ -138,9 +122,9 @@ class ClassifyRunsWrapperTest {
                     .jitterFraction(0)
                     .build();
 
-            ClassifyRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
+            ClassifyRun result = wrapper.createAndPoll(null, options);
 
-            assertEquals(ProcessorRunStatus.FAILED, result.getClassifyRun().getStatus());
+            assertEquals(ProcessorRunStatus.FAILED, result.getStatus());
         }
 
         @Test
@@ -148,16 +132,12 @@ class ClassifyRunsWrapperTest {
         void shouldHandleCancelledAsTerminal() {
             String runId = "classify_run_test123";
 
-            ClassifyRun createRun = mock(ClassifyRun.class);
-            when(createRun.getId()).thenReturn(runId);
-            ClassifyRunsCreateResponse createResponse = mock(ClassifyRunsCreateResponse.class);
-            when(createResponse.getClassifyRun()).thenReturn(createRun);
+            ClassifyRun createResponse = mock(ClassifyRun.class);
+            when(createResponse.getId()).thenReturn(runId);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
 
-            ClassifyRun cancelledRun = mock(ClassifyRun.class);
-            when(cancelledRun.getStatus()).thenReturn(ProcessorRunStatus.CANCELLED);
-            ClassifyRunsRetrieveResponse cancelledResponse = mock(ClassifyRunsRetrieveResponse.class);
-            when(cancelledResponse.getClassifyRun()).thenReturn(cancelledRun);
+            ClassifyRun cancelledResponse = mock(ClassifyRun.class);
+            when(cancelledResponse.getStatus()).thenReturn(ProcessorRunStatus.CANCELLED);
 
             when(mockClient.retrieve(eq(runId), any())).thenReturn(cancelledResponse);
 
@@ -167,9 +147,9 @@ class ClassifyRunsWrapperTest {
                     .jitterFraction(0)
                     .build();
 
-            ClassifyRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
+            ClassifyRun result = wrapper.createAndPoll(null, options);
 
-            assertEquals(ProcessorRunStatus.CANCELLED, result.getClassifyRun().getStatus());
+            assertEquals(ProcessorRunStatus.CANCELLED, result.getStatus());
         }
 
         @Test
@@ -177,16 +157,12 @@ class ClassifyRunsWrapperTest {
         void shouldThrowTimeoutError() {
             String runId = "classify_run_test123";
 
-            ClassifyRun createRun = mock(ClassifyRun.class);
-            when(createRun.getId()).thenReturn(runId);
-            ClassifyRunsCreateResponse createResponse = mock(ClassifyRunsCreateResponse.class);
-            when(createResponse.getClassifyRun()).thenReturn(createRun);
+            ClassifyRun createResponse = mock(ClassifyRun.class);
+            when(createResponse.getId()).thenReturn(runId);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
 
-            ClassifyRun processingRun = mock(ClassifyRun.class);
-            when(processingRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
-            ClassifyRunsRetrieveResponse processingResponse = mock(ClassifyRunsRetrieveResponse.class);
-            when(processingResponse.getClassifyRun()).thenReturn(processingRun);
+            ClassifyRun processingResponse = mock(ClassifyRun.class);
+            when(processingResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
 
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processingResponse);
 
@@ -206,22 +182,18 @@ class ClassifyRunsWrapperTest {
         void shouldUseDefaultOptions() {
             String runId = "classify_run_test123";
 
-            ClassifyRun createRun = mock(ClassifyRun.class);
-            when(createRun.getId()).thenReturn(runId);
-            ClassifyRunsCreateResponse createResponse = mock(ClassifyRunsCreateResponse.class);
-            when(createResponse.getClassifyRun()).thenReturn(createRun);
+            ClassifyRun createResponse = mock(ClassifyRun.class);
+            when(createResponse.getId()).thenReturn(runId);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
 
-            ClassifyRun processedRun = mock(ClassifyRun.class);
-            when(processedRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
-            ClassifyRunsRetrieveResponse processedResponse = mock(ClassifyRunsRetrieveResponse.class);
-            when(processedResponse.getClassifyRun()).thenReturn(processedRun);
+            ClassifyRun processedResponse = mock(ClassifyRun.class);
+            when(processedResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
 
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
 
-            ClassifyRunsRetrieveResponse result = wrapper.createAndPoll(null);
+            ClassifyRun result = wrapper.createAndPoll(null);
 
-            assertEquals(ProcessorRunStatus.PROCESSED, result.getClassifyRun().getStatus());
+            assertEquals(ProcessorRunStatus.PROCESSED, result.getStatus());
         }
     }
 }

@@ -9,8 +9,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import ai.extend.resources.editruns.EditRunsClient;
-import ai.extend.resources.editruns.types.EditRunsCreateResponse;
-import ai.extend.resources.editruns.types.EditRunsRetrieveResponse;
 import ai.extend.types.EditRun;
 import ai.extend.types.EditRunStatus;
 import ai.extend.wrapper.errors.PollingTimeoutError;
@@ -51,21 +49,15 @@ class EditRunsWrapperTest {
         void shouldCreateAndPollUntilProcessed() {
             String runId = "edit_run_test123";
 
-            EditRun createRun = mock(EditRun.class);
-            when(createRun.getId()).thenReturn(runId);
-            EditRunsCreateResponse createResponse = mock(EditRunsCreateResponse.class);
-            when(createResponse.getEditRun()).thenReturn(createRun);
+            EditRun createResponse = mock(EditRun.class);
+            when(createResponse.getId()).thenReturn(runId);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
 
-            EditRun processingRun = mock(EditRun.class);
-            when(processingRun.getStatus()).thenReturn(EditRunStatus.PROCESSING);
-            EditRunsRetrieveResponse processingResponse = mock(EditRunsRetrieveResponse.class);
-            when(processingResponse.getEditRun()).thenReturn(processingRun);
+            EditRun processingResponse = mock(EditRun.class);
+            when(processingResponse.getStatus()).thenReturn(EditRunStatus.PROCESSING);
 
-            EditRun processedRun = mock(EditRun.class);
-            when(processedRun.getStatus()).thenReturn(EditRunStatus.PROCESSED);
-            EditRunsRetrieveResponse processedResponse = mock(EditRunsRetrieveResponse.class);
-            when(processedResponse.getEditRun()).thenReturn(processedRun);
+            EditRun processedResponse = mock(EditRun.class);
+            when(processedResponse.getStatus()).thenReturn(EditRunStatus.PROCESSED);
 
             when(mockClient.retrieve(eq(runId), any()))
                     .thenReturn(processingResponse)
@@ -77,9 +69,9 @@ class EditRunsWrapperTest {
                     .jitterFraction(0)
                     .build();
 
-            EditRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
+            EditRun result = wrapper.createAndPoll(null, options);
 
-            assertEquals(EditRunStatus.PROCESSED, result.getEditRun().getStatus());
+            assertEquals(EditRunStatus.PROCESSED, result.getStatus());
             verify(mockClient, times(1)).create(any(), any());
             verify(mockClient, times(2)).retrieve(eq(runId), any());
         }
@@ -89,16 +81,12 @@ class EditRunsWrapperTest {
         void shouldReturnImmediatelyIfAlreadyProcessed() {
             String runId = "edit_run_test123";
 
-            EditRun createRun = mock(EditRun.class);
-            when(createRun.getId()).thenReturn(runId);
-            EditRunsCreateResponse createResponse = mock(EditRunsCreateResponse.class);
-            when(createResponse.getEditRun()).thenReturn(createRun);
+            EditRun createResponse = mock(EditRun.class);
+            when(createResponse.getId()).thenReturn(runId);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
 
-            EditRun processedRun = mock(EditRun.class);
-            when(processedRun.getStatus()).thenReturn(EditRunStatus.PROCESSED);
-            EditRunsRetrieveResponse processedResponse = mock(EditRunsRetrieveResponse.class);
-            when(processedResponse.getEditRun()).thenReturn(processedRun);
+            EditRun processedResponse = mock(EditRun.class);
+            when(processedResponse.getStatus()).thenReturn(EditRunStatus.PROCESSED);
 
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
 
@@ -108,9 +96,9 @@ class EditRunsWrapperTest {
                     .jitterFraction(0)
                     .build();
 
-            EditRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
+            EditRun result = wrapper.createAndPoll(null, options);
 
-            assertEquals(EditRunStatus.PROCESSED, result.getEditRun().getStatus());
+            assertEquals(EditRunStatus.PROCESSED, result.getStatus());
             verify(mockClient, times(1)).retrieve(eq(runId), any());
         }
 
@@ -119,16 +107,12 @@ class EditRunsWrapperTest {
         void shouldHandleFailedAsTerminal() {
             String runId = "edit_run_test123";
 
-            EditRun createRun = mock(EditRun.class);
-            when(createRun.getId()).thenReturn(runId);
-            EditRunsCreateResponse createResponse = mock(EditRunsCreateResponse.class);
-            when(createResponse.getEditRun()).thenReturn(createRun);
+            EditRun createResponse = mock(EditRun.class);
+            when(createResponse.getId()).thenReturn(runId);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
 
-            EditRun failedRun = mock(EditRun.class);
-            when(failedRun.getStatus()).thenReturn(EditRunStatus.FAILED);
-            EditRunsRetrieveResponse failedResponse = mock(EditRunsRetrieveResponse.class);
-            when(failedResponse.getEditRun()).thenReturn(failedRun);
+            EditRun failedResponse = mock(EditRun.class);
+            when(failedResponse.getStatus()).thenReturn(EditRunStatus.FAILED);
 
             when(mockClient.retrieve(eq(runId), any())).thenReturn(failedResponse);
 
@@ -138,9 +122,9 @@ class EditRunsWrapperTest {
                     .jitterFraction(0)
                     .build();
 
-            EditRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
+            EditRun result = wrapper.createAndPoll(null, options);
 
-            assertEquals(EditRunStatus.FAILED, result.getEditRun().getStatus());
+            assertEquals(EditRunStatus.FAILED, result.getStatus());
         }
 
         @Test
@@ -148,16 +132,12 @@ class EditRunsWrapperTest {
         void shouldThrowTimeoutError() {
             String runId = "edit_run_test123";
 
-            EditRun createRun = mock(EditRun.class);
-            when(createRun.getId()).thenReturn(runId);
-            EditRunsCreateResponse createResponse = mock(EditRunsCreateResponse.class);
-            when(createResponse.getEditRun()).thenReturn(createRun);
+            EditRun createResponse = mock(EditRun.class);
+            when(createResponse.getId()).thenReturn(runId);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
 
-            EditRun processingRun = mock(EditRun.class);
-            when(processingRun.getStatus()).thenReturn(EditRunStatus.PROCESSING);
-            EditRunsRetrieveResponse processingResponse = mock(EditRunsRetrieveResponse.class);
-            when(processingResponse.getEditRun()).thenReturn(processingRun);
+            EditRun processingResponse = mock(EditRun.class);
+            when(processingResponse.getStatus()).thenReturn(EditRunStatus.PROCESSING);
 
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processingResponse);
 
@@ -177,22 +157,18 @@ class EditRunsWrapperTest {
         void shouldUseDefaultOptions() {
             String runId = "edit_run_test123";
 
-            EditRun createRun = mock(EditRun.class);
-            when(createRun.getId()).thenReturn(runId);
-            EditRunsCreateResponse createResponse = mock(EditRunsCreateResponse.class);
-            when(createResponse.getEditRun()).thenReturn(createRun);
+            EditRun createResponse = mock(EditRun.class);
+            when(createResponse.getId()).thenReturn(runId);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
 
-            EditRun processedRun = mock(EditRun.class);
-            when(processedRun.getStatus()).thenReturn(EditRunStatus.PROCESSED);
-            EditRunsRetrieveResponse processedResponse = mock(EditRunsRetrieveResponse.class);
-            when(processedResponse.getEditRun()).thenReturn(processedRun);
+            EditRun processedResponse = mock(EditRun.class);
+            when(processedResponse.getStatus()).thenReturn(EditRunStatus.PROCESSED);
 
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
 
-            EditRunsRetrieveResponse result = wrapper.createAndPoll(null);
+            EditRun result = wrapper.createAndPoll(null);
 
-            assertEquals(EditRunStatus.PROCESSED, result.getEditRun().getStatus());
+            assertEquals(EditRunStatus.PROCESSED, result.getStatus());
         }
     }
 }

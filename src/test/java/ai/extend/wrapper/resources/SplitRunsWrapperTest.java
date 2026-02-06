@@ -9,8 +9,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import ai.extend.resources.splitruns.SplitRunsClient;
-import ai.extend.resources.splitruns.types.SplitRunsCreateResponse;
-import ai.extend.resources.splitruns.types.SplitRunsRetrieveResponse;
 import ai.extend.types.ProcessorRunStatus;
 import ai.extend.types.SplitRun;
 import ai.extend.wrapper.errors.PollingTimeoutError;
@@ -51,21 +49,15 @@ class SplitRunsWrapperTest {
         void shouldCreateAndPollUntilProcessed() {
             String runId = "split_run_test123";
 
-            SplitRun createRun = mock(SplitRun.class);
-            when(createRun.getId()).thenReturn(runId);
-            SplitRunsCreateResponse createResponse = mock(SplitRunsCreateResponse.class);
-            when(createResponse.getSplitRun()).thenReturn(createRun);
+            SplitRun createResponse = mock(SplitRun.class);
+            when(createResponse.getId()).thenReturn(runId);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
 
-            SplitRun processingRun = mock(SplitRun.class);
-            when(processingRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
-            SplitRunsRetrieveResponse processingResponse = mock(SplitRunsRetrieveResponse.class);
-            when(processingResponse.getSplitRun()).thenReturn(processingRun);
+            SplitRun processingResponse = mock(SplitRun.class);
+            when(processingResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
 
-            SplitRun processedRun = mock(SplitRun.class);
-            when(processedRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
-            SplitRunsRetrieveResponse processedResponse = mock(SplitRunsRetrieveResponse.class);
-            when(processedResponse.getSplitRun()).thenReturn(processedRun);
+            SplitRun processedResponse = mock(SplitRun.class);
+            when(processedResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
 
             when(mockClient.retrieve(eq(runId), any()))
                     .thenReturn(processingResponse)
@@ -77,9 +69,9 @@ class SplitRunsWrapperTest {
                     .jitterFraction(0)
                     .build();
 
-            SplitRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
+            SplitRun result = wrapper.createAndPoll(null, options);
 
-            assertEquals(ProcessorRunStatus.PROCESSED, result.getSplitRun().getStatus());
+            assertEquals(ProcessorRunStatus.PROCESSED, result.getStatus());
             verify(mockClient, times(1)).create(any(), any());
             verify(mockClient, times(2)).retrieve(eq(runId), any());
         }
@@ -89,16 +81,12 @@ class SplitRunsWrapperTest {
         void shouldReturnImmediatelyIfAlreadyProcessed() {
             String runId = "split_run_test123";
 
-            SplitRun createRun = mock(SplitRun.class);
-            when(createRun.getId()).thenReturn(runId);
-            SplitRunsCreateResponse createResponse = mock(SplitRunsCreateResponse.class);
-            when(createResponse.getSplitRun()).thenReturn(createRun);
+            SplitRun createResponse = mock(SplitRun.class);
+            when(createResponse.getId()).thenReturn(runId);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
 
-            SplitRun processedRun = mock(SplitRun.class);
-            when(processedRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
-            SplitRunsRetrieveResponse processedResponse = mock(SplitRunsRetrieveResponse.class);
-            when(processedResponse.getSplitRun()).thenReturn(processedRun);
+            SplitRun processedResponse = mock(SplitRun.class);
+            when(processedResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
 
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
 
@@ -108,9 +96,9 @@ class SplitRunsWrapperTest {
                     .jitterFraction(0)
                     .build();
 
-            SplitRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
+            SplitRun result = wrapper.createAndPoll(null, options);
 
-            assertEquals(ProcessorRunStatus.PROCESSED, result.getSplitRun().getStatus());
+            assertEquals(ProcessorRunStatus.PROCESSED, result.getStatus());
             verify(mockClient, times(1)).retrieve(eq(runId), any());
         }
 
@@ -119,16 +107,12 @@ class SplitRunsWrapperTest {
         void shouldHandleFailedAsTerminal() {
             String runId = "split_run_test123";
 
-            SplitRun createRun = mock(SplitRun.class);
-            when(createRun.getId()).thenReturn(runId);
-            SplitRunsCreateResponse createResponse = mock(SplitRunsCreateResponse.class);
-            when(createResponse.getSplitRun()).thenReturn(createRun);
+            SplitRun createResponse = mock(SplitRun.class);
+            when(createResponse.getId()).thenReturn(runId);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
 
-            SplitRun failedRun = mock(SplitRun.class);
-            when(failedRun.getStatus()).thenReturn(ProcessorRunStatus.FAILED);
-            SplitRunsRetrieveResponse failedResponse = mock(SplitRunsRetrieveResponse.class);
-            when(failedResponse.getSplitRun()).thenReturn(failedRun);
+            SplitRun failedResponse = mock(SplitRun.class);
+            when(failedResponse.getStatus()).thenReturn(ProcessorRunStatus.FAILED);
 
             when(mockClient.retrieve(eq(runId), any())).thenReturn(failedResponse);
 
@@ -138,9 +122,9 @@ class SplitRunsWrapperTest {
                     .jitterFraction(0)
                     .build();
 
-            SplitRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
+            SplitRun result = wrapper.createAndPoll(null, options);
 
-            assertEquals(ProcessorRunStatus.FAILED, result.getSplitRun().getStatus());
+            assertEquals(ProcessorRunStatus.FAILED, result.getStatus());
         }
 
         @Test
@@ -148,16 +132,12 @@ class SplitRunsWrapperTest {
         void shouldHandleCancelledAsTerminal() {
             String runId = "split_run_test123";
 
-            SplitRun createRun = mock(SplitRun.class);
-            when(createRun.getId()).thenReturn(runId);
-            SplitRunsCreateResponse createResponse = mock(SplitRunsCreateResponse.class);
-            when(createResponse.getSplitRun()).thenReturn(createRun);
+            SplitRun createResponse = mock(SplitRun.class);
+            when(createResponse.getId()).thenReturn(runId);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
 
-            SplitRun cancelledRun = mock(SplitRun.class);
-            when(cancelledRun.getStatus()).thenReturn(ProcessorRunStatus.CANCELLED);
-            SplitRunsRetrieveResponse cancelledResponse = mock(SplitRunsRetrieveResponse.class);
-            when(cancelledResponse.getSplitRun()).thenReturn(cancelledRun);
+            SplitRun cancelledResponse = mock(SplitRun.class);
+            when(cancelledResponse.getStatus()).thenReturn(ProcessorRunStatus.CANCELLED);
 
             when(mockClient.retrieve(eq(runId), any())).thenReturn(cancelledResponse);
 
@@ -167,9 +147,9 @@ class SplitRunsWrapperTest {
                     .jitterFraction(0)
                     .build();
 
-            SplitRunsRetrieveResponse result = wrapper.createAndPoll(null, options);
+            SplitRun result = wrapper.createAndPoll(null, options);
 
-            assertEquals(ProcessorRunStatus.CANCELLED, result.getSplitRun().getStatus());
+            assertEquals(ProcessorRunStatus.CANCELLED, result.getStatus());
         }
 
         @Test
@@ -177,16 +157,12 @@ class SplitRunsWrapperTest {
         void shouldThrowTimeoutError() {
             String runId = "split_run_test123";
 
-            SplitRun createRun = mock(SplitRun.class);
-            when(createRun.getId()).thenReturn(runId);
-            SplitRunsCreateResponse createResponse = mock(SplitRunsCreateResponse.class);
-            when(createResponse.getSplitRun()).thenReturn(createRun);
+            SplitRun createResponse = mock(SplitRun.class);
+            when(createResponse.getId()).thenReturn(runId);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
 
-            SplitRun processingRun = mock(SplitRun.class);
-            when(processingRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
-            SplitRunsRetrieveResponse processingResponse = mock(SplitRunsRetrieveResponse.class);
-            when(processingResponse.getSplitRun()).thenReturn(processingRun);
+            SplitRun processingResponse = mock(SplitRun.class);
+            when(processingResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
 
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processingResponse);
 
@@ -206,22 +182,18 @@ class SplitRunsWrapperTest {
         void shouldUseDefaultOptions() {
             String runId = "split_run_test123";
 
-            SplitRun createRun = mock(SplitRun.class);
-            when(createRun.getId()).thenReturn(runId);
-            SplitRunsCreateResponse createResponse = mock(SplitRunsCreateResponse.class);
-            when(createResponse.getSplitRun()).thenReturn(createRun);
+            SplitRun createResponse = mock(SplitRun.class);
+            when(createResponse.getId()).thenReturn(runId);
             when(mockClient.create(any(), any())).thenReturn(createResponse);
 
-            SplitRun processedRun = mock(SplitRun.class);
-            when(processedRun.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
-            SplitRunsRetrieveResponse processedResponse = mock(SplitRunsRetrieveResponse.class);
-            when(processedResponse.getSplitRun()).thenReturn(processedRun);
+            SplitRun processedResponse = mock(SplitRun.class);
+            when(processedResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
 
             when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
 
-            SplitRunsRetrieveResponse result = wrapper.createAndPoll(null);
+            SplitRun result = wrapper.createAndPoll(null);
 
-            assertEquals(ProcessorRunStatus.PROCESSED, result.getSplitRun().getStatus());
+            assertEquals(ProcessorRunStatus.PROCESSED, result.getStatus());
         }
     }
 }

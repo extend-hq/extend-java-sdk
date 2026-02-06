@@ -7,8 +7,7 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.editruns.EditRunsClient;
 import ai.extend.resources.editruns.requests.EditRunsCreateRequest;
-import ai.extend.resources.editruns.types.EditRunsCreateResponse;
-import ai.extend.resources.editruns.types.EditRunsRetrieveResponse;
+import ai.extend.types.EditRun;
 import ai.extend.types.EditRunStatus;
 import ai.extend.wrapper.utilities.polling.Polling;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
@@ -59,7 +58,7 @@ public class EditRunsWrapper {
      * @param request The create request
      * @return The final response when a terminal state is reached
      */
-    public EditRunsRetrieveResponse createAndPoll(EditRunsCreateRequest request) {
+    public EditRun createAndPoll(EditRunsCreateRequest request) {
         return createAndPoll(request, PollingOptions.defaults());
     }
 
@@ -72,18 +71,18 @@ public class EditRunsWrapper {
      * @param options Polling options
      * @return The final response when a terminal state is reached
      */
-    public EditRunsRetrieveResponse createAndPoll(EditRunsCreateRequest request, PollingOptions options) {
+    public EditRun createAndPoll(EditRunsCreateRequest request, PollingOptions options) {
 
         RequestOptions requestOptions = options.getRequestOptions();
 
         // Create the edit run
-        EditRunsCreateResponse createResponse = client.create(request, requestOptions);
-        final String runId = createResponse.getEditRun().getId();
+        EditRun createResponse = client.create(request, requestOptions);
+        final String runId = createResponse.getId();
 
         // Poll until terminal state
         return Polling.pollUntilDone(
                 () -> client.retrieve(runId, requestOptions),
-                response -> isTerminalStatus(response.getEditRun().getStatus()),
+                response -> isTerminalStatus(response.getStatus()),
                 options);
     }
 
