@@ -3,9 +3,12 @@
  */
 package ai.extend.types;
 
+import ai.extend.core.Nullable;
+import ai.extend.core.NullableNonemptyFilter;
 import ai.extend.core.ObjectMappers;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -43,23 +46,59 @@ public final class BlockBoundingBox {
         this.additionalProperties = additionalProperties;
     }
 
-    @JsonProperty("left")
+    @JsonIgnore
     public Optional<Double> getLeft() {
+        if (left == null) {
+            return Optional.empty();
+        }
         return left;
     }
 
-    @JsonProperty("right")
+    @JsonIgnore
     public Optional<Double> getRight() {
+        if (right == null) {
+            return Optional.empty();
+        }
         return right;
     }
 
-    @JsonProperty("top")
+    @JsonIgnore
     public Optional<Double> getTop() {
+        if (top == null) {
+            return Optional.empty();
+        }
         return top;
     }
 
-    @JsonProperty("bottom")
+    @JsonIgnore
     public Optional<Double> getBottom() {
+        if (bottom == null) {
+            return Optional.empty();
+        }
+        return bottom;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("left")
+    private Optional<Double> _getLeft() {
+        return left;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("right")
+    private Optional<Double> _getRight() {
+        return right;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("top")
+    private Optional<Double> _getTop() {
+        return top;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("bottom")
+    private Optional<Double> _getBottom() {
         return bottom;
     }
 
@@ -129,6 +168,17 @@ public final class BlockBoundingBox {
             return this;
         }
 
+        public Builder left(Nullable<Double> left) {
+            if (left.isNull()) {
+                this.left = null;
+            } else if (left.isEmpty()) {
+                this.left = Optional.empty();
+            } else {
+                this.left = Optional.of(left.get());
+            }
+            return this;
+        }
+
         @JsonSetter(value = "right", nulls = Nulls.SKIP)
         public Builder right(Optional<Double> right) {
             this.right = right;
@@ -137,6 +187,17 @@ public final class BlockBoundingBox {
 
         public Builder right(Double right) {
             this.right = Optional.ofNullable(right);
+            return this;
+        }
+
+        public Builder right(Nullable<Double> right) {
+            if (right.isNull()) {
+                this.right = null;
+            } else if (right.isEmpty()) {
+                this.right = Optional.empty();
+            } else {
+                this.right = Optional.of(right.get());
+            }
             return this;
         }
 
@@ -151,6 +212,17 @@ public final class BlockBoundingBox {
             return this;
         }
 
+        public Builder top(Nullable<Double> top) {
+            if (top.isNull()) {
+                this.top = null;
+            } else if (top.isEmpty()) {
+                this.top = Optional.empty();
+            } else {
+                this.top = Optional.of(top.get());
+            }
+            return this;
+        }
+
         @JsonSetter(value = "bottom", nulls = Nulls.SKIP)
         public Builder bottom(Optional<Double> bottom) {
             this.bottom = bottom;
@@ -159,6 +231,17 @@ public final class BlockBoundingBox {
 
         public Builder bottom(Double bottom) {
             this.bottom = Optional.ofNullable(bottom);
+            return this;
+        }
+
+        public Builder bottom(Nullable<Double> bottom) {
+            if (bottom.isNull()) {
+                this.bottom = null;
+            } else if (bottom.isEmpty()) {
+                this.bottom = Optional.empty();
+            } else {
+                this.bottom = Optional.of(bottom.get());
+            }
             return this;
         }
 

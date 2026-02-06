@@ -22,14 +22,12 @@ import java.util.Optional;
 public final class FileMetadata {
     private final Optional<Double> pageCount;
 
-    private final Optional<FileMetadataParentSplit> parentSplit;
+    private final Optional<ParentSplit> parentSplit;
 
     private final Map<String, Object> additionalProperties;
 
     private FileMetadata(
-            Optional<Double> pageCount,
-            Optional<FileMetadataParentSplit> parentSplit,
-            Map<String, Object> additionalProperties) {
+            Optional<Double> pageCount, Optional<ParentSplit> parentSplit, Map<String, Object> additionalProperties) {
         this.pageCount = pageCount;
         this.parentSplit = parentSplit;
         this.additionalProperties = additionalProperties;
@@ -43,11 +41,8 @@ public final class FileMetadata {
         return pageCount;
     }
 
-    /**
-     * @return The split metadata details. Only included if this file is a derivative of another file, for instance if it was created via a Splitter in a workflow.
-     */
     @JsonProperty("parentSplit")
-    public Optional<FileMetadataParentSplit> getParentSplit() {
+    public Optional<ParentSplit> getParentSplit() {
         return parentSplit;
     }
 
@@ -84,7 +79,7 @@ public final class FileMetadata {
     public static final class Builder {
         private Optional<Double> pageCount = Optional.empty();
 
-        private Optional<FileMetadataParentSplit> parentSplit = Optional.empty();
+        private Optional<ParentSplit> parentSplit = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -111,16 +106,13 @@ public final class FileMetadata {
             return this;
         }
 
-        /**
-         * <p>The split metadata details. Only included if this file is a derivative of another file, for instance if it was created via a Splitter in a workflow.</p>
-         */
         @JsonSetter(value = "parentSplit", nulls = Nulls.SKIP)
-        public Builder parentSplit(Optional<FileMetadataParentSplit> parentSplit) {
+        public Builder parentSplit(Optional<ParentSplit> parentSplit) {
             this.parentSplit = parentSplit;
             return this;
         }
 
-        public Builder parentSplit(FileMetadataParentSplit parentSplit) {
+        public Builder parentSplit(ParentSplit parentSplit) {
             this.parentSplit = Optional.ofNullable(parentSplit);
             return this;
         }

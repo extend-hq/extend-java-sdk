@@ -1,0 +1,14 @@
+{
+  "cliVersion": "3.37.6",
+  "generatorName": "fernapi/fern-java-sdk",
+  "generatorVersion": "3.34.8",
+  "generatorConfig": {
+    "publish-to": "central",
+    "client-class-name": "ExtendClient",
+    "package-prefix": "ai.extend",
+    "enable-inline-types": false,
+    "inline-file-properties": false,
+    "inline-path-parameters": false
+  },
+  "sdkVersion": "0.0.9"
+}

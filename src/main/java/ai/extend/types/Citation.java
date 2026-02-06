@@ -3,9 +3,12 @@
  */
 package ai.extend.types;
 
+import ai.extend.core.Nullable;
+import ai.extend.core.NullableNonemptyFilter;
 import ai.extend.core.ObjectMappers;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,71 +24,53 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = Citation.Builder.class)
 public final class Citation {
-    private final Optional<Double> page;
+    private final Optional<CitationPage> page;
 
     private final Optional<String> referenceText;
 
     private final Optional<List<Polygon>> polygon;
 
-    private final Optional<Double> pageWidth;
-
-    private final Optional<Double> pageHeight;
-
     private final Map<String, Object> additionalProperties;
 
     private Citation(
-            Optional<Double> page,
+            Optional<CitationPage> page,
             Optional<String> referenceText,
             Optional<List<Polygon>> polygon,
-            Optional<Double> pageWidth,
-            Optional<Double> pageHeight,
             Map<String, Object> additionalProperties) {
         this.page = page;
         this.referenceText = referenceText;
         this.polygon = polygon;
-        this.pageWidth = pageWidth;
-        this.pageHeight = pageHeight;
         this.additionalProperties = additionalProperties;
     }
 
-    /**
-     * @return Page number where the citation was found
-     */
     @JsonProperty("page")
-    public Optional<Double> getPage() {
+    public Optional<CitationPage> getPage() {
         return page;
     }
 
     /**
      * @return The text that was referenced
      */
-    @JsonProperty("referenceText")
+    @JsonIgnore
     public Optional<String> getReferenceText() {
+        if (referenceText == null) {
+            return Optional.empty();
+        }
         return referenceText;
     }
 
     /**
-     * @return Array of points defining the polygon
+     * @return Array of points defining the polygon around the referenced text
      */
     @JsonProperty("polygon")
     public Optional<List<Polygon>> getPolygon() {
         return polygon;
     }
 
-    /**
-     * @return Width of the page in points
-     */
-    @JsonProperty("pageWidth")
-    public Optional<Double> getPageWidth() {
-        return pageWidth;
-    }
-
-    /**
-     * @return Height of the page in points
-     */
-    @JsonProperty("pageHeight")
-    public Optional<Double> getPageHeight() {
-        return pageHeight;
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("referenceText")
+    private Optional<String> _getReferenceText() {
+        return referenceText;
     }
 
     @java.lang.Override
@@ -100,16 +85,12 @@ public final class Citation {
     }
 
     private boolean equalTo(Citation other) {
-        return page.equals(other.page)
-                && referenceText.equals(other.referenceText)
-                && polygon.equals(other.polygon)
-                && pageWidth.equals(other.pageWidth)
-                && pageHeight.equals(other.pageHeight);
+        return page.equals(other.page) && referenceText.equals(other.referenceText) && polygon.equals(other.polygon);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.page, this.referenceText, this.polygon, this.pageWidth, this.pageHeight);
+        return Objects.hash(this.page, this.referenceText, this.polygon);
     }
 
     @java.lang.Override
@@ -123,15 +104,11 @@ public final class Citation {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-        private Optional<Double> page = Optional.empty();
+        private Optional<CitationPage> page = Optional.empty();
 
         private Optional<String> referenceText = Optional.empty();
 
         private Optional<List<Polygon>> polygon = Optional.empty();
-
-        private Optional<Double> pageWidth = Optional.empty();
-
-        private Optional<Double> pageHeight = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -142,21 +119,16 @@ public final class Citation {
             page(other.getPage());
             referenceText(other.getReferenceText());
             polygon(other.getPolygon());
-            pageWidth(other.getPageWidth());
-            pageHeight(other.getPageHeight());
             return this;
         }
 
-        /**
-         * <p>Page number where the citation was found</p>
-         */
         @JsonSetter(value = "page", nulls = Nulls.SKIP)
-        public Builder page(Optional<Double> page) {
+        public Builder page(Optional<CitationPage> page) {
             this.page = page;
             return this;
         }
 
-        public Builder page(Double page) {
+        public Builder page(CitationPage page) {
             this.page = Optional.ofNullable(page);
             return this;
         }
@@ -175,8 +147,19 @@ public final class Citation {
             return this;
         }
 
+        public Builder referenceText(Nullable<String> referenceText) {
+            if (referenceText.isNull()) {
+                this.referenceText = null;
+            } else if (referenceText.isEmpty()) {
+                this.referenceText = Optional.empty();
+            } else {
+                this.referenceText = Optional.of(referenceText.get());
+            }
+            return this;
+        }
+
         /**
-         * <p>Array of points defining the polygon</p>
+         * <p>Array of points defining the polygon around the referenced text</p>
          */
         @JsonSetter(value = "polygon", nulls = Nulls.SKIP)
         public Builder polygon(Optional<List<Polygon>> polygon) {
@@ -189,36 +172,8 @@ public final class Citation {
             return this;
         }
 
-        /**
-         * <p>Width of the page in points</p>
-         */
-        @JsonSetter(value = "pageWidth", nulls = Nulls.SKIP)
-        public Builder pageWidth(Optional<Double> pageWidth) {
-            this.pageWidth = pageWidth;
-            return this;
-        }
-
-        public Builder pageWidth(Double pageWidth) {
-            this.pageWidth = Optional.ofNullable(pageWidth);
-            return this;
-        }
-
-        /**
-         * <p>Height of the page in points</p>
-         */
-        @JsonSetter(value = "pageHeight", nulls = Nulls.SKIP)
-        public Builder pageHeight(Optional<Double> pageHeight) {
-            this.pageHeight = pageHeight;
-            return this;
-        }
-
-        public Builder pageHeight(Double pageHeight) {
-            this.pageHeight = Optional.ofNullable(pageHeight);
-            return this;
-        }
-
         public Citation build() {
-            return new Citation(page, referenceText, polygon, pageWidth, pageHeight, additionalProperties);
+            return new Citation(page, referenceText, polygon, additionalProperties);
         }
     }
 }

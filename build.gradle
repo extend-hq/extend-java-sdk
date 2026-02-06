@@ -14,10 +14,10 @@ repositories {
 }
 
 dependencies {
-    api 'com.squareup.okhttp3:okhttp:4.12.0'
-    api 'com.fasterxml.jackson.core:jackson-databind:2.17.2'
-    api 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2'
-    api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2'
+    api 'com.squareup.okhttp3:okhttp:5.2.1'
+    api 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
+    api 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.18.2'
+    api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.2'
@@ -47,7 +47,7 @@ java {
 
 group = 'ai.extend'
 
-version = '0.0.12-beta'
+version = '0.0.9'
 
 jar {
     dependsOn(":generatePomFileForMavenPublication")
@@ -78,12 +78,12 @@ publishing {
         maven(MavenPublication) {
             groupId = 'ai.extend'
             artifactId = 'extend-java-sdk'
-            version = '0.0.12-beta'
+            version = '0.0.9'
             from components.java
             pom {
                 name = 'Extend.ai'
                 description = 'The Java SDK for Extend.ai'
-                url = 'https://docs.extend.ai/2025-04-21/developers'
+                url = 'https://docs.extend.ai/2026-02-09/developers'
                 licenses {
                     license {
                         name = 'The MIT License (MIT)'
@@ -122,9 +122,10 @@ sonatypeCentralUpload {
 }
 
 signing {
-    def signingKeyId = "$System.env.MAVEN_SIGNATURE_SECRET_KEY"
+    def signingKeyId = "$System.env.MAVEN_SIGNATURE_KID"
+    def signingKey = "$System.env.MAVEN_SIGNATURE_SECRET_KEY"
     def signingPassword = "$System.env.MAVEN_SIGNATURE_PASSWORD"
-    useInMemoryPgpKeys(signingKeyId, signingPassword)
+    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
     sign publishing.publications.maven
 }
 

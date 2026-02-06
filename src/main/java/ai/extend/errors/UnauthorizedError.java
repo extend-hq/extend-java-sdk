@@ -4,21 +4,20 @@
 package ai.extend.errors;
 
 import ai.extend.core.ExtendClientApiException;
-import ai.extend.types.Error;
 import okhttp3.Response;
 
 public final class UnauthorizedError extends ExtendClientApiException {
     /**
      * The body of the response that triggered the exception.
      */
-    private final Error body;
+    private final Object body;
 
-    public UnauthorizedError(Error body) {
+    public UnauthorizedError(Object body) {
         super("UnauthorizedError", 401, body);
         this.body = body;
     }
 
-    public UnauthorizedError(Error body, Response rawResponse) {
+    public UnauthorizedError(Object body, Response rawResponse) {
         super("UnauthorizedError", 401, body, rawResponse);
         this.body = body;
     }
@@ -27,7 +26,7 @@ public final class UnauthorizedError extends ExtendClientApiException {
      * @return the body
      */
     @java.lang.Override
-    public Error body() {
+    public Object body() {
         return this.body;
     }
 }

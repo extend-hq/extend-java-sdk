@@ -321,7 +321,9 @@ public final class ExtractionFieldResult {
          */
         @java.lang.Override
         public _FinalStage addAllReferences(List<ExtractionFieldResultReference> references) {
-            this.references.addAll(references);
+            if (references != null) {
+                this.references.addAll(references);
+            }
             return this;
         }
 
@@ -342,7 +344,9 @@ public final class ExtractionFieldResult {
         @JsonSetter(value = "references", nulls = Nulls.SKIP)
         public _FinalStage references(List<ExtractionFieldResultReference> references) {
             this.references.clear();
-            this.references.addAll(references);
+            if (references != null) {
+                this.references.addAll(references);
+            }
             return this;
         }
 

@@ -23,8 +23,6 @@ import org.jetbrains.annotations.NotNull;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = Block.Builder.class)
 public final class Block {
-    private final String object;
-
     private final String id;
 
     private final Optional<String> parentBlockId;
@@ -46,7 +44,6 @@ public final class Block {
     private final Map<String, Object> additionalProperties;
 
     private Block(
-            String object,
             String id,
             Optional<String> parentBlockId,
             BlockType type,
@@ -57,7 +54,6 @@ public final class Block {
             BlockBoundingBox boundingBox,
             Optional<List<Block>> children,
             Map<String, Object> additionalProperties) {
-        this.object = object;
         this.id = id;
         this.parentBlockId = parentBlockId;
         this.type = type;
@@ -75,7 +71,7 @@ public final class Block {
      */
     @JsonProperty("object")
     public String getObject() {
-        return object;
+        return "block";
     }
 
     /**
@@ -171,8 +167,7 @@ public final class Block {
     }
 
     private boolean equalTo(Block other) {
-        return object.equals(other.object)
-                && id.equals(other.id)
+        return id.equals(other.id)
                 && parentBlockId.equals(other.parentBlockId)
                 && type.equals(other.type)
                 && content.equals(other.content)
@@ -186,7 +181,6 @@ public final class Block {
     @java.lang.Override
     public int hashCode() {
         return Objects.hash(
-                this.object,
                 this.id,
                 this.parentBlockId,
                 this.type,
@@ -203,17 +197,8 @@ public final class Block {
         return ObjectMappers.stringify(this);
     }
 
-    public static ObjectStage builder() {
+    public static IdStage builder() {
         return new Builder();
-    }
-
-    public interface ObjectStage {
-        /**
-         * <p>The type of object. In this case, it will always be <code>&quot;block&quot;</code>.</p>
-         */
-        IdStage object(@NotNull String object);
-
-        Builder from(Block other);
     }
 
     public interface IdStage {
@@ -221,6 +206,8 @@ public final class Block {
          * <p>A unique identifier for the block, deterministically generated as a hash of the block content.</p>
          */
         TypeStage id(@NotNull String id);
+
+        Builder from(Block other);
     }
 
     public interface TypeStage {
@@ -296,16 +283,7 @@ public final class Block {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder
-            implements ObjectStage,
-                    IdStage,
-                    TypeStage,
-                    ContentStage,
-                    DetailsStage,
-                    MetadataStage,
-                    BoundingBoxStage,
-                    _FinalStage {
-        private String object;
-
+            implements IdStage, TypeStage, ContentStage, DetailsStage, MetadataStage, BoundingBoxStage, _FinalStage {
         private String id;
 
         private BlockType type;
@@ -331,7 +309,6 @@ public final class Block {
 
         @java.lang.Override
         public Builder from(Block other) {
-            object(other.getObject());
             id(other.getId());
             parentBlockId(other.getParentBlockId());
             type(other.getType());
@@ -341,18 +318,6 @@ public final class Block {
             polygon(other.getPolygon());
             boundingBox(other.getBoundingBox());
             children(other.getChildren());
-            return this;
-        }
-
-        /**
-         * <p>The type of object. In this case, it will always be <code>&quot;block&quot;</code>.</p>
-         * <p>The type of object. In this case, it will always be <code>&quot;block&quot;</code>.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("object")
-        public IdStage object(@NotNull String object) {
-            this.object = Objects.requireNonNull(object, "object must not be null");
             return this;
         }
 
@@ -472,7 +437,9 @@ public final class Block {
          */
         @java.lang.Override
         public _FinalStage addAllPolygon(List<BlockPolygonItem> polygon) {
-            this.polygon.addAll(polygon);
+            if (polygon != null) {
+                this.polygon.addAll(polygon);
+            }
             return this;
         }
 
@@ -493,7 +460,9 @@ public final class Block {
         @JsonSetter(value = "polygon", nulls = Nulls.SKIP)
         public _FinalStage polygon(List<BlockPolygonItem> polygon) {
             this.polygon.clear();
-            this.polygon.addAll(polygon);
+            if (polygon != null) {
+                this.polygon.addAll(polygon);
+            }
             return this;
         }
 
@@ -520,7 +489,6 @@ public final class Block {
         @java.lang.Override
         public Block build() {
             return new Block(
-                    object,
                     id,
                     parentBlockId,
                     type,

@@ -3,181 +3,2029 @@
  */
 package ai.extend.types;
 
-import ai.extend.core.ObjectMappers;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import java.util.HashMap;
-import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
+import java.util.Optional;
 
-@JsonInclude(JsonInclude.Include.NON_ABSENT)
-@JsonDeserialize(builder = WebhookEvent.Builder.class)
 public final class WebhookEvent {
-    private final String eventId;
+    private final Value value;
 
-    private final WebhookEventEventType eventType;
-
-    private final WebhookEventPayload payload;
-
-    private final Map<String, Object> additionalProperties;
-
-    private WebhookEvent(
-            String eventId,
-            WebhookEventEventType eventType,
-            WebhookEventPayload payload,
-            Map<String, Object> additionalProperties) {
-        this.eventId = eventId;
-        this.eventType = eventType;
-        this.payload = payload;
-        this.additionalProperties = additionalProperties;
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    private WebhookEvent(Value value) {
+        this.value = value;
     }
 
-    /**
-     * @return Unique identifier for the event
-     */
-    @JsonProperty("eventId")
-    public String getEventId() {
-        return eventId;
+    public <T> T visit(Visitor<T> visitor) {
+        return value.visit(visitor);
     }
 
-    /**
-     * @return Type of the event that occurred
-     */
-    @JsonProperty("eventType")
-    public WebhookEventEventType getEventType() {
-        return eventType;
+    public static WebhookEvent workflowRunCompleted(WorkflowRunCompletedWebhookEvent value) {
+        return new WebhookEvent(new WorkflowRunCompletedValue(value));
     }
 
-    /**
-     * @return Contains the relevant object for the event type
-     */
-    @JsonProperty("payload")
-    public WebhookEventPayload getPayload() {
-        return payload;
+    public static WebhookEvent workflowRunFailed(WorkflowRunFailedWebhookEvent value) {
+        return new WebhookEvent(new WorkflowRunFailedValue(value));
     }
 
-    @java.lang.Override
-    public boolean equals(Object other) {
-        if (this == other) return true;
-        return other instanceof WebhookEvent && equalTo((WebhookEvent) other);
+    public static WebhookEvent workflowRunNeedsReview(WorkflowRunNeedsReviewWebhookEvent value) {
+        return new WebhookEvent(new WorkflowRunNeedsReviewValue(value));
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
+    public static WebhookEvent workflowRunRejected(WorkflowRunRejectedWebhookEvent value) {
+        return new WebhookEvent(new WorkflowRunRejectedValue(value));
     }
 
-    private boolean equalTo(WebhookEvent other) {
-        return eventId.equals(other.eventId) && eventType.equals(other.eventType) && payload.equals(other.payload);
+    public static WebhookEvent workflowRunCancelled(WorkflowRunCancelledWebhookEvent value) {
+        return new WebhookEvent(new WorkflowRunCancelledValue(value));
     }
 
-    @java.lang.Override
-    public int hashCode() {
-        return Objects.hash(this.eventId, this.eventType, this.payload);
+    public static WebhookEvent workflowRunStepRunProcessed(WorkflowRunStepRunProcessedWebhookEvent value) {
+        return new WebhookEvent(new WorkflowRunStepRunProcessedValue(value));
     }
 
-    @java.lang.Override
-    public String toString() {
-        return ObjectMappers.stringify(this);
+    public static WebhookEvent extractRunProcessed(ExtractRunProcessedWebhookEvent value) {
+        return new WebhookEvent(new ExtractRunProcessedValue(value));
     }
 
-    public static EventIdStage builder() {
-        return new Builder();
+    public static WebhookEvent extractRunFailed(ExtractRunFailedWebhookEvent value) {
+        return new WebhookEvent(new ExtractRunFailedValue(value));
     }
 
-    public interface EventIdStage {
-        /**
-         * <p>Unique identifier for the event</p>
-         */
-        EventTypeStage eventId(@NotNull String eventId);
-
-        Builder from(WebhookEvent other);
+    public static WebhookEvent classifyRunProcessed(ClassifyRunProcessedWebhookEvent value) {
+        return new WebhookEvent(new ClassifyRunProcessedValue(value));
     }
 
-    public interface EventTypeStage {
-        /**
-         * <p>Type of the event that occurred</p>
-         */
-        PayloadStage eventType(@NotNull WebhookEventEventType eventType);
+    public static WebhookEvent classifyRunFailed(ClassifyRunFailedWebhookEvent value) {
+        return new WebhookEvent(new ClassifyRunFailedValue(value));
     }
 
-    public interface PayloadStage {
-        /**
-         * <p>Contains the relevant object for the event type</p>
-         */
-        _FinalStage payload(@NotNull WebhookEventPayload payload);
+    public static WebhookEvent splitRunProcessed(SplitRunProcessedWebhookEvent value) {
+        return new WebhookEvent(new SplitRunProcessedValue(value));
     }
 
-    public interface _FinalStage {
-        WebhookEvent build();
+    public static WebhookEvent splitRunFailed(SplitRunFailedWebhookEvent value) {
+        return new WebhookEvent(new SplitRunFailedValue(value));
     }
 
+    public static WebhookEvent parseRunProcessed(ParseRunProcessedWebhookEvent value) {
+        return new WebhookEvent(new ParseRunProcessedValue(value));
+    }
+
+    public static WebhookEvent parseRunFailed(ParseRunFailedWebhookEvent value) {
+        return new WebhookEvent(new ParseRunFailedValue(value));
+    }
+
+    public static WebhookEvent editRunProcessed(EditRunProcessedWebhookEvent value) {
+        return new WebhookEvent(new EditRunProcessedValue(value));
+    }
+
+    public static WebhookEvent editRunFailed(EditRunFailedWebhookEvent value) {
+        return new WebhookEvent(new EditRunFailedValue(value));
+    }
+
+    public static WebhookEvent workflowCreated(WorkflowCreatedWebhookEvent value) {
+        return new WebhookEvent(new WorkflowCreatedValue(value));
+    }
+
+    public static WebhookEvent workflowDeployed(WorkflowDeployedWebhookEvent value) {
+        return new WebhookEvent(new WorkflowDeployedValue(value));
+    }
+
+    public static WebhookEvent workflowDeleted(WorkflowDeletedWebhookEvent value) {
+        return new WebhookEvent(new WorkflowDeletedValue(value));
+    }
+
+    public static WebhookEvent extractorCreated(ExtractorCreatedWebhookEvent value) {
+        return new WebhookEvent(new ExtractorCreatedValue(value));
+    }
+
+    public static WebhookEvent extractorUpdated(ExtractorUpdatedWebhookEvent value) {
+        return new WebhookEvent(new ExtractorUpdatedValue(value));
+    }
+
+    public static WebhookEvent extractorDeleted(ExtractorDeletedWebhookEvent value) {
+        return new WebhookEvent(new ExtractorDeletedValue(value));
+    }
+
+    public static WebhookEvent extractorDraftUpdated(ExtractorDraftUpdatedWebhookEvent value) {
+        return new WebhookEvent(new ExtractorDraftUpdatedValue(value));
+    }
+
+    public static WebhookEvent extractorVersionPublished(ExtractorVersionPublishedWebhookEvent value) {
+        return new WebhookEvent(new ExtractorVersionPublishedValue(value));
+    }
+
+    public static WebhookEvent classifierCreated(ClassifierCreatedWebhookEvent value) {
+        return new WebhookEvent(new ClassifierCreatedValue(value));
+    }
+
+    public static WebhookEvent classifierUpdated(ClassifierUpdatedWebhookEvent value) {
+        return new WebhookEvent(new ClassifierUpdatedValue(value));
+    }
+
+    public static WebhookEvent classifierDeleted(ClassifierDeletedWebhookEvent value) {
+        return new WebhookEvent(new ClassifierDeletedValue(value));
+    }
+
+    public static WebhookEvent classifierDraftUpdated(ClassifierDraftUpdatedWebhookEvent value) {
+        return new WebhookEvent(new ClassifierDraftUpdatedValue(value));
+    }
+
+    public static WebhookEvent classifierVersionPublished(ClassifierVersionPublishedWebhookEvent value) {
+        return new WebhookEvent(new ClassifierVersionPublishedValue(value));
+    }
+
+    public static WebhookEvent splitterCreated(SplitterCreatedWebhookEvent value) {
+        return new WebhookEvent(new SplitterCreatedValue(value));
+    }
+
+    public static WebhookEvent splitterUpdated(SplitterUpdatedWebhookEvent value) {
+        return new WebhookEvent(new SplitterUpdatedValue(value));
+    }
+
+    public static WebhookEvent splitterDeleted(SplitterDeletedWebhookEvent value) {
+        return new WebhookEvent(new SplitterDeletedValue(value));
+    }
+
+    public static WebhookEvent splitterDraftUpdated(SplitterDraftUpdatedWebhookEvent value) {
+        return new WebhookEvent(new SplitterDraftUpdatedValue(value));
+    }
+
+    public static WebhookEvent splitterVersionPublished(SplitterVersionPublishedWebhookEvent value) {
+        return new WebhookEvent(new SplitterVersionPublishedValue(value));
+    }
+
+    public boolean isWorkflowRunCompleted() {
+        return value instanceof WorkflowRunCompletedValue;
+    }
+
+    public boolean isWorkflowRunFailed() {
+        return value instanceof WorkflowRunFailedValue;
+    }
+
+    public boolean isWorkflowRunNeedsReview() {
+        return value instanceof WorkflowRunNeedsReviewValue;
+    }
+
+    public boolean isWorkflowRunRejected() {
+        return value instanceof WorkflowRunRejectedValue;
+    }
+
+    public boolean isWorkflowRunCancelled() {
+        return value instanceof WorkflowRunCancelledValue;
+    }
+
+    public boolean isWorkflowRunStepRunProcessed() {
+        return value instanceof WorkflowRunStepRunProcessedValue;
+    }
+
+    public boolean isExtractRunProcessed() {
+        return value instanceof ExtractRunProcessedValue;
+    }
+
+    public boolean isExtractRunFailed() {
+        return value instanceof ExtractRunFailedValue;
+    }
+
+    public boolean isClassifyRunProcessed() {
+        return value instanceof ClassifyRunProcessedValue;
+    }
+
+    public boolean isClassifyRunFailed() {
+        return value instanceof ClassifyRunFailedValue;
+    }
+
+    public boolean isSplitRunProcessed() {
+        return value instanceof SplitRunProcessedValue;
+    }
+
+    public boolean isSplitRunFailed() {
+        return value instanceof SplitRunFailedValue;
+    }
+
+    public boolean isParseRunProcessed() {
+        return value instanceof ParseRunProcessedValue;
+    }
+
+    public boolean isParseRunFailed() {
+        return value instanceof ParseRunFailedValue;
+    }
+
+    public boolean isEditRunProcessed() {
+        return value instanceof EditRunProcessedValue;
+    }
+
+    public boolean isEditRunFailed() {
+        return value instanceof EditRunFailedValue;
+    }
+
+    public boolean isWorkflowCreated() {
+        return value instanceof WorkflowCreatedValue;
+    }
+
+    public boolean isWorkflowDeployed() {
+        return value instanceof WorkflowDeployedValue;
+    }
+
+    public boolean isWorkflowDeleted() {
+        return value instanceof WorkflowDeletedValue;
+    }
+
+    public boolean isExtractorCreated() {
+        return value instanceof ExtractorCreatedValue;
+    }
+
+    public boolean isExtractorUpdated() {
+        return value instanceof ExtractorUpdatedValue;
+    }
+
+    public boolean isExtractorDeleted() {
+        return value instanceof ExtractorDeletedValue;
+    }
+
+    public boolean isExtractorDraftUpdated() {
+        return value instanceof ExtractorDraftUpdatedValue;
+    }
+
+    public boolean isExtractorVersionPublished() {
+        return value instanceof ExtractorVersionPublishedValue;
+    }
+
+    public boolean isClassifierCreated() {
+        return value instanceof ClassifierCreatedValue;
+    }
+
+    public boolean isClassifierUpdated() {
+        return value instanceof ClassifierUpdatedValue;
+    }
+
+    public boolean isClassifierDeleted() {
+        return value instanceof ClassifierDeletedValue;
+    }
+
+    public boolean isClassifierDraftUpdated() {
+        return value instanceof ClassifierDraftUpdatedValue;
+    }
+
+    public boolean isClassifierVersionPublished() {
+        return value instanceof ClassifierVersionPublishedValue;
+    }
+
+    public boolean isSplitterCreated() {
+        return value instanceof SplitterCreatedValue;
+    }
+
+    public boolean isSplitterUpdated() {
+        return value instanceof SplitterUpdatedValue;
+    }
+
+    public boolean isSplitterDeleted() {
+        return value instanceof SplitterDeletedValue;
+    }
+
+    public boolean isSplitterDraftUpdated() {
+        return value instanceof SplitterDraftUpdatedValue;
+    }
+
+    public boolean isSplitterVersionPublished() {
+        return value instanceof SplitterVersionPublishedValue;
+    }
+
+    public boolean _isUnknown() {
+        return value instanceof _UnknownValue;
+    }
+
+    public Optional<WorkflowRunCompletedWebhookEvent> getWorkflowRunCompleted() {
+        if (isWorkflowRunCompleted()) {
+            return Optional.of(((WorkflowRunCompletedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<WorkflowRunFailedWebhookEvent> getWorkflowRunFailed() {
+        if (isWorkflowRunFailed()) {
+            return Optional.of(((WorkflowRunFailedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<WorkflowRunNeedsReviewWebhookEvent> getWorkflowRunNeedsReview() {
+        if (isWorkflowRunNeedsReview()) {
+            return Optional.of(((WorkflowRunNeedsReviewValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<WorkflowRunRejectedWebhookEvent> getWorkflowRunRejected() {
+        if (isWorkflowRunRejected()) {
+            return Optional.of(((WorkflowRunRejectedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<WorkflowRunCancelledWebhookEvent> getWorkflowRunCancelled() {
+        if (isWorkflowRunCancelled()) {
+            return Optional.of(((WorkflowRunCancelledValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<WorkflowRunStepRunProcessedWebhookEvent> getWorkflowRunStepRunProcessed() {
+        if (isWorkflowRunStepRunProcessed()) {
+            return Optional.of(((WorkflowRunStepRunProcessedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ExtractRunProcessedWebhookEvent> getExtractRunProcessed() {
+        if (isExtractRunProcessed()) {
+            return Optional.of(((ExtractRunProcessedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ExtractRunFailedWebhookEvent> getExtractRunFailed() {
+        if (isExtractRunFailed()) {
+            return Optional.of(((ExtractRunFailedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ClassifyRunProcessedWebhookEvent> getClassifyRunProcessed() {
+        if (isClassifyRunProcessed()) {
+            return Optional.of(((ClassifyRunProcessedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ClassifyRunFailedWebhookEvent> getClassifyRunFailed() {
+        if (isClassifyRunFailed()) {
+            return Optional.of(((ClassifyRunFailedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<SplitRunProcessedWebhookEvent> getSplitRunProcessed() {
+        if (isSplitRunProcessed()) {
+            return Optional.of(((SplitRunProcessedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<SplitRunFailedWebhookEvent> getSplitRunFailed() {
+        if (isSplitRunFailed()) {
+            return Optional.of(((SplitRunFailedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ParseRunProcessedWebhookEvent> getParseRunProcessed() {
+        if (isParseRunProcessed()) {
+            return Optional.of(((ParseRunProcessedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ParseRunFailedWebhookEvent> getParseRunFailed() {
+        if (isParseRunFailed()) {
+            return Optional.of(((ParseRunFailedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<EditRunProcessedWebhookEvent> getEditRunProcessed() {
+        if (isEditRunProcessed()) {
+            return Optional.of(((EditRunProcessedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<EditRunFailedWebhookEvent> getEditRunFailed() {
+        if (isEditRunFailed()) {
+            return Optional.of(((EditRunFailedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<WorkflowCreatedWebhookEvent> getWorkflowCreated() {
+        if (isWorkflowCreated()) {
+            return Optional.of(((WorkflowCreatedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<WorkflowDeployedWebhookEvent> getWorkflowDeployed() {
+        if (isWorkflowDeployed()) {
+            return Optional.of(((WorkflowDeployedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<WorkflowDeletedWebhookEvent> getWorkflowDeleted() {
+        if (isWorkflowDeleted()) {
+            return Optional.of(((WorkflowDeletedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ExtractorCreatedWebhookEvent> getExtractorCreated() {
+        if (isExtractorCreated()) {
+            return Optional.of(((ExtractorCreatedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ExtractorUpdatedWebhookEvent> getExtractorUpdated() {
+        if (isExtractorUpdated()) {
+            return Optional.of(((ExtractorUpdatedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ExtractorDeletedWebhookEvent> getExtractorDeleted() {
+        if (isExtractorDeleted()) {
+            return Optional.of(((ExtractorDeletedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ExtractorDraftUpdatedWebhookEvent> getExtractorDraftUpdated() {
+        if (isExtractorDraftUpdated()) {
+            return Optional.of(((ExtractorDraftUpdatedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ExtractorVersionPublishedWebhookEvent> getExtractorVersionPublished() {
+        if (isExtractorVersionPublished()) {
+            return Optional.of(((ExtractorVersionPublishedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ClassifierCreatedWebhookEvent> getClassifierCreated() {
+        if (isClassifierCreated()) {
+            return Optional.of(((ClassifierCreatedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ClassifierUpdatedWebhookEvent> getClassifierUpdated() {
+        if (isClassifierUpdated()) {
+            return Optional.of(((ClassifierUpdatedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ClassifierDeletedWebhookEvent> getClassifierDeleted() {
+        if (isClassifierDeleted()) {
+            return Optional.of(((ClassifierDeletedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ClassifierDraftUpdatedWebhookEvent> getClassifierDraftUpdated() {
+        if (isClassifierDraftUpdated()) {
+            return Optional.of(((ClassifierDraftUpdatedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ClassifierVersionPublishedWebhookEvent> getClassifierVersionPublished() {
+        if (isClassifierVersionPublished()) {
+            return Optional.of(((ClassifierVersionPublishedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<SplitterCreatedWebhookEvent> getSplitterCreated() {
+        if (isSplitterCreated()) {
+            return Optional.of(((SplitterCreatedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<SplitterUpdatedWebhookEvent> getSplitterUpdated() {
+        if (isSplitterUpdated()) {
+            return Optional.of(((SplitterUpdatedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<SplitterDeletedWebhookEvent> getSplitterDeleted() {
+        if (isSplitterDeleted()) {
+            return Optional.of(((SplitterDeletedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<SplitterDraftUpdatedWebhookEvent> getSplitterDraftUpdated() {
+        if (isSplitterDraftUpdated()) {
+            return Optional.of(((SplitterDraftUpdatedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<SplitterVersionPublishedWebhookEvent> getSplitterVersionPublished() {
+        if (isSplitterVersionPublished()) {
+            return Optional.of(((SplitterVersionPublishedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Object> _getUnknown() {
+        if (_isUnknown()) {
+            return Optional.of(((_UnknownValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    @JsonValue
+    private Value getValue() {
+        return this.value;
+    }
+
+    public interface Visitor<T> {
+        T visitWorkflowRunCompleted(WorkflowRunCompletedWebhookEvent workflowRunCompleted);
+
+        T visitWorkflowRunFailed(WorkflowRunFailedWebhookEvent workflowRunFailed);
+
+        T visitWorkflowRunNeedsReview(WorkflowRunNeedsReviewWebhookEvent workflowRunNeedsReview);
+
+        T visitWorkflowRunRejected(WorkflowRunRejectedWebhookEvent workflowRunRejected);
+
+        T visitWorkflowRunCancelled(WorkflowRunCancelledWebhookEvent workflowRunCancelled);
+
+        T visitWorkflowRunStepRunProcessed(WorkflowRunStepRunProcessedWebhookEvent workflowRunStepRunProcessed);
+
+        T visitExtractRunProcessed(ExtractRunProcessedWebhookEvent extractRunProcessed);
+
+        T visitExtractRunFailed(ExtractRunFailedWebhookEvent extractRunFailed);
+
+        T visitClassifyRunProcessed(ClassifyRunProcessedWebhookEvent classifyRunProcessed);
+
+        T visitClassifyRunFailed(ClassifyRunFailedWebhookEvent classifyRunFailed);
+
+        T visitSplitRunProcessed(SplitRunProcessedWebhookEvent splitRunProcessed);
+
+        T visitSplitRunFailed(SplitRunFailedWebhookEvent splitRunFailed);
+
+        T visitParseRunProcessed(ParseRunProcessedWebhookEvent parseRunProcessed);
+
+        T visitParseRunFailed(ParseRunFailedWebhookEvent parseRunFailed);
+
+        T visitEditRunProcessed(EditRunProcessedWebhookEvent editRunProcessed);
+
+        T visitEditRunFailed(EditRunFailedWebhookEvent editRunFailed);
+
+        T visitWorkflowCreated(WorkflowCreatedWebhookEvent workflowCreated);
+
+        T visitWorkflowDeployed(WorkflowDeployedWebhookEvent workflowDeployed);
+
+        T visitWorkflowDeleted(WorkflowDeletedWebhookEvent workflowDeleted);
+
+        T visitExtractorCreated(ExtractorCreatedWebhookEvent extractorCreated);
+
+        T visitExtractorUpdated(ExtractorUpdatedWebhookEvent extractorUpdated);
+
+        T visitExtractorDeleted(ExtractorDeletedWebhookEvent extractorDeleted);
+
+        T visitExtractorDraftUpdated(ExtractorDraftUpdatedWebhookEvent extractorDraftUpdated);
+
+        T visitExtractorVersionPublished(ExtractorVersionPublishedWebhookEvent extractorVersionPublished);
+
+        T visitClassifierCreated(ClassifierCreatedWebhookEvent classifierCreated);
+
+        T visitClassifierUpdated(ClassifierUpdatedWebhookEvent classifierUpdated);
+
+        T visitClassifierDeleted(ClassifierDeletedWebhookEvent classifierDeleted);
+
+        T visitClassifierDraftUpdated(ClassifierDraftUpdatedWebhookEvent classifierDraftUpdated);
+
+        T visitClassifierVersionPublished(ClassifierVersionPublishedWebhookEvent classifierVersionPublished);
+
+        T visitSplitterCreated(SplitterCreatedWebhookEvent splitterCreated);
+
+        T visitSplitterUpdated(SplitterUpdatedWebhookEvent splitterUpdated);
+
+        T visitSplitterDeleted(SplitterDeletedWebhookEvent splitterDeleted);
+
+        T visitSplitterDraftUpdated(SplitterDraftUpdatedWebhookEvent splitterDraftUpdated);
+
+        T visitSplitterVersionPublished(SplitterVersionPublishedWebhookEvent splitterVersionPublished);
+
+        T _visitUnknown(Object unknownType);
+    }
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "eventType", visible = true, defaultImpl = _UnknownValue.class)
+    @JsonSubTypes({
+        @JsonSubTypes.Type(WorkflowRunCompletedValue.class),
+        @JsonSubTypes.Type(WorkflowRunFailedValue.class),
+        @JsonSubTypes.Type(WorkflowRunNeedsReviewValue.class),
+        @JsonSubTypes.Type(WorkflowRunRejectedValue.class),
+        @JsonSubTypes.Type(WorkflowRunCancelledValue.class),
+        @JsonSubTypes.Type(WorkflowRunStepRunProcessedValue.class),
+        @JsonSubTypes.Type(ExtractRunProcessedValue.class),
+        @JsonSubTypes.Type(ExtractRunFailedValue.class),
+        @JsonSubTypes.Type(ClassifyRunProcessedValue.class),
+        @JsonSubTypes.Type(ClassifyRunFailedValue.class),
+        @JsonSubTypes.Type(SplitRunProcessedValue.class),
+        @JsonSubTypes.Type(SplitRunFailedValue.class),
+        @JsonSubTypes.Type(ParseRunProcessedValue.class),
+        @JsonSubTypes.Type(ParseRunFailedValue.class),
+        @JsonSubTypes.Type(EditRunProcessedValue.class),
+        @JsonSubTypes.Type(EditRunFailedValue.class),
+        @JsonSubTypes.Type(WorkflowCreatedValue.class),
+        @JsonSubTypes.Type(WorkflowDeployedValue.class),
+        @JsonSubTypes.Type(WorkflowDeletedValue.class),
+        @JsonSubTypes.Type(ExtractorCreatedValue.class),
+        @JsonSubTypes.Type(ExtractorUpdatedValue.class),
+        @JsonSubTypes.Type(ExtractorDeletedValue.class),
+        @JsonSubTypes.Type(ExtractorDraftUpdatedValue.class),
+        @JsonSubTypes.Type(ExtractorVersionPublishedValue.class),
+        @JsonSubTypes.Type(ClassifierCreatedValue.class),
+        @JsonSubTypes.Type(ClassifierUpdatedValue.class),
+        @JsonSubTypes.Type(ClassifierDeletedValue.class),
+        @JsonSubTypes.Type(ClassifierDraftUpdatedValue.class),
+        @JsonSubTypes.Type(ClassifierVersionPublishedValue.class),
+        @JsonSubTypes.Type(SplitterCreatedValue.class),
+        @JsonSubTypes.Type(SplitterUpdatedValue.class),
+        @JsonSubTypes.Type(SplitterDeletedValue.class),
+        @JsonSubTypes.Type(SplitterDraftUpdatedValue.class),
+        @JsonSubTypes.Type(SplitterVersionPublishedValue.class)
+    })
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements EventIdStage, EventTypeStage, PayloadStage, _FinalStage {
-        private String eventId;
+    private interface Value {
+        <T> T visit(Visitor<T> visitor);
+    }
 
-        private WebhookEventEventType eventType;
+    @JsonTypeName("workflow_run.completed")
+    @JsonIgnoreProperties("eventType")
+    private static final class WorkflowRunCompletedValue implements Value {
+        @JsonUnwrapped
+        private WorkflowRunCompletedWebhookEvent value;
 
-        private WebhookEventPayload payload;
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private WorkflowRunCompletedValue() {}
 
-        @JsonAnySetter
-        private Map<String, Object> additionalProperties = new HashMap<>();
-
-        private Builder() {}
-
-        @java.lang.Override
-        public Builder from(WebhookEvent other) {
-            eventId(other.getEventId());
-            eventType(other.getEventType());
-            payload(other.getPayload());
-            return this;
-        }
-
-        /**
-         * <p>Unique identifier for the event</p>
-         * <p>Unique identifier for the event</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("eventId")
-        public EventTypeStage eventId(@NotNull String eventId) {
-            this.eventId = Objects.requireNonNull(eventId, "eventId must not be null");
-            return this;
-        }
-
-        /**
-         * <p>Type of the event that occurred</p>
-         * <p>Type of the event that occurred</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("eventType")
-        public PayloadStage eventType(@NotNull WebhookEventEventType eventType) {
-            this.eventType = Objects.requireNonNull(eventType, "eventType must not be null");
-            return this;
-        }
-
-        /**
-         * <p>Contains the relevant object for the event type</p>
-         * <p>Contains the relevant object for the event type</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("payload")
-        public _FinalStage payload(@NotNull WebhookEventPayload payload) {
-            this.payload = Objects.requireNonNull(payload, "payload must not be null");
-            return this;
+        private WorkflowRunCompletedValue(WorkflowRunCompletedWebhookEvent value) {
+            this.value = value;
         }
 
         @java.lang.Override
-        public WebhookEvent build() {
-            return new WebhookEvent(eventId, eventType, payload, additionalProperties);
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitWorkflowRunCompleted(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof WorkflowRunCompletedValue && equalTo((WorkflowRunCompletedValue) other);
+        }
+
+        private boolean equalTo(WorkflowRunCompletedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("workflow_run.failed")
+    @JsonIgnoreProperties("eventType")
+    private static final class WorkflowRunFailedValue implements Value {
+        @JsonUnwrapped
+        private WorkflowRunFailedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private WorkflowRunFailedValue() {}
+
+        private WorkflowRunFailedValue(WorkflowRunFailedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitWorkflowRunFailed(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof WorkflowRunFailedValue && equalTo((WorkflowRunFailedValue) other);
+        }
+
+        private boolean equalTo(WorkflowRunFailedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("workflow_run.needs_review")
+    @JsonIgnoreProperties("eventType")
+    private static final class WorkflowRunNeedsReviewValue implements Value {
+        @JsonUnwrapped
+        private WorkflowRunNeedsReviewWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private WorkflowRunNeedsReviewValue() {}
+
+        private WorkflowRunNeedsReviewValue(WorkflowRunNeedsReviewWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitWorkflowRunNeedsReview(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof WorkflowRunNeedsReviewValue && equalTo((WorkflowRunNeedsReviewValue) other);
+        }
+
+        private boolean equalTo(WorkflowRunNeedsReviewValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("workflow_run.rejected")
+    @JsonIgnoreProperties("eventType")
+    private static final class WorkflowRunRejectedValue implements Value {
+        @JsonUnwrapped
+        private WorkflowRunRejectedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private WorkflowRunRejectedValue() {}
+
+        private WorkflowRunRejectedValue(WorkflowRunRejectedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitWorkflowRunRejected(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof WorkflowRunRejectedValue && equalTo((WorkflowRunRejectedValue) other);
+        }
+
+        private boolean equalTo(WorkflowRunRejectedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("workflow_run.cancelled")
+    @JsonIgnoreProperties("eventType")
+    private static final class WorkflowRunCancelledValue implements Value {
+        @JsonUnwrapped
+        private WorkflowRunCancelledWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private WorkflowRunCancelledValue() {}
+
+        private WorkflowRunCancelledValue(WorkflowRunCancelledWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitWorkflowRunCancelled(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof WorkflowRunCancelledValue && equalTo((WorkflowRunCancelledValue) other);
+        }
+
+        private boolean equalTo(WorkflowRunCancelledValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("workflow_run.step_run.processed")
+    @JsonIgnoreProperties("eventType")
+    private static final class WorkflowRunStepRunProcessedValue implements Value {
+        @JsonUnwrapped
+        private WorkflowRunStepRunProcessedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private WorkflowRunStepRunProcessedValue() {}
+
+        private WorkflowRunStepRunProcessedValue(WorkflowRunStepRunProcessedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitWorkflowRunStepRunProcessed(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof WorkflowRunStepRunProcessedValue
+                    && equalTo((WorkflowRunStepRunProcessedValue) other);
+        }
+
+        private boolean equalTo(WorkflowRunStepRunProcessedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("extract_run.processed")
+    @JsonIgnoreProperties("eventType")
+    private static final class ExtractRunProcessedValue implements Value {
+        @JsonUnwrapped
+        private ExtractRunProcessedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ExtractRunProcessedValue() {}
+
+        private ExtractRunProcessedValue(ExtractRunProcessedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitExtractRunProcessed(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ExtractRunProcessedValue && equalTo((ExtractRunProcessedValue) other);
+        }
+
+        private boolean equalTo(ExtractRunProcessedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("extract_run.failed")
+    @JsonIgnoreProperties("eventType")
+    private static final class ExtractRunFailedValue implements Value {
+        @JsonUnwrapped
+        private ExtractRunFailedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ExtractRunFailedValue() {}
+
+        private ExtractRunFailedValue(ExtractRunFailedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitExtractRunFailed(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ExtractRunFailedValue && equalTo((ExtractRunFailedValue) other);
+        }
+
+        private boolean equalTo(ExtractRunFailedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("classify_run.processed")
+    @JsonIgnoreProperties("eventType")
+    private static final class ClassifyRunProcessedValue implements Value {
+        @JsonUnwrapped
+        private ClassifyRunProcessedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ClassifyRunProcessedValue() {}
+
+        private ClassifyRunProcessedValue(ClassifyRunProcessedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitClassifyRunProcessed(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ClassifyRunProcessedValue && equalTo((ClassifyRunProcessedValue) other);
+        }
+
+        private boolean equalTo(ClassifyRunProcessedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("classify_run.failed")
+    @JsonIgnoreProperties("eventType")
+    private static final class ClassifyRunFailedValue implements Value {
+        @JsonUnwrapped
+        private ClassifyRunFailedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ClassifyRunFailedValue() {}
+
+        private ClassifyRunFailedValue(ClassifyRunFailedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitClassifyRunFailed(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ClassifyRunFailedValue && equalTo((ClassifyRunFailedValue) other);
+        }
+
+        private boolean equalTo(ClassifyRunFailedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("split_run.processed")
+    @JsonIgnoreProperties("eventType")
+    private static final class SplitRunProcessedValue implements Value {
+        @JsonUnwrapped
+        private SplitRunProcessedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private SplitRunProcessedValue() {}
+
+        private SplitRunProcessedValue(SplitRunProcessedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitSplitRunProcessed(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof SplitRunProcessedValue && equalTo((SplitRunProcessedValue) other);
+        }
+
+        private boolean equalTo(SplitRunProcessedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("split_run.failed")
+    @JsonIgnoreProperties("eventType")
+    private static final class SplitRunFailedValue implements Value {
+        @JsonUnwrapped
+        private SplitRunFailedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private SplitRunFailedValue() {}
+
+        private SplitRunFailedValue(SplitRunFailedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitSplitRunFailed(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof SplitRunFailedValue && equalTo((SplitRunFailedValue) other);
+        }
+
+        private boolean equalTo(SplitRunFailedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("parse_run.processed")
+    @JsonIgnoreProperties("eventType")
+    private static final class ParseRunProcessedValue implements Value {
+        @JsonUnwrapped
+        private ParseRunProcessedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ParseRunProcessedValue() {}
+
+        private ParseRunProcessedValue(ParseRunProcessedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitParseRunProcessed(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ParseRunProcessedValue && equalTo((ParseRunProcessedValue) other);
+        }
+
+        private boolean equalTo(ParseRunProcessedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("parse_run.failed")
+    @JsonIgnoreProperties("eventType")
+    private static final class ParseRunFailedValue implements Value {
+        @JsonUnwrapped
+        private ParseRunFailedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ParseRunFailedValue() {}
+
+        private ParseRunFailedValue(ParseRunFailedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitParseRunFailed(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ParseRunFailedValue && equalTo((ParseRunFailedValue) other);
+        }
+
+        private boolean equalTo(ParseRunFailedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("edit_run.processed")
+    @JsonIgnoreProperties("eventType")
+    private static final class EditRunProcessedValue implements Value {
+        @JsonUnwrapped
+        private EditRunProcessedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private EditRunProcessedValue() {}
+
+        private EditRunProcessedValue(EditRunProcessedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitEditRunProcessed(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof EditRunProcessedValue && equalTo((EditRunProcessedValue) other);
+        }
+
+        private boolean equalTo(EditRunProcessedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("edit_run.failed")
+    @JsonIgnoreProperties("eventType")
+    private static final class EditRunFailedValue implements Value {
+        @JsonUnwrapped
+        private EditRunFailedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private EditRunFailedValue() {}
+
+        private EditRunFailedValue(EditRunFailedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitEditRunFailed(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof EditRunFailedValue && equalTo((EditRunFailedValue) other);
+        }
+
+        private boolean equalTo(EditRunFailedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("workflow.created")
+    @JsonIgnoreProperties("eventType")
+    private static final class WorkflowCreatedValue implements Value {
+        @JsonUnwrapped
+        private WorkflowCreatedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private WorkflowCreatedValue() {}
+
+        private WorkflowCreatedValue(WorkflowCreatedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitWorkflowCreated(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof WorkflowCreatedValue && equalTo((WorkflowCreatedValue) other);
+        }
+
+        private boolean equalTo(WorkflowCreatedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("workflow.deployed")
+    @JsonIgnoreProperties("eventType")
+    private static final class WorkflowDeployedValue implements Value {
+        @JsonUnwrapped
+        private WorkflowDeployedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private WorkflowDeployedValue() {}
+
+        private WorkflowDeployedValue(WorkflowDeployedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitWorkflowDeployed(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof WorkflowDeployedValue && equalTo((WorkflowDeployedValue) other);
+        }
+
+        private boolean equalTo(WorkflowDeployedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("workflow.deleted")
+    @JsonIgnoreProperties("eventType")
+    private static final class WorkflowDeletedValue implements Value {
+        @JsonUnwrapped
+        private WorkflowDeletedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private WorkflowDeletedValue() {}
+
+        private WorkflowDeletedValue(WorkflowDeletedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitWorkflowDeleted(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof WorkflowDeletedValue && equalTo((WorkflowDeletedValue) other);
+        }
+
+        private boolean equalTo(WorkflowDeletedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("extractor.created")
+    @JsonIgnoreProperties("eventType")
+    private static final class ExtractorCreatedValue implements Value {
+        @JsonUnwrapped
+        private ExtractorCreatedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ExtractorCreatedValue() {}
+
+        private ExtractorCreatedValue(ExtractorCreatedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitExtractorCreated(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ExtractorCreatedValue && equalTo((ExtractorCreatedValue) other);
+        }
+
+        private boolean equalTo(ExtractorCreatedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("extractor.updated")
+    @JsonIgnoreProperties("eventType")
+    private static final class ExtractorUpdatedValue implements Value {
+        @JsonUnwrapped
+        private ExtractorUpdatedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ExtractorUpdatedValue() {}
+
+        private ExtractorUpdatedValue(ExtractorUpdatedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitExtractorUpdated(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ExtractorUpdatedValue && equalTo((ExtractorUpdatedValue) other);
+        }
+
+        private boolean equalTo(ExtractorUpdatedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("extractor.deleted")
+    @JsonIgnoreProperties("eventType")
+    private static final class ExtractorDeletedValue implements Value {
+        @JsonUnwrapped
+        private ExtractorDeletedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ExtractorDeletedValue() {}
+
+        private ExtractorDeletedValue(ExtractorDeletedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitExtractorDeleted(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ExtractorDeletedValue && equalTo((ExtractorDeletedValue) other);
+        }
+
+        private boolean equalTo(ExtractorDeletedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("extractor.draft.updated")
+    @JsonIgnoreProperties("eventType")
+    private static final class ExtractorDraftUpdatedValue implements Value {
+        @JsonUnwrapped
+        private ExtractorDraftUpdatedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ExtractorDraftUpdatedValue() {}
+
+        private ExtractorDraftUpdatedValue(ExtractorDraftUpdatedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitExtractorDraftUpdated(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ExtractorDraftUpdatedValue && equalTo((ExtractorDraftUpdatedValue) other);
+        }
+
+        private boolean equalTo(ExtractorDraftUpdatedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("extractor.version.published")
+    @JsonIgnoreProperties("eventType")
+    private static final class ExtractorVersionPublishedValue implements Value {
+        @JsonUnwrapped
+        private ExtractorVersionPublishedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ExtractorVersionPublishedValue() {}
+
+        private ExtractorVersionPublishedValue(ExtractorVersionPublishedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitExtractorVersionPublished(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ExtractorVersionPublishedValue && equalTo((ExtractorVersionPublishedValue) other);
+        }
+
+        private boolean equalTo(ExtractorVersionPublishedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("classifier.created")
+    @JsonIgnoreProperties("eventType")
+    private static final class ClassifierCreatedValue implements Value {
+        @JsonUnwrapped
+        private ClassifierCreatedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ClassifierCreatedValue() {}
+
+        private ClassifierCreatedValue(ClassifierCreatedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitClassifierCreated(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ClassifierCreatedValue && equalTo((ClassifierCreatedValue) other);
+        }
+
+        private boolean equalTo(ClassifierCreatedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("classifier.updated")
+    @JsonIgnoreProperties("eventType")
+    private static final class ClassifierUpdatedValue implements Value {
+        @JsonUnwrapped
+        private ClassifierUpdatedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ClassifierUpdatedValue() {}
+
+        private ClassifierUpdatedValue(ClassifierUpdatedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitClassifierUpdated(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ClassifierUpdatedValue && equalTo((ClassifierUpdatedValue) other);
+        }
+
+        private boolean equalTo(ClassifierUpdatedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("classifier.deleted")
+    @JsonIgnoreProperties("eventType")
+    private static final class ClassifierDeletedValue implements Value {
+        @JsonUnwrapped
+        private ClassifierDeletedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ClassifierDeletedValue() {}
+
+        private ClassifierDeletedValue(ClassifierDeletedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitClassifierDeleted(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ClassifierDeletedValue && equalTo((ClassifierDeletedValue) other);
+        }
+
+        private boolean equalTo(ClassifierDeletedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("classifier.draft.updated")
+    @JsonIgnoreProperties("eventType")
+    private static final class ClassifierDraftUpdatedValue implements Value {
+        @JsonUnwrapped
+        private ClassifierDraftUpdatedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ClassifierDraftUpdatedValue() {}
+
+        private ClassifierDraftUpdatedValue(ClassifierDraftUpdatedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitClassifierDraftUpdated(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ClassifierDraftUpdatedValue && equalTo((ClassifierDraftUpdatedValue) other);
+        }
+
+        private boolean equalTo(ClassifierDraftUpdatedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("classifier.version.published")
+    @JsonIgnoreProperties("eventType")
+    private static final class ClassifierVersionPublishedValue implements Value {
+        @JsonUnwrapped
+        private ClassifierVersionPublishedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ClassifierVersionPublishedValue() {}
+
+        private ClassifierVersionPublishedValue(ClassifierVersionPublishedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitClassifierVersionPublished(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ClassifierVersionPublishedValue && equalTo((ClassifierVersionPublishedValue) other);
+        }
+
+        private boolean equalTo(ClassifierVersionPublishedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("splitter.created")
+    @JsonIgnoreProperties("eventType")
+    private static final class SplitterCreatedValue implements Value {
+        @JsonUnwrapped
+        private SplitterCreatedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private SplitterCreatedValue() {}
+
+        private SplitterCreatedValue(SplitterCreatedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitSplitterCreated(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof SplitterCreatedValue && equalTo((SplitterCreatedValue) other);
+        }
+
+        private boolean equalTo(SplitterCreatedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("splitter.updated")
+    @JsonIgnoreProperties("eventType")
+    private static final class SplitterUpdatedValue implements Value {
+        @JsonUnwrapped
+        private SplitterUpdatedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private SplitterUpdatedValue() {}
+
+        private SplitterUpdatedValue(SplitterUpdatedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitSplitterUpdated(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof SplitterUpdatedValue && equalTo((SplitterUpdatedValue) other);
+        }
+
+        private boolean equalTo(SplitterUpdatedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("splitter.deleted")
+    @JsonIgnoreProperties("eventType")
+    private static final class SplitterDeletedValue implements Value {
+        @JsonUnwrapped
+        private SplitterDeletedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private SplitterDeletedValue() {}
+
+        private SplitterDeletedValue(SplitterDeletedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitSplitterDeleted(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof SplitterDeletedValue && equalTo((SplitterDeletedValue) other);
+        }
+
+        private boolean equalTo(SplitterDeletedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("splitter.draft.updated")
+    @JsonIgnoreProperties("eventType")
+    private static final class SplitterDraftUpdatedValue implements Value {
+        @JsonUnwrapped
+        private SplitterDraftUpdatedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private SplitterDraftUpdatedValue() {}
+
+        private SplitterDraftUpdatedValue(SplitterDraftUpdatedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitSplitterDraftUpdated(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof SplitterDraftUpdatedValue && equalTo((SplitterDraftUpdatedValue) other);
+        }
+
+        private boolean equalTo(SplitterDraftUpdatedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("splitter.version.published")
+    @JsonIgnoreProperties("eventType")
+    private static final class SplitterVersionPublishedValue implements Value {
+        @JsonUnwrapped
+        private SplitterVersionPublishedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private SplitterVersionPublishedValue() {}
+
+        private SplitterVersionPublishedValue(SplitterVersionPublishedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitSplitterVersionPublished(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof SplitterVersionPublishedValue && equalTo((SplitterVersionPublishedValue) other);
+        }
+
+        private boolean equalTo(SplitterVersionPublishedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonIgnoreProperties("eventType")
+    private static final class _UnknownValue implements Value {
+        private String type;
+
+        @JsonValue
+        private Object value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private _UnknownValue(@JsonProperty("value") Object value) {}
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor._visitUnknown(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof _UnknownValue && equalTo((_UnknownValue) other);
+        }
+
+        private boolean equalTo(_UnknownValue other) {
+            return type.equals(other.type) && value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.type, this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "type: " + type + ", value: " + value + "}";
         }
     }
 }

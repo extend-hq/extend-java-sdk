@@ -23,9 +23,9 @@ import java.util.Optional;
 public final class FileContents {
     private final Optional<String> rawText;
 
-    private final Optional<String> markdown;
-
     private final Optional<List<FileContentsPagesItem>> pages;
+
+    private final Optional<List<FileContentsSectionsItem>> sections;
 
     private final Optional<List<FileContentsSheetsItem>> sheets;
 
@@ -33,19 +33,26 @@ public final class FileContents {
 
     private FileContents(
             Optional<String> rawText,
-            Optional<String> markdown,
             Optional<List<FileContentsPagesItem>> pages,
+            Optional<List<FileContentsSectionsItem>> sections,
             Optional<List<FileContentsSheetsItem>> sheets,
             Map<String, Object> additionalProperties) {
         this.rawText = rawText;
-        this.markdown = markdown;
         this.pages = pages;
+        this.sections = sections;
         this.sheets = sheets;
         this.additionalProperties = additionalProperties;
     }
 
     /**
-     * @return The raw text content of the file. This is included for all file types if the <code>rawText</code> query parameter is set to true in the endpoint request.
+     * @return The raw text content of the file. Available for all file types when the <code>rawText</code> query parameter is set to true.
+     * <ul>
+     * <li><strong>PDF/IMG</strong>: Concatenated raw text from all pages</li>
+     * <li><strong>DOCX</strong>: The document's raw text</li>
+     * <li><strong>CSV</strong>: Concatenated chunks or CSV text</li>
+     * <li><strong>EXCEL</strong>: Not included (use <code>sheets</code> instead)</li>
+     * <li><strong>TXT/XML/HTML</strong>: The file's text content</li>
+     * </ul>
      */
     @JsonProperty("rawText")
     public Optional<String> getRawText() {
@@ -53,18 +60,29 @@ public final class FileContents {
     }
 
     /**
-     * @return Cleaned and structured markdown content of the entire file. Available for PDF and IMG file types. Only included if the <code>markdown</code> query parameter is set to true in the endpoint request.
+     * @return Page-level content for document file types.
+     * <ul>
+     * <li><strong>PDF/IMG</strong>: Contains <code>pageNumber</code>, <code>pageHeight</code>, <code>pageWidth</code>, and <code>markdown</code> (if <code>markdown</code> query param is true)</li>
+     * <li><strong>DOCX</strong>: Contains <code>pageNumber</code> and <code>html</code> (if <code>html</code> query param is true)</li>
+     * <li><strong>Other file types</strong>: Empty array</li>
+     * </ul>
      */
-    @JsonProperty("markdown")
-    public Optional<String> getMarkdown() {
-        return markdown;
-    }
-
     @JsonProperty("pages")
     public Optional<List<FileContentsPagesItem>> getPages() {
         return pages;
     }
 
+    /**
+     * @return Section-level content for documents that support section-based chunking. Available for PDF and IMG file types.
+     */
+    @JsonProperty("sections")
+    public Optional<List<FileContentsSectionsItem>> getSections() {
+        return sections;
+    }
+
+    /**
+     * @return Sheet-level content for spreadsheet file types. Available for EXCEL files.
+     */
     @JsonProperty("sheets")
     public Optional<List<FileContentsSheetsItem>> getSheets() {
         return sheets;
@@ -83,14 +101,14 @@ public final class FileContents {
 
     private boolean equalTo(FileContents other) {
         return rawText.equals(other.rawText)
-                && markdown.equals(other.markdown)
                 && pages.equals(other.pages)
+                && sections.equals(other.sections)
                 && sheets.equals(other.sheets);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.rawText, this.markdown, this.pages, this.sheets);
+        return Objects.hash(this.rawText, this.pages, this.sections, this.sheets);
     }
 
     @java.lang.Override
@@ -106,9 +124,9 @@ public final class FileContents {
     public static final class Builder {
         private Optional<String> rawText = Optional.empty();
 
-        private Optional<String> markdown = Optional.empty();
-
         private Optional<List<FileContentsPagesItem>> pages = Optional.empty();
+
+        private Optional<List<FileContentsSectionsItem>> sections = Optional.empty();
 
         private Optional<List<FileContentsSheetsItem>> sheets = Optional.empty();
 
@@ -119,14 +137,21 @@ public final class FileContents {
 
         public Builder from(FileContents other) {
             rawText(other.getRawText());
-            markdown(other.getMarkdown());
             pages(other.getPages());
+            sections(other.getSections());
             sheets(other.getSheets());
             return this;
         }
 
         /**
-         * <p>The raw text content of the file. This is included for all file types if the <code>rawText</code> query parameter is set to true in the endpoint request.</p>
+         * <p>The raw text content of the file. Available for all file types when the <code>rawText</code> query parameter is set to true.</p>
+         * <ul>
+         * <li><strong>PDF/IMG</strong>: Concatenated raw text from all pages</li>
+         * <li><strong>DOCX</strong>: The document's raw text</li>
+         * <li><strong>CSV</strong>: Concatenated chunks or CSV text</li>
+         * <li><strong>EXCEL</strong>: Not included (use <code>sheets</code> instead)</li>
+         * <li><strong>TXT/XML/HTML</strong>: The file's text content</li>
+         * </ul>
          */
         @JsonSetter(value = "rawText", nulls = Nulls.SKIP)
         public Builder rawText(Optional<String> rawText) {
@@ -140,19 +165,13 @@ public final class FileContents {
         }
 
         /**
-         * <p>Cleaned and structured markdown content of the entire file. Available for PDF and IMG file types. Only included if the <code>markdown</code> query parameter is set to true in the endpoint request.</p>
+         * <p>Page-level content for document file types.</p>
+         * <ul>
+         * <li><strong>PDF/IMG</strong>: Contains <code>pageNumber</code>, <code>pageHeight</code>, <code>pageWidth</code>, and <code>markdown</code> (if <code>markdown</code> query param is true)</li>
+         * <li><strong>DOCX</strong>: Contains <code>pageNumber</code> and <code>html</code> (if <code>html</code> query param is true)</li>
+         * <li><strong>Other file types</strong>: Empty array</li>
+         * </ul>
          */
-        @JsonSetter(value = "markdown", nulls = Nulls.SKIP)
-        public Builder markdown(Optional<String> markdown) {
-            this.markdown = markdown;
-            return this;
-        }
-
-        public Builder markdown(String markdown) {
-            this.markdown = Optional.ofNullable(markdown);
-            return this;
-        }
-
         @JsonSetter(value = "pages", nulls = Nulls.SKIP)
         public Builder pages(Optional<List<FileContentsPagesItem>> pages) {
             this.pages = pages;
@@ -164,6 +183,23 @@ public final class FileContents {
             return this;
         }
 
+        /**
+         * <p>Section-level content for documents that support section-based chunking. Available for PDF and IMG file types.</p>
+         */
+        @JsonSetter(value = "sections", nulls = Nulls.SKIP)
+        public Builder sections(Optional<List<FileContentsSectionsItem>> sections) {
+            this.sections = sections;
+            return this;
+        }
+
+        public Builder sections(List<FileContentsSectionsItem> sections) {
+            this.sections = Optional.ofNullable(sections);
+            return this;
+        }
+
+        /**
+         * <p>Sheet-level content for spreadsheet file types. Available for EXCEL files.</p>
+         */
         @JsonSetter(value = "sheets", nulls = Nulls.SKIP)
         public Builder sheets(Optional<List<FileContentsSheetsItem>> sheets) {
             this.sheets = sheets;
@@ -176,7 +212,7 @@ public final class FileContents {
         }
 
         public FileContents build() {
-            return new FileContents(rawText, markdown, pages, sheets, additionalProperties);
+            return new FileContents(rawText, pages, sections, sheets, additionalProperties);
         }
     }
 }

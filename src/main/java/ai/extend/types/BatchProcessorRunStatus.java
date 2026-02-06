@@ -3,26 +3,103 @@
  */
 package ai.extend.types;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum BatchProcessorRunStatus {
-    PENDING("PENDING"),
+public final class BatchProcessorRunStatus {
+    public static final BatchProcessorRunStatus PROCESSING =
+            new BatchProcessorRunStatus(Value.PROCESSING, "PROCESSING");
 
-    PROCESSING("PROCESSING"),
+    public static final BatchProcessorRunStatus PROCESSED = new BatchProcessorRunStatus(Value.PROCESSED, "PROCESSED");
 
-    PROCESSED("PROCESSED"),
+    public static final BatchProcessorRunStatus PENDING = new BatchProcessorRunStatus(Value.PENDING, "PENDING");
 
-    FAILED("FAILED");
+    public static final BatchProcessorRunStatus FAILED = new BatchProcessorRunStatus(Value.FAILED, "FAILED");
 
-    private final String value;
+    private final Value value;
 
-    BatchProcessorRunStatus(String value) {
+    private final String string;
+
+    BatchProcessorRunStatus(Value value, String string) {
         this.value = value;
+        this.string = string;
     }
 
-    @JsonValue
+    public Value getEnumValue() {
+        return value;
+    }
+
     @java.lang.Override
+    @JsonValue
     public String toString() {
-        return this.value;
+        return this.string;
+    }
+
+    @java.lang.Override
+    public boolean equals(Object other) {
+        return (this == other)
+                || (other instanceof BatchProcessorRunStatus
+                        && this.string.equals(((BatchProcessorRunStatus) other).string));
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+        return this.string.hashCode();
+    }
+
+    public <T> T visit(Visitor<T> visitor) {
+        switch (value) {
+            case PROCESSING:
+                return visitor.visitProcessing();
+            case PROCESSED:
+                return visitor.visitProcessed();
+            case PENDING:
+                return visitor.visitPending();
+            case FAILED:
+                return visitor.visitFailed();
+            case UNKNOWN:
+            default:
+                return visitor.visitUnknown(string);
+        }
+    }
+
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static BatchProcessorRunStatus valueOf(String value) {
+        switch (value) {
+            case "PROCESSING":
+                return PROCESSING;
+            case "PROCESSED":
+                return PROCESSED;
+            case "PENDING":
+                return PENDING;
+            case "FAILED":
+                return FAILED;
+            default:
+                return new BatchProcessorRunStatus(Value.UNKNOWN, value);
+        }
+    }
+
+    public enum Value {
+        PENDING,
+
+        PROCESSING,
+
+        PROCESSED,
+
+        FAILED,
+
+        UNKNOWN
+    }
+
+    public interface Visitor<T> {
+        T visitPending();
+
+        T visitProcessing();
+
+        T visitProcessed();
+
+        T visitFailed();
+
+        T visitUnknown(String unknownType);
     }
 }
