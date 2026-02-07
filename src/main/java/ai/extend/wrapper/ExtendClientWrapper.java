@@ -4,20 +4,9 @@
 package ai.extend.wrapper;
 
 import ai.extend.ExtendClient;
+import ai.extend.ExtendClientBuilder;
 import ai.extend.core.ClientOptions;
-import ai.extend.core.Environment;
 import ai.extend.core.Suppliers;
-import ai.extend.resources.classifiers.ClassifiersClient;
-import ai.extend.resources.classifierversions.ClassifierVersionsClient;
-import ai.extend.resources.evaluationsetitems.EvaluationSetItemsClient;
-import ai.extend.resources.evaluationsetruns.EvaluationSetRunsClient;
-import ai.extend.resources.evaluationsets.EvaluationSetsClient;
-import ai.extend.resources.extractors.ExtractorsClient;
-import ai.extend.resources.extractorversions.ExtractorVersionsClient;
-import ai.extend.resources.files.FilesClient;
-import ai.extend.resources.splitters.SplittersClient;
-import ai.extend.resources.splitterversions.SplitterVersionsClient;
-import ai.extend.resources.workflows.WorkflowsClient;
 import ai.extend.wrapper.resources.ClassifyRunsWrapper;
 import ai.extend.wrapper.resources.EditRunsWrapper;
 import ai.extend.wrapper.resources.ExtractRunsWrapper;
@@ -30,14 +19,28 @@ import java.util.function.Supplier;
 /**
  * Wrapper for the Extend API client with additional polling and webhook utilities.
  *
+ * <p>Extends the generated {@link ExtendClient}, so all generated methods (parse, edit,
+ * extract, classify, split, files, extractors, classifiers, splitters, workflows,
+ * evaluation sets, etc.) are available directly.</p>
+ *
+ * <p>Additionally provides:</p>
+ * <ul>
+ *   <li>{@code createAndPoll} on all run resources (extractRuns, classifyRuns, etc.)</li>
+ *   <li>{@code webhooks()} for signature verification</li>
+ * </ul>
+ *
  * <h3>Basic Usage</h3>
  * <pre>{@code
  * ExtendClientWrapper client = ExtendClientWrapper.builder()
- *     .apiKey("your-api-key")
+ *     .token("your-api-key")
  *     .build();
  *
+ * // Synchronous convenience methods (inherited from ExtendClient)
+ * ParseRun parseResult = client.parse(ParseRequest.builder().file(...).build());
+ * ExtractRun extractResult = client.extract(ExtractRequest.builder().file(...).build());
+ *
  * // Create and poll an extract run
- * var response = client.extractRuns().createAndPoll(
+ * ExtractRun response = client.extractRuns().createAndPoll(
  *     ExtractRunsCreateRequest.builder()
  *         .file(...)
  *         .extractor(...)
@@ -54,12 +57,11 @@ import java.util.function.Supplier;
  * );
  * }</pre>
  */
-public class ExtendClientWrapper {
+public class ExtendClientWrapper extends ExtendClient {
 
-    private final ExtendClient client;
     private final Webhooks webhooks;
 
-    // Lazy-initialized wrappers
+    // Lazy-initialized run wrappers that override the generated client accessors
     private final Supplier<ExtractRunsWrapper> extractRunsWrapper;
     private final Supplier<ClassifyRunsWrapper> classifyRunsWrapper;
     private final Supplier<SplitRunsWrapper> splitRunsWrapper;
@@ -67,8 +69,8 @@ public class ExtendClientWrapper {
     private final Supplier<EditRunsWrapper> editRunsWrapper;
     private final Supplier<WorkflowRunsWrapper> workflowRunsWrapper;
 
-    private ExtendClientWrapper(ClientOptions clientOptions) {
-        this.client = new ExtendClient(clientOptions);
+    public ExtendClientWrapper(ClientOptions clientOptions) {
+        super(clientOptions);
         this.webhooks = new Webhooks();
 
         // Lazy initialization of wrappers
@@ -81,140 +83,66 @@ public class ExtendClientWrapper {
     }
 
     /**
-     * Returns the underlying ExtendClient for direct API access.
-     */
-    public ExtendClient getClient() {
-        return client;
-    }
-
-    /**
      * Returns the webhook utilities for signature verification.
      */
     public Webhooks webhooks() {
         return webhooks;
     }
 
-    // ========== Run Wrappers with createAndPoll ==========
+    // ========== Override run accessors to return wrappers with createAndPoll ==========
 
     /**
      * Returns the extract runs wrapper with createAndPoll support.
+     * All standard methods (create, list, retrieve, delete, cancel) are also available.
      */
+    @Override
     public ExtractRunsWrapper extractRuns() {
         return extractRunsWrapper.get();
     }
 
     /**
      * Returns the classify runs wrapper with createAndPoll support.
+     * All standard methods (create, list, retrieve, delete, cancel) are also available.
      */
+    @Override
     public ClassifyRunsWrapper classifyRuns() {
         return classifyRunsWrapper.get();
     }
 
     /**
      * Returns the split runs wrapper with createAndPoll support.
+     * All standard methods (create, list, retrieve, delete, cancel) are also available.
      */
+    @Override
     public SplitRunsWrapper splitRuns() {
         return splitRunsWrapper.get();
     }
 
     /**
      * Returns the parse runs wrapper with createAndPoll support.
+     * All standard methods (create, retrieve, delete) are also available.
      */
+    @Override
     public ParseRunsWrapper parseRuns() {
         return parseRunsWrapper.get();
     }
 
     /**
      * Returns the edit runs wrapper with createAndPoll support.
+     * All standard methods (create, retrieve, delete) are also available.
      */
+    @Override
     public EditRunsWrapper editRuns() {
         return editRunsWrapper.get();
     }
 
     /**
      * Returns the workflow runs wrapper with createAndPoll support.
+     * All standard methods (create, list, retrieve, update, delete, cancel, createBatch) are also available.
      */
+    @Override
     public WorkflowRunsWrapper workflowRuns() {
         return workflowRunsWrapper.get();
-    }
-
-    // ========== Pass-through clients (no wrapper needed) ==========
-
-    /**
-     * Returns the files client.
-     */
-    public FilesClient files() {
-        return client.files();
-    }
-
-    /**
-     * Returns the extractors client.
-     */
-    public ExtractorsClient extractors() {
-        return client.extractors();
-    }
-
-    /**
-     * Returns the extractor versions client.
-     */
-    public ExtractorVersionsClient extractorVersions() {
-        return client.extractorVersions();
-    }
-
-    /**
-     * Returns the classifiers client.
-     */
-    public ClassifiersClient classifiers() {
-        return client.classifiers();
-    }
-
-    /**
-     * Returns the classifier versions client.
-     */
-    public ClassifierVersionsClient classifierVersions() {
-        return client.classifierVersions();
-    }
-
-    /**
-     * Returns the splitters client.
-     */
-    public SplittersClient splitters() {
-        return client.splitters();
-    }
-
-    /**
-     * Returns the splitter versions client.
-     */
-    public SplitterVersionsClient splitterVersions() {
-        return client.splitterVersions();
-    }
-
-    /**
-     * Returns the workflows client.
-     */
-    public WorkflowsClient workflows() {
-        return client.workflows();
-    }
-
-    /**
-     * Returns the evaluation sets client.
-     */
-    public EvaluationSetsClient evaluationSets() {
-        return client.evaluationSets();
-    }
-
-    /**
-     * Returns the evaluation set items client.
-     */
-    public EvaluationSetItemsClient evaluationSetItems() {
-        return client.evaluationSetItems();
-    }
-
-    /**
-     * Returns the evaluation set runs client.
-     */
-    public EvaluationSetRunsClient evaluationSetRuns() {
-        return client.evaluationSetRuns();
     }
 
     /**
@@ -226,69 +154,30 @@ public class ExtendClientWrapper {
 
     /**
      * Builder for {@link ExtendClientWrapper}.
+     * Extends the generated {@link ExtendClientBuilder} so all standard options
+     * (token, environment, url, timeout, maxRetries, etc.) are available.
      */
-    public static class Builder {
-        private static final String DEFAULT_API_VERSION = "2026-01-01";
-
-        private String apiKey;
-        private String apiVersion = DEFAULT_API_VERSION;
-        private Environment environment = Environment.PRODUCTION;
-        private String baseUrl;
+    public static class Builder extends ExtendClientBuilder {
 
         /**
-         * Sets the API key.
+         * Sets the API key (convenience alias for {@link #token(String)}).
          */
         public Builder apiKey(String apiKey) {
-            this.apiKey = apiKey;
+            super.token(apiKey);
             return this;
         }
 
         /**
-         * Sets the API version.
-         * Default: 2026-01-01
-         */
-        public Builder apiVersion(String apiVersion) {
-            this.apiVersion = apiVersion;
-            return this;
-        }
-
-        /**
-         * Sets the environment.
-         * Default: PRODUCTION
-         */
-        public Builder environment(Environment environment) {
-            this.environment = environment;
-            return this;
-        }
-
-        /**
-         * Sets a custom base URL (overrides environment).
+         * Sets a custom base URL (convenience alias for {@link #url(String)}).
          */
         public Builder baseUrl(String baseUrl) {
-            this.baseUrl = baseUrl;
+            super.url(baseUrl);
             return this;
         }
 
-        /**
-         * Builds the ExtendClientWrapper.
-         */
+        @Override
         public ExtendClientWrapper build() {
-            ClientOptions.Builder optionsBuilder = ClientOptions.builder();
-
-            if (apiKey != null) {
-                optionsBuilder.addHeader("Authorization", "Bearer " + apiKey);
-            }
-
-            // Add API version header
-            optionsBuilder.addHeader("x-extend-api-version", apiVersion);
-
-            if (baseUrl != null) {
-                optionsBuilder.environment(Environment.custom(baseUrl));
-            } else {
-                optionsBuilder.environment(environment);
-            }
-
-            return new ExtendClientWrapper(optionsBuilder.build());
+            return new ExtendClientWrapper(buildClientOptions());
         }
     }
 }

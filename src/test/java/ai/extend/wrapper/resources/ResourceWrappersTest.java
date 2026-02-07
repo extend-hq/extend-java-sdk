@@ -195,5 +195,4 @@ class ResourceWrappersTest {
             assertTrue(isTerminal(WorkflowRunStatus.REJECTED));
         }
     }
-
 }

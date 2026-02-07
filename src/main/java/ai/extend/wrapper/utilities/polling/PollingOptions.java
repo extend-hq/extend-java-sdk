@@ -61,7 +61,7 @@ public class PollingOptions {
      */
     public static final double DEFAULT_JITTER_FRACTION = 0.25;
 
-    private final Integer maxWaitMs;  // null = poll indefinitely
+    private final Integer maxWaitMs; // null = poll indefinitely
     private final int fastPollDurationMs;
     private final int fastPollIntervalMs;
     private final int initialDelayMs;
@@ -162,7 +162,7 @@ public class PollingOptions {
      * Builder for {@link PollingOptions}.
      */
     public static class Builder {
-        private Integer maxWaitMs = null;  // null = poll indefinitely
+        private Integer maxWaitMs = null; // null = poll indefinitely
         private int fastPollDurationMs = DEFAULT_FAST_POLL_DURATION_MS;
         private int fastPollIntervalMs = DEFAULT_FAST_POLL_INTERVAL_MS;
         private int initialDelayMs = DEFAULT_INITIAL_DELAY_MS;

@@ -16,9 +16,10 @@ import java.util.Set;
 /**
  * Wrapper for ParseRunsClient that adds polling functionality.
  *
- * <p>Polls indefinitely until a terminal state is reached.</p>
+ * <p>Extends {@link ParseRunsClient}, so all standard methods (create, retrieve, delete)
+ * are inherited. Adds {@code createAndPoll} for convenience.</p>
  */
-public class ParseRunsWrapper {
+public class ParseRunsWrapper extends ParseRunsClient {
 
     private static final Set<ParseRunStatusEnum> NON_TERMINAL_STATUSES;
 
@@ -27,35 +28,14 @@ public class ParseRunsWrapper {
         NON_TERMINAL_STATUSES.add(ParseRunStatusEnum.PROCESSING);
     }
 
-    private final ParseRunsClient client;
-
     public ParseRunsWrapper(ClientOptions clientOptions) {
-        this.client = new ParseRunsClient(clientOptions);
-    }
-
-    /**
-     * Package-private constructor for testing with a mock client.
-     */
-    ParseRunsWrapper(ParseRunsClient client) {
-        this.client = client;
-    }
-
-    /**
-     * Returns the underlying ParseRunsClient for direct API access.
-     */
-    public ParseRunsClient getClient() {
-        return client;
+        super(clientOptions);
     }
 
     /**
      * Creates a parse run and polls until it reaches a terminal state.
      *
      * <p>Terminal states: PROCESSED, FAILED</p>
-     *
-     * <p>Polls indefinitely until complete.</p>
-     *
-     * @param request The create request
-     * @return The final response when a terminal state is reached
      */
     public ParseRun createAndPoll(ParseRunsCreateRequest request) {
         return createAndPoll(request, PollingOptions.defaults());
@@ -65,23 +45,14 @@ public class ParseRunsWrapper {
      * Creates a parse run and polls until it reaches a terminal state.
      *
      * <p>Terminal states: PROCESSED, FAILED</p>
-     *
-     * @param request The create request
-     * @param options Polling options
-     * @return The final response when a terminal state is reached
      */
     public ParseRun createAndPoll(ParseRunsCreateRequest request, PollingOptions options) {
 
-        // Create the parse run
-        ParseRun createResponse = client.create(request);
+        ParseRun createResponse = this.create(request);
         final String runId = createResponse.getId();
 
-        // Poll until terminal state
-        // Note: ParseRunsClient.retrieve() does not take RequestOptions directly
         return Polling.pollUntilDone(
-                () -> client.retrieve(runId),
-                response -> isTerminalStatus(response.getStatus()),
-                options);
+                () -> this.retrieve(runId), response -> isTerminalStatus(response.getStatus()), options);
     }
 
     private boolean isTerminalStatus(ParseRunStatusEnum status) {
