@@ -17,9 +17,10 @@ import java.util.Set;
 /**
  * Wrapper for WorkflowRunsClient that adds polling functionality.
  *
- * <p>Polls indefinitely until a terminal state is reached.</p>
+ * <p>Extends {@link WorkflowRunsClient}, so all standard methods (list, create, retrieve,
+ * update, delete, cancel, createBatch) are inherited. Adds {@code createAndPoll} for convenience.</p>
  */
-public class WorkflowRunsWrapper {
+public class WorkflowRunsWrapper extends WorkflowRunsClient {
 
     private static final Set<WorkflowRunStatus> NON_TERMINAL_STATUSES;
 
@@ -30,38 +31,14 @@ public class WorkflowRunsWrapper {
         NON_TERMINAL_STATUSES.add(WorkflowRunStatus.CANCELLING);
     }
 
-    private final WorkflowRunsClient client;
-
     public WorkflowRunsWrapper(ClientOptions clientOptions) {
-        this.client = new WorkflowRunsClient(clientOptions);
-    }
-
-    /**
-     * Package-private constructor for testing with a mock client.
-     */
-    WorkflowRunsWrapper(WorkflowRunsClient client) {
-        this.client = client;
-    }
-
-    /**
-     * Returns the underlying WorkflowRunsClient for direct API access.
-     */
-    public WorkflowRunsClient getClient() {
-        return client;
+        super(clientOptions);
     }
 
     /**
      * Creates a workflow run and polls until it reaches a terminal state.
      *
      * <p>Terminal states: PROCESSED, FAILED, CANCELLED, NEEDS_REVIEW, REJECTED</p>
-     *
-     * <p>Polls indefinitely by default. For production use, set an explicit timeout:</p>
-     * <pre>{@code
-     * createAndPoll(request, PollingOptions.builder().maxWaitMs(300000).build());
-     * }</pre>
-     *
-     * @param request The create request
-     * @return The final response when a terminal state is reached
      */
     public WorkflowRun createAndPoll(WorkflowRunsCreateRequest request) {
         return createAndPoll(request, PollingOptions.defaults());
@@ -71,31 +48,20 @@ public class WorkflowRunsWrapper {
      * Creates a workflow run and polls until it reaches a terminal state.
      *
      * <p>Terminal states: PROCESSED, FAILED, CANCELLED, NEEDS_REVIEW, REJECTED</p>
-     *
-     * @param request The create request
-     * @param options Polling options (set maxWaitMs for production use)
-     * @return The final response when a terminal state is reached
      */
     public WorkflowRun createAndPoll(WorkflowRunsCreateRequest request, PollingOptions options) {
 
         RequestOptions requestOptions = options.getRequestOptions();
 
-        // Create the workflow run
-        WorkflowRun createResponse = client.create(request, requestOptions);
+        WorkflowRun createResponse = this.create(request, requestOptions);
         final String runId = createResponse.getId();
 
-        // Poll until terminal state
         return Polling.pollUntilDone(
-                () -> client.retrieve(runId, requestOptions),
+                () -> this.retrieve(runId, requestOptions),
                 response -> isTerminalStatus(response.getStatus()),
                 options);
     }
 
-    /**
-     * Check if status is terminal.
-     * Terminal states: PROCESSED, FAILED, CANCELLED, NEEDS_REVIEW, REJECTED
-     * Non-terminal: PENDING, PROCESSING, CANCELLING
-     */
     private boolean isTerminalStatus(WorkflowRunStatus status) {
         return !NON_TERMINAL_STATUSES.contains(status);
     }

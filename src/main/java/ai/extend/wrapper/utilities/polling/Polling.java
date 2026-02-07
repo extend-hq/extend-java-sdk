@@ -39,11 +39,7 @@ public final class Polling {
      * @return The calculated delay in milliseconds
      */
     public static int calculateBackoffDelay(
-            int attempt,
-            int initialDelayMs,
-            int maxDelayMs,
-            double jitterFraction,
-            double backoffMultiplier) {
+            int attempt, int initialDelayMs, int maxDelayMs, double jitterFraction, double backoffMultiplier) {
 
         // Exponential backoff: initialDelay * multiplier^attempt
         long exponentialDelay = (long) (initialDelayMs * Math.pow(backoffMultiplier, attempt));

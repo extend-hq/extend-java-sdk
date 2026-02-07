@@ -17,9 +17,10 @@ import java.util.Set;
 /**
  * Wrapper for SplitRunsClient that adds polling functionality.
  *
- * <p>Polls indefinitely until a terminal state is reached.</p>
+ * <p>Extends {@link SplitRunsClient}, so all standard methods (list, create, retrieve,
+ * delete, cancel) are inherited. Adds {@code createAndPoll} for convenience.</p>
  */
-public class SplitRunsWrapper {
+public class SplitRunsWrapper extends SplitRunsClient {
 
     private static final Set<ProcessorRunStatus> NON_TERMINAL_STATUSES;
 
@@ -28,35 +29,12 @@ public class SplitRunsWrapper {
         NON_TERMINAL_STATUSES.add(ProcessorRunStatus.PROCESSING);
     }
 
-    private final SplitRunsClient client;
-
     public SplitRunsWrapper(ClientOptions clientOptions) {
-        this.client = new SplitRunsClient(clientOptions);
-    }
-
-    /**
-     * Package-private constructor for testing with a mock client.
-     */
-    SplitRunsWrapper(SplitRunsClient client) {
-        this.client = client;
-    }
-
-    /**
-     * Returns the underlying SplitRunsClient for direct API access.
-     */
-    public SplitRunsClient getClient() {
-        return client;
+        super(clientOptions);
     }
 
     /**
      * Creates a split run and polls until it reaches a terminal state.
-     *
-     * <p>Terminal states: PROCESSED, FAILED, CANCELLED</p>
-     *
-     * <p>Polls indefinitely until complete.</p>
-     *
-     * @param request The create request
-     * @return The final response when a terminal state is reached
      */
     public SplitRun createAndPoll(SplitRunsCreateRequest request) {
         return createAndPoll(request, PollingOptions.defaults());
@@ -64,24 +42,16 @@ public class SplitRunsWrapper {
 
     /**
      * Creates a split run and polls until it reaches a terminal state.
-     *
-     * <p>Terminal states: PROCESSED, FAILED, CANCELLED</p>
-     *
-     * @param request The create request
-     * @param options Polling options
-     * @return The final response when a terminal state is reached
      */
     public SplitRun createAndPoll(SplitRunsCreateRequest request, PollingOptions options) {
 
         RequestOptions requestOptions = options.getRequestOptions();
 
-        // Create the split run
-        SplitRun createResponse = client.create(request, requestOptions);
+        SplitRun createResponse = this.create(request, requestOptions);
         final String runId = createResponse.getId();
 
-        // Poll until terminal state
         return Polling.pollUntilDone(
-                () -> client.retrieve(runId, requestOptions),
+                () -> this.retrieve(runId, requestOptions),
                 response -> isTerminalStatus(response.getStatus()),
                 options);
     }

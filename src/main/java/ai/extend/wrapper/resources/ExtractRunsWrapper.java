@@ -17,32 +17,10 @@ import java.util.Set;
 /**
  * Wrapper for ExtractRunsClient that adds polling functionality.
  *
- * <p>Polls indefinitely until a terminal state is reached.</p>
- *
- * <h3>Usage</h3>
- * <pre>{@code
- * ExtendClientWrapper client = new ExtendClientWrapper("your-api-key");
- *
- * // Polls indefinitely (suitable for development/testing)
- * ExtractRun response = client.extractRuns().createAndPoll(
- *     ExtractRunsCreateRequest.builder()
- *         .file(...)
- *         .extractor(...)
- *         .build()
- * );
- *
- * // With custom timeout
- * ExtractRun response = client.extractRuns().createAndPoll(
- *     request,
- *     PollingOptions.builder().maxWaitMs(300000).build() // 5 minute timeout
- * );
- *
- * if (response.getStatus() == ProcessorRunStatus.PROCESSED) {
- *     // Handle successful extraction
- * }
- * }</pre>
+ * <p>Extends {@link ExtractRunsClient}, so all standard methods (list, create, retrieve,
+ * delete, cancel) are inherited. Adds {@code createAndPoll} for convenience.</p>
  */
-public class ExtractRunsWrapper {
+public class ExtractRunsWrapper extends ExtractRunsClient {
 
     private static final Set<ProcessorRunStatus> NON_TERMINAL_STATUSES;
 
@@ -51,24 +29,8 @@ public class ExtractRunsWrapper {
         NON_TERMINAL_STATUSES.add(ProcessorRunStatus.PROCESSING);
     }
 
-    private final ExtractRunsClient client;
-
     public ExtractRunsWrapper(ClientOptions clientOptions) {
-        this.client = new ExtractRunsClient(clientOptions);
-    }
-
-    /**
-     * Package-private constructor for testing with a mock client.
-     */
-    ExtractRunsWrapper(ExtractRunsClient client) {
-        this.client = client;
-    }
-
-    /**
-     * Returns the underlying ExtractRunsClient for direct API access.
-     */
-    public ExtractRunsClient getClient() {
-        return client;
+        super(clientOptions);
     }
 
     /**
@@ -99,20 +61,16 @@ public class ExtractRunsWrapper {
         RequestOptions requestOptions = options.getRequestOptions();
 
         // Create the extract run
-        ExtractRun createResponse = client.create(request, requestOptions);
+        ExtractRun createResponse = this.create(request, requestOptions);
         final String runId = createResponse.getId();
 
         // Poll until terminal state
         return Polling.pollUntilDone(
-                () -> client.retrieve(runId, requestOptions),
+                () -> this.retrieve(runId, requestOptions),
                 response -> isTerminalStatus(response.getStatus()),
                 options);
     }
 
-    /**
-     * Check if status is terminal (NOT processing).
-     * We check for non-terminal states so new terminal states are handled correctly.
-     */
     private boolean isTerminalStatus(ProcessorRunStatus status) {
         return !NON_TERMINAL_STATUSES.contains(status);
     }

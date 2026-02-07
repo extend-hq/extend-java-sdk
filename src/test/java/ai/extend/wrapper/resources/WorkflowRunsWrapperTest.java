@@ -8,7 +8,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-import ai.extend.resources.workflowruns.WorkflowRunsClient;
+import ai.extend.core.ClientOptions;
 import ai.extend.types.WorkflowRun;
 import ai.extend.types.WorkflowRunStatus;
 import ai.extend.wrapper.errors.PollingTimeoutError;
@@ -18,7 +18,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -30,14 +29,14 @@ import org.mockito.quality.Strictness;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class WorkflowRunsWrapperTest {
 
-    @Mock
-    private WorkflowRunsClient mockClient;
+    private static final ClientOptions TEST_OPTIONS =
+            ClientOptions.builder().addHeader("Authorization", "Bearer test").build();
 
     private WorkflowRunsWrapper wrapper;
 
     @BeforeEach
     void setUp() {
-        wrapper = new WorkflowRunsWrapper(mockClient);
+        wrapper = spy(new WorkflowRunsWrapper(TEST_OPTIONS));
     }
 
     @Nested
@@ -51,7 +50,7 @@ class WorkflowRunsWrapperTest {
 
             WorkflowRun createResponse = mock(WorkflowRun.class);
             when(createResponse.getId()).thenReturn(runId);
-            when(mockClient.create(any(), any())).thenReturn(createResponse);
+            doReturn(createResponse).when(wrapper).create(any(), any());
 
             WorkflowRun processingResponse = mock(WorkflowRun.class);
             when(processingResponse.getStatus()).thenReturn(WorkflowRunStatus.PROCESSING);
@@ -59,9 +58,10 @@ class WorkflowRunsWrapperTest {
             WorkflowRun processedResponse = mock(WorkflowRun.class);
             when(processedResponse.getStatus()).thenReturn(WorkflowRunStatus.PROCESSED);
 
-            when(mockClient.retrieve(eq(runId), any()))
-                    .thenReturn(processingResponse)
-                    .thenReturn(processedResponse);
+            doReturn(processingResponse)
+                    .doReturn(processedResponse)
+                    .when(wrapper)
+                    .retrieve(eq(runId), any());
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -72,8 +72,8 @@ class WorkflowRunsWrapperTest {
             WorkflowRun result = wrapper.createAndPoll(null, options);
 
             assertEquals(WorkflowRunStatus.PROCESSED, result.getStatus());
-            verify(mockClient, times(1)).create(any(), any());
-            verify(mockClient, times(2)).retrieve(eq(runId), any());
+            verify(wrapper, times(1)).create(any(), any());
+            verify(wrapper, times(2)).retrieve(eq(runId), any());
         }
 
         @Test
@@ -83,12 +83,12 @@ class WorkflowRunsWrapperTest {
 
             WorkflowRun createResponse = mock(WorkflowRun.class);
             when(createResponse.getId()).thenReturn(runId);
-            when(mockClient.create(any(), any())).thenReturn(createResponse);
+            doReturn(createResponse).when(wrapper).create(any(), any());
 
             WorkflowRun processedResponse = mock(WorkflowRun.class);
             when(processedResponse.getStatus()).thenReturn(WorkflowRunStatus.PROCESSED);
 
-            when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
+            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), any());
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -99,7 +99,7 @@ class WorkflowRunsWrapperTest {
             WorkflowRun result = wrapper.createAndPoll(null, options);
 
             assertEquals(WorkflowRunStatus.PROCESSED, result.getStatus());
-            verify(mockClient, times(1)).retrieve(eq(runId), any());
+            verify(wrapper, times(1)).retrieve(eq(runId), any());
         }
 
         @Test
@@ -109,12 +109,12 @@ class WorkflowRunsWrapperTest {
 
             WorkflowRun createResponse = mock(WorkflowRun.class);
             when(createResponse.getId()).thenReturn(runId);
-            when(mockClient.create(any(), any())).thenReturn(createResponse);
+            doReturn(createResponse).when(wrapper).create(any(), any());
 
             WorkflowRun failedResponse = mock(WorkflowRun.class);
             when(failedResponse.getStatus()).thenReturn(WorkflowRunStatus.FAILED);
 
-            when(mockClient.retrieve(eq(runId), any())).thenReturn(failedResponse);
+            doReturn(failedResponse).when(wrapper).retrieve(eq(runId), any());
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -134,12 +134,12 @@ class WorkflowRunsWrapperTest {
 
             WorkflowRun createResponse = mock(WorkflowRun.class);
             when(createResponse.getId()).thenReturn(runId);
-            when(mockClient.create(any(), any())).thenReturn(createResponse);
+            doReturn(createResponse).when(wrapper).create(any(), any());
 
             WorkflowRun cancelledResponse = mock(WorkflowRun.class);
             when(cancelledResponse.getStatus()).thenReturn(WorkflowRunStatus.CANCELLED);
 
-            when(mockClient.retrieve(eq(runId), any())).thenReturn(cancelledResponse);
+            doReturn(cancelledResponse).when(wrapper).retrieve(eq(runId), any());
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -159,12 +159,12 @@ class WorkflowRunsWrapperTest {
 
             WorkflowRun createResponse = mock(WorkflowRun.class);
             when(createResponse.getId()).thenReturn(runId);
-            when(mockClient.create(any(), any())).thenReturn(createResponse);
+            doReturn(createResponse).when(wrapper).create(any(), any());
 
             WorkflowRun needsReviewResponse = mock(WorkflowRun.class);
             when(needsReviewResponse.getStatus()).thenReturn(WorkflowRunStatus.NEEDS_REVIEW);
 
-            when(mockClient.retrieve(eq(runId), any())).thenReturn(needsReviewResponse);
+            doReturn(needsReviewResponse).when(wrapper).retrieve(eq(runId), any());
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -184,12 +184,12 @@ class WorkflowRunsWrapperTest {
 
             WorkflowRun createResponse = mock(WorkflowRun.class);
             when(createResponse.getId()).thenReturn(runId);
-            when(mockClient.create(any(), any())).thenReturn(createResponse);
+            doReturn(createResponse).when(wrapper).create(any(), any());
 
             WorkflowRun rejectedResponse = mock(WorkflowRun.class);
             when(rejectedResponse.getStatus()).thenReturn(WorkflowRunStatus.REJECTED);
 
-            when(mockClient.retrieve(eq(runId), any())).thenReturn(rejectedResponse);
+            doReturn(rejectedResponse).when(wrapper).retrieve(eq(runId), any());
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -209,7 +209,7 @@ class WorkflowRunsWrapperTest {
 
             WorkflowRun createResponse = mock(WorkflowRun.class);
             when(createResponse.getId()).thenReturn(runId);
-            when(mockClient.create(any(), any())).thenReturn(createResponse);
+            doReturn(createResponse).when(wrapper).create(any(), any());
 
             WorkflowRun pendingResponse = mock(WorkflowRun.class);
             when(pendingResponse.getStatus()).thenReturn(WorkflowRunStatus.PENDING);
@@ -220,10 +220,11 @@ class WorkflowRunsWrapperTest {
             WorkflowRun processedResponse = mock(WorkflowRun.class);
             when(processedResponse.getStatus()).thenReturn(WorkflowRunStatus.PROCESSED);
 
-            when(mockClient.retrieve(eq(runId), any()))
-                    .thenReturn(pendingResponse)
-                    .thenReturn(processingResponse)
-                    .thenReturn(processedResponse);
+            doReturn(pendingResponse)
+                    .doReturn(processingResponse)
+                    .doReturn(processedResponse)
+                    .when(wrapper)
+                    .retrieve(eq(runId), any());
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -234,7 +235,7 @@ class WorkflowRunsWrapperTest {
             WorkflowRun result = wrapper.createAndPoll(null, options);
 
             assertEquals(WorkflowRunStatus.PROCESSED, result.getStatus());
-            verify(mockClient, times(3)).retrieve(eq(runId), any());
+            verify(wrapper, times(3)).retrieve(eq(runId), any());
         }
 
         @Test
@@ -244,7 +245,7 @@ class WorkflowRunsWrapperTest {
 
             WorkflowRun createResponse = mock(WorkflowRun.class);
             when(createResponse.getId()).thenReturn(runId);
-            when(mockClient.create(any(), any())).thenReturn(createResponse);
+            doReturn(createResponse).when(wrapper).create(any(), any());
 
             WorkflowRun cancellingResponse = mock(WorkflowRun.class);
             when(cancellingResponse.getStatus()).thenReturn(WorkflowRunStatus.CANCELLING);
@@ -252,9 +253,10 @@ class WorkflowRunsWrapperTest {
             WorkflowRun cancelledResponse = mock(WorkflowRun.class);
             when(cancelledResponse.getStatus()).thenReturn(WorkflowRunStatus.CANCELLED);
 
-            when(mockClient.retrieve(eq(runId), any()))
-                    .thenReturn(cancellingResponse)
-                    .thenReturn(cancelledResponse);
+            doReturn(cancellingResponse)
+                    .doReturn(cancelledResponse)
+                    .when(wrapper)
+                    .retrieve(eq(runId), any());
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -265,7 +267,7 @@ class WorkflowRunsWrapperTest {
             WorkflowRun result = wrapper.createAndPoll(null, options);
 
             assertEquals(WorkflowRunStatus.CANCELLED, result.getStatus());
-            verify(mockClient, times(2)).retrieve(eq(runId), any());
+            verify(wrapper, times(2)).retrieve(eq(runId), any());
         }
 
         @Test
@@ -275,12 +277,12 @@ class WorkflowRunsWrapperTest {
 
             WorkflowRun createResponse = mock(WorkflowRun.class);
             when(createResponse.getId()).thenReturn(runId);
-            when(mockClient.create(any(), any())).thenReturn(createResponse);
+            doReturn(createResponse).when(wrapper).create(any(), any());
 
             WorkflowRun processingResponse = mock(WorkflowRun.class);
             when(processingResponse.getStatus()).thenReturn(WorkflowRunStatus.PROCESSING);
 
-            when(mockClient.retrieve(eq(runId), any())).thenReturn(processingResponse);
+            doReturn(processingResponse).when(wrapper).retrieve(eq(runId), any());
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(10)
@@ -300,12 +302,12 @@ class WorkflowRunsWrapperTest {
 
             WorkflowRun createResponse = mock(WorkflowRun.class);
             when(createResponse.getId()).thenReturn(runId);
-            when(mockClient.create(any(), any())).thenReturn(createResponse);
+            doReturn(createResponse).when(wrapper).create(any(), any());
 
             WorkflowRun processedResponse = mock(WorkflowRun.class);
             when(processedResponse.getStatus()).thenReturn(WorkflowRunStatus.PROCESSED);
 
-            when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
+            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), any());
 
             // Should complete - polls indefinitely by default
             WorkflowRun result = wrapper.createAndPoll(null);

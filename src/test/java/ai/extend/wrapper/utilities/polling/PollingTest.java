@@ -387,7 +387,7 @@ class PollingTest {
                         },
                         r -> r.status.equals("DONE"),
                         PollingOptions.builder()
-                                .fastPollDurationMs(30000)  // Long fast phase
+                                .fastPollDurationMs(30000) // Long fast phase
                                 .fastPollIntervalMs(10)
                                 .jitterFraction(0)
                                 .maxWaitMs(5000)
@@ -417,7 +417,7 @@ class PollingTest {
                         },
                         r -> r.status.equals("DONE"),
                         PollingOptions.builder()
-                                .fastPollDurationMs(0)  // Pure backoff mode
+                                .fastPollDurationMs(0) // Pure backoff mode
                                 .initialDelayMs(50)
                                 .jitterFraction(0)
                                 .maxWaitMs(5000)
@@ -504,7 +504,7 @@ class PollingTest {
                         PollingOptions.builder()
                                 .fastPollIntervalMs(1)
                                 .jitterFraction(0)
-                                .build());  // No maxWaitMs set
+                                .build()); // No maxWaitMs set
 
                 assertEquals(3, callCount.get());
                 assertEquals("DONE", result.status);
@@ -518,9 +518,9 @@ class PollingTest {
                             () -> new TestResult("PROCESSING", 0),
                             r -> false,
                             PollingOptions.builder()
-                                    .fastPollDurationMs(30000)  // Long fast phase
+                                    .fastPollDurationMs(30000) // Long fast phase
                                     .fastPollIntervalMs(10)
-                                    .maxWaitMs(50)  // Short timeout
+                                    .maxWaitMs(50) // Short timeout
                                     .jitterFraction(0)
                                     .build());
                 });

@@ -17,9 +17,10 @@ import java.util.Set;
 /**
  * Wrapper for EditRunsClient that adds polling functionality.
  *
- * <p>Polls indefinitely until a terminal state is reached.</p>
+ * <p>Extends {@link EditRunsClient}, so all standard methods (create, retrieve, delete)
+ * are inherited. Adds {@code createAndPoll} for convenience.</p>
  */
-public class EditRunsWrapper {
+public class EditRunsWrapper extends EditRunsClient {
 
     private static final Set<EditRunStatus> NON_TERMINAL_STATUSES;
 
@@ -28,35 +29,14 @@ public class EditRunsWrapper {
         NON_TERMINAL_STATUSES.add(EditRunStatus.PROCESSING);
     }
 
-    private final EditRunsClient client;
-
     public EditRunsWrapper(ClientOptions clientOptions) {
-        this.client = new EditRunsClient(clientOptions);
-    }
-
-    /**
-     * Package-private constructor for testing with a mock client.
-     */
-    EditRunsWrapper(EditRunsClient client) {
-        this.client = client;
-    }
-
-    /**
-     * Returns the underlying EditRunsClient for direct API access.
-     */
-    public EditRunsClient getClient() {
-        return client;
+        super(clientOptions);
     }
 
     /**
      * Creates an edit run and polls until it reaches a terminal state.
      *
      * <p>Terminal states: PROCESSED, FAILED</p>
-     *
-     * <p>Polls indefinitely until complete.</p>
-     *
-     * @param request The create request
-     * @return The final response when a terminal state is reached
      */
     public EditRun createAndPoll(EditRunsCreateRequest request) {
         return createAndPoll(request, PollingOptions.defaults());
@@ -66,22 +46,16 @@ public class EditRunsWrapper {
      * Creates an edit run and polls until it reaches a terminal state.
      *
      * <p>Terminal states: PROCESSED, FAILED</p>
-     *
-     * @param request The create request
-     * @param options Polling options
-     * @return The final response when a terminal state is reached
      */
     public EditRun createAndPoll(EditRunsCreateRequest request, PollingOptions options) {
 
         RequestOptions requestOptions = options.getRequestOptions();
 
-        // Create the edit run
-        EditRun createResponse = client.create(request, requestOptions);
+        EditRun createResponse = this.create(request, requestOptions);
         final String runId = createResponse.getId();
 
-        // Poll until terminal state
         return Polling.pollUntilDone(
-                () -> client.retrieve(runId, requestOptions),
+                () -> this.retrieve(runId, requestOptions),
                 response -> isTerminalStatus(response.getStatus()),
                 options);
     }

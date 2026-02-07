@@ -8,7 +8,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-import ai.extend.resources.extractruns.ExtractRunsClient;
+import ai.extend.core.ClientOptions;
 import ai.extend.types.ExtractRun;
 import ai.extend.types.ProcessorRunStatus;
 import ai.extend.wrapper.errors.PollingTimeoutError;
@@ -18,7 +18,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -30,20 +29,15 @@ import org.mockito.quality.Strictness;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class ExtractRunsWrapperTest {
 
-    @Mock
-    private ExtractRunsClient mockClient;
+    private static final ClientOptions TEST_OPTIONS =
+            ClientOptions.builder().addHeader("Authorization", "Bearer test").build();
 
     private ExtractRunsWrapper wrapper;
 
     @BeforeEach
     void setUp() {
-        // Use the package-private constructor with the mock client
-        wrapper = new ExtractRunsWrapper(mockClient);
+        wrapper = spy(new ExtractRunsWrapper(TEST_OPTIONS));
     }
-
-    // ============================================================================
-    // createAndPoll tests
-    // ============================================================================
 
     @Nested
     @DisplayName("createAndPoll")
@@ -54,21 +48,20 @@ class ExtractRunsWrapperTest {
         void shouldCreateAndPollUntilProcessed() {
             String runId = "extract_run_test123";
 
-            // Set up create response
             ExtractRun createResponse = mock(ExtractRun.class);
             when(createResponse.getId()).thenReturn(runId);
-            when(mockClient.create(any(), any())).thenReturn(createResponse);
+            doReturn(createResponse).when(wrapper).create(any(), any());
 
-            // Set up retrieve responses - processing then processed
             ExtractRun processingResponse = mock(ExtractRun.class);
             when(processingResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
 
             ExtractRun processedResponse = mock(ExtractRun.class);
             when(processedResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
 
-            when(mockClient.retrieve(eq(runId), any()))
-                    .thenReturn(processingResponse)
-                    .thenReturn(processedResponse);
+            doReturn(processingResponse)
+                    .doReturn(processedResponse)
+                    .when(wrapper)
+                    .retrieve(eq(runId), any());
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -79,8 +72,8 @@ class ExtractRunsWrapperTest {
             ExtractRun result = wrapper.createAndPoll(null, options);
 
             assertEquals(ProcessorRunStatus.PROCESSED, result.getStatus());
-            verify(mockClient, times(1)).create(any(), any());
-            verify(mockClient, times(2)).retrieve(eq(runId), any());
+            verify(wrapper, times(1)).create(any(), any());
+            verify(wrapper, times(2)).retrieve(eq(runId), any());
         }
 
         @Test
@@ -90,12 +83,12 @@ class ExtractRunsWrapperTest {
 
             ExtractRun createResponse = mock(ExtractRun.class);
             when(createResponse.getId()).thenReturn(runId);
-            when(mockClient.create(any(), any())).thenReturn(createResponse);
+            doReturn(createResponse).when(wrapper).create(any(), any());
 
             ExtractRun processedResponse = mock(ExtractRun.class);
             when(processedResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
 
-            when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
+            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), any());
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -106,7 +99,7 @@ class ExtractRunsWrapperTest {
             ExtractRun result = wrapper.createAndPoll(null, options);
 
             assertEquals(ProcessorRunStatus.PROCESSED, result.getStatus());
-            verify(mockClient, times(1)).retrieve(eq(runId), any());
+            verify(wrapper, times(1)).retrieve(eq(runId), any());
         }
 
         @Test
@@ -116,12 +109,12 @@ class ExtractRunsWrapperTest {
 
             ExtractRun createResponse = mock(ExtractRun.class);
             when(createResponse.getId()).thenReturn(runId);
-            when(mockClient.create(any(), any())).thenReturn(createResponse);
+            doReturn(createResponse).when(wrapper).create(any(), any());
 
             ExtractRun failedResponse = mock(ExtractRun.class);
             when(failedResponse.getStatus()).thenReturn(ProcessorRunStatus.FAILED);
 
-            when(mockClient.retrieve(eq(runId), any())).thenReturn(failedResponse);
+            doReturn(failedResponse).when(wrapper).retrieve(eq(runId), any());
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -141,12 +134,12 @@ class ExtractRunsWrapperTest {
 
             ExtractRun createResponse = mock(ExtractRun.class);
             when(createResponse.getId()).thenReturn(runId);
-            when(mockClient.create(any(), any())).thenReturn(createResponse);
+            doReturn(createResponse).when(wrapper).create(any(), any());
 
             ExtractRun cancelledResponse = mock(ExtractRun.class);
             when(cancelledResponse.getStatus()).thenReturn(ProcessorRunStatus.CANCELLED);
 
-            when(mockClient.retrieve(eq(runId), any())).thenReturn(cancelledResponse);
+            doReturn(cancelledResponse).when(wrapper).retrieve(eq(runId), any());
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -166,12 +159,12 @@ class ExtractRunsWrapperTest {
 
             ExtractRun createResponse = mock(ExtractRun.class);
             when(createResponse.getId()).thenReturn(runId);
-            when(mockClient.create(any(), any())).thenReturn(createResponse);
+            doReturn(createResponse).when(wrapper).create(any(), any());
 
             ExtractRun processingResponse = mock(ExtractRun.class);
             when(processingResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
 
-            when(mockClient.retrieve(eq(runId), any())).thenReturn(processingResponse);
+            doReturn(processingResponse).when(wrapper).retrieve(eq(runId), any());
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(10)
@@ -191,7 +184,7 @@ class ExtractRunsWrapperTest {
 
             ExtractRun createResponse = mock(ExtractRun.class);
             when(createResponse.getId()).thenReturn(runId);
-            when(mockClient.create(any(), any())).thenReturn(createResponse);
+            doReturn(createResponse).when(wrapper).create(any(), any());
 
             ExtractRun processingResponse1 = mock(ExtractRun.class);
             when(processingResponse1.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
@@ -202,10 +195,11 @@ class ExtractRunsWrapperTest {
             ExtractRun processedResponse = mock(ExtractRun.class);
             when(processedResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
 
-            when(mockClient.retrieve(eq(runId), any()))
-                    .thenReturn(processingResponse1)
-                    .thenReturn(processingResponse2)
-                    .thenReturn(processedResponse);
+            doReturn(processingResponse1)
+                    .doReturn(processingResponse2)
+                    .doReturn(processedResponse)
+                    .when(wrapper)
+                    .retrieve(eq(runId), any());
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -216,7 +210,7 @@ class ExtractRunsWrapperTest {
             ExtractRun result = wrapper.createAndPoll(null, options);
 
             assertEquals(ProcessorRunStatus.PROCESSED, result.getStatus());
-            verify(mockClient, times(3)).retrieve(eq(runId), any());
+            verify(wrapper, times(3)).retrieve(eq(runId), any());
         }
 
         @Test
@@ -226,14 +220,13 @@ class ExtractRunsWrapperTest {
 
             ExtractRun createResponse = mock(ExtractRun.class);
             when(createResponse.getId()).thenReturn(runId);
-            when(mockClient.create(any(), any())).thenReturn(createResponse);
+            doReturn(createResponse).when(wrapper).create(any(), any());
 
             ExtractRun processedResponse = mock(ExtractRun.class);
             when(processedResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
 
-            when(mockClient.retrieve(eq(runId), any())).thenReturn(processedResponse);
+            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), any());
 
-            // Should not throw - uses default options
             ExtractRun result = wrapper.createAndPoll(null);
 
             assertEquals(ProcessorRunStatus.PROCESSED, result.getStatus());

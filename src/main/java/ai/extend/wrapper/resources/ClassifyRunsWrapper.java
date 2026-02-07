@@ -17,9 +17,10 @@ import java.util.Set;
 /**
  * Wrapper for ClassifyRunsClient that adds polling functionality.
  *
- * <p>Polls indefinitely until a terminal state is reached.</p>
+ * <p>Extends {@link ClassifyRunsClient}, so all standard methods (list, create, retrieve,
+ * delete, cancel) are inherited. Adds {@code createAndPoll} for convenience.</p>
  */
-public class ClassifyRunsWrapper {
+public class ClassifyRunsWrapper extends ClassifyRunsClient {
 
     private static final Set<ProcessorRunStatus> NON_TERMINAL_STATUSES;
 
@@ -28,35 +29,12 @@ public class ClassifyRunsWrapper {
         NON_TERMINAL_STATUSES.add(ProcessorRunStatus.PROCESSING);
     }
 
-    private final ClassifyRunsClient client;
-
     public ClassifyRunsWrapper(ClientOptions clientOptions) {
-        this.client = new ClassifyRunsClient(clientOptions);
-    }
-
-    /**
-     * Package-private constructor for testing with a mock client.
-     */
-    ClassifyRunsWrapper(ClassifyRunsClient client) {
-        this.client = client;
-    }
-
-    /**
-     * Returns the underlying ClassifyRunsClient for direct API access.
-     */
-    public ClassifyRunsClient getClient() {
-        return client;
+        super(clientOptions);
     }
 
     /**
      * Creates a classify run and polls until it reaches a terminal state.
-     *
-     * <p>Terminal states: PROCESSED, FAILED, CANCELLED</p>
-     *
-     * <p>Polls indefinitely until complete.</p>
-     *
-     * @param request The create request
-     * @return The final response when a terminal state is reached
      */
     public ClassifyRun createAndPoll(ClassifyRunsCreateRequest request) {
         return createAndPoll(request, PollingOptions.defaults());
@@ -64,24 +42,16 @@ public class ClassifyRunsWrapper {
 
     /**
      * Creates a classify run and polls until it reaches a terminal state.
-     *
-     * <p>Terminal states: PROCESSED, FAILED, CANCELLED</p>
-     *
-     * @param request The create request
-     * @param options Polling options
-     * @return The final response when a terminal state is reached
      */
     public ClassifyRun createAndPoll(ClassifyRunsCreateRequest request, PollingOptions options) {
 
         RequestOptions requestOptions = options.getRequestOptions();
 
-        // Create the classify run
-        ClassifyRun createResponse = client.create(request, requestOptions);
+        ClassifyRun createResponse = this.create(request, requestOptions);
         final String runId = createResponse.getId();
 
-        // Poll until terminal state
         return Polling.pollUntilDone(
-                () -> client.retrieve(runId, requestOptions),
+                () -> this.retrieve(runId, requestOptions),
                 response -> isTerminalStatus(response.getStatus()),
                 options);
     }
