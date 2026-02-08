@@ -29,6 +29,8 @@ public final class ParserRun {
 
     private final List<Chunk> chunks;
 
+    private final Optional<ParserRunOcr> ocr;
+
     private final ParserRunStatusEnum status;
 
     private final Optional<String> failureReason;
@@ -45,6 +47,7 @@ public final class ParserRun {
             String id,
             String fileId,
             List<Chunk> chunks,
+            Optional<ParserRunOcr> ocr,
             ParserRunStatusEnum status,
             Optional<String> failureReason,
             ParserRunMetrics metrics,
@@ -54,6 +57,7 @@ public final class ParserRun {
         this.id = id;
         this.fileId = fileId;
         this.chunks = chunks;
+        this.ocr = ocr;
         this.status = status;
         this.failureReason = failureReason;
         this.metrics = metrics;
@@ -93,6 +97,14 @@ public final class ParserRun {
     @JsonProperty("chunks")
     public List<Chunk> getChunks() {
         return chunks;
+    }
+
+    /**
+     * @return Raw OCR data from the parsing process. Only included when <code>returnOcr</code> is configured in the parse config's advanced options.
+     */
+    @JsonProperty("ocr")
+    public Optional<ParserRunOcr> getOcr() {
+        return ocr;
     }
 
     /**
@@ -151,6 +163,7 @@ public final class ParserRun {
         return id.equals(other.id)
                 && fileId.equals(other.fileId)
                 && chunks.equals(other.chunks)
+                && ocr.equals(other.ocr)
                 && status.equals(other.status)
                 && failureReason.equals(other.failureReason)
                 && metrics.equals(other.metrics)
@@ -164,6 +177,7 @@ public final class ParserRun {
                 this.id,
                 this.fileId,
                 this.chunks,
+                this.ocr,
                 this.status,
                 this.failureReason,
                 this.metrics,
@@ -235,6 +249,13 @@ public final class ParserRun {
         _FinalStage addAllChunks(List<Chunk> chunks);
 
         /**
+         * <p>Raw OCR data from the parsing process. Only included when <code>returnOcr</code> is configured in the parse config's advanced options.</p>
+         */
+        _FinalStage ocr(Optional<ParserRunOcr> ocr);
+
+        _FinalStage ocr(ParserRunOcr ocr);
+
+        /**
          * <p>The reason for failure if status is &quot;FAILED&quot;.</p>
          */
         _FinalStage failureReason(Optional<String> failureReason);
@@ -263,6 +284,8 @@ public final class ParserRun {
 
         private Optional<String> failureReason = Optional.empty();
 
+        private Optional<ParserRunOcr> ocr = Optional.empty();
+
         private List<Chunk> chunks = new ArrayList<>();
 
         @JsonAnySetter
@@ -275,6 +298,7 @@ public final class ParserRun {
             id(other.getId());
             fileId(other.getFileId());
             chunks(other.getChunks());
+            ocr(other.getOcr());
             status(other.getStatus());
             failureReason(other.getFailureReason());
             metrics(other.getMetrics());
@@ -387,6 +411,26 @@ public final class ParserRun {
         }
 
         /**
+         * <p>Raw OCR data from the parsing process. Only included when <code>returnOcr</code> is configured in the parse config's advanced options.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage ocr(ParserRunOcr ocr) {
+            this.ocr = Optional.ofNullable(ocr);
+            return this;
+        }
+
+        /**
+         * <p>Raw OCR data from the parsing process. Only included when <code>returnOcr</code> is configured in the parse config's advanced options.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "ocr", nulls = Nulls.SKIP)
+        public _FinalStage ocr(Optional<ParserRunOcr> ocr) {
+            this.ocr = ocr;
+            return this;
+        }
+
+        /**
          * <p>An array of chunks that were parsed from the file.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
@@ -420,7 +464,7 @@ public final class ParserRun {
         @java.lang.Override
         public ParserRun build() {
             return new ParserRun(
-                    id, fileId, chunks, status, failureReason, metrics, config, usage, additionalProperties);
+                    id, fileId, chunks, ocr, status, failureReason, metrics, config, usage, additionalProperties);
         }
     }
 }
