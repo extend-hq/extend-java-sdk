@@ -4,6 +4,7 @@
 package ai.extend.wrapper.webhooks;
 
 import ai.extend.core.ObjectMappers;
+import ai.extend.types.WebhookEvent;
 import ai.extend.wrapper.errors.SignedUrlNotAllowedError;
 import ai.extend.wrapper.errors.WebhookPayloadFetchError;
 import ai.extend.wrapper.errors.WebhookSignatureVerificationError;
@@ -29,19 +30,18 @@ import okhttp3.Response;
  * Webhooks webhooks = new Webhooks();
  *
  * // Verify and parse a webhook (throws if signed URL received)
- * Map<String, Object> event = webhooks.verifyAndParse(body, headers, signingSecret);
+ * WebhookEvent event = webhooks.verifyAndParse(body, headers, signingSecret);
+ * event.visit(new WebhookEvent.Visitor&lt;Void&gt;() { ... });
  * }</pre>
  *
  * <h3>Handling Signed URLs</h3>
  * <pre>{@code
- * VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(body, headers, signingSecret,
+ * RawWebhookEvent raw = webhooks.verifyAndParseWithOptions(body, headers, signingSecret,
  *     VerifyAndParseOptions.builder().allowSignedUrl(true).build());
- *
- * if (result.isSignedUrlEvent()) {
- *     WebhookEventWithSignedUrl signedEvent = result.getSignedUrlEvent();
- *     Map<String, Object> fullEvent = webhooks.fetchSignedPayload(signedEvent);
+ * if (raw.isSignedUrlEvent()) {
+ *     WebhookEvent fullEvent = webhooks.fetchSignedPayload(raw.getSignedUrlEvent());
  * } else {
- *     Map<String, Object> event = result.getEvent();
+ *     WebhookEvent event = raw.getEvent();
  * }
  * }</pre>
  */
@@ -67,49 +67,53 @@ public class Webhooks {
      * @param body          The raw request body as a string
      * @param headers       The request headers (case-insensitive lookup supported)
      * @param signingSecret The webhook signing secret from the Extend dashboard
-     * @return The parsed webhook event
+     * @return The parsed typed webhook event
      * @throws WebhookSignatureVerificationError if signature verification fails
      * @throws SignedUrlNotAllowedError if a signed URL payload is received
      */
-    public Map<String, Object> verifyAndParse(String body, Map<String, String> headers, String signingSecret)
+    public WebhookEvent verifyAndParse(String body, Map<String, String> headers, String signingSecret)
             throws WebhookSignatureVerificationError, SignedUrlNotAllowedError {
-        VerifyAndParseResult result =
+        RawWebhookEvent raw =
                 verifyAndParseWithOptions(body, headers, signingSecret, VerifyAndParseOptions.defaults());
-        return result.getEvent();
+        return raw.getEvent();
     }
 
     /**
      * Verifies the webhook signature and parses the event with options.
      *
-     * <p>Returns a {@link VerifyAndParseResult} that provides type-safe access to either
-     * a normal event or a signed URL event.</p>
+     * <p>Returns a {@link RawWebhookEvent} (union of typed event or signed URL event), matching
+     * the TypeScript and Python SDKs. Use {@link RawWebhookEvent#isSignedUrlEvent()} to narrow,
+     * then {@link RawWebhookEvent#getEvent()} or {@link RawWebhookEvent#getSignedUrlEvent()}.</p>
      *
      * @param body          The raw request body as a string
      * @param headers       The request headers (case-insensitive lookup supported)
      * @param signingSecret The webhook signing secret from the Extend dashboard
      * @param options       Verification and parsing options
-     * @return A result containing either the event or signed URL event
+     * @return A raw webhook event (either normal or signed URL)
      * @throws WebhookSignatureVerificationError if signature verification fails
      * @throws SignedUrlNotAllowedError if signed URL received without allowSignedUrl=true
      */
     @SuppressWarnings("unchecked")
-    public VerifyAndParseResult verifyAndParseWithOptions(
+    public RawWebhookEvent verifyAndParseWithOptions(
             String body, Map<String, String> headers, String signingSecret, VerifyAndParseOptions options)
             throws WebhookSignatureVerificationError, SignedUrlNotAllowedError {
 
         verifySignature(body, headers, signingSecret, options.toVerifyOptions());
 
-        Map<String, Object> event = parseJsonBody(body);
-        Map<String, Object> payload = (Map<String, Object>) event.get("payload");
+        Map<String, Object> eventMap = parseJsonBody(body);
+        Map<String, Object> payload = (Map<String, Object>) eventMap.get("payload");
 
         if (isSignedDataUrlPayload(payload)) {
             if (!options.isAllowSignedUrl()) {
                 throw new SignedUrlNotAllowedError();
             }
-            return VerifyAndParseResult.ofSignedUrlEvent(parseAsSignedUrlEvent(event));
+            return VerifyAndParseResult.ofSignedUrlEvent(parseAsSignedUrlEvent(eventMap));
         }
 
-        return VerifyAndParseResult.ofEvent(event);
+        WebhookEvent webhookEvent = parseAsWebhookEvent(body);
+        String eventId = (String) eventMap.get("eventId");
+        String eventType = (String) eventMap.get("eventType");
+        return VerifyAndParseResult.ofEvent(webhookEvent, eventId, eventType);
     }
 
     /**
@@ -137,7 +141,7 @@ public class Webhooks {
         try {
             verifySignature(body, headers, signingSecret, options);
             return true;
-        } catch (WebhookSignatureVerificationError e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -149,34 +153,36 @@ public class Webhooks {
      * with {@link #verify}.</p>
      *
      * @param body The raw request body as a string
-     * @return A result containing either the event or signed URL event
+     * @return A raw webhook event (either normal or signed URL)
      */
     @SuppressWarnings("unchecked")
-    public VerifyAndParseResult parse(String body) {
-        Map<String, Object> event = parseJsonBody(body);
-        Map<String, Object> payload = (Map<String, Object>) event.get("payload");
+    public RawWebhookEvent parse(String body) {
+        Map<String, Object> eventMap = parseJsonBody(body);
+        Map<String, Object> payload = (Map<String, Object>) eventMap.get("payload");
 
         if (isSignedDataUrlPayload(payload)) {
-            return VerifyAndParseResult.ofSignedUrlEvent(parseAsSignedUrlEvent(event));
+            return VerifyAndParseResult.ofSignedUrlEvent(parseAsSignedUrlEvent(eventMap));
         }
 
-        return VerifyAndParseResult.ofEvent(event);
+        WebhookEvent webhookEvent = parseAsWebhookEvent(body);
+        String eventId = (String) eventMap.get("eventId");
+        String eventType = (String) eventMap.get("eventType");
+        return VerifyAndParseResult.ofEvent(webhookEvent, eventId, eventType);
     }
 
     /**
      * Fetches the full payload from a signed URL event.
      *
      * @param event The webhook event with a signed URL payload
-     * @return The full webhook event with resolved payload
+     * @return The full typed webhook event with resolved payload
      * @throws WebhookPayloadFetchError if the fetch fails
      */
-    public Map<String, Object> fetchSignedPayload(WebhookEventWithSignedUrl event) throws WebhookPayloadFetchError {
+    public WebhookEvent fetchSignedPayload(WebhookEventWithSignedUrl event) throws WebhookPayloadFetchError {
         String url = event.getPayload().getData();
 
         Request request = new Request.Builder().url(url).get().build();
 
-        try {
-            Response response = httpClient.newCall(request).execute();
+        try (Response response = httpClient.newCall(request).execute()) {
 
             if (!response.isSuccessful()) {
                 throw new WebhookPayloadFetchError(
@@ -185,15 +191,16 @@ public class Webhooks {
 
             String responseBody = response.body() != null ? response.body().string() : "";
 
-            Map<String, Object> fullPayload =
-                    ObjectMappers.JSON_MAPPER.readValue(responseBody, new TypeReference<Map<String, Object>>() {});
+            Object fullPayload =
+                    ObjectMappers.JSON_MAPPER.readValue(responseBody, Object.class);
 
-            // Return full event with resolved payload
-            Map<String, Object> result = new HashMap<String, Object>();
-            result.put("eventId", event.getEventId());
-            result.put("eventType", event.getEventType());
-            result.put("payload", fullPayload);
-            return result;
+            // Build full event JSON and deserialize to typed WebhookEvent
+            Map<String, Object> fullEvent = new HashMap<>();
+            fullEvent.put("eventId", event.getEventId());
+            fullEvent.put("eventType", event.getEventType());
+            fullEvent.put("payload", fullPayload);
+            String eventJson = ObjectMappers.JSON_MAPPER.writeValueAsString(fullEvent);
+            return ObjectMappers.JSON_MAPPER.readValue(eventJson, WebhookEvent.class);
 
         } catch (WebhookPayloadFetchError e) {
             throw e;
@@ -313,7 +320,15 @@ public class Webhooks {
         try {
             return ObjectMappers.JSON_MAPPER.readValue(body, new TypeReference<Map<String, Object>>() {});
         } catch (Exception e) {
-            throw new RuntimeException("Failed to parse webhook body as JSON", e);
+            throw new WebhookSignatureVerificationError("Failed to parse webhook body as JSON");
+        }
+    }
+
+    private WebhookEvent parseAsWebhookEvent(String body) {
+        try {
+            return ObjectMappers.JSON_MAPPER.readValue(body, WebhookEvent.class);
+        } catch (Exception e) {
+            throw new WebhookSignatureVerificationError("Failed to parse webhook body as WebhookEvent");
         }
     }
 

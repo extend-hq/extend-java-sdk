@@ -5,6 +5,7 @@ package ai.extend.wrapper.webhooks;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import ai.extend.types.WebhookEvent;
 import ai.extend.wrapper.errors.SignedUrlNotAllowedError;
 import ai.extend.wrapper.errors.WebhookSignatureVerificationError;
 import java.nio.charset.StandardCharsets;
@@ -111,11 +112,11 @@ class WebhooksTest {
                 String body = createWorkflowRunEventBody();
                 Map<String, String> headers = createValidHeaders(body, SECRET);
 
-                Map<String, Object> event = webhooks.verifyAndParse(body, headers, SECRET);
+                WebhookEvent event = webhooks.verifyAndParse(body, headers, SECRET);
 
-                assertEquals("evt_123", event.get("eventId"));
-                assertEquals("workflow_run.completed", event.get("eventType"));
-                assertNotNull(event.get("payload"));
+                assertTrue(event.isWorkflowRunCompleted());
+                assertEquals("evt_123", event.getWorkflowRunCompleted().orElseThrow().getEventId());
+                assertNotNull(event.getWorkflowRunCompleted().orElseThrow().getPayload());
             }
 
             @Test
@@ -124,10 +125,10 @@ class WebhooksTest {
                 String body = createExtractRunEventBody();
                 Map<String, String> headers = createValidHeaders(body, SECRET);
 
-                Map<String, Object> event = webhooks.verifyAndParse(body, headers, SECRET);
+                WebhookEvent event = webhooks.verifyAndParse(body, headers, SECRET);
 
-                assertEquals("evt_456", event.get("eventId"));
-                assertEquals("extract_run.processed", event.get("eventType"));
+                assertTrue(event.isExtractRunProcessed());
+                assertEquals("evt_456", event.getExtractRunProcessed().orElseThrow().getEventId());
             }
 
             @Test
@@ -160,7 +161,7 @@ class WebhooksTest {
                 String body = createSignedUrlEventBody();
                 Map<String, String> headers = createValidHeaders(body, SECRET);
 
-                VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(
+                RawWebhookEvent result = webhooks.verifyAndParseWithOptions(
                         body,
                         headers,
                         SECRET,
@@ -182,15 +183,16 @@ class WebhooksTest {
                 String body = createWorkflowRunEventBody();
                 Map<String, String> headers = createValidHeaders(body, SECRET);
 
-                VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(
+                RawWebhookEvent result = webhooks.verifyAndParseWithOptions(
                         body,
                         headers,
                         SECRET,
                         VerifyAndParseOptions.builder().allowSignedUrl(true).build());
 
                 assertFalse(result.isSignedUrlEvent());
-                Map<String, Object> event = result.getEvent();
-                assertEquals("workflow_run.completed", event.get("eventType"));
+                WebhookEvent event = result.getEvent();
+                assertEquals("workflow_run.completed", result.getEventType());
+                assertNotNull(event);
             }
         }
 
@@ -301,8 +303,9 @@ class WebhooksTest {
                 long recentTimestamp = System.currentTimeMillis() / 1000 - 60; // 1 minute ago
                 Map<String, String> headers = createValidHeaders(body, SECRET, recentTimestamp);
 
-                Map<String, Object> event = webhooks.verifyAndParse(body, headers, SECRET);
-                assertEquals("evt_123", event.get("eventId"));
+                WebhookEvent event = webhooks.verifyAndParse(body, headers, SECRET);
+                assertTrue(event.isWorkflowRunCompleted());
+                assertEquals("evt_123", event.getWorkflowRunCompleted().orElseThrow().getEventId());
             }
 
             @Test
@@ -318,12 +321,12 @@ class WebhooksTest {
                 });
 
                 // Should succeed with 900s
-                VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(
+                RawWebhookEvent result = webhooks.verifyAndParseWithOptions(
                         body,
                         headers,
                         SECRET,
                         VerifyAndParseOptions.builder().maxAgeSeconds(900).build());
-                assertEquals("evt_123", result.getEvent().get("eventId"));
+                assertEquals("evt_123", result.getEventId());
             }
 
             @Test
@@ -333,12 +336,12 @@ class WebhooksTest {
                 long veryOldTimestamp = System.currentTimeMillis() / 1000 - 86400; // 1 day ago
                 Map<String, String> headers = createValidHeaders(body, SECRET, veryOldTimestamp);
 
-                VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(
+                RawWebhookEvent result = webhooks.verifyAndParseWithOptions(
                         body,
                         headers,
                         SECRET,
                         VerifyAndParseOptions.builder().maxAgeSeconds(0).build());
-                assertEquals("evt_123", result.getEvent().get("eventId"));
+                assertEquals("evt_123", result.getEventId());
             }
 
             @Test
@@ -362,8 +365,9 @@ class WebhooksTest {
                 long slightlyFutureTimestamp = System.currentTimeMillis() / 1000 + 30; // 30 seconds in future
                 Map<String, String> headers = createValidHeaders(body, SECRET, slightlyFutureTimestamp);
 
-                Map<String, Object> event = webhooks.verifyAndParse(body, headers, SECRET);
-                assertEquals("evt_123", event.get("eventId"));
+                WebhookEvent event = webhooks.verifyAndParse(body, headers, SECRET);
+                assertTrue(event.isWorkflowRunCompleted());
+                assertEquals("evt_123", event.getWorkflowRunCompleted().orElseThrow().getEventId());
             }
 
             @Test
@@ -411,8 +415,9 @@ class WebhooksTest {
                 headers.put("x-extend-request-timestamp", String.valueOf(ts));
                 headers.put("x-extend-request-signature", createSignature(body, SECRET, ts));
 
-                Map<String, Object> event = webhooks.verifyAndParse(body, headers, SECRET);
-                assertEquals("evt_123", event.get("eventId"));
+                WebhookEvent event = webhooks.verifyAndParse(body, headers, SECRET);
+                assertTrue(event.isWorkflowRunCompleted());
+                assertEquals("evt_123", event.getWorkflowRunCompleted().orElseThrow().getEventId());
             }
         }
     }
@@ -492,12 +497,13 @@ class WebhooksTest {
         void shouldParseNormalEvent() {
             String body = createWorkflowRunEventBody();
 
-            VerifyAndParseResult result = webhooks.parse(body);
+            RawWebhookEvent result = webhooks.parse(body);
 
             assertFalse(result.isSignedUrlEvent());
-            Map<String, Object> event = result.getEvent();
-            assertEquals("evt_123", event.get("eventId"));
-            assertEquals("workflow_run.completed", event.get("eventType"));
+            WebhookEvent event = result.getEvent();
+            assertEquals("evt_123", result.getEventId());
+            assertEquals("workflow_run.completed", result.getEventType());
+            assertNotNull(event);
         }
 
         @Test
@@ -505,7 +511,7 @@ class WebhooksTest {
         void shouldParseSignedUrlEvent() {
             String body = createSignedUrlEventBody();
 
-            VerifyAndParseResult result = webhooks.parse(body);
+            RawWebhookEvent result = webhooks.parse(body);
 
             assertTrue(result.isSignedUrlEvent());
             WebhookEventWithSignedUrl signedEvent = result.getSignedUrlEvent();
@@ -522,18 +528,18 @@ class WebhooksTest {
     }
 
     // ============================================================================
-    // VerifyAndParseResult tests
+    // RawWebhookEvent (VerifyAndParseResult) tests
     // ============================================================================
 
     @Nested
-    @DisplayName("VerifyAndParseResult")
-    class VerifyAndParseResultTests {
+    @DisplayName("RawWebhookEvent")
+    class RawWebhookEventTests {
 
         @Test
         @DisplayName("should return event for normal events")
         void shouldReturnEventForNormalEvents() {
             String body = createWorkflowRunEventBody();
-            VerifyAndParseResult result = webhooks.parse(body);
+            RawWebhookEvent result = webhooks.parse(body);
 
             assertFalse(result.isSignedUrlEvent());
             assertNotNull(result.getEvent());
@@ -545,7 +551,7 @@ class WebhooksTest {
         @DisplayName("should return signedUrlEvent for signed URL events")
         void shouldReturnSignedUrlEventForSignedUrl() {
             String body = createSignedUrlEventBody();
-            VerifyAndParseResult result = webhooks.parse(body);
+            RawWebhookEvent result = webhooks.parse(body);
 
             assertTrue(result.isSignedUrlEvent());
             assertNotNull(result.getSignedUrlEvent());
@@ -557,7 +563,7 @@ class WebhooksTest {
         @DisplayName("should throw when calling getEvent on signed URL event")
         void shouldThrowWhenCallingGetEventOnSignedUrl() {
             String body = createSignedUrlEventBody();
-            VerifyAndParseResult result = webhooks.parse(body);
+            RawWebhookEvent result = webhooks.parse(body);
 
             assertThrows(IllegalStateException.class, () -> {
                 result.getEvent();
@@ -568,7 +574,7 @@ class WebhooksTest {
         @DisplayName("should throw when calling getSignedUrlEvent on normal event")
         void shouldThrowWhenCallingGetSignedUrlEventOnNormal() {
             String body = createWorkflowRunEventBody();
-            VerifyAndParseResult result = webhooks.parse(body);
+            RawWebhookEvent result = webhooks.parse(body);
 
             assertThrows(IllegalStateException.class, () -> {
                 result.getSignedUrlEvent();

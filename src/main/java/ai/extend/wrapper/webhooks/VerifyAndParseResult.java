@@ -3,50 +3,54 @@
  */
 package ai.extend.wrapper.webhooks;
 
-import java.util.Map;
+import ai.extend.types.WebhookEvent;
 
 /**
  * Result of verifying and parsing a webhook event.
  *
  * <p>This class provides type-safe access to the parsed webhook event,
- * which can be either a normal event or a signed URL event.</p>
+ * which can be either a normal typed event or a signed URL event.</p>
  *
  * <h3>Usage</h3>
  * <pre>{@code
- * VerifyAndParseResult result = webhooks.verifyAndParse(body, headers, secret, options);
+ * VerifyAndParseResult result = webhooks.verifyAndParseWithOptions(body, headers, secret, options);
  *
  * if (result.isSignedUrlEvent()) {
  *     WebhookEventWithSignedUrl signedEvent = result.getSignedUrlEvent();
- *     // Fetch the full payload
- *     Map<String, Object> fullEvent = webhooks.fetchSignedPayload(signedEvent);
+ *     WebhookEvent fullEvent = webhooks.fetchSignedPayload(signedEvent);
  * } else {
- *     Map<String, Object> event = result.getEvent();
- *     // Process the event
+ *     WebhookEvent event = result.getEvent();
+ *     event.visit(new WebhookEvent.Visitor<Void>() { ... });
  * }
  * }</pre>
  */
-public class VerifyAndParseResult {
+public class VerifyAndParseResult implements RawWebhookEvent {
 
-    private final Map<String, Object> event;
+    private final WebhookEvent event;
+    private final String eventId;
+    private final String eventType;
     private final WebhookEventWithSignedUrl signedUrlEvent;
 
-    private VerifyAndParseResult(Map<String, Object> event, WebhookEventWithSignedUrl signedUrlEvent) {
+    private VerifyAndParseResult(
+            WebhookEvent event, String eventId, String eventType, WebhookEventWithSignedUrl signedUrlEvent) {
         this.event = event;
+        this.eventId = eventId;
+        this.eventType = eventType;
         this.signedUrlEvent = signedUrlEvent;
     }
 
     /**
      * Creates a result for a normal webhook event.
      */
-    public static VerifyAndParseResult ofEvent(Map<String, Object> event) {
-        return new VerifyAndParseResult(event, null);
+    public static VerifyAndParseResult ofEvent(WebhookEvent event, String eventId, String eventType) {
+        return new VerifyAndParseResult(event, eventId, eventType, null);
     }
 
     /**
      * Creates a result for a signed URL webhook event.
      */
     public static VerifyAndParseResult ofSignedUrlEvent(WebhookEventWithSignedUrl signedUrlEvent) {
-        return new VerifyAndParseResult(null, signedUrlEvent);
+        return new VerifyAndParseResult(null, null, null, signedUrlEvent);
     }
 
     /**
@@ -59,10 +63,10 @@ public class VerifyAndParseResult {
     /**
      * Returns the parsed webhook event.
      *
-     * @return The event map, or null if this is a signed URL event
+     * @return The typed webhook event
      * @throws IllegalStateException if this is a signed URL event
      */
-    public Map<String, Object> getEvent() {
+    public WebhookEvent getEvent() {
         if (isSignedUrlEvent()) {
             throw new IllegalStateException(
                     "Cannot call getEvent() on a signed URL event. Use getSignedUrlEvent() instead.");
@@ -73,7 +77,7 @@ public class VerifyAndParseResult {
     /**
      * Returns the signed URL event.
      *
-     * @return The signed URL event, or null if this is a normal event
+     * @return The signed URL event
      * @throws IllegalStateException if this is not a signed URL event
      */
     public WebhookEventWithSignedUrl getSignedUrlEvent() {
@@ -91,7 +95,7 @@ public class VerifyAndParseResult {
         if (isSignedUrlEvent()) {
             return signedUrlEvent.getEventId();
         }
-        return (String) event.get("eventId");
+        return eventId;
     }
 
     /**
@@ -101,6 +105,6 @@ public class VerifyAndParseResult {
         if (isSignedUrlEvent()) {
             return signedUrlEvent.getEventType();
         }
-        return (String) event.get("eventType");
+        return eventType;
     }
 }
