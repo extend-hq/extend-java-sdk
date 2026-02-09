@@ -23,20 +23,20 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 /**
- * Tests for ParseRunsWrapper.createAndPoll method.
+ * Tests for ParseRunsClient.createAndPoll method.
  */
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class ParseRunsWrapperTest {
+class ParseRunsClientTest {
 
     private static final ClientOptions TEST_OPTIONS =
             ClientOptions.builder().addHeader("Authorization", "Bearer test").build();
 
-    private ParseRunsWrapper wrapper;
+    private ParseRunsClient wrapper;
 
     @BeforeEach
     void setUp() {
-        wrapper = spy(new ParseRunsWrapper(TEST_OPTIONS));
+        wrapper = spy(new ParseRunsClient(TEST_OPTIONS));
     }
 
     @Nested

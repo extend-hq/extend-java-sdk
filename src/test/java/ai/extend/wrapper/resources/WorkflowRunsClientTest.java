@@ -23,20 +23,20 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 /**
- * Tests for WorkflowRunsWrapper.createAndPoll method.
+ * Tests for WorkflowRunsClient.createAndPoll method.
  */
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class WorkflowRunsWrapperTest {
+class WorkflowRunsClientTest {
 
     private static final ClientOptions TEST_OPTIONS =
             ClientOptions.builder().addHeader("Authorization", "Bearer test").build();
 
-    private WorkflowRunsWrapper wrapper;
+    private WorkflowRunsClient wrapper;
 
     @BeforeEach
     void setUp() {
-        wrapper = spy(new WorkflowRunsWrapper(TEST_OPTIONS));
+        wrapper = spy(new WorkflowRunsClient(TEST_OPTIONS));
     }
 
     @Nested

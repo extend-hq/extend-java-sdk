@@ -9,7 +9,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import ai.extend.core.ClientOptions;
-import ai.extend.types.ClassifyRun;
+import ai.extend.types.ExtractRun;
 import ai.extend.types.ProcessorRunStatus;
 import ai.extend.wrapper.errors.PollingTimeoutError;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
@@ -23,20 +23,20 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 /**
- * Tests for ClassifyRunsWrapper.createAndPoll method.
+ * Tests for ExtractRunsClient.createAndPoll method.
  */
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class ClassifyRunsWrapperTest {
+class ExtractRunsClientTest {
 
     private static final ClientOptions TEST_OPTIONS =
             ClientOptions.builder().addHeader("Authorization", "Bearer test").build();
 
-    private ClassifyRunsWrapper wrapper;
+    private ExtractRunsClient wrapper;
 
     @BeforeEach
     void setUp() {
-        wrapper = spy(new ClassifyRunsWrapper(TEST_OPTIONS));
+        wrapper = spy(new ExtractRunsClient(TEST_OPTIONS));
     }
 
     @Nested
@@ -46,16 +46,16 @@ class ClassifyRunsWrapperTest {
         @Test
         @DisplayName("should create and poll until PROCESSED")
         void shouldCreateAndPollUntilProcessed() {
-            String runId = "classify_run_test123";
+            String runId = "extract_run_test123";
 
-            ClassifyRun createResponse = mock(ClassifyRun.class);
+            ExtractRun createResponse = mock(ExtractRun.class);
             when(createResponse.getId()).thenReturn(runId);
             doReturn(createResponse).when(wrapper).create(any(), any());
 
-            ClassifyRun processingResponse = mock(ClassifyRun.class);
+            ExtractRun processingResponse = mock(ExtractRun.class);
             when(processingResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
 
-            ClassifyRun processedResponse = mock(ClassifyRun.class);
+            ExtractRun processedResponse = mock(ExtractRun.class);
             when(processedResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
 
             doReturn(processingResponse)
@@ -69,7 +69,7 @@ class ClassifyRunsWrapperTest {
                     .jitterFraction(0)
                     .build();
 
-            ClassifyRun result = wrapper.createAndPoll(null, options);
+            ExtractRun result = wrapper.createAndPoll(null, options);
 
             assertEquals(ProcessorRunStatus.PROCESSED, result.getStatus());
             verify(wrapper, times(1)).create(any(), any());
@@ -77,15 +77,15 @@ class ClassifyRunsWrapperTest {
         }
 
         @Test
-        @DisplayName("should return immediately if already PROCESSED")
+        @DisplayName("should return immediately if already PROCESSED on first retrieve")
         void shouldReturnImmediatelyIfAlreadyProcessed() {
-            String runId = "classify_run_test123";
+            String runId = "extract_run_test123";
 
-            ClassifyRun createResponse = mock(ClassifyRun.class);
+            ExtractRun createResponse = mock(ExtractRun.class);
             when(createResponse.getId()).thenReturn(runId);
             doReturn(createResponse).when(wrapper).create(any(), any());
 
-            ClassifyRun processedResponse = mock(ClassifyRun.class);
+            ExtractRun processedResponse = mock(ExtractRun.class);
             when(processedResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
 
             doReturn(processedResponse).when(wrapper).retrieve(eq(runId), any());
@@ -96,7 +96,7 @@ class ClassifyRunsWrapperTest {
                     .jitterFraction(0)
                     .build();
 
-            ClassifyRun result = wrapper.createAndPoll(null, options);
+            ExtractRun result = wrapper.createAndPoll(null, options);
 
             assertEquals(ProcessorRunStatus.PROCESSED, result.getStatus());
             verify(wrapper, times(1)).retrieve(eq(runId), any());
@@ -105,13 +105,13 @@ class ClassifyRunsWrapperTest {
         @Test
         @DisplayName("should handle FAILED status as terminal")
         void shouldHandleFailedAsTerminal() {
-            String runId = "classify_run_test123";
+            String runId = "extract_run_test123";
 
-            ClassifyRun createResponse = mock(ClassifyRun.class);
+            ExtractRun createResponse = mock(ExtractRun.class);
             when(createResponse.getId()).thenReturn(runId);
             doReturn(createResponse).when(wrapper).create(any(), any());
 
-            ClassifyRun failedResponse = mock(ClassifyRun.class);
+            ExtractRun failedResponse = mock(ExtractRun.class);
             when(failedResponse.getStatus()).thenReturn(ProcessorRunStatus.FAILED);
 
             doReturn(failedResponse).when(wrapper).retrieve(eq(runId), any());
@@ -122,7 +122,7 @@ class ClassifyRunsWrapperTest {
                     .jitterFraction(0)
                     .build();
 
-            ClassifyRun result = wrapper.createAndPoll(null, options);
+            ExtractRun result = wrapper.createAndPoll(null, options);
 
             assertEquals(ProcessorRunStatus.FAILED, result.getStatus());
         }
@@ -130,13 +130,13 @@ class ClassifyRunsWrapperTest {
         @Test
         @DisplayName("should handle CANCELLED status as terminal")
         void shouldHandleCancelledAsTerminal() {
-            String runId = "classify_run_test123";
+            String runId = "extract_run_test123";
 
-            ClassifyRun createResponse = mock(ClassifyRun.class);
+            ExtractRun createResponse = mock(ExtractRun.class);
             when(createResponse.getId()).thenReturn(runId);
             doReturn(createResponse).when(wrapper).create(any(), any());
 
-            ClassifyRun cancelledResponse = mock(ClassifyRun.class);
+            ExtractRun cancelledResponse = mock(ExtractRun.class);
             when(cancelledResponse.getStatus()).thenReturn(ProcessorRunStatus.CANCELLED);
 
             doReturn(cancelledResponse).when(wrapper).retrieve(eq(runId), any());
@@ -147,7 +147,7 @@ class ClassifyRunsWrapperTest {
                     .jitterFraction(0)
                     .build();
 
-            ClassifyRun result = wrapper.createAndPoll(null, options);
+            ExtractRun result = wrapper.createAndPoll(null, options);
 
             assertEquals(ProcessorRunStatus.CANCELLED, result.getStatus());
         }
@@ -155,13 +155,13 @@ class ClassifyRunsWrapperTest {
         @Test
         @DisplayName("should throw PollingTimeoutError when timeout exceeded")
         void shouldThrowTimeoutError() {
-            String runId = "classify_run_test123";
+            String runId = "extract_run_test123";
 
-            ClassifyRun createResponse = mock(ClassifyRun.class);
+            ExtractRun createResponse = mock(ExtractRun.class);
             when(createResponse.getId()).thenReturn(runId);
             doReturn(createResponse).when(wrapper).create(any(), any());
 
-            ClassifyRun processingResponse = mock(ClassifyRun.class);
+            ExtractRun processingResponse = mock(ExtractRun.class);
             when(processingResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
 
             doReturn(processingResponse).when(wrapper).retrieve(eq(runId), any());
@@ -178,20 +178,56 @@ class ClassifyRunsWrapperTest {
         }
 
         @Test
-        @DisplayName("should use default polling options when not specified")
-        void shouldUseDefaultOptions() {
-            String runId = "classify_run_test123";
+        @DisplayName("should continue polling while PROCESSING")
+        void shouldContinuePollingWhileProcessing() {
+            String runId = "extract_run_test123";
 
-            ClassifyRun createResponse = mock(ClassifyRun.class);
+            ExtractRun createResponse = mock(ExtractRun.class);
             when(createResponse.getId()).thenReturn(runId);
             doReturn(createResponse).when(wrapper).create(any(), any());
 
-            ClassifyRun processedResponse = mock(ClassifyRun.class);
+            ExtractRun processingResponse1 = mock(ExtractRun.class);
+            when(processingResponse1.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
+
+            ExtractRun processingResponse2 = mock(ExtractRun.class);
+            when(processingResponse2.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
+
+            ExtractRun processedResponse = mock(ExtractRun.class);
+            when(processedResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
+
+            doReturn(processingResponse1)
+                    .doReturn(processingResponse2)
+                    .doReturn(processedResponse)
+                    .when(wrapper)
+                    .retrieve(eq(runId), any());
+
+            PollingOptions options = PollingOptions.builder()
+                    .initialDelayMs(1)
+                    .maxWaitMs(10000)
+                    .jitterFraction(0)
+                    .build();
+
+            ExtractRun result = wrapper.createAndPoll(null, options);
+
+            assertEquals(ProcessorRunStatus.PROCESSED, result.getStatus());
+            verify(wrapper, times(3)).retrieve(eq(runId), any());
+        }
+
+        @Test
+        @DisplayName("should use default polling options when not specified")
+        void shouldUseDefaultOptions() {
+            String runId = "extract_run_test123";
+
+            ExtractRun createResponse = mock(ExtractRun.class);
+            when(createResponse.getId()).thenReturn(runId);
+            doReturn(createResponse).when(wrapper).create(any(), any());
+
+            ExtractRun processedResponse = mock(ExtractRun.class);
             when(processedResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
 
             doReturn(processedResponse).when(wrapper).retrieve(eq(runId), any());
 
-            ClassifyRun result = wrapper.createAndPoll(null);
+            ExtractRun result = wrapper.createAndPoll(null);
 
             assertEquals(ProcessorRunStatus.PROCESSED, result.getStatus());
         }

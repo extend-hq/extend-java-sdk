@@ -7,12 +7,12 @@ import ai.extend.ExtendClient;
 import ai.extend.ExtendClientBuilder;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.Suppliers;
-import ai.extend.wrapper.resources.ClassifyRunsWrapper;
-import ai.extend.wrapper.resources.EditRunsWrapper;
-import ai.extend.wrapper.resources.ExtractRunsWrapper;
-import ai.extend.wrapper.resources.ParseRunsWrapper;
-import ai.extend.wrapper.resources.SplitRunsWrapper;
-import ai.extend.wrapper.resources.WorkflowRunsWrapper;
+import ai.extend.wrapper.resources.ClassifyRunsClient;
+import ai.extend.wrapper.resources.EditRunsClient;
+import ai.extend.wrapper.resources.ExtractRunsClient;
+import ai.extend.wrapper.resources.ParseRunsClient;
+import ai.extend.wrapper.resources.SplitRunsClient;
+import ai.extend.wrapper.resources.WorkflowRunsClient;
 import ai.extend.wrapper.webhooks.Webhooks;
 import java.util.function.Supplier;
 
@@ -61,25 +61,25 @@ public class ExtendClientWrapper extends ExtendClient {
 
     private final Webhooks webhooks;
 
-    // Lazy-initialized run wrappers that override the generated client accessors
-    private final Supplier<ExtractRunsWrapper> extractRunsWrapper;
-    private final Supplier<ClassifyRunsWrapper> classifyRunsWrapper;
-    private final Supplier<SplitRunsWrapper> splitRunsWrapper;
-    private final Supplier<ParseRunsWrapper> parseRunsWrapper;
-    private final Supplier<EditRunsWrapper> editRunsWrapper;
-    private final Supplier<WorkflowRunsWrapper> workflowRunsWrapper;
+    // Lazy-initialized run clients that override the generated client accessors
+    private final Supplier<ExtractRunsClient> extractRunsClient;
+    private final Supplier<ClassifyRunsClient> classifyRunsClient;
+    private final Supplier<SplitRunsClient> splitRunsClient;
+    private final Supplier<ParseRunsClient> parseRunsClient;
+    private final Supplier<EditRunsClient> editRunsClient;
+    private final Supplier<WorkflowRunsClient> workflowRunsClient;
 
     public ExtendClientWrapper(ClientOptions clientOptions) {
         super(clientOptions);
         this.webhooks = new Webhooks();
 
-        // Lazy initialization of wrappers
-        this.extractRunsWrapper = Suppliers.memoize(() -> new ExtractRunsWrapper(clientOptions));
-        this.classifyRunsWrapper = Suppliers.memoize(() -> new ClassifyRunsWrapper(clientOptions));
-        this.splitRunsWrapper = Suppliers.memoize(() -> new SplitRunsWrapper(clientOptions));
-        this.parseRunsWrapper = Suppliers.memoize(() -> new ParseRunsWrapper(clientOptions));
-        this.editRunsWrapper = Suppliers.memoize(() -> new EditRunsWrapper(clientOptions));
-        this.workflowRunsWrapper = Suppliers.memoize(() -> new WorkflowRunsWrapper(clientOptions));
+        // Lazy initialization of clients
+        this.extractRunsClient = Suppliers.memoize(() -> new ExtractRunsClient(clientOptions));
+        this.classifyRunsClient = Suppliers.memoize(() -> new ClassifyRunsClient(clientOptions));
+        this.splitRunsClient = Suppliers.memoize(() -> new SplitRunsClient(clientOptions));
+        this.parseRunsClient = Suppliers.memoize(() -> new ParseRunsClient(clientOptions));
+        this.editRunsClient = Suppliers.memoize(() -> new EditRunsClient(clientOptions));
+        this.workflowRunsClient = Suppliers.memoize(() -> new WorkflowRunsClient(clientOptions));
     }
 
     /**
@@ -89,60 +89,60 @@ public class ExtendClientWrapper extends ExtendClient {
         return webhooks;
     }
 
-    // ========== Override run accessors to return wrappers with createAndPoll ==========
+    // ========== Override run accessors to return clients with createAndPoll ==========
 
     /**
-     * Returns the extract runs wrapper with createAndPoll support.
+     * Returns the extract runs client with createAndPoll support.
      * All standard methods (create, list, retrieve, delete, cancel) are also available.
      */
     @Override
-    public ExtractRunsWrapper extractRuns() {
-        return extractRunsWrapper.get();
+    public ExtractRunsClient extractRuns() {
+        return extractRunsClient.get();
     }
 
     /**
-     * Returns the classify runs wrapper with createAndPoll support.
+     * Returns the classify runs client with createAndPoll support.
      * All standard methods (create, list, retrieve, delete, cancel) are also available.
      */
     @Override
-    public ClassifyRunsWrapper classifyRuns() {
-        return classifyRunsWrapper.get();
+    public ClassifyRunsClient classifyRuns() {
+        return classifyRunsClient.get();
     }
 
     /**
-     * Returns the split runs wrapper with createAndPoll support.
+     * Returns the split runs client with createAndPoll support.
      * All standard methods (create, list, retrieve, delete, cancel) are also available.
      */
     @Override
-    public SplitRunsWrapper splitRuns() {
-        return splitRunsWrapper.get();
+    public SplitRunsClient splitRuns() {
+        return splitRunsClient.get();
     }
 
     /**
-     * Returns the parse runs wrapper with createAndPoll support.
+     * Returns the parse runs client with createAndPoll support.
      * All standard methods (create, retrieve, delete) are also available.
      */
     @Override
-    public ParseRunsWrapper parseRuns() {
-        return parseRunsWrapper.get();
+    public ParseRunsClient parseRuns() {
+        return parseRunsClient.get();
     }
 
     /**
-     * Returns the edit runs wrapper with createAndPoll support.
+     * Returns the edit runs client with createAndPoll support.
      * All standard methods (create, retrieve, delete) are also available.
      */
     @Override
-    public EditRunsWrapper editRuns() {
-        return editRunsWrapper.get();
+    public EditRunsClient editRuns() {
+        return editRunsClient.get();
     }
 
     /**
-     * Returns the workflow runs wrapper with createAndPoll support.
+     * Returns the workflow runs client with createAndPoll support.
      * All standard methods (create, list, retrieve, update, delete, cancel, createBatch) are also available.
      */
     @Override
-    public WorkflowRunsWrapper workflowRuns() {
-        return workflowRunsWrapper.get();
+    public WorkflowRunsClient workflowRuns() {
+        return workflowRunsClient.get();
     }
 
     /**

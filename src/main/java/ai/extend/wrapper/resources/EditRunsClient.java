@@ -5,7 +5,6 @@ package ai.extend.wrapper.resources;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
-import ai.extend.resources.editruns.EditRunsClient;
 import ai.extend.resources.editruns.requests.EditRunsCreateRequest;
 import ai.extend.types.EditRun;
 import ai.extend.types.EditRunStatus;
@@ -15,12 +14,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Wrapper for EditRunsClient that adds polling functionality.
+ * Extended EditRuns client with polling functionality.
  *
- * <p>Extends {@link EditRunsClient}, so all standard methods (create, retrieve, delete)
- * are inherited. Adds {@code createAndPoll} for convenience.</p>
+ * <p>Extends the generated {@link ai.extend.resources.editruns.EditRunsClient},
+ * so all standard methods (create, retrieve, delete) are inherited.
+ * Adds {@code createAndPoll} for convenience.</p>
  */
-public class EditRunsWrapper extends EditRunsClient {
+public class EditRunsClient extends ai.extend.resources.editruns.EditRunsClient {
 
     private static final Set<EditRunStatus> NON_TERMINAL_STATUSES;
 
@@ -29,7 +29,7 @@ public class EditRunsWrapper extends EditRunsClient {
         NON_TERMINAL_STATUSES.add(EditRunStatus.PROCESSING);
     }
 
-    public EditRunsWrapper(ClientOptions clientOptions) {
+    public EditRunsClient(ClientOptions clientOptions) {
         super(clientOptions);
     }
 

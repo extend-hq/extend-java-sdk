@@ -4,7 +4,6 @@
 package ai.extend.wrapper.resources;
 
 import ai.extend.core.ClientOptions;
-import ai.extend.resources.parseruns.ParseRunsClient;
 import ai.extend.resources.parseruns.requests.ParseRunsCreateRequest;
 import ai.extend.types.ParseRun;
 import ai.extend.types.ParseRunStatusEnum;
@@ -14,12 +13,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Wrapper for ParseRunsClient that adds polling functionality.
+ * Extended ParseRuns client with polling functionality.
  *
- * <p>Extends {@link ParseRunsClient}, so all standard methods (create, retrieve, delete)
- * are inherited. Adds {@code createAndPoll} for convenience.</p>
+ * <p>Extends the generated {@link ai.extend.resources.parseruns.ParseRunsClient},
+ * so all standard methods (create, retrieve, delete) are inherited.
+ * Adds {@code createAndPoll} for convenience.</p>
  */
-public class ParseRunsWrapper extends ParseRunsClient {
+public class ParseRunsClient extends ai.extend.resources.parseruns.ParseRunsClient {
 
     private static final Set<ParseRunStatusEnum> NON_TERMINAL_STATUSES;
 
@@ -28,7 +28,7 @@ public class ParseRunsWrapper extends ParseRunsClient {
         NON_TERMINAL_STATUSES.add(ParseRunStatusEnum.PROCESSING);
     }
 
-    public ParseRunsWrapper(ClientOptions clientOptions) {
+    public ParseRunsClient(ClientOptions clientOptions) {
         super(clientOptions);
     }
 

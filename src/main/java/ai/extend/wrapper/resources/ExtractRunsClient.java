@@ -5,7 +5,6 @@ package ai.extend.wrapper.resources;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
-import ai.extend.resources.extractruns.ExtractRunsClient;
 import ai.extend.resources.extractruns.requests.ExtractRunsCreateRequest;
 import ai.extend.types.ExtractRun;
 import ai.extend.types.ProcessorRunStatus;
@@ -15,12 +14,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Wrapper for ExtractRunsClient that adds polling functionality.
+ * Extended ExtractRuns client with polling functionality.
  *
- * <p>Extends {@link ExtractRunsClient}, so all standard methods (list, create, retrieve,
- * delete, cancel) are inherited. Adds {@code createAndPoll} for convenience.</p>
+ * <p>Extends the generated {@link ai.extend.resources.extractruns.ExtractRunsClient},
+ * so all standard methods (list, create, retrieve, delete, cancel) are inherited.
+ * Adds {@code createAndPoll} for convenience.</p>
  */
-public class ExtractRunsWrapper extends ExtractRunsClient {
+public class ExtractRunsClient extends ai.extend.resources.extractruns.ExtractRunsClient {
 
     private static final Set<ProcessorRunStatus> NON_TERMINAL_STATUSES;
 
@@ -29,7 +29,7 @@ public class ExtractRunsWrapper extends ExtractRunsClient {
         NON_TERMINAL_STATUSES.add(ProcessorRunStatus.PROCESSING);
     }
 
-    public ExtractRunsWrapper(ClientOptions clientOptions) {
+    public ExtractRunsClient(ClientOptions clientOptions) {
         super(clientOptions);
     }
 

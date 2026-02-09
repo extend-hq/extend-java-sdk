@@ -5,7 +5,6 @@ package ai.extend.wrapper.resources;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
-import ai.extend.resources.workflowruns.WorkflowRunsClient;
 import ai.extend.resources.workflowruns.requests.WorkflowRunsCreateRequest;
 import ai.extend.types.WorkflowRun;
 import ai.extend.types.WorkflowRunStatus;
@@ -15,12 +14,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Wrapper for WorkflowRunsClient that adds polling functionality.
+ * Extended WorkflowRuns client with polling functionality.
  *
- * <p>Extends {@link WorkflowRunsClient}, so all standard methods (list, create, retrieve,
- * update, delete, cancel, createBatch) are inherited. Adds {@code createAndPoll} for convenience.</p>
+ * <p>Extends the generated {@link ai.extend.resources.workflowruns.WorkflowRunsClient},
+ * so all standard methods (list, create, retrieve, update, delete, cancel, createBatch)
+ * are inherited. Adds {@code createAndPoll} for convenience.</p>
  */
-public class WorkflowRunsWrapper extends WorkflowRunsClient {
+public class WorkflowRunsClient extends ai.extend.resources.workflowruns.WorkflowRunsClient {
 
     private static final Set<WorkflowRunStatus> NON_TERMINAL_STATUSES;
 
@@ -31,7 +31,7 @@ public class WorkflowRunsWrapper extends WorkflowRunsClient {
         NON_TERMINAL_STATUSES.add(WorkflowRunStatus.CANCELLING);
     }
 
-    public WorkflowRunsWrapper(ClientOptions clientOptions) {
+    public WorkflowRunsClient(ClientOptions clientOptions) {
         super(clientOptions);
     }
 

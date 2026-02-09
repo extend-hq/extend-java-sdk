@@ -5,22 +5,22 @@ package ai.extend.wrapper.resources;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
-import ai.extend.resources.splitruns.SplitRunsClient;
-import ai.extend.resources.splitruns.requests.SplitRunsCreateRequest;
+import ai.extend.resources.classifyruns.requests.ClassifyRunsCreateRequest;
+import ai.extend.types.ClassifyRun;
 import ai.extend.types.ProcessorRunStatus;
-import ai.extend.types.SplitRun;
 import ai.extend.wrapper.utilities.polling.Polling;
 import ai.extend.wrapper.utilities.polling.PollingOptions;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Wrapper for SplitRunsClient that adds polling functionality.
+ * Extended ClassifyRuns client with polling functionality.
  *
- * <p>Extends {@link SplitRunsClient}, so all standard methods (list, create, retrieve,
- * delete, cancel) are inherited. Adds {@code createAndPoll} for convenience.</p>
+ * <p>Extends the generated {@link ai.extend.resources.classifyruns.ClassifyRunsClient},
+ * so all standard methods (list, create, retrieve, delete, cancel) are inherited.
+ * Adds {@code createAndPoll} for convenience.</p>
  */
-public class SplitRunsWrapper extends SplitRunsClient {
+public class ClassifyRunsClient extends ai.extend.resources.classifyruns.ClassifyRunsClient {
 
     private static final Set<ProcessorRunStatus> NON_TERMINAL_STATUSES;
 
@@ -29,25 +29,25 @@ public class SplitRunsWrapper extends SplitRunsClient {
         NON_TERMINAL_STATUSES.add(ProcessorRunStatus.PROCESSING);
     }
 
-    public SplitRunsWrapper(ClientOptions clientOptions) {
+    public ClassifyRunsClient(ClientOptions clientOptions) {
         super(clientOptions);
     }
 
     /**
-     * Creates a split run and polls until it reaches a terminal state.
+     * Creates a classify run and polls until it reaches a terminal state.
      */
-    public SplitRun createAndPoll(SplitRunsCreateRequest request) {
+    public ClassifyRun createAndPoll(ClassifyRunsCreateRequest request) {
         return createAndPoll(request, PollingOptions.defaults());
     }
 
     /**
-     * Creates a split run and polls until it reaches a terminal state.
+     * Creates a classify run and polls until it reaches a terminal state.
      */
-    public SplitRun createAndPoll(SplitRunsCreateRequest request, PollingOptions options) {
+    public ClassifyRun createAndPoll(ClassifyRunsCreateRequest request, PollingOptions options) {
 
         RequestOptions requestOptions = options.getRequestOptions();
 
-        SplitRun createResponse = this.create(request, requestOptions);
+        ClassifyRun createResponse = this.create(request, requestOptions);
         final String runId = createResponse.getId();
 
         return Polling.pollUntilDone(
