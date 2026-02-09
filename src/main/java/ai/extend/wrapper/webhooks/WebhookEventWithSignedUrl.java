@@ -41,4 +41,13 @@ public class WebhookEventWithSignedUrl {
     public SignedDataUrlPayload getPayload() {
         return payload;
     }
+
+    @Override
+    public String toString() {
+        return "WebhookEventWithSignedUrl{"
+                + "eventId='" + eventId + '\''
+                + ", eventType='" + eventType + '\''
+                + ", payload=" + payload
+                + '}';
+    }
 }

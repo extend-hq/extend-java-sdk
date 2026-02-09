@@ -3,6 +3,8 @@
  */
 package ai.extend.wrapper.webhooks;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -23,7 +25,7 @@ public class SignedDataUrlPayload {
         this.data = data;
         this.id = id;
         this.object = object;
-        this.metadata = metadata;
+        this.metadata = metadata != null ? Collections.unmodifiableMap(new HashMap<>(metadata)) : null;
     }
 
     /**
@@ -54,5 +56,15 @@ public class SignedDataUrlPayload {
      */
     public Map<String, Object> getMetadata() {
         return metadata;
+    }
+
+    @Override
+    public String toString() {
+        return "SignedDataUrlPayload{"
+                + "data='" + data + '\''
+                + ", id='" + id + '\''
+                + ", object='" + object + '\''
+                + ", metadata=" + metadata
+                + '}';
     }
 }

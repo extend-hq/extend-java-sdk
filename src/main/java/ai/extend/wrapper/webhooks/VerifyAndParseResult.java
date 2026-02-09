@@ -107,4 +107,12 @@ public class VerifyAndParseResult implements RawWebhookEvent {
         }
         return eventType;
     }
+
+    @Override
+    public String toString() {
+        if (isSignedUrlEvent()) {
+            return "VerifyAndParseResult{signedUrlEvent=" + signedUrlEvent + '}';
+        }
+        return "VerifyAndParseResult{eventId='" + eventId + "', eventType='" + eventType + "', event=" + event + '}';
+    }
 }

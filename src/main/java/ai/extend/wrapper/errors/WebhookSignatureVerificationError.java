@@ -23,4 +23,14 @@ public class WebhookSignatureVerificationError extends RuntimeException {
     public WebhookSignatureVerificationError(String message) {
         super(message);
     }
+
+    /**
+     * Creates a new WebhookSignatureVerificationError with a cause.
+     *
+     * @param message Descriptive error message explaining why verification failed
+     * @param cause The underlying exception that caused the verification to fail
+     */
+    public WebhookSignatureVerificationError(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

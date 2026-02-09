@@ -9,10 +9,13 @@ import ai.extend.wrapper.errors.SignedUrlNotAllowedError;
 import ai.extend.wrapper.errors.WebhookPayloadFetchError;
 import ai.extend.wrapper.errors.WebhookSignatureVerificationError;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.Closeable;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import okhttp3.OkHttpClient;
@@ -45,16 +48,50 @@ import okhttp3.Response;
  * }
  * }</pre>
  */
-public class Webhooks {
+public class Webhooks implements Closeable {
 
     private static final String TIMESTAMP_HEADER = "x-extend-request-timestamp";
     private static final String SIGNATURE_HEADER = "x-extend-request-signature";
     private static final int CLOCK_SKEW_TOLERANCE_SECONDS = 60;
+    private static final int DEFAULT_TIMEOUT_SECONDS = 30;
 
     private final OkHttpClient httpClient;
+    private final boolean ownsHttpClient;
 
     public Webhooks() {
-        this.httpClient = new OkHttpClient();
+        this.httpClient = new OkHttpClient.Builder()
+                .connectTimeout(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .readTimeout(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .writeTimeout(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .build();
+        this.ownsHttpClient = true;
+    }
+
+    /**
+     * Creates a new Webhooks instance with a custom OkHttpClient.
+     *
+     * <p>Use this constructor to customize timeouts, proxy settings, or connection pool
+     * configuration. The provided client will not be closed when {@link #close()} is called.</p>
+     *
+     * @param httpClient The OkHttpClient to use for fetching signed URL payloads
+     */
+    public Webhooks(OkHttpClient httpClient) {
+        this.httpClient = httpClient;
+        this.ownsHttpClient = false;
+    }
+
+    /**
+     * Closes the underlying HTTP client if it was created by this instance.
+     *
+     * <p>If a custom OkHttpClient was provided via {@link #Webhooks(OkHttpClient)},
+     * this method does nothing (the caller is responsible for closing their client).</p>
+     */
+    @Override
+    public void close() {
+        if (ownsHttpClient) {
+            httpClient.dispatcher().executorService().shutdown();
+            httpClient.connectionPool().evictAll();
+        }
     }
 
     /**
@@ -93,7 +130,6 @@ public class Webhooks {
      * @throws WebhookSignatureVerificationError if signature verification fails
      * @throws SignedUrlNotAllowedError if signed URL received without allowSignedUrl=true
      */
-    @SuppressWarnings("unchecked")
     public RawWebhookEvent verifyAndParseWithOptions(
             String body, Map<String, String> headers, String signingSecret, VerifyAndParseOptions options)
             throws WebhookSignatureVerificationError, SignedUrlNotAllowedError {
@@ -101,7 +137,7 @@ public class Webhooks {
         verifySignature(body, headers, signingSecret, options.toVerifyOptions());
 
         Map<String, Object> eventMap = parseJsonBody(body);
-        Map<String, Object> payload = (Map<String, Object>) eventMap.get("payload");
+        Map<String, Object> payload = safeGetMap(eventMap, "payload");
 
         if (isSignedDataUrlPayload(payload)) {
             if (!options.isAllowSignedUrl()) {
@@ -111,8 +147,8 @@ public class Webhooks {
         }
 
         WebhookEvent webhookEvent = parseAsWebhookEvent(body);
-        String eventId = (String) eventMap.get("eventId");
-        String eventType = (String) eventMap.get("eventType");
+        String eventId = safeGetString(eventMap, "eventId");
+        String eventType = safeGetString(eventMap, "eventType");
         return VerifyAndParseResult.ofEvent(webhookEvent, eventId, eventType);
     }
 
@@ -155,18 +191,17 @@ public class Webhooks {
      * @param body The raw request body as a string
      * @return A raw webhook event (either normal or signed URL)
      */
-    @SuppressWarnings("unchecked")
     public RawWebhookEvent parse(String body) {
         Map<String, Object> eventMap = parseJsonBody(body);
-        Map<String, Object> payload = (Map<String, Object>) eventMap.get("payload");
+        Map<String, Object> payload = safeGetMap(eventMap, "payload");
 
         if (isSignedDataUrlPayload(payload)) {
             return VerifyAndParseResult.ofSignedUrlEvent(parseAsSignedUrlEvent(eventMap));
         }
 
         WebhookEvent webhookEvent = parseAsWebhookEvent(body);
-        String eventId = (String) eventMap.get("eventId");
-        String eventType = (String) eventMap.get("eventType");
+        String eventId = safeGetString(eventMap, "eventId");
+        String eventType = safeGetString(eventMap, "eventType");
         return VerifyAndParseResult.ofEvent(webhookEvent, eventId, eventType);
     }
 
@@ -191,16 +226,14 @@ public class Webhooks {
 
             String responseBody = response.body() != null ? response.body().string() : "";
 
-            Object fullPayload =
-                    ObjectMappers.JSON_MAPPER.readValue(responseBody, Object.class);
+            JsonNode fullPayload = ObjectMappers.JSON_MAPPER.readTree(responseBody);
 
-            // Build full event JSON and deserialize to typed WebhookEvent
-            Map<String, Object> fullEvent = new HashMap<>();
+            // Build full event tree and deserialize to typed WebhookEvent
+            ObjectNode fullEvent = ObjectMappers.JSON_MAPPER.createObjectNode();
             fullEvent.put("eventId", event.getEventId());
             fullEvent.put("eventType", event.getEventType());
-            fullEvent.put("payload", fullPayload);
-            String eventJson = ObjectMappers.JSON_MAPPER.writeValueAsString(fullEvent);
-            return ObjectMappers.JSON_MAPPER.readValue(eventJson, WebhookEvent.class);
+            fullEvent.set("payload", fullPayload);
+            return ObjectMappers.JSON_MAPPER.treeToValue(fullEvent, WebhookEvent.class);
 
         } catch (WebhookPayloadFetchError e) {
             throw e;
@@ -266,30 +299,19 @@ public class Webhooks {
         // Try exact match first
         String value = headers.get(name);
         if (value != null) {
-            // Handle array values (some frameworks pass arrays)
-            if (value.startsWith("[") && value.endsWith("]")) {
-                value = value.substring(1, value.length() - 1);
-            }
             return value;
         }
 
         // Try lowercase
         value = headers.get(name.toLowerCase());
         if (value != null) {
-            if (value.startsWith("[") && value.endsWith("]")) {
-                value = value.substring(1, value.length() - 1);
-            }
             return value;
         }
 
         // Try case-insensitive search
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             if (entry.getKey().equalsIgnoreCase(name)) {
-                value = entry.getValue();
-                if (value.startsWith("[") && value.endsWith("]")) {
-                    value = value.substring(1, value.length() - 1);
-                }
-                return value;
+                return entry.getValue();
             }
         }
 
@@ -304,7 +326,7 @@ public class Webhooks {
             byte[] hash = mac.doFinal(message.getBytes(StandardCharsets.UTF_8));
             return bytesToHex(hash);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to compute HMAC", e);
+            throw new WebhookSignatureVerificationError("Failed to compute HMAC", e);
         }
     }
 
@@ -320,7 +342,7 @@ public class Webhooks {
         try {
             return ObjectMappers.JSON_MAPPER.readValue(body, new TypeReference<Map<String, Object>>() {});
         } catch (Exception e) {
-            throw new WebhookSignatureVerificationError("Failed to parse webhook body as JSON");
+            throw new WebhookSignatureVerificationError("Failed to parse webhook body as JSON", e);
         }
     }
 
@@ -328,7 +350,7 @@ public class Webhooks {
         try {
             return ObjectMappers.JSON_MAPPER.readValue(body, WebhookEvent.class);
         } catch (Exception e) {
-            throw new WebhookSignatureVerificationError("Failed to parse webhook body as WebhookEvent");
+            throw new WebhookSignatureVerificationError("Failed to parse webhook body as WebhookEvent", e);
         }
     }
 
@@ -338,17 +360,45 @@ public class Webhooks {
                 && payload.get("data") instanceof String;
     }
 
-    @SuppressWarnings("unchecked")
     private WebhookEventWithSignedUrl parseAsSignedUrlEvent(Map<String, Object> event) {
-        String eventId = (String) event.get("eventId");
-        String eventType = (String) event.get("eventType");
-        Map<String, Object> payloadMap = (Map<String, Object>) event.get("payload");
+        String eventId = safeGetString(event, "eventId");
+        String eventType = safeGetString(event, "eventType");
+        Map<String, Object> payloadMap = safeGetMap(event, "payload");
+
+        if (payloadMap == null) {
+            throw new WebhookSignatureVerificationError("Missing payload in webhook event");
+        }
 
         SignedDataUrlPayload payload = new SignedDataUrlPayload(
-                (String) payloadMap.get("data"), (String) payloadMap.get("id"), (String) payloadMap.get("object"), (Map<
-                                String, Object>)
-                        payloadMap.get("metadata"));
+                safeGetString(payloadMap, "data"),
+                safeGetString(payloadMap, "id"),
+                safeGetString(payloadMap, "object"),
+                safeGetMap(payloadMap, "metadata"));
 
         return new WebhookEventWithSignedUrl(eventId, eventType, payload);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> safeGetMap(Map<String, Object> map, String field) {
+        Object value = map.get(field);
+        if (value == null) {
+            return null;
+        }
+        if (!(value instanceof Map)) {
+            throw new WebhookSignatureVerificationError(
+                    String.format("Expected '%s' to be an object, got %s", field, value.getClass().getSimpleName()));
+        }
+        return (Map<String, Object>) value;
+    }
+
+    private String safeGetString(Map<String, Object> map, String field) {
+        Object value = map.get(field);
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof String) {
+            return (String) value;
+        }
+        return String.valueOf(value);
     }
 }
