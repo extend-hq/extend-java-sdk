@@ -1,5 +1,5 @@
 # Reference
-<details><summary><code>client.parse(request) -> ParserRun</code></summary>
+<details><summary><code>client.parse(request) -> ParseRun</code></summary>
 <dl>
 <dd>
 
@@ -11,11 +11,13 @@
 <dl>
 <dd>
 
-Parse files to get cleaned, chunked target content (e.g. markdown).
+Parse a file synchronously, waiting for the result before returning. This endpoint has a **5-minute timeout** — if processing takes longer, the request will fail.
+
+**Note:** This endpoint is intended for onboarding and testing only. For production workloads, use `POST /parse_runs` with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.
 
 The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.
 
-For more details, see the [Parse File guide](/product/parsing/parse).
+For more details, see the [Parse File guide](https://docs.extend.ai/2026-02-09/product/parsing/parse).
 </dd>
 </dl>
 </dd>
@@ -34,11 +36,13 @@ client.parse(
     ParseRequest
         .builder()
         .file(
-            ParseRequestFile
-                .builder()
-                .build()
+            ParseRequestFile.of(
+                FileFromUrl
+                    .builder()
+                    .url("url")
+                    .build()
+            )
         )
-        .responseType(ParseRequestResponseType.JSON)
         .build()
 );
 ```
@@ -67,7 +71,7 @@ Controls the format of the response chunks. Defaults to `json` if not specified.
 <dl>
 <dd>
 
-**file:** `ParseRequestFile` — A file object containing either a URL or a fileId.
+**file:** `ParseRequestFile` — The file to be parsed. Files can be provided as a URL or an Extend file ID.
     
 </dd>
 </dl>
@@ -79,6 +83,14 @@ Controls the format of the response chunks. Defaults to `json` if not specified.
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**metadata:** `Optional<Map<String, Object>>` 
+    
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -87,7 +99,7 @@ Controls the format of the response chunks. Defaults to `json` if not specified.
 </dl>
 </details>
 
-<details><summary><code>client.parseAsync(request) -> ParserRunStatus</code></summary>
+<details><summary><code>client.edit(request) -> EditRun</code></summary>
 <dl>
 <dd>
 
@@ -99,17 +111,13 @@ Controls the format of the response chunks. Defaults to `json` if not specified.
 <dl>
 <dd>
 
-Parse files **asynchronously** to get cleaned, chunked target content (e.g. markdown).
+Edit a file synchronously, waiting for the result before returning. This endpoint has a **5-minute timeout** — if processing takes longer, the request will fail.
 
-The Parse Async endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.
+**Note:** This endpoint is intended for onboarding and testing only. For production workloads, use `POST /edit_runs` with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.
 
-Parse files asynchronously and get a parser run ID that can be used to check status and retrieve results with the [Get Parser Run](https://docs.extend.ai/2025-04-21/developers/api-reference/parse-endpoints/get-parser-run) endpoint.
+The Edit endpoint allows you to detect and fill form fields in PDF documents.
 
-This is useful for:
-* Large files that may take longer to process
-* Avoiding timeout issues with synchronous parsing.
-
-For more details, see the [Parse File guide](/product/parsing/parse).
+For more details, see the [Edit File guide](https://docs.extend.ai/2026-02-09/product/editing/edit).
 </dd>
 </dl>
 </dd>
@@ -124,13 +132,16 @@ For more details, see the [Parse File guide](/product/parsing/parse).
 <dd>
 
 ```java
-client.parseAsync(
-    ParseAsyncRequest
+client.edit(
+    EditRequest
         .builder()
         .file(
-            ParseAsyncRequestFile
-                .builder()
-                .build()
+            EditRequestFile.of(
+                FileFromUrl
+                    .builder()
+                    .url("url")
+                    .build()
+            )
         )
         .build()
 );
@@ -148,7 +159,7 @@ client.parseAsync(
 <dl>
 <dd>
 
-**file:** `ParseAsyncRequestFile` — A file object containing either a URL or a fileId.
+**file:** `EditRequestFile` — The file to be edited. Files can be provided as a URL or an Extend file ID.
     
 </dd>
 </dl>
@@ -156,7 +167,7 @@ client.parseAsync(
 <dl>
 <dd>
 
-**config:** `Optional<ParseConfig>` 
+**config:** `Optional<EditConfig>` 
     
 </dd>
 </dl>
@@ -168,8 +179,7 @@ client.parseAsync(
 </dl>
 </details>
 
-## WorkflowRun
-<details><summary><code>client.workflowRun.list() -> WorkflowRunListResponse</code></summary>
+<details><summary><code>client.extract(request) -> ExtractRun</code></summary>
 <dl>
 <dd>
 
@@ -181,7 +191,13 @@ client.parseAsync(
 <dl>
 <dd>
 
-List runs of a Workflow. Workflows are sequences of steps that process files and data in a specific order to achieve a desired outcome. A WorkflowRun represents a single execution of a workflow against a file.
+Extract structured data from a file synchronously, waiting for the result before returning. This endpoint has a **5-minute timeout** — if processing takes longer, the request will fail.
+
+**Note:** This endpoint is intended for onboarding and testing only. For production workloads, use `POST /extract_runs` with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.
+
+The Extract endpoint allows you to extract structured data from files using an existing extractor or an inline configuration.
+
+For more details, see the [Extract File guide](https://docs.extend.ai/2026-02-09/product/extracting/extract).
 </dd>
 </dl>
 </dd>
@@ -196,17 +212,17 @@ List runs of a Workflow. Workflows are sequences of steps that process files and
 <dd>
 
 ```java
-client.workflowRun().list(
-    WorkflowRunListRequest
+client.extract(
+    ExtractRequest
         .builder()
-        .status(WorkflowStatus.PENDING)
-        .workflowId("workflowId")
-        .batchId("batchId")
-        .fileNameContains("fileNameContains")
-        .sortBy(SortByEnum.UPDATED_AT)
-        .sortDir(SortDirEnum.ASC)
-        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
-        .maxPageSize(1)
+        .file(
+            ExtractRequestFile.of(
+                FileFromUrl
+                    .builder()
+                    .url("url")
+                    .build()
+            )
+        )
         .build()
 );
 ```
@@ -223,19 +239,7 @@ client.workflowRun().list(
 <dl>
 <dd>
 
-**status:** `Optional<WorkflowStatus>` 
-
-Filters workflow runs by their status. If not provided, no filter is applied.
-
- The status of a workflow run:
- * `"PENDING"` - The workflow run has not started yet
- * `"PROCESSING"` - The workflow run is in progress
- * `"NEEDS_REVIEW"` - The workflow run requires manual review
- * `"REJECTED"` - The workflow run was rejected during manual review
- * `"PROCESSED"` - The workflow run completed successfully
- * `"FAILED"` - The workflow run encountered an error
- * `"CANCELLED"` - The workflow run was cancelled
- * `"CANCELLING"` - The workflow run is being cancelled
+**extractor:** `Optional<ExtractRequestExtractor>` — Reference to an existing extractor. One of `extractor` or `config` must be provided.
     
 </dd>
 </dl>
@@ -243,11 +247,7 @@ Filters workflow runs by their status. If not provided, no filter is applied.
 <dl>
 <dd>
 
-**workflowId:** `Optional<String>` 
-
-Filters workflow runs by the workflow ID. If not provided, runs for all workflows are returned.
-
-Example: `"workflow_BMdfq_yWM3sT-ZzvCnA3f"`
+**config:** `Optional<ExtractConfigJson>` — Inline extract configuration. One of `extractor` or `config` must be provided.
     
 </dd>
 </dl>
@@ -255,11 +255,7 @@ Example: `"workflow_BMdfq_yWM3sT-ZzvCnA3f"`
 <dl>
 <dd>
 
-**batchId:** `Optional<String>` 
-
-Filters workflow runs by the batch ID. This is useful for fetching all runs for a given batch created via the [Batch Run Workflow](/developers/api-reference/workflow-endpoints/batch-run-workflow) endpoint.
-
-Example: `"batch_7Ws31-F5"`
+**file:** `ExtractRequestFile` — The file to be extracted from. Files can be provided as a URL, Extend file ID, or raw text.
     
 </dd>
 </dl>
@@ -267,9 +263,261 @@ Example: `"batch_7Ws31-F5"`
 <dl>
 <dd>
 
-**fileNameContains:** `Optional<String>` 
+**metadata:** `Optional<Map<String, Object>>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
 
-Filters workflow runs by the name of the file. Only returns workflow runs where the file name contains this string.
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.classify(request) -> ClassifyRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Classify a document synchronously, waiting for the result before returning. This endpoint has a **5-minute timeout** — if processing takes longer, the request will fail.
+
+**Note:** This endpoint is intended for onboarding and testing only. For production workloads, use `POST /classify_runs` with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.
+
+The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.
+
+For more details, see the [Classify File guide](https://docs.extend.ai/2026-02-09/product/classifying/classify).
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.classify(
+    ClassifyRequest
+        .builder()
+        .file(
+            ClassifyRequestFile.of(
+                FileFromUrl
+                    .builder()
+                    .url("url")
+                    .build()
+            )
+        )
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**classifier:** `Optional<ClassifyRequestClassifier>` — Reference to an existing classifier. One of `classifier` or `config` must be provided.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<ClassifyConfig>` — Inline classify configuration. One of `classifier` or `config` must be provided.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file:** `ClassifyRequestFile` — The file to be classified. Files can be provided as a URL, an Extend file ID, or raw text.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**metadata:** `Optional<Map<String, Object>>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.split(request) -> SplitRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Split a document synchronously, waiting for the result before returning. This endpoint has a **5-minute timeout** — if processing takes longer, the request will fail.
+
+**Note:** This endpoint is intended for onboarding and testing only. For production workloads, use `POST /split_runs` with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.
+
+The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.
+
+For more details, see the [Split File guide](https://docs.extend.ai/2026-02-09/product/splitting/split).
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.split(
+    SplitRequest
+        .builder()
+        .file(
+            SplitRequestFile.of(
+                FileFromUrl
+                    .builder()
+                    .url("url")
+                    .build()
+            )
+        )
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**splitter:** `Optional<SplitRequestSplitter>` — Reference to an existing splitter. One of `splitter` or `config` must be provided.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<SplitConfig>` — Inline splitter configuration. One of `splitter` or `config` must be provided.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file:** `SplitRequestFile` — The file to be split. Files can be provided as a URL or an Extend file ID.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**metadata:** `Optional<Map<String, Object>>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Files
+<details><summary><code>client.files.list() -> FilesListResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List files.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.files().list(
+    FilesListRequest
+        .builder()
+        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**nameContains:** `Optional<String>` 
+
+Filters files to only include those that contain the given string in the name.
 
 Example: `"invoice"`
     
@@ -279,15 +527,7 @@ Example: `"invoice"`
 <dl>
 <dd>
 
-**sortBy:** `Optional<SortByEnum>` — Sorts the workflow runs by the given field.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sortDir:** `Optional<SortDirEnum>` — Sorts the workflow runs in ascending or descending order. Ascending order means the earliest workflow run is returned first.
+**sortDir:** `Optional<SortDir>` 
     
 </dd>
 </dl>
@@ -315,7 +555,7 @@ Example: `"invoice"`
 </dl>
 </details>
 
-<details><summary><code>client.workflowRun.create(request) -> WorkflowRunCreateResponse</code></summary>
+<details><summary><code>client.files.retrieve(id) -> File</code></summary>
 <dl>
 <dd>
 
@@ -327,7 +567,7 @@ Example: `"invoice"`
 <dl>
 <dd>
 
-Run a Workflow with files. A Workflow is a sequence of steps that process files and data in a specific order to achieve a desired outcome. A WorkflowRun will be created for each file processed. A WorkflowRun represents a single execution of a workflow against a file.
+Fetch a file by its ID.
 </dd>
 </dl>
 </dd>
@@ -342,10 +582,10 @@ Run a Workflow with files. A Workflow is a sequence of steps that process files 
 <dd>
 
 ```java
-client.workflowRun().create(
-    WorkflowRunCreateRequest
+client.files().retrieve(
+    "file_id_here",
+    FilesRetrieveRequest
         .builder()
-        .workflowId("workflow_id_here")
         .build()
 );
 ```
@@ -362,11 +602,11 @@ client.workflowRun().create(
 <dl>
 <dd>
 
-**workflowId:** `String` 
+**id:** `String` 
 
-The ID of the workflow to run.
+ID for the file. It will always start with `"file_"`.
 
-Example: `"workflow_BMdfq_yWM3sT-ZzvCnA3f"`
+Example: `"file_Xj8mK2pL9nR4vT7qY5wZ"`
     
 </dd>
 </dl>
@@ -374,7 +614,11 @@ Example: `"workflow_BMdfq_yWM3sT-ZzvCnA3f"`
 <dl>
 <dd>
 
-**files:** `Optional<List<WorkflowRunFileInput>>` — An array of files to process through the workflow. Either the `files` array or `rawTexts` array must be provided. Supported file types can be found [here](/product/general/supported-file-types). There is a limit if 50 files that can be processed at once using this endpoint. If you wish to process more at a time, consider using the [Batch Run Workflow](/developers/api-reference/workflow-endpoints/batch-run-workflow) endpoint.
+**rawText:** `Optional<Boolean>` 
+
+**Deprecated:** Use `POST /parse_runs` instead to parse file contents.
+
+If set to true, the raw text content of the file will be included in the response.
     
 </dd>
 </dl>
@@ -382,7 +626,13 @@ Example: `"workflow_BMdfq_yWM3sT-ZzvCnA3f"`
 <dl>
 <dd>
 
-**rawTexts:** `Optional<List<String>>` — An array of raw strings. Can be used in place of files when passing raw data. The raw data will be converted to `.txt` files and run through the workflow. If the data follows a specific format, it is recommended to use the files parameter instead. Either `files` or `rawTexts` must be provided.
+**markdown:** `Optional<Boolean>` 
+
+**Deprecated:** Use `POST /parse_runs` instead to parse file contents.
+
+If set to true, the markdown content of the file will be included in the response.
+
+Only available for files with a type of PDF, IMG, or DOCX files that were auto-converted to PDFs.
     
 </dd>
 </dl>
@@ -390,33 +640,13 @@ Example: `"workflow_BMdfq_yWM3sT-ZzvCnA3f"`
 <dl>
 <dd>
 
-**version:** `Optional<String>` 
+**html:** `Optional<Boolean>` 
 
-An optional version of the workflow that files will be run through. This number can be found when viewing the workflow on the Extend platform. When a version number is not supplied, the most recent published version of the workflow will be used. If no published versions exist, the draft version will be used. To run the `"draft"` version of a workflow, use `"draft"` as the version.
+**Deprecated:** Use `POST /parse_runs` instead to parse file contents.
 
-Examples:
-- `"3"` - Run version 3 of the workflow
-- `"draft"` - Run the draft version of the workflow
-    
-</dd>
-</dl>
+If set to true, the html content of the file will be included in the response.
 
-<dl>
-<dd>
-
-**priority:** `Optional<Integer>` — An optional value used to determine the relative order of WorkflowRuns when rate limiting is in effect. Lower values will be prioritized before higher values.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**metadata:** `Optional<Map<String, Object>>` 
-
-An optional metadata object that can be assigned to a specific WorkflowRun to help identify it. It will be returned in the response and webhooks. You can place any arbitrary `key : value` pairs in this object.
-
-To categorize workflow runs for billing and usage tracking, include `extend:usage_tags` with an array of string values (e.g., `{"extend:usage_tags": ["production", "team-eng", "customer-123"]}`). Tags must contain only alphanumeric characters, hyphens, and underscores; any special characters will be automatically removed.
+Only available for files with a type of DOCX.
     
 </dd>
 </dl>
@@ -428,7 +658,3732 @@ To categorize workflow runs for billing and usage tracking, include `extend:usag
 </dl>
 </details>
 
-<details><summary><code>client.workflowRun.get(workflowRunId) -> WorkflowRunGetResponse</code></summary>
+<details><summary><code>client.files.delete(id) -> FilesDeleteResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete a file and all associated data from Extend. This operation is permanent and cannot be undone.
+
+This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.files().delete("file_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the file to delete.
+
+Example: `"file_xK9mLPqRtN3vS8wF5hB2cQ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.files.upload(request) -> File</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Upload and create a new file in Extend.
+
+This endpoint accepts file contents and registers them as a File in Extend, which can be used for [running workflows](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/run-workflow), [creating evaluation set items](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/bulk-create-evaluation-set-items), [parsing](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/parse/parse-file), etc.
+
+If an uploaded file is detected as a Word or PowerPoint document, it will be automatically converted to a PDF.
+
+Supported file types can be found [here](https://docs.extend.ai/2026-02-09/product/general/supported-file-types).
+
+This endpoint requires multipart form encoding. Most HTTP clients will handle this encoding automatically (see the examples).
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.files().upload(
+    FilesUploadRequest
+        .builder()
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## ParseRuns
+<details><summary><code>client.parseRuns.create(request) -> ParseRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Parse files to get cleaned, chunked target content (e.g. markdown).
+
+The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.
+
+For more details, see the [Parse File guide](https://docs.extend.ai/2026-02-09/product/parsing/parse).
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.parseRuns().create(
+    ParseRunsCreateRequest
+        .builder()
+        .file(
+            ParseRunsCreateRequestFile.of(
+                FileFromUrl
+                    .builder()
+                    .url("url")
+                    .build()
+            )
+        )
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**file:** `ParseRunsCreateRequestFile` — The file to be parsed. Files can be provided as a URL or an Extend file ID.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<ParseConfig>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**metadata:** `Optional<Map<String, Object>>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.parseRuns.retrieve(id) -> ParseRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve the status and results of a parse run.
+
+Use this endpoint to get results for a parse run that has already completed, or to check on the status of a parse run initiated by the [Create Parse Run](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/parse/create-parse-run) endpoint.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.parseRuns().retrieve(
+    "parse_run_id_here",
+    ParseRunsRetrieveRequest
+        .builder()
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The unique identifier for the parse run.
+
+Example: `"pr_xK9mLPqRtN3vS8wF5hB2cQ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**responseType:** `Optional<ParseRunsRetrieveRequestResponseType>` 
+
+Controls how the output is delivered. Defaults to `inline`.
+* `json` - Returns the output directly in the `output` field of the response body.
+* `url` - Returns a presigned URL in the `outputUrl` field to download the output as a JSON file. The URL expires after 15 minutes. Useful for large outputs.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.parseRuns.delete(id) -> ParseRunsDeleteResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete a parse run and all associated data from Extend. This operation is permanent and cannot be undone.
+
+This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.parseRuns().delete("parse_run_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the parse run to delete.
+
+Example: `"pr_xK9mLPqRtN3vS8wF5hB2cQ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## EditRuns
+<details><summary><code>client.editRuns.create(request) -> EditRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Edit and manipulate PDF documents by detecting and filling form fields.
+
+The Edit Runs endpoint allows you to convert and edit documents and get an edit run ID that can be used to check status and retrieve results with the [Get Edit Run](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/edit/get-edit-run) endpoint.
+
+For more details, see the [Edit File guide](https://docs.extend.ai/2026-02-09/product/editing/edit).
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.editRuns().create(
+    EditRunsCreateRequest
+        .builder()
+        .file(
+            EditRunsCreateRequestFile.of(
+                FileFromUrl
+                    .builder()
+                    .url("url")
+                    .build()
+            )
+        )
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**file:** `EditRunsCreateRequestFile` — The file to be edited. Files can be provided as a URL or an Extend file ID.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<EditConfig>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.editRuns.retrieve(id) -> EditRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve the status and results of an edit run.
+
+Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the [Create Edit Run](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/edit/create-edit-run) endpoint.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.editRuns().retrieve("edit_run_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The unique identifier for the edit run.
+
+Example: `"edr_xK9mLPqRtN3vS8wF5hB2cQ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.editRuns.delete(id) -> EditRunsDeleteResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
+
+This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.editRuns().delete("edit_run_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the edit run to delete.
+
+Example: `"edr_xK9mLPqRtN3vS8wF5hB2cQ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## ExtractRuns
+<details><summary><code>client.extractRuns.list() -> ExtractRunsListResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all extract runs.
+
+Returns a summary of each run. Use `GET /extract_runs/{id}` to retrieve the full object including `output` and `config`.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.extractRuns().list(
+    ExtractRunsListRequest
+        .builder()
+        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**status:** `Optional<ProcessorRunStatus>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extractorId:** `Optional<String>` 
+
+Filters extract runs by the extractor ID. If not provided, all extract runs are returned.
+
+Example: `"ex_BMdfq_yWM3sT-ZzvCnA3f"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sourceId:** `Optional<String>` — Filters runs by the source ID.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**source:** `Optional<RunSource>` — Filters runs by the source that created them. If not provided, runs from all sources are returned.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fileNameContains:** `Optional<String>` 
+
+Filters runs by the name of the file. Only returns runs where the file name contains this string.
+
+Example: `"invoice"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortBy:** `Optional<SortBy>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortDir:** `Optional<SortDir>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**nextPageToken:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.extractRuns.create(request) -> ExtractRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Extract structured data from a file using an existing extractor or an inline configuration.
+
+The request returns immediately with a `PROCESSING` status. Use webhooks or poll the [Get Extract Run](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/extract/get-extract-run) endpoint for results.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.extractRuns().create(
+    ExtractRunsCreateRequest
+        .builder()
+        .file(
+            ExtractRunsCreateRequestFile.of(
+                FileFromUrl
+                    .builder()
+                    .url("url")
+                    .build()
+            )
+        )
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**extractor:** `Optional<ExtractRunsCreateRequestExtractor>` — Reference to an existing extractor. One of `extractor` or `config` must be provided.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<ExtractConfigJson>` — Inline extract configuration. One of `extractor` or `config` must be provided.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file:** `ExtractRunsCreateRequestFile` — The file to be extracted from. Files can be provided as a URL, Extend file ID, or raw text.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**priority:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**metadata:** `Optional<Map<String, Object>>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.extractRuns.retrieve(id) -> ExtractRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve details about a specific extract run, including its status, outputs, and any edits made during review.
+
+A common use case for this endpoint is to poll for the status and final output of an extract run when using the [Create Extract Run](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/extract/create-extract-run) endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.extractRuns().retrieve("extract_run_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The unique identifier for this extract run.
+
+Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.extractRuns.delete(id) -> ExtractRunsDeleteResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete an extract run and all associated data from Extend. This operation is permanent and cannot be undone.
+
+This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.extractRuns().delete("id");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` — The ID of the extract run.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.extractRuns.cancel(id) -> ExtractRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Cancel an in-progress extract run.
+
+Note: Only extract runs with a status of `"PROCESSING"` can be cancelled. Extractor runs that have already completed, failed, or been cancelled cannot be cancelled again.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.extractRuns().cancel("extract_run_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the extract run to cancel.
+
+Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Extractors
+<details><summary><code>client.extractors.list() -> ExtractorsListResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all extractors.
+
+Returns a summary of each extractor. Use `GET /extractors/{id}` to retrieve the full object including `draftVersion`.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.extractors().list(
+    ExtractorsListRequest
+        .builder()
+        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**nextPageToken:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortBy:** `Optional<SortBy>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortDir:** `Optional<SortDir>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.extractors.create(request) -> Extractor</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create a new extractor.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.extractors().create(
+    ExtractorsCreateRequest
+        .builder()
+        .name("name")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `String` — The name of the extractor.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cloneExtractorId:** `Optional<String>` 
+
+The ID of an existing extractor to clone. If provided, the new extractor will be created with the same config as the extractor with this ID. Cannot be provided together with `config`.
+
+Example: `"ex_BMdfq_yWM3sT-ZzvCnA3f"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<ExtractConfigJson>` — The configuration for the extractor. Cannot be provided together with `cloneExtractorId`.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.extractors.retrieve(id) -> Extractor</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get details of an extractor.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.extractors().retrieve("extractor_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the extractor to get.
+
+Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.extractors.update(id, request) -> Extractor</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update an existing extractor.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.extractors().update(
+    "extractor_id_here",
+    ExtractorsUpdateRequest
+        .builder()
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the extractor to update.
+
+Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `Optional<String>` — The new name of the extractor.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<ExtractConfigJson>` — The new configuration for the extractor. This will update the draft version of the extractor.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## ExtractorVersions
+<details><summary><code>client.extractorVersions.list(extractorId) -> ExtractorVersionsListResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+This endpoint allows you to fetch all versions of a given extractor, including the current `draft` version.
+
+Versions are returned in descending order of creation (newest first) with the `draft` version first. The `draft` version is the latest unpublished version of the extractor, which can be published to create a new version. It might not have any changes from the last published version.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.extractorVersions().list(
+    "extractor_id_here",
+    ExtractorVersionsListRequest
+        .builder()
+        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**extractorId:** `String` 
+
+The ID of the extractor.
+
+Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortDir:** `Optional<SortDir>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**nextPageToken:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.extractorVersions.create(extractorId, request) -> ExtractorVersion</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+This endpoint allows you to publish a new version of an existing extractor. Publishing a new version creates a snapshot of the extractor's current configuration and makes it available for use in workflows.
+
+Publishing a new version does not automatically update existing workflows using this extractor. You may need to manually update workflows to use the new version if desired.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.extractorVersions().create(
+    "extractor_id_here",
+    ExtractorVersionsCreateRequest
+        .builder()
+        .releaseType(ReleaseType.MAJOR)
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**extractorId:** `String` 
+
+The ID of the extractor.
+
+Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**releaseType:** `ReleaseType` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**description:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<ExtractConfigJson>` — The configuration for this version of the extractor.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.extractorVersions.retrieve(extractorId, versionId) -> ExtractorVersion</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve a specific version of an extractor in Extend
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.extractorVersions().retrieve("extractor_id_here", "extractor_version_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**extractorId:** `String` 
+
+The ID of the extractor.
+
+Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**versionId:** `String` 
+
+The ID of the specific extractor version.
+
+Example: `"extv_QYk6jgHA_8CsO8rVWhyNC"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## ClassifyRuns
+<details><summary><code>client.classifyRuns.list() -> ClassifyRunsListResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all classify runs.
+
+Returns a summary of each run. Use `GET /classify_runs/{id}` to retrieve the full object including `output` and `config`.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.classifyRuns().list(
+    ClassifyRunsListRequest
+        .builder()
+        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**status:** `Optional<ProcessorRunStatus>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**classifierId:** `Optional<String>` 
+
+Filters classify runs by the classifier ID. If not provided, all classify runs are returned.
+
+Example: `"cl_BMdfq_yWM3sT-ZzvCnA3f"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sourceId:** `Optional<String>` — Filters runs by the source ID.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**source:** `Optional<RunSource>` — Filters runs by the source that created them. If not provided, runs from all sources are returned.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fileNameContains:** `Optional<String>` 
+
+Filters runs by the name of the file. Only returns runs where the file name contains this string.
+
+Example: `"invoice"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortBy:** `Optional<SortBy>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortDir:** `Optional<SortDir>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**nextPageToken:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.classifyRuns.create(request) -> ClassifyRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Classify a document using an existing classifier or an inline configuration.
+
+The request returns immediately with a `PROCESSING` status. Use webhooks or poll the [Get Classify Run](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/get-classify-run) endpoint for results.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.classifyRuns().create(
+    ClassifyRunsCreateRequest
+        .builder()
+        .file(
+            ClassifyRunsCreateRequestFile.of(
+                FileFromUrl
+                    .builder()
+                    .url("url")
+                    .build()
+            )
+        )
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**classifier:** `Optional<ClassifyRunsCreateRequestClassifier>` — Reference to an existing classifier. One of `classifier` or `config` must be provided.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<ClassifyConfig>` — Inline classify configuration. One of `classifier` or `config` must be provided.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file:** `ClassifyRunsCreateRequestFile` — The file to be classified. Files can be provided as a URL, an Extend file ID, or raw text.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**priority:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**metadata:** `Optional<Map<String, Object>>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.classifyRuns.retrieve(id) -> ClassifyRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve details about a specific classify run, including its status and outputs.
+
+A common use case for this endpoint is to poll for the status and final output of a classify run when using the [Create Classify Run](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/create-classify-run) endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.classifyRuns().retrieve("classify_run_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The unique identifier for this classify run.
+
+Example: `"cl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.classifyRuns.delete(id) -> ClassifyRunsDeleteResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete a classify run and all associated data from Extend. This operation is permanent and cannot be undone.
+
+This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.classifyRuns().delete("id");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` — The ID of the classify run.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.classifyRuns.cancel(id) -> ClassifyRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Cancel an in-progress classify run.
+
+Note: Only classify runs with a status of `"PROCESSING"` can be cancelled. Classifier runs that have already completed, failed, or been cancelled cannot be cancelled again.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.classifyRuns().cancel("classify_run_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the classify run to cancel.
+
+Example: `"cl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Classifiers
+<details><summary><code>client.classifiers.list() -> ClassifiersListResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all classifiers.
+
+Returns a summary of each classifier. Use `GET /classifiers/{id}` to retrieve the full object including `draftVersion`.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.classifiers().list(
+    ClassifiersListRequest
+        .builder()
+        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**nextPageToken:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortBy:** `Optional<SortBy>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortDir:** `Optional<SortDir>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.classifiers.create(request) -> Classifier</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create a new classifier.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.classifiers().create(
+    ClassifiersCreateRequest
+        .builder()
+        .name("name")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `String` — The name of the classifier.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cloneClassifierId:** `Optional<String>` 
+
+The ID of an existing classifier to clone. If provided, the new classifier will be created with the same config as the classifier with this ID. Cannot be provided together with `config`.
+
+Example: `"cl_BMdfq_yWM3sT-ZzvCnA3f"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<ClassifyConfig>` — The configuration for the classifier. Cannot be provided together with `cloneClassifierId`.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.classifiers.retrieve(id) -> Classifier</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get details of a classifier.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.classifiers().retrieve("classifier_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the classifier to get.
+
+Example: `"cl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.classifiers.update(id, request) -> Classifier</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update an existing classifier.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.classifiers().update(
+    "classifier_id_here",
+    ClassifiersUpdateRequest
+        .builder()
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the classifier to update.
+
+Example: `"cl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `Optional<String>` — The new name of the classifier.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<ClassifyConfig>` — The new configuration for the classifier. This will update the draft version of the classifier.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## ClassifierVersions
+<details><summary><code>client.classifierVersions.list(classifierId) -> ClassifierVersionsListResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+This endpoint allows you to fetch all versions of a given classifier, including the current `draft` version.
+
+Versions are returned in descending order of creation (newest first) with the `draft` version first. The `draft` version is the latest unpublished version of the classifier, which can be published to create a new version. It might not have any changes from the last published version.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.classifierVersions().list(
+    "classifier_id_here",
+    ClassifierVersionsListRequest
+        .builder()
+        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**classifierId:** `String` 
+
+The ID of the classifier.
+
+Example: `"cl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortDir:** `Optional<SortDir>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**nextPageToken:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.classifierVersions.create(classifierId, request) -> ClassifierVersion</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+This endpoint allows you to publish a new version of an existing classifier. Publishing a new version creates a snapshot of the classifier's current configuration and makes it available for use in workflows.
+
+Publishing a new version does not automatically update existing workflows using this classifier. You may need to manually update workflows to use the new version if desired.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.classifierVersions().create(
+    "classifier_id_here",
+    ClassifierVersionsCreateRequest
+        .builder()
+        .releaseType(ReleaseType.MAJOR)
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**classifierId:** `String` 
+
+The ID of the classifier.
+
+Example: `"cl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**releaseType:** `ReleaseType` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**description:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<ClassifyConfig>` — The configuration for this version of the classifier.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.classifierVersions.retrieve(classifierId, versionId) -> ClassifierVersion</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve a specific version of a classifier in Extend
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.classifierVersions().retrieve("classifier_id_here", "classifier_version_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**classifierId:** `String` 
+
+The ID of the classifier.
+
+Example: `"cl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**versionId:** `String` 
+
+The ID of the specific classifier version.
+
+Example: `"clsv_QYk6jgHA_8CsO8rVWhyNC"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## SplitRuns
+<details><summary><code>client.splitRuns.list() -> SplitRunsListResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all split runs.
+
+Returns a summary of each run. Use `GET /split_runs/{id}` to retrieve the full object including `output` and `config`.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.splitRuns().list(
+    SplitRunsListRequest
+        .builder()
+        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**status:** `Optional<ProcessorRunStatus>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**splitterId:** `Optional<String>` 
+
+Filters split runs by the splitter ID. If not provided, all split runs are returned.
+
+Example: `"spl_BMdfq_yWM3sT-ZzvCnA3f"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sourceId:** `Optional<String>` — Filters runs by the source ID.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**source:** `Optional<RunSource>` — Filters runs by the source that created them. If not provided, runs from all sources are returned.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fileNameContains:** `Optional<String>` 
+
+Filters runs by the name of the file. Only returns runs where the file name contains this string.
+
+Example: `"invoice"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortBy:** `Optional<SortBy>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortDir:** `Optional<SortDir>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**nextPageToken:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.splitRuns.create(request) -> SplitRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Split a document into multiple parts using an existing splitter or an inline configuration.
+
+The request returns immediately with a `PROCESSING` status. Use webhooks or poll the [Get Split Run](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/split/get-split-run) endpoint for results.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.splitRuns().create(
+    SplitRunsCreateRequest
+        .builder()
+        .file(
+            SplitRunsCreateRequestFile.of(
+                FileFromUrl
+                    .builder()
+                    .url("url")
+                    .build()
+            )
+        )
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**splitter:** `Optional<SplitRunsCreateRequestSplitter>` — Reference to an existing splitter. One of `splitter` or `config` must be provided.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<SplitConfig>` — Inline splitter configuration. One of `splitter` or `config` must be provided.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file:** `SplitRunsCreateRequestFile` — The file to be split. Files can be provided as a URL or an Extend file ID.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**priority:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**metadata:** `Optional<Map<String, Object>>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.splitRuns.retrieve(id) -> SplitRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve details about a specific split run, including its status and outputs.
+
+A common use case for this endpoint is to poll for the status and final output of a split run when using the [Create Split Run](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/split/create-split-run) endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.splitRuns().retrieve("split_run_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The unique identifier for this split run.
+
+Example: `"spl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.splitRuns.delete(id) -> SplitRunsDeleteResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete a split run and all associated data from Extend. This operation is permanent and cannot be undone.
+
+This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.splitRuns().delete("id");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` — The ID of the split run.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.splitRuns.cancel(id) -> SplitRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Cancel an in-progress split run.
+
+Note: Only split runs with a status of `"PROCESSING"` can be cancelled. Splitter runs that have already completed, failed, or been cancelled cannot be cancelled again.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.splitRuns().cancel("split_run_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the split run to cancel.
+
+Example: `"spl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Splitters
+<details><summary><code>client.splitters.list() -> SplittersListResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all splitters.
+
+Returns a summary of each splitter. Use `GET /splitters/{id}` to retrieve the full object including `draftVersion`.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.splitters().list(
+    SplittersListRequest
+        .builder()
+        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**nextPageToken:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortBy:** `Optional<SortBy>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortDir:** `Optional<SortDir>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.splitters.create(request) -> Splitter</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create a new splitter.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.splitters().create(
+    SplittersCreateRequest
+        .builder()
+        .name("name")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `String` — The name of the splitter.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cloneSplitterId:** `Optional<String>` 
+
+The ID of an existing splitter to clone. If provided, the new splitter will be created with the same config as the splitter with this ID. Cannot be provided together with `config`.
+
+Example: `"spl_BMdfq_yWM3sT-ZzvCnA3f"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<SplitConfig>` — The configuration for the splitter. Cannot be provided together with `cloneSplitterId`.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.splitters.retrieve(id) -> Splitter</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get details of a splitter.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.splitters().retrieve("splitter_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the splitter to get.
+
+Example: `"spl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.splitters.update(id, request) -> Splitter</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update an existing splitter.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.splitters().update(
+    "splitter_id_here",
+    SplittersUpdateRequest
+        .builder()
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the splitter to update.
+
+Example: `"spl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `Optional<String>` — The new name of the splitter.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<SplitConfig>` — The new configuration for the splitter. This will update the draft version of the splitter.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## SplitterVersions
+<details><summary><code>client.splitterVersions.list(splitterId) -> SplitterVersionsListResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+This endpoint allows you to fetch all versions of a given splitter, including the current `draft` version.
+
+Versions are returned in descending order of creation (newest first) with the `draft` version first. The `draft` version is the latest unpublished version of the splitter, which can be published to create a new version. It might not have any changes from the last published version.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.splitterVersions().list(
+    "splitter_id_here",
+    SplitterVersionsListRequest
+        .builder()
+        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**splitterId:** `String` 
+
+The ID of the splitter.
+
+Example: `"spl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortDir:** `Optional<SortDir>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**nextPageToken:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.splitterVersions.create(splitterId, request) -> SplitterVersion</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+This endpoint allows you to publish a new version of an existing splitter. Publishing a new version creates a snapshot of the splitter's current configuration and makes it available for use in workflows.
+
+Publishing a new version does not automatically update existing workflows using this splitter. You may need to manually update workflows to use the new version if desired.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.splitterVersions().create(
+    "splitter_id_here",
+    SplitterVersionsCreateRequest
+        .builder()
+        .releaseType(ReleaseType.MAJOR)
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**splitterId:** `String` 
+
+The ID of the splitter.
+
+Example: `"spl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**releaseType:** `ReleaseType` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**description:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<SplitConfig>` — The configuration for this version of the splitter.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.splitterVersions.retrieve(splitterId, versionId) -> SplitterVersion</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve a specific version of a splitter in Extend
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.splitterVersions().retrieve("splitter_id_here", "splitter_version_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**splitterId:** `String` 
+
+The ID of the splitter.
+
+Example: `"spl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**versionId:** `String` 
+
+The ID of the specific splitter version.
+
+Example: `"splv_QYk6jgHA_8CsO8rVWhyNC"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Workflows
+<details><summary><code>client.workflows.create(request) -> Workflow</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create a new workflow in Extend. Workflows are sequences of steps that process files and data in a specific order to achieve a desired outcome.
+
+This endpoint will create a new workflow in Extend, which can then be configured and deployed. Typically, workflows are created from our UI, however this endpoint can be used to create workflows programmatically. Configuration of the flow still needs to be done in the dashboard.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.workflows().create(
+    WorkflowsCreateRequest
+        .builder()
+        .name("Invoice Processing")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `String` — The name of the workflow
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## WorkflowRuns
+<details><summary><code>client.workflowRuns.list() -> WorkflowRunsListResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List runs of a Workflow. Workflows are sequences of steps that process files and data in a specific order to achieve a desired outcome. A WorkflowRun represents a single execution of a workflow against a file.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.workflowRuns().list(
+    WorkflowRunsListRequest
+        .builder()
+        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**status:** `Optional<WorkflowRunStatus>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**workflowId:** `Optional<String>` 
+
+Filters workflow runs by the workflow ID. If not provided, runs for all workflows are returned.
+
+Example: `"workflow_BMdfq_yWM3sT-ZzvCnA3f"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**batchId:** `Optional<String>` 
+
+Filters workflow runs by the batch ID. This is useful for fetching all runs for a given batch created via the [Batch Run Workflow](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/batch-run-workflow) endpoint.
+
+Example: `"batch_7Ws31-F5"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fileNameContains:** `Optional<String>` 
+
+Filters runs by the name of the file. Only returns runs where the file name contains this string.
+
+Example: `"invoice"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortBy:** `Optional<SortBy>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortDir:** `Optional<SortDir>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**nextPageToken:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.workflowRuns.create(request) -> WorkflowRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Run a workflow with a file. A workflow is a sequence of steps that process files and data in a specific order to achieve a desired outcome.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.workflowRuns().create(
+    WorkflowRunsCreateRequest
+        .builder()
+        .workflow(
+            WorkflowReference
+                .builder()
+                .id("workflow_BMdfq_yWM3sT-ZzvCnA3f")
+                .build()
+        )
+        .file(
+            WorkflowRunsCreateRequestFile.of(
+                FileFromUrl
+                    .builder()
+                    .url("url")
+                    .build()
+            )
+        )
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**workflow:** `WorkflowReference` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file:** `WorkflowRunsCreateRequestFile` — The file to be processed. Supported file types can be found [here](https://docs.extend.ai/2026-02-09/product/general/supported-file-types). Files can be provided as a URL, an Extend file ID, or raw text. If you wish to process more at a time, consider using the [Batch Run Workflow](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/batch-run-workflow) endpoint.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**outputs:** `Optional<List<WorkflowRunsCreateRequestOutputsItem>>` — Predetermined outputs to be used for the workflow run. Generally not recommended for most use cases, however, can be useful in cases of overriding a classification in a workflow, or a subset of extraction fields when data is known.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**priority:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**metadata:** `Optional<Map<String, Object>>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**secrets:** `Optional<Map<String, Object>>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.workflowRuns.retrieve(id) -> WorkflowRun</code></summary>
 <dl>
 <dd>
 
@@ -455,7 +4410,7 @@ Once a workflow has been run, you can check the status and output of a specific 
 <dd>
 
 ```java
-client.workflowRun().get("workflow_run_id_here");
+client.workflowRuns().retrieve("workflow_run_id_here");
 ```
 </dd>
 </dl>
@@ -470,11 +4425,11 @@ client.workflowRun().get("workflow_run_id_here");
 <dl>
 <dd>
 
-**workflowRunId:** `String` 
+**id:** `String` 
 
-The ID of the WorkflowRun that was outputted after a Workflow was run through the API.
+The ID of the workflow run.
 
-Example: `"workflow_run_8k9m-xyzAB_Pqrst-Nvw4"`
+Example: `"workflow_run_xKm9pNv3qWsY_jL2tR5Dh"`
     
 </dd>
 </dl>
@@ -486,7 +4441,7 @@ Example: `"workflow_run_8k9m-xyzAB_Pqrst-Nvw4"`
 </dl>
 </details>
 
-<details><summary><code>client.workflowRun.update(workflowRunId, request) -> WorkflowRunUpdateResponse</code></summary>
+<details><summary><code>client.workflowRuns.update(id, request) -> WorkflowRun</code></summary>
 <dl>
 <dd>
 
@@ -513,9 +4468,9 @@ You can update the name and metadata of an in progress WorkflowRun at any time u
 <dd>
 
 ```java
-client.workflowRun().update(
+client.workflowRuns().update(
     "workflow_run_id_here",
-    WorkflowRunUpdateRequest
+    WorkflowRunsUpdateRequest
         .builder()
         .build()
 );
@@ -533,11 +4488,11 @@ client.workflowRun().update(
 <dl>
 <dd>
 
-**workflowRunId:** `String` 
+**id:** `String` 
 
-The ID of the WorkflowRun. This ID will start with "workflow_run". This ID can be found in the API response when creating a Workflow Run, or in the "history" tab of a workflow on the Extend platform.
+The ID of the workflow run.
 
-Example: `"workflow_run_8k9m-xyzAB_Pqrst-Nvw4"`
+Example: `"workflow_run_xKm9pNv3qWsY_jL2tR5Dh"`
     
 </dd>
 </dl>
@@ -571,7 +4526,7 @@ To categorize workflow runs for billing and usage tracking, include `extend:usag
 </dl>
 </details>
 
-<details><summary><code>client.workflowRun.delete(workflowRunId) -> WorkflowRunDeleteResponse</code></summary>
+<details><summary><code>client.workflowRuns.delete(id) -> WorkflowRunsDeleteResponse</code></summary>
 <dl>
 <dd>
 
@@ -600,7 +4555,7 @@ This endpoint can be used if you'd like to manage data retention on your own rat
 <dd>
 
 ```java
-client.workflowRun().delete("workflow_run_id_here");
+client.workflowRuns().delete("workflow_run_id_here");
 ```
 </dd>
 </dl>
@@ -615,9 +4570,9 @@ client.workflowRun().delete("workflow_run_id_here");
 <dl>
 <dd>
 
-**workflowRunId:** `String` 
+**id:** `String` 
 
-The ID of the workflow run to delete.
+The ID of the workflow run.
 
 Example: `"workflow_run_xKm9pNv3qWsY_jL2tR5Dh"`
     
@@ -631,7 +4586,7 @@ Example: `"workflow_run_xKm9pNv3qWsY_jL2tR5Dh"`
 </dl>
 </details>
 
-<details><summary><code>client.workflowRun.cancel(workflowRunId) -> WorkflowRunCancelResponse</code></summary>
+<details><summary><code>client.workflowRuns.cancel(id) -> WorkflowRun</code></summary>
 <dl>
 <dd>
 
@@ -660,7 +4615,7 @@ Note: Only workflow runs with a status of `PROCESSING` or `PENDING` can be cance
 <dd>
 
 ```java
-client.workflowRun().cancel("workflow_run_id_here");
+client.workflowRuns().cancel("workflow_run_id_here");
 ```
 </dd>
 </dl>
@@ -675,9 +4630,9 @@ client.workflowRun().cancel("workflow_run_id_here");
 <dl>
 <dd>
 
-**workflowRunId:** `String` 
+**id:** `String` 
 
-The ID of the workflow run to cancel.
+The ID of the workflow run.
 
 Example: `"workflow_run_xKm9pNv3qWsY_jL2tR5Dh"`
     
@@ -691,8 +4646,7 @@ Example: `"workflow_run_xKm9pNv3qWsY_jL2tR5Dh"`
 </dl>
 </details>
 
-## BatchWorkflowRun
-<details><summary><code>client.batchWorkflowRun.create(request) -> BatchWorkflowRunCreateResponse</code></summary>
+<details><summary><code>client.workflowRuns.createBatch(request) -> WorkflowRunsCreateBatchResponse</code></summary>
 <dl>
 <dd>
 
@@ -706,17 +4660,17 @@ Example: `"workflow_run_xKm9pNv3qWsY_jL2tR5Dh"`
 
 This endpoint allows you to efficiently initiate large batches of workflow runs in a single request (up to 1,000 in a single request, but you can queue up multiple batches in rapid succession). It accepts an array of inputs, each containing a file and metadata pair. The primary use case for this endpoint is for doing large bulk runs of >1000 files at a time that can process over the course of a few hours without needing to manage rate limits that would likely occur using the primary run endpoint.
 
-Unlike the single [Run Workflow](/developers/api-reference/workflow-endpoints/run-workflow) endpoint which returns the details of the created workflow runs immediately, this batch endpoint returns a `batchId`.
+Unlike the single [Run Workflow](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/run-workflow) endpoint which returns the details of the created workflow runs immediately, this batch endpoint returns a `batchId`.
 
-Our recommended usage pattern is to integrate with [Webhooks](/product/webhooks/configuration) for consuming results, using the `metadata` and `batchId` to match up results to the original inputs in your downstream systems. However, you can integrate in a polling mechanism by using a combination of the [List Workflow Runs](https://docs.extend.ai/2025-04-21/developers/api-reference/workflow-endpoints/list-workflow-runs) endpoint to fetch all runs via a batch, and then [Get Workflow Run](https://docs.extend.ai/2025-04-21/developers/api-reference/workflow-endpoints/get-workflow-run) to fetch the full outputs each run.
+Our recommended usage pattern is to integrate with [Webhooks](https://docs.extend.ai/2026-02-09/product/webhooks/configuration) for consuming results, using the `metadata` and `batchId` to match up results to the original inputs in your downstream systems. However, you can integrate in a polling mechanism by using a combination of the [List Workflow Runs](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/list-workflow-runs) endpoint to fetch all runs via a batch, and then [Get Workflow Run](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/get-workflow-run) to fetch the full outputs each run.
 
 **Priority:** All workflow runs created through this batch endpoint are automatically assigned a priority of 90.
 
 **Processing and Monitoring:**
 Upon successful submission, the endpoint returns a `batchId`. The individual workflow runs are then queued for processing.
 
-- **Monitoring:** Track the progress and consume results of individual runs using [Webhooks](/product/webhooks/configuration). Subscribe to events like `workflow_run.completed`, `workflow_run.failed`, etc. The webhook payload for these events will include the corresponding `batchId` and the `metadata` you provided for each input.
-- **Fetching Results:** You can also use the [List Workflow Runs](https://docs.extend.ai/2025-04-21/developers/api-reference/workflow-endpoints/list-workflow-runs) endpoint and filter using the `batchId` query param.
+- **Monitoring:** Track the progress and consume results of individual runs using [Webhooks](https://docs.extend.ai/2026-02-09/product/webhooks/configuration). Subscribe to events like `workflow_run.completed`, `workflow_run.failed`, etc. The webhook payload for these events will include the corresponding `batchId` and the `metadata` you provided for each input.
+- **Fetching Results:** You can also use the [List Workflow Runs](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/list-workflow-runs) endpoint and filter using the `batchId` query param.
 </dd>
 </dl>
 </dd>
@@ -731,17 +4685,28 @@ Upon successful submission, the endpoint returns a `batchId`. The individual wor
 <dd>
 
 ```java
-client.batchWorkflowRun().create(
-    BatchWorkflowRunCreateRequest
+client.workflowRuns().createBatch(
+    WorkflowRunsCreateBatchRequest
         .builder()
-        .workflowId("workflow_id_here")
+        .workflow(
+            WorkflowReference
+                .builder()
+                .id("workflow_BMdfq_yWM3sT-ZzvCnA3f")
+                .build()
+        )
         .inputs(
-            new ArrayList<BatchWorkflowRunCreateRequestInputsItem>(
-                Arrays.asList(
-                    BatchWorkflowRunCreateRequestInputsItem
-                        .builder()
-                        .build()
-                )
+            Arrays.asList(
+                WorkflowRunsCreateBatchRequestInputsItem
+                    .builder()
+                    .file(
+                        WorkflowRunsCreateBatchRequestInputsItemFile.of(
+                            FileFromUrl
+                                .builder()
+                                .url("url")
+                                .build()
+                        )
+                    )
+                    .build()
             )
         )
         .build()
@@ -760,11 +4725,7 @@ client.batchWorkflowRun().create(
 <dl>
 <dd>
 
-**workflowId:** `String` 
-
-The ID of the workflow to run. This ID will start with "workflow_". This ID can be found viewing the workflow on the Extend platform.
-
-Example: `"workflow_BMdfq_yWM3sT-ZzvCnA3f"`
+**workflow:** `WorkflowReference` 
     
 </dd>
 </dl>
@@ -772,15 +4733,7 @@ Example: `"workflow_BMdfq_yWM3sT-ZzvCnA3f"`
 <dl>
 <dd>
 
-**version:** `Optional<String>` — An optional version of the workflow to use. This can be a specific version number (e.g., `"1"`, `"2"`) found on the Extend platform, or `"draft"` to use the current unpublished draft version. When a version is not supplied, the latest deployed version of the workflow will be used. If no deployed version exists, the draft version will be used.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**inputs:** `List<BatchWorkflowRunCreateRequestInputsItem>` — An array of input objects to be processed by the workflow. Each object represents a single workflow run to be created. The array must contain at least 1 input and at most 1000 inputs.
+**inputs:** `List<WorkflowRunsCreateBatchRequestInputsItem>` — An array of input objects to be processed by the workflow. Each object represents a single workflow run to be created. The array must contain at least 1 input and at most 1000 inputs.
     
 </dd>
 </dl>
@@ -823,16 +4776,7 @@ List runs of a Processor. A ProcessorRun represents a single execution of a proc
 client.processorRun().list(
     ProcessorRunListRequest
         .builder()
-        .status(ProcessorStatus.PENDING)
-        .processorId("processorId")
-        .processorType(ProcessorType.EXTRACT)
-        .sourceId("sourceId")
-        .source(ProcessorRunListRequestSource.ADMIN)
-        .fileNameContains("fileNameContains")
-        .sortBy(SortByEnum.UPDATED_AT)
-        .sortDir(SortDirEnum.ASC)
         .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
-        .maxPageSize(1)
         .build()
 );
 ```
@@ -849,7 +4793,7 @@ client.processorRun().list(
 <dl>
 <dd>
 
-**status:** `Optional<ProcessorStatus>` 
+**status:** `Optional<LegacyProcessorStatus>` 
 
 Filters processor runs by their status. If not provided, no filter is applied.
 
@@ -870,7 +4814,7 @@ Filters processor runs by their status. If not provided, no filter is applied.
 
 Filters processor runs by the processor ID. If not provided, runs for all processors are returned.
 
-Example: `"dp_BMdfq_yWM3sT-ZzvCnA3f"`
+Example: `"ex_BMdfq_yWM3sT-ZzvCnA3f"`
     
 </dd>
 </dl>
@@ -878,7 +4822,7 @@ Example: `"dp_BMdfq_yWM3sT-ZzvCnA3f"`
 <dl>
 <dd>
 
-**processorType:** `Optional<ProcessorType>` 
+**processorType:** `Optional<LegacyProcessorType>` 
 
 Filters processor runs by the processor type. If not provided, runs for all processor types are returned.
 
@@ -933,7 +4877,7 @@ Example: `"invoice"`
 <dl>
 <dd>
 
-**sortBy:** `Optional<SortByEnum>` — Sorts the processor runs by the given field.
+**sortBy:** `Optional<LegacySortByEnum>` — Sorts the processor runs by the given field.
     
 </dd>
 </dl>
@@ -941,7 +4885,7 @@ Example: `"invoice"`
 <dl>
 <dd>
 
-**sortDir:** `Optional<SortDirEnum>` — Sorts the processor runs in ascending or descending order. Ascending order means the earliest processor run is returned first.
+**sortDir:** `Optional<LegacySortDirEnum>` — Sorts the processor runs in ascending or descending order. Ascending order means the earliest processor run is returned first.
     
 </dd>
 </dl>
@@ -988,7 +4932,7 @@ Run processors (extraction, classification, splitting, etc.) on a given document
 - **Synchronous**: Set `sync: true` to wait for completion and get final results in the response (5-minute timeout).
 
 **For asynchronous processing:**
-- You can [configure webhooks](https://docs.extend.ai/2025-04-21/developers/webhooks/configuration) to receive notifications when a processor run is complete or failed.
+- You can [configure webhooks](https://docs.extend.ai/product/webhooks/configuration) to receive notifications when a processor run is complete or failed.
 - Or you can [poll the get endpoint](https://docs.extend.ai/2025-04-21/developers/api-reference/processor-endpoints/get-processor-run) for updates on the status of the processor run.
 </dd>
 </dl>
@@ -1045,7 +4989,7 @@ An optional version of the processor to use. When not supplied, the most recent 
 <dl>
 <dd>
 
-**file:** `Optional<ProcessorRunFileInput>` — The file to be processed. One of `file` or `rawText` must be provided. Supported file types can be found [here](/product/general/supported-file-types).
+**file:** `Optional<LegacyProcessorRunFileInput>` — The file to be processed. One of `file` or `rawText` must be provided. Supported file types can be found [here](/product/general/supported-file-types).
     
 </dd>
 </dl>
@@ -1153,7 +5097,7 @@ client.processorRun().get("processor_run_id_here");
 
 The unique identifier for this processor run.
 
-Example: `"dpr_Xj8mK2pL9nR4vT7qY5wZ"`
+Example: `"exr_Xj8mK2pL9nR4vT7qY5wZ"`
     
 </dd>
 </dl>
@@ -1213,7 +5157,7 @@ client.processorRun().delete("processor_run_id_here");
 
 The ID of the processor run to delete.
 
-Example: `"dpr_Xj8mK2pL9nR4vT7qY5wZ"`
+Example: `"exr_Xj8mK2pL9nR4vT7qY5wZ"`
     
 </dd>
 </dl>
@@ -1273,7 +5217,7 @@ client.processorRun().cancel("processor_run_id_here");
 
 The unique identifier for the processor run to cancel.
 
-Example: `"dpr_Xj8mK2pL9nR4vT7qY5wZ"`
+Example: `"exr_Xj8mK2pL9nR4vT7qY5wZ"`
     
 </dd>
 </dl>
@@ -1286,7 +5230,7 @@ Example: `"dpr_Xj8mK2pL9nR4vT7qY5wZ"`
 </details>
 
 ## Processor
-<details><summary><code>client.processor.list() -> ListProcessorsResponse</code></summary>
+<details><summary><code>client.processor.list() -> LegacyListProcessorsResponse</code></summary>
 <dl>
 <dd>
 
@@ -1316,11 +5260,6 @@ List all processors in your organization
 client.processor().list(
     ProcessorListRequest
         .builder()
-        .type(ProcessorType.EXTRACT)
-        .nextPageToken("nextPageToken")
-        .maxPageSize(1)
-        .sortBy(ProcessorListRequestSortBy.CREATED_AT)
-        .sortDir(ProcessorListRequestSortDir.ASC)
         .build()
 );
 ```
@@ -1337,7 +5276,7 @@ client.processor().list(
 <dl>
 <dd>
 
-**type:** `Optional<ProcessorType>` — Filter processors by type
+**type:** `Optional<LegacyProcessorType>` — Filter processors by type
     
 </dd>
 </dl>
@@ -1412,7 +5351,7 @@ client.processor().create(
     ProcessorCreateRequest
         .builder()
         .name("My Processor Name")
-        .type(ProcessorType.EXTRACT)
+        .type(LegacyProcessorType.EXTRACT)
         .build()
 );
 ```
@@ -1437,7 +5376,7 @@ client.processor().create(
 <dl>
 <dd>
 
-**type:** `ProcessorType` 
+**type:** `LegacyProcessorType` 
     
 </dd>
 </dl>
@@ -1449,7 +5388,7 @@ client.processor().create(
 
 The ID of an existing processor to clone. One of `cloneProcessorId` or `config` must be provided.
 
-Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
+Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
     
 </dd>
 </dl>
@@ -1520,7 +5459,7 @@ client.processor().update(
 
 The ID of the processor to update.
 
-Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
+Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
     
 </dd>
 </dl>
@@ -1554,76 +5493,6 @@ The new configuration for the processor. The type of configuration must match th
 </details>
 
 ## ProcessorVersion
-<details><summary><code>client.processorVersion.get(processorId, processorVersionId) -> ProcessorVersionGetResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Retrieve a specific version of a processor in Extend
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.processorVersion().get("processor_id_here", "processor_version_id_here");
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**processorId:** `String` 
-
-The ID of the processor.
-
-Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**processorVersionId:** `String` 
-
-The ID of the specific processor version to retrieve.
-
-Example: `"dpv_QYk6jgHA_8CsO8rVWhyNC"`
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
 <details><summary><code>client.processorVersion.list(id) -> ProcessorVersionListResponse</code></summary>
 <dl>
 <dd>
@@ -1673,7 +5542,7 @@ client.processorVersion().list("processor_id_here");
 
 The ID of the processor to retrieve versions for.
 
-Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
+Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
     
 </dd>
 </dl>
@@ -1739,7 +5608,7 @@ client.processorVersion().create(
 
 The ID of the processor to publish a new version for.
 
-Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
+Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
     
 </dd>
 </dl>
@@ -1775,8 +5644,7 @@ Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
 </dl>
 </details>
 
-## ParserRun
-<details><summary><code>client.parserRun.get(id) -> ParserRunGetResponse</code></summary>
+<details><summary><code>client.processorVersion.get(processorId, processorVersionId) -> ProcessorVersionGetResponse</code></summary>
 <dl>
 <dd>
 
@@ -1788,11 +5656,7 @@ Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
 <dl>
 <dd>
 
-Retrieve the status and results of a parser run.
-
-Use this endpoint to get results for a parser run that has already completed, or to check on the status of an asynchronous parser run initiated via the [Parse File Asynchronously](https://docs.extend.ai/2025-04-21/developers/api-reference/parse-endpoints/parse-file-async) endpoint.
-
-If parsing is still in progress, you'll receive a response with just the status. Once complete, you'll receive the full parsed content in the response.
+Retrieve a specific version of a processor in Extend
 </dd>
 </dl>
 </dd>
@@ -1807,13 +5671,80 @@ If parsing is still in progress, you'll receive a response with just the status.
 <dd>
 
 ```java
-client.parserRun().get(
-    "parser_run_id_here",
-    ParserRunGetRequest
-        .builder()
-        .responseType(ParserRunGetRequestResponseType.JSON)
-        .build()
-);
+client.processorVersion().get("processor_id_here", "processor_version_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**processorId:** `String` 
+
+The ID of the processor.
+
+Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**processorVersionId:** `String` 
+
+The ID of the specific processor version to retrieve.
+
+Example: `"exv_QYk6jgHA_8CsO8rVWhyNC"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## BatchProcessorRun
+<details><summary><code>client.batchProcessorRun.get(id) -> BatchProcessorRunGetResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve details about a batch processor run, including evaluation runs.
+
+**Deprecated:** This endpoint is maintained for backwards compatibility only and will be replaced in a future API version. Use [Get Evaluation Set Run](/2026-02-09/developers/api-reference/endpoints/evaluation/get-evaluation-set-run) for interacting with evaluation set runs.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.batchProcessorRun().get("bpr_id_here");
 ```
 </dd>
 </dl>
@@ -1830,21 +5761,9 @@ client.parserRun().get(
 
 **id:** `String` 
 
-The unique identifier for the parser run.
+The unique identifier of the batch processor run to retrieve.
 
-Example: `"parser_run_xK9mLPqRtN3vS8wF5hB2cQ"`
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**responseType:** `Optional<ParserRunGetRequestResponseType>` 
-
-Controls the format of the response chunks. Defaults to `json` if not specified.
-* `json` - Returns chunks with inline content
-* `url` - Returns chunks with presigned URLs to content instead of inline data
+Example: `"bpr_Xj8mK2pL9nR4vT7qY5wZ"`
     
 </dd>
 </dl>
@@ -1856,7 +5775,8 @@ Controls the format of the response chunks. Defaults to `json` if not specified.
 </dl>
 </details>
 
-<details><summary><code>client.parserRun.delete(id) -> ParserRunDeleteResponse</code></summary>
+## EvaluationSets
+<details><summary><code>client.evaluationSets.list() -> EvaluationSetsListResponse</code></summary>
 <dl>
 <dd>
 
@@ -1868,9 +5788,7 @@ Controls the format of the response chunks. Defaults to `json` if not specified.
 <dl>
 <dd>
 
-Delete a parser run and all associated data from Extend. This operation is permanent and cannot be undone.
-
-This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.
+List evaluation sets in your account.
 </dd>
 </dl>
 </dd>
@@ -1885,345 +5803,11 @@ This endpoint can be used if you'd like to manage data retention on your own rat
 <dd>
 
 ```java
-client.parserRun().delete("parser_run_id_here");
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `String` 
-
-The ID of the parser run to delete.
-
-Example: `"parser_run_xK9mLPqRtN3vS8wF5hB2cQ"`
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## Edit
-<details><summary><code>client.edit.create(request) -> EditRun</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Edit and manipulate PDF documents by detecting and filling form fields.
-This is a synchronous endpoint that will wait for the edit operation to complete (up to 5 minutes) before returning results. For longer operations, use the [Edit File Async](/developers/api-reference/edit-endpoints/edit-file-async) endpoint.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.edit().create(
-    EditCreateRequest
+client.evaluationSets().list(
+    EvaluationSetsListRequest
         .builder()
-        .file(
-            EditCreateRequestFile
-                .builder()
-                .build()
-        )
-        .build()
-);
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**file:** `EditCreateRequestFile` — A file object containing either a URL or a fileId.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**config:** `Optional<EditCreateRequestConfig>` — Configuration for the edit operation. Field values should be specified using `extend_edit:value` on each field in the schema.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.edit.createAsync(request) -> EditRunStatus</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Edit and manipulate PDF documents **asynchronously** by filling forms, adding/modifying text fields, and applying structured changes.
-
-The Edit Async endpoint allows you to convert and edit documents asynchronously and get an edit run ID that can be used to check status and retrieve results with the [Get Edit Run](/developers/api-reference/edit-endpoints/get-edit-run) endpoint.
-
-This is useful for:
-* Large files that may take longer to process
-* Avoiding timeout issues with synchronous editing
-* Processing multiple files in parallel
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.edit().createAsync(
-    EditCreateAsyncRequest
-        .builder()
-        .file(
-            EditCreateAsyncRequestFile
-                .builder()
-                .build()
-        )
-        .build()
-);
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**file:** `EditCreateAsyncRequestFile` — A file object containing either a URL or a fileId.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**config:** `Optional<EditCreateAsyncRequestConfig>` — Configuration for the edit operation. Field values should be specified using `extend_edit:value` on each field in the schema.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.edit.get(id) -> EditGetResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Retrieve the status and results of an edit run.
-
-Use this endpoint to get results for an edit run that has already completed, or to check on the status of an asynchronous edit run initiated via the [Edit File Asynchronously](/developers/api-reference/edit-endpoints/edit-file-async) endpoint.
-
-If editing is still in progress, you'll receive a response with just the status. Once complete, you'll receive the full edited file information in the response.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.edit().get("edit_run_id_here");
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `String` 
-
-The unique identifier for the edit run.
-
-Example: `"edit_run_xK9mLPqRtN3vS8wF5hB2cQ"`
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.edit.delete(id) -> EditDeleteResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
-
-This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.edit().delete("edit_run_id_here");
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `String` 
-
-The ID of the edit run to delete.
-
-Example: `"edit_run_xK9mLPqRtN3vS8wF5hB2cQ"`
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## File
-<details><summary><code>client.file.list() -> FileListResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-List files in your account. Files represent documents that have been uploaded to Extend. This endpoint returns a paginated response. You can use the `nextPageToken` to fetch subsequent results.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.file().list(
-    FileListRequest
-        .builder()
-        .nameContains("nameContains")
-        .sortDir(SortDirEnum.ASC)
+        .entityId("entity_id_here")
         .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
-        .maxPageSize(1)
         .build()
 );
 ```
@@ -2240,11 +5824,11 @@ client.file().list(
 <dl>
 <dd>
 
-**nameContains:** `Optional<String>` 
+**entityId:** `Optional<String>` 
 
-Filters files to only include those that contain the given string in the name.
+The ID of the extractor, classifier, or splitter to filter evaluation sets by.
 
-Example: `"invoice"`
+Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
     
 </dd>
 </dl>
@@ -2252,7 +5836,15 @@ Example: `"invoice"`
 <dl>
 <dd>
 
-**sortDir:** `Optional<SortDirEnum>` — Sorts the files in ascending or descending order. Ascending order means the earliest file is returned first.
+**sortBy:** `Optional<SortBy>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortDir:** `Optional<SortDir>` 
     
 </dd>
 </dl>
@@ -2280,7 +5872,7 @@ Example: `"invoice"`
 </dl>
 </details>
 
-<details><summary><code>client.file.get(id) -> FileGetResponse</code></summary>
+<details><summary><code>client.evaluationSets.create(request) -> EvaluationSet</code></summary>
 <dl>
 <dd>
 
@@ -2292,7 +5884,9 @@ Example: `"invoice"`
 <dl>
 <dd>
 
-Fetch a file by its ID to obtain additional details and the raw file content.
+Evaluation sets are collections of files and expected outputs that are used to evaluate the performance of a given extractor, classifier, or splitter. This endpoint will create a new evaluation set, which items can be added to using the [Create Evaluation Set Item](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/create-evaluation-set-item) endpoint.
+
+Note: It is not necessary to create an evaluation set via API. You can also create an evaluation set via the Extend dashboard and take the ID from there. To learn more about how to create evaluation sets, see the [Evaluation Sets](https://docs.extend.ai/product/evaluation/overview) product page.
 </dd>
 </dl>
 </dd>
@@ -2307,325 +5901,11 @@ Fetch a file by its ID to obtain additional details and the raw file content.
 <dd>
 
 ```java
-client.file().get(
-    "file_id_here",
-    FileGetRequest
-        .builder()
-        .rawText(true)
-        .markdown(true)
-        .html(true)
-        .build()
-);
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `String` 
-
-Extend's ID for the file. It will always start with `"file_"`. This ID is returned when creating a new File, or the value on the `fileId` field in a WorkflowRun.
-
-Example: `"file_Xj8mK2pL9nR4vT7qY5wZ"`
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**rawText:** `Optional<Boolean>` — If set to true, the raw text content of the file will be included in the response. This is useful for indexing text-based files like PDFs, Word Documents, etc.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**markdown:** `Optional<Boolean>` 
-
-If set to true, the markdown content of the file will be included in the response. This is useful for indexing very clean content into RAG pipelines for files like PDFs, Word Documents, etc.
-
-Only available for files with a type of PDF, IMG, or .doc/.docx files that were auto-converted to PDFs.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**html:** `Optional<Boolean>` 
-
-If set to true, the html content of the file will be included in the response. This is useful for indexing html content into RAG pipelines.
-
-Only available for files with a type of DOCX.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.file.delete(id) -> FileDeleteResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Delete a file and all associated data from Extend. This operation is permanent and cannot be undone.
-
-This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.file().delete("file_id_here");
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `String` 
-
-The ID of the file to delete.
-
-Example: `"file_xK9mLPqRtN3vS8wF5hB2cQ"`
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.file.upload(request) -> FileUploadResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Upload and create a new file in Extend.
-
-This endpoint accepts file contents and registers them as a File in Extend, which can be used for [running workflows](https://docs.extend.ai/2025-04-21/developers/api-reference/workflow-endpoints/run-workflow), [creating evaluation set items](https://docs.extend.ai/2025-04-21/developers/api-reference/evaluation-set-endpoints/bulk-create-evaluation-set-items), [parsing](https://docs.extend.ai/2025-04-21/developers/api-reference/parse-endpoints/parse-file), etc.
-
-If an uploaded file is detected as a Word or PowerPoint document, it will be automatically converted to a PDF.
-
-Supported file types can be found [here](/product/general/supported-file-types).
-
-This endpoint requires multipart form encoding. Most HTTP clients will handle this encoding automatically (see the examples).
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.file().upload(
-    FileUploadRequest
-        .builder()
-        .build()
-);
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## EvaluationSet
-<details><summary><code>client.evaluationSet.list() -> EvaluationSetListResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-List evaluation sets in your account. You can use the `processorId` parameter to filter evaluation sets by processor. 
-
-This endpoint returns a paginated response. You can use the `nextPageToken` to fetch subsequent results.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.evaluationSet().list(
-    EvaluationSetListRequest
-        .builder()
-        .processorId("processor_id_here")
-        .sortBy(SortByEnum.UPDATED_AT)
-        .sortDir(SortDirEnum.ASC)
-        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
-        .maxPageSize(1)
-        .build()
-);
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**processorId:** `Optional<String>` 
-
-The ID of the processor to filter evaluation sets by.
-
-Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sortBy:** `Optional<SortByEnum>` — Sorts the evaluation sets by the given field.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sortDir:** `Optional<SortDirEnum>` — Sorts the evaluation sets in ascending or descending order. Ascending order means the earliest evaluation set is returned first.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**nextPageToken:** `Optional<String>` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**maxPageSize:** `Optional<Integer>` 
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.evaluationSet.create(request) -> EvaluationSetCreateResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Evaluation sets are collections of files and expected outputs that are used to evaluate the performance of a given processor in Extend. This endpoint will create a new evaluation set in Extend, which items can be added to using the [Create Evaluation Set Item](https://docs.extend.ai/2025-04-21/developers/api-reference/evaluation-set-endpoints/create-evaluation-set-item) endpoint.
-
-Note: it is not necessary to create an evaluation set via API. You can also create an evaluation set via the Extend dashboard and take the ID from there.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.evaluationSet().create(
-    EvaluationSetCreateRequest
+client.evaluationSets().create(
+    EvaluationSetsCreateRequest
         .builder()
         .name("My Evaluation Set")
-        .description("My Evaluation Set Description")
-        .processorId("processor_id_here")
+        .entityId("entity_id_here")
         .build()
 );
 ```
@@ -2654,7 +5934,7 @@ Example: `"Invoice Processing Test Set"`
 <dl>
 <dd>
 
-**description:** `String` 
+**description:** `Optional<String>` 
 
 A description of what this evaluation set is used for.
 
@@ -2666,11 +5946,11 @@ Example: `"Q4 2023 vendor invoices"`
 <dl>
 <dd>
 
-**processorId:** `String` 
+**entityId:** `String` 
 
-The ID of the processor to create an evaluation set for. Evaluation sets can in theory be run against any processor, but it is required to associate the evaluation set with a primary processor.
+The ID of the extractor, classifier, or splitter to create an evaluation set for. Evaluation sets can in theory be run against any extractor, classifier, or splitter, but it is required to associate the evaluation set with a primary extractor, classifier, or splitter.
 
-Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
+Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
     
 </dd>
 </dl>
@@ -2682,7 +5962,7 @@ Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
 </dl>
 </details>
 
-<details><summary><code>client.evaluationSet.get(id) -> EvaluationSetGetResponse</code></summary>
+<details><summary><code>client.evaluationSets.retrieve(id) -> EvaluationSet</code></summary>
 <dl>
 <dd>
 
@@ -2694,7 +5974,7 @@ Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
 <dl>
 <dd>
 
-Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the [List Evaluation Set Items](https://docs.extend.ai/2025-04-21/developers/api-reference/evaluation-set-endpoints/list-evaluation-set-items) endpoint to get the items in an evaluation set.
+Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the [List Evaluation Set Items](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/list-evaluation-set-items) endpoint to get the items in an evaluation set.
 </dd>
 </dl>
 </dd>
@@ -2709,7 +5989,7 @@ Retrieve a specific evaluation set by ID. This returns an evaluation set object,
 <dd>
 
 ```java
-client.evaluationSet().get("evaluation_set_id_here");
+client.evaluationSets().retrieve("evaluation_set_id_here");
 ```
 </dd>
 </dl>
@@ -2726,7 +6006,7 @@ client.evaluationSet().get("evaluation_set_id_here");
 
 **id:** `String` 
 
-The ID of the evaluation set to retrieve.
+The ID of the evaluation set.
 
 Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
     
@@ -2740,8 +6020,8 @@ Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
 </dl>
 </details>
 
-## EvaluationSetItem
-<details><summary><code>client.evaluationSetItem.list(id) -> EvaluationSetItemListResponse</code></summary>
+## EvaluationSetItems
+<details><summary><code>client.evaluationSetItems.list(evaluationSetId) -> EvaluationSetItemsListResponse</code></summary>
 <dl>
 <dd>
 
@@ -2753,9 +6033,9 @@ Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
 <dl>
 <dd>
 
-List all items in a specific evaluation set. Evaluation set items are the individual files and expected outputs that are used to evaluate the performance of a given processor in Extend. 
+List items in a specific evaluation set.
 
-This endpoint returns a paginated response. You can use the `nextPageToken` to fetch subsequent results.
+Returns a summary of each evaluation set item. Use the [Get Evaluation Set Item](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/get-evaluation-set-item) endpoint to get the full details of an evaluation set item.
 </dd>
 </dl>
 </dd>
@@ -2770,14 +6050,11 @@ This endpoint returns a paginated response. You can use the `nextPageToken` to f
 <dd>
 
 ```java
-client.evaluationSetItem().list(
+client.evaluationSetItems().list(
     "evaluation_set_id_here",
-    EvaluationSetItemListRequest
+    EvaluationSetItemsListRequest
         .builder()
-        .sortBy(SortByEnum.UPDATED_AT)
-        .sortDir(SortDirEnum.ASC)
         .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
-        .maxPageSize(1)
         .build()
 );
 ```
@@ -2794,9 +6071,9 @@ client.evaluationSetItem().list(
 <dl>
 <dd>
 
-**id:** `String` 
+**evaluationSetId:** `String` 
 
-The ID of the evaluation set to retrieve items for.
+The ID of the evaluation set.
 
 Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
     
@@ -2806,7 +6083,7 @@ Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
 <dl>
 <dd>
 
-**sortBy:** `Optional<SortByEnum>` — Sorts the evaluation set items by the given field.
+**sortBy:** `Optional<SortBy>` 
     
 </dd>
 </dl>
@@ -2814,7 +6091,7 @@ Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
 <dl>
 <dd>
 
-**sortDir:** `Optional<SortDirEnum>` — Sorts the evaluation set items in ascending or descending order. Ascending order means the earliest evaluation set is returned first.
+**sortDir:** `Optional<SortDir>` 
     
 </dd>
 </dl>
@@ -2842,7 +6119,7 @@ Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
 </dl>
 </details>
 
-<details><summary><code>client.evaluationSetItem.create(request) -> EvaluationSetItemCreateResponse</code></summary>
+<details><summary><code>client.evaluationSetItems.create(evaluationSetId, request) -> EvaluationSetItemsCreateResponse</code></summary>
 <dl>
 <dd>
 
@@ -2854,20 +6131,11 @@ Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
 <dl>
 <dd>
 
-Evaluation set items are the individual files and expected outputs that are used to evaluate the performance of a given processor in Extend. This endpoint will create a new evaluation set item in Extend, which will be used during an evaluation run.
+Evaluation set items are the individual files and expected outputs that are used to evaluate the performance of a given extractor, classifier, or splitter in Extend. This endpoint will create new evaluation set items in Extend, which will be used during an evaluation run.
 
-Best Practices for Outputs in Evaluation Sets:
-- **Configure First, Output Later**
-  - Always create and finalize your processor configuration before creating evaluation sets
-  - Field IDs in outputs must match those defined in your processor configuration
-- **Type Consistency**
-  - Ensure output types exactly match your processor configuration
-  - For example, if a field is configured as "currency", don't submit a simple number value
-- **Field IDs**
-  - Use the exact field IDs from your processor configuration
-  - Create your own semantic IDs instead in the configs for each field/type instead of using the generated ones
-- **Value**
-  - Remember that all results are inside the value key of a result object, except the values within nested structures.
+**Limit:** You can create up to 100 items at a time.
+
+Learn more about how to create evaluation set items in the [Evaluation Sets](https://docs.extend.ai/product/evaluation/overview) product page.
 </dd>
 </dl>
 </dd>
@@ -2882,277 +6150,23 @@ Best Practices for Outputs in Evaluation Sets:
 <dd>
 
 ```java
-client.evaluationSetItem().create(
-    EvaluationSetItemCreateRequest
+client.evaluationSetItems().create(
+    "evaluation_set_id_here",
+    EvaluationSetItemsCreateRequest
         .builder()
-        .evaluationSetId("evaluation_set_id_here")
-        .fileId("file_id_here")
-        .expectedOutput(
-            ProvidedProcessorOutput.ofProvidedExtractionOutput(
-                ProvidedExtractionOutput.ofProvidedJsonOutput(
-                    ProvidedJsonOutput
-                        .builder()
-                        .value(
-                            new HashMap<String, Object>() {{
-                                put("key", "value");
-                            }}
-                        )
-                        .build()
-                )
-            )
-        )
-        .build()
-);
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**evaluationSetId:** `String` 
-
-The ID of the evaluation set to add the item to.
-
-Example: `"ev_Xj8mK2pL9nR4vT7qY5wZ"`
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**fileId:** `String` 
-
-Extend's internal ID for the file. It will always start with "file_".
-
-Example: `"file_xK9mLPqRtN3vS8wF5hB2cQ"`
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**expectedOutput:** `ProvidedProcessorOutput` — The expected output that will be used to evaluate the processor's performance.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.evaluationSetItem.update(id, request) -> EvaluationSetItemUpdateResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-If you need to change the expected output for a given evaluation set item, you can use this endpoint to update the item. This can be useful if you need to correct an error in the expected output or if the output of the processor has changed.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.evaluationSetItem().update(
-    "evaluation_set_item_id_here",
-    EvaluationSetItemUpdateRequest
-        .builder()
-        .expectedOutput(
-            ProvidedProcessorOutput.ofProvidedExtractionOutput(
-                ProvidedExtractionOutput.ofProvidedJsonOutput(
-                    ProvidedJsonOutput
-                        .builder()
-                        .value(
-                            new HashMap<String, Object>() {{
-                                put("key", "value");
-                            }}
-                        )
-                        .build()
-                )
-            )
-        )
-        .build()
-);
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `String` 
-
-The ID of the evaluation set item to update.
-
-Example: `"evi_kR9mNP12Qw4yTv8BdR3H"`
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**expectedOutput:** `ProvidedProcessorOutput` — The expected output of the processor when run against the file
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.evaluationSetItem.delete(id) -> EvaluationSetItemDeleteResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Delete an evaluation set item from an evaluation set. This operation is permanent and cannot be undone.
-
-This endpoint can be used to remove individual items from an evaluation set when they are no longer needed or if they were added in error.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.evaluationSetItem().delete("evaluation_set_item_id_here");
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `String` 
-
-The ID of the evaluation set item to delete.
-
-Example: `"evi_kR9mNP12Qw4yTv8BdR3H"`
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.evaluationSetItem.createBatch(request) -> EvaluationSetItemCreateBatchResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-If you have a large number of files that you need to add to an evaluation set, you can use this endpoint to create multiple evaluation set items at once. This can be useful if you have a large dataset that you need to evaluate the performance of a processor against.
-
-Note: you still need to create each File first using the file API.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.evaluationSetItem().createBatch(
-    EvaluationSetItemCreateBatchRequest
-        .builder()
-        .evaluationSetId("evaluation_set_id_here")
         .items(
-            new ArrayList<EvaluationSetItemCreateBatchRequestItemsItem>(
-                Arrays.asList(
-                    EvaluationSetItemCreateBatchRequestItemsItem
-                        .builder()
-                        .fileId("file_id_here")
-                        .expectedOutput(
-                            ProvidedProcessorOutput.ofProvidedExtractionOutput(
-                                ProvidedExtractionOutput.ofProvidedJsonOutput(
-                                    ProvidedJsonOutput
-                                        .builder()
-                                        .value(
-                                            new HashMap<String, Object>() {{
-                                                put("key", "value");
-                                            }}
-                                        )
-                                        .build()
-                                )
-                            )
+            Arrays.asList(
+                EvaluationSetItemsCreateRequestItemsItem
+                    .builder()
+                    .fileId("file_id_here")
+                    .expectedOutput(
+                        ProvidedProcessorOutput.of(
+                            ProvidedExtractOutput
+                                .builder()
+                                .build()
                         )
-                        .build()
-                )
+                    )
+                    .build()
             )
         )
         .build()
@@ -3173,7 +6187,7 @@ client.evaluationSetItem().createBatch(
 
 **evaluationSetId:** `String` 
 
-The ID of the evaluation set to add the items to.
+The ID of the evaluation set.
 
 Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
     
@@ -3183,7 +6197,7 @@ Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
 <dl>
 <dd>
 
-**items:** `List<EvaluationSetItemCreateBatchRequestItemsItem>` — An array of objects representing the evaluation set items to create
+**items:** `List<EvaluationSetItemsCreateRequestItemsItem>` — An array of objects representing the evaluation set items to create.
     
 </dd>
 </dl>
@@ -3195,8 +6209,7 @@ Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
 </dl>
 </details>
 
-## WorkflowRunOutput
-<details><summary><code>client.workflowRunOutput.update(workflowRunId, outputId, request) -> WorkflowRunOutputUpdateResponse</code></summary>
+<details><summary><code>client.evaluationSetItems.retrieve(evaluationSetId, itemId) -> EvaluationSetItem</code></summary>
 <dl>
 <dd>
 
@@ -3208,11 +6221,7 @@ Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
 <dl>
 <dd>
 
-Use this endpoint to submit corrected outputs for a WorkflowRun for future processor evaluation and tuning in Extend.
-
-If you are using our Human-in-the-loop workflow review, then we already will be collecting your operator submitted corrections. However, if you are receiving data via the API without human review, there could be incorrect outputs that you would like to correct for future usage in evaluation and tuning within the Extend platform. This endpoint allows you to submit corrected outputs for a WorkflowRun, by providing the correct output for a given output ID.
-
-The output ID, would be found in a given entry within the outputs arrays of a Workflow Run payload. The ID would look something like `dpr_gwkZZNRrPgkjcq0y-***`.
+Get details of an evaluation set item.
 </dd>
 </dl>
 </dd>
@@ -3227,23 +6236,86 @@ The output ID, would be found in a given entry within the outputs arrays of a Wo
 <dd>
 
 ```java
-client.workflowRunOutput().update(
-    "workflow_run_id_here",
-    "output_id_here",
-    WorkflowRunOutputUpdateRequest
+client.evaluationSetItems().retrieve("evaluation_set_id_here", "evaluation_set_item_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**evaluationSetId:** `String` 
+
+The ID of the evaluation set.
+
+Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**itemId:** `String` 
+
+The ID of the evaluation set item.
+
+Example: `"evi_kR9mNP12Qw4yTv8BdR3H"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.evaluationSetItems.update(evaluationSetId, itemId, request) -> EvaluationSetItem</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+If you need to change the expected output for a given evaluation set item, you can use this endpoint to update the item. This can be useful if you need to correct an error in the expected output or if the output of the extractor, classifier, or splitter has changed.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.evaluationSetItems().update(
+    "evaluation_set_id_here",
+    "evaluation_set_item_id_here",
+    EvaluationSetItemsUpdateRequest
         .builder()
-        .reviewedOutput(
-            ProvidedProcessorOutput.ofProvidedExtractionOutput(
-                ProvidedExtractionOutput.ofProvidedJsonOutput(
-                    ProvidedJsonOutput
-                        .builder()
-                        .value(
-                            new HashMap<String, Object>() {{
-                                put("key", "value");
-                            }}
-                        )
-                        .build()
-                )
+        .expectedOutput(
+            ProvidedProcessorOutput.of(
+                ProvidedExtractOutput
+                    .builder()
+                    .build()
             )
         )
         .build()
@@ -3262,7 +6334,11 @@ client.workflowRunOutput().update(
 <dl>
 <dd>
 
-**workflowRunId:** `String` 
+**evaluationSetId:** `String` 
+
+The ID of the evaluation set.
+
+Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
     
 </dd>
 </dl>
@@ -3270,7 +6346,11 @@ client.workflowRunOutput().update(
 <dl>
 <dd>
 
-**outputId:** `String` 
+**itemId:** `String` 
+
+The ID of the evaluation set item.
+
+Example: `"evi_kR9mNP12Qw4yTv8BdR3H"`
     
 </dd>
 </dl>
@@ -3278,13 +6358,7 @@ client.workflowRunOutput().update(
 <dl>
 <dd>
 
-**reviewedOutput:** `ProvidedProcessorOutput` 
-
-The corrected output of the processor when run against the file.
-
-This should conform to the output type schema of the given processor.
-
-If this is an extraction result, you can include all fields, or just the ones that were corrected, our system will handle merges/dedupes. However, if you do include a field, we assume the value included in the final reviewed value.
+**expectedOutput:** `ProvidedProcessorOutput` — The expected output of the extractor, classifier, or splitter when run against the file. This must conform to the output schema of the entity associated with the evaluation set.
     
 </dd>
 </dl>
@@ -3296,8 +6370,7 @@ If this is an extraction result, you can include all fields, or just the ones th
 </dl>
 </details>
 
-## BatchProcessorRun
-<details><summary><code>client.batchProcessorRun.get(id) -> BatchProcessorRunGetResponse</code></summary>
+<details><summary><code>client.evaluationSetItems.delete(evaluationSetId, itemId) -> EvaluationSetItemsDeleteResponse</code></summary>
 <dl>
 <dd>
 
@@ -3309,7 +6382,7 @@ If this is an extraction result, you can include all fields, or just the ones th
 <dl>
 <dd>
 
-Retrieve details about a batch processor run, including evaluation runs
+Delete an evaluation set item.
 </dd>
 </dl>
 </dd>
@@ -3324,7 +6397,78 @@ Retrieve details about a batch processor run, including evaluation runs
 <dd>
 
 ```java
-client.batchProcessorRun().get("batch_processor_run_id_here");
+client.evaluationSetItems().delete("evaluation_set_id_here", "evaluation_set_item_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**evaluationSetId:** `String` 
+
+The ID of the evaluation set.
+
+Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**itemId:** `String` 
+
+The ID of the evaluation set item.
+
+Example: `"evi_kR9mNP12Qw4yTv8BdR3H"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## EvaluationSetRuns
+<details><summary><code>client.evaluationSetRuns.retrieve(id) -> EvaluationSetRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get details of an evaluation set run.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.evaluationSetRuns().retrieve("evaluation_set_run_id_here");
 ```
 </dd>
 </dl>
@@ -3341,71 +6485,9 @@ client.batchProcessorRun().get("batch_processor_run_id_here");
 
 **id:** `String` 
 
-The unique identifier of the batch processor run to retrieve. The ID will always start with "bpr_".
+The ID of the evaluation set run.
 
-Example: `"bpr_Xj8mK2pL9nR4vT7qY5wZ"`
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## Workflow
-<details><summary><code>client.workflow.create(request) -> WorkflowCreateResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Create a new workflow in Extend. Workflows are sequences of steps that process files and data in a specific order to achieve a desired outcome.
-
-This endpoint will create a new workflow in Extend, which can then be configured and deployed. Typically, workflows are created from our UI, however this endpoint can be used to create workflows programmatically. Configuration of the flow still needs to be done in the dashboard.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.workflow().create(
-    WorkflowCreateRequest
-        .builder()
-        .name("Invoice Processing")
-        .build()
-);
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**name:** `String` — The name of the workflow
+Example: `"evr_Xj8mK2pL9nR4vT7qY5wZ"`
     
 </dd>
 </dl>

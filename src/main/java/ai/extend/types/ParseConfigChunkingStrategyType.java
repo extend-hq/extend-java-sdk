@@ -3,24 +3,94 @@
  */
 package ai.extend.types;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum ParseConfigChunkingStrategyType {
-    PAGE("page"),
+public final class ParseConfigChunkingStrategyType {
+    public static final ParseConfigChunkingStrategyType SECTION =
+            new ParseConfigChunkingStrategyType(Value.SECTION, "section");
 
-    DOCUMENT("document"),
+    public static final ParseConfigChunkingStrategyType DOCUMENT =
+            new ParseConfigChunkingStrategyType(Value.DOCUMENT, "document");
 
-    SECTION("section");
+    public static final ParseConfigChunkingStrategyType PAGE = new ParseConfigChunkingStrategyType(Value.PAGE, "page");
 
-    private final String value;
+    private final Value value;
 
-    ParseConfigChunkingStrategyType(String value) {
+    private final String string;
+
+    ParseConfigChunkingStrategyType(Value value, String string) {
         this.value = value;
+        this.string = string;
     }
 
-    @JsonValue
+    public Value getEnumValue() {
+        return value;
+    }
+
     @java.lang.Override
+    @JsonValue
     public String toString() {
-        return this.value;
+        return this.string;
+    }
+
+    @java.lang.Override
+    public boolean equals(Object other) {
+        return (this == other)
+                || (other instanceof ParseConfigChunkingStrategyType
+                        && this.string.equals(((ParseConfigChunkingStrategyType) other).string));
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+        return this.string.hashCode();
+    }
+
+    public <T> T visit(Visitor<T> visitor) {
+        switch (value) {
+            case SECTION:
+                return visitor.visitSection();
+            case DOCUMENT:
+                return visitor.visitDocument();
+            case PAGE:
+                return visitor.visitPage();
+            case UNKNOWN:
+            default:
+                return visitor.visitUnknown(string);
+        }
+    }
+
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static ParseConfigChunkingStrategyType valueOf(String value) {
+        switch (value) {
+            case "section":
+                return SECTION;
+            case "document":
+                return DOCUMENT;
+            case "page":
+                return PAGE;
+            default:
+                return new ParseConfigChunkingStrategyType(Value.UNKNOWN, value);
+        }
+    }
+
+    public enum Value {
+        PAGE,
+
+        DOCUMENT,
+
+        SECTION,
+
+        UNKNOWN
+    }
+
+    public interface Visitor<T> {
+        T visitPage();
+
+        T visitDocument();
+
+        T visitSection();
+
+        T visitUnknown(String unknownType);
     }
 }

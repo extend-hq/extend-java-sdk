@@ -3,32 +3,130 @@
  */
 package ai.extend.types;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum BlockType {
-    TEXT("text"),
+public final class BlockType {
+    public static final BlockType TABLE_HEAD = new BlockType(Value.TABLE_HEAD, "table_head");
 
-    HEADING("heading"),
+    public static final BlockType TEXT = new BlockType(Value.TEXT, "text");
 
-    SECTION_HEADING("section_heading"),
+    public static final BlockType HEADING = new BlockType(Value.HEADING, "heading");
 
-    TABLE("table"),
+    public static final BlockType SECTION_HEADING = new BlockType(Value.SECTION_HEADING, "section_heading");
 
-    FIGURE("figure"),
+    public static final BlockType TABLE = new BlockType(Value.TABLE, "table");
 
-    TABLE_HEAD("table_head"),
+    public static final BlockType TABLE_CELL = new BlockType(Value.TABLE_CELL, "table_cell");
 
-    TABLE_CELL("table_cell");
+    public static final BlockType FIGURE = new BlockType(Value.FIGURE, "figure");
 
-    private final String value;
+    private final Value value;
 
-    BlockType(String value) {
+    private final String string;
+
+    BlockType(Value value, String string) {
         this.value = value;
+        this.string = string;
     }
 
-    @JsonValue
+    public Value getEnumValue() {
+        return value;
+    }
+
     @java.lang.Override
+    @JsonValue
     public String toString() {
-        return this.value;
+        return this.string;
+    }
+
+    @java.lang.Override
+    public boolean equals(Object other) {
+        return (this == other) || (other instanceof BlockType && this.string.equals(((BlockType) other).string));
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+        return this.string.hashCode();
+    }
+
+    public <T> T visit(Visitor<T> visitor) {
+        switch (value) {
+            case TABLE_HEAD:
+                return visitor.visitTableHead();
+            case TEXT:
+                return visitor.visitText();
+            case HEADING:
+                return visitor.visitHeading();
+            case SECTION_HEADING:
+                return visitor.visitSectionHeading();
+            case TABLE:
+                return visitor.visitTable();
+            case TABLE_CELL:
+                return visitor.visitTableCell();
+            case FIGURE:
+                return visitor.visitFigure();
+            case UNKNOWN:
+            default:
+                return visitor.visitUnknown(string);
+        }
+    }
+
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static BlockType valueOf(String value) {
+        switch (value) {
+            case "table_head":
+                return TABLE_HEAD;
+            case "text":
+                return TEXT;
+            case "heading":
+                return HEADING;
+            case "section_heading":
+                return SECTION_HEADING;
+            case "table":
+                return TABLE;
+            case "table_cell":
+                return TABLE_CELL;
+            case "figure":
+                return FIGURE;
+            default:
+                return new BlockType(Value.UNKNOWN, value);
+        }
+    }
+
+    public enum Value {
+        TEXT,
+
+        HEADING,
+
+        SECTION_HEADING,
+
+        TABLE,
+
+        FIGURE,
+
+        TABLE_HEAD,
+
+        TABLE_CELL,
+
+        UNKNOWN
+    }
+
+    public interface Visitor<T> {
+        T visitText();
+
+        T visitHeading();
+
+        T visitSectionHeading();
+
+        T visitTable();
+
+        T visitFigure();
+
+        T visitTableHead();
+
+        T visitTableCell();
+
+        T visitUnknown(String unknownType);
     }
 }

@@ -3,24 +3,93 @@
  */
 package ai.extend.types;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum BatchProcessorRunSource {
-    EVAL_SET("EVAL_SET"),
+public final class BatchProcessorRunSource {
+    public static final BatchProcessorRunSource PLAYGROUND =
+            new BatchProcessorRunSource(Value.PLAYGROUND, "PLAYGROUND");
 
-    PLAYGROUND("PLAYGROUND"),
+    public static final BatchProcessorRunSource EVAL_SET = new BatchProcessorRunSource(Value.EVAL_SET, "EVAL_SET");
 
-    STUDIO("STUDIO");
+    public static final BatchProcessorRunSource STUDIO = new BatchProcessorRunSource(Value.STUDIO, "STUDIO");
 
-    private final String value;
+    private final Value value;
 
-    BatchProcessorRunSource(String value) {
+    private final String string;
+
+    BatchProcessorRunSource(Value value, String string) {
         this.value = value;
+        this.string = string;
     }
 
-    @JsonValue
+    public Value getEnumValue() {
+        return value;
+    }
+
     @java.lang.Override
+    @JsonValue
     public String toString() {
-        return this.value;
+        return this.string;
+    }
+
+    @java.lang.Override
+    public boolean equals(Object other) {
+        return (this == other)
+                || (other instanceof BatchProcessorRunSource
+                        && this.string.equals(((BatchProcessorRunSource) other).string));
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+        return this.string.hashCode();
+    }
+
+    public <T> T visit(Visitor<T> visitor) {
+        switch (value) {
+            case PLAYGROUND:
+                return visitor.visitPlayground();
+            case EVAL_SET:
+                return visitor.visitEvalSet();
+            case STUDIO:
+                return visitor.visitStudio();
+            case UNKNOWN:
+            default:
+                return visitor.visitUnknown(string);
+        }
+    }
+
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static BatchProcessorRunSource valueOf(String value) {
+        switch (value) {
+            case "PLAYGROUND":
+                return PLAYGROUND;
+            case "EVAL_SET":
+                return EVAL_SET;
+            case "STUDIO":
+                return STUDIO;
+            default:
+                return new BatchProcessorRunSource(Value.UNKNOWN, value);
+        }
+    }
+
+    public enum Value {
+        EVAL_SET,
+
+        PLAYGROUND,
+
+        STUDIO,
+
+        UNKNOWN
+    }
+
+    public interface Visitor<T> {
+        T visitEvalSet();
+
+        T visitPlayground();
+
+        T visitStudio();
+
+        T visitUnknown(String unknownType);
     }
 }

@@ -3,22 +3,84 @@
  */
 package ai.extend.types;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum ParseConfigBlockOptionsTablesTargetFormat {
-    MARKDOWN("markdown"),
+public final class ParseConfigBlockOptionsTablesTargetFormat {
+    public static final ParseConfigBlockOptionsTablesTargetFormat HTML =
+            new ParseConfigBlockOptionsTablesTargetFormat(Value.HTML, "html");
 
-    HTML("html");
+    public static final ParseConfigBlockOptionsTablesTargetFormat MARKDOWN =
+            new ParseConfigBlockOptionsTablesTargetFormat(Value.MARKDOWN, "markdown");
 
-    private final String value;
+    private final Value value;
 
-    ParseConfigBlockOptionsTablesTargetFormat(String value) {
+    private final String string;
+
+    ParseConfigBlockOptionsTablesTargetFormat(Value value, String string) {
         this.value = value;
+        this.string = string;
     }
 
-    @JsonValue
+    public Value getEnumValue() {
+        return value;
+    }
+
     @java.lang.Override
+    @JsonValue
     public String toString() {
-        return this.value;
+        return this.string;
+    }
+
+    @java.lang.Override
+    public boolean equals(Object other) {
+        return (this == other)
+                || (other instanceof ParseConfigBlockOptionsTablesTargetFormat
+                        && this.string.equals(((ParseConfigBlockOptionsTablesTargetFormat) other).string));
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+        return this.string.hashCode();
+    }
+
+    public <T> T visit(Visitor<T> visitor) {
+        switch (value) {
+            case HTML:
+                return visitor.visitHtml();
+            case MARKDOWN:
+                return visitor.visitMarkdown();
+            case UNKNOWN:
+            default:
+                return visitor.visitUnknown(string);
+        }
+    }
+
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static ParseConfigBlockOptionsTablesTargetFormat valueOf(String value) {
+        switch (value) {
+            case "html":
+                return HTML;
+            case "markdown":
+                return MARKDOWN;
+            default:
+                return new ParseConfigBlockOptionsTablesTargetFormat(Value.UNKNOWN, value);
+        }
+    }
+
+    public enum Value {
+        MARKDOWN,
+
+        HTML,
+
+        UNKNOWN
+    }
+
+    public interface Visitor<T> {
+        T visitMarkdown();
+
+        T visitHtml();
+
+        T visitUnknown(String unknownType);
     }
 }

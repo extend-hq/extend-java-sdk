@@ -19,33 +19,25 @@ import org.jetbrains.annotations.NotNull;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = Insight.Builder.class)
 public final class Insight {
-    private final InsightType type;
-
     private final String content;
 
     private final Map<String, Object> additionalProperties;
 
-    private Insight(InsightType type, String content, Map<String, Object> additionalProperties) {
-        this.type = type;
+    private Insight(String content, Map<String, Object> additionalProperties) {
         this.content = content;
         this.additionalProperties = additionalProperties;
     }
 
     /**
-     * @return The type of insight:
-     * <ul>
-     * <li><code>reasoning</code>: Model reasoning about the extraction decision</li>
-     * <li><code>issue</code>: A potential problem or concern identified by the agentic confidence system</li>
-     * <li><code>review_summary</code>: A summary explanation from the agentic confidence system about why the field may need manual review</li>
-     * </ul>
+     * @return The type of insight. Will always be <code>&quot;reasoning&quot;</code> for now.
      */
     @JsonProperty("type")
-    public InsightType getType() {
-        return type;
+    public String getType() {
+        return "reasoning";
     }
 
     /**
-     * @return The content of the insight.
+     * @return The content of the reasoning insight.
      */
     @JsonProperty("content")
     public String getContent() {
@@ -64,12 +56,12 @@ public final class Insight {
     }
 
     private boolean equalTo(Insight other) {
-        return type.equals(other.type) && content.equals(other.content);
+        return content.equals(other.content);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.type, this.content);
+        return Objects.hash(this.content);
     }
 
     @java.lang.Override
@@ -77,29 +69,17 @@ public final class Insight {
         return ObjectMappers.stringify(this);
     }
 
-    public static TypeStage builder() {
+    public static ContentStage builder() {
         return new Builder();
-    }
-
-    public interface TypeStage {
-        /**
-         * <p>The type of insight:</p>
-         * <ul>
-         * <li><code>reasoning</code>: Model reasoning about the extraction decision</li>
-         * <li><code>issue</code>: A potential problem or concern identified by the agentic confidence system</li>
-         * <li><code>review_summary</code>: A summary explanation from the agentic confidence system about why the field may need manual review</li>
-         * </ul>
-         */
-        ContentStage type(@NotNull InsightType type);
-
-        Builder from(Insight other);
     }
 
     public interface ContentStage {
         /**
-         * <p>The content of the insight.</p>
+         * <p>The content of the reasoning insight.</p>
          */
         _FinalStage content(@NotNull String content);
+
+        Builder from(Insight other);
     }
 
     public interface _FinalStage {
@@ -107,9 +87,7 @@ public final class Insight {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements TypeStage, ContentStage, _FinalStage {
-        private InsightType type;
-
+    public static final class Builder implements ContentStage, _FinalStage {
         private String content;
 
         @JsonAnySetter
@@ -119,36 +97,13 @@ public final class Insight {
 
         @java.lang.Override
         public Builder from(Insight other) {
-            type(other.getType());
             content(other.getContent());
             return this;
         }
 
         /**
-         * <p>The type of insight:</p>
-         * <ul>
-         * <li><code>reasoning</code>: Model reasoning about the extraction decision</li>
-         * <li><code>issue</code>: A potential problem or concern identified by the agentic confidence system</li>
-         * <li><code>review_summary</code>: A summary explanation from the agentic confidence system about why the field may need manual review</li>
-         * </ul>
-         * <p>The type of insight:</p>
-         * <ul>
-         * <li><code>reasoning</code>: Model reasoning about the extraction decision</li>
-         * <li><code>issue</code>: A potential problem or concern identified by the agentic confidence system</li>
-         * <li><code>review_summary</code>: A summary explanation from the agentic confidence system about why the field may need manual review</li>
-         * </ul>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("type")
-        public ContentStage type(@NotNull InsightType type) {
-            this.type = Objects.requireNonNull(type, "type must not be null");
-            return this;
-        }
-
-        /**
-         * <p>The content of the insight.</p>
-         * <p>The content of the insight.</p>
+         * <p>The content of the reasoning insight.</p>
+         * <p>The content of the reasoning insight.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -160,7 +115,7 @@ public final class Insight {
 
         @java.lang.Override
         public Insight build() {
-            return new Insight(type, content, additionalProperties);
+            return new Insight(content, additionalProperties);
         }
     }
 }

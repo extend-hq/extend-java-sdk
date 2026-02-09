@@ -41,6 +41,13 @@ public class AsyncProcessorRunClient {
     /**
      * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
      */
+    public CompletableFuture<ProcessorRunListResponse> list(RequestOptions requestOptions) {
+        return this.rawClient.list(requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
+     */
     public CompletableFuture<ProcessorRunListResponse> list(ProcessorRunListRequest request) {
         return this.rawClient.list(request).thenApply(response -> response.body());
     }
@@ -62,7 +69,7 @@ public class AsyncProcessorRunClient {
      * </ul>
      * <p><strong>For asynchronous processing:</strong></p>
      * <ul>
-     * <li>You can <a href="https://docs.extend.ai/2025-04-21/developers/webhooks/configuration">configure webhooks</a> to receive notifications when a processor run is complete or failed.</li>
+     * <li>You can <a href="https://docs.extend.ai/product/webhooks/configuration">configure webhooks</a> to receive notifications when a processor run is complete or failed.</li>
      * <li>Or you can <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/processor-endpoints/get-processor-run">poll the get endpoint</a> for updates on the status of the processor run.</li>
      * </ul>
      */
@@ -79,7 +86,7 @@ public class AsyncProcessorRunClient {
      * </ul>
      * <p><strong>For asynchronous processing:</strong></p>
      * <ul>
-     * <li>You can <a href="https://docs.extend.ai/2025-04-21/developers/webhooks/configuration">configure webhooks</a> to receive notifications when a processor run is complete or failed.</li>
+     * <li>You can <a href="https://docs.extend.ai/product/webhooks/configuration">configure webhooks</a> to receive notifications when a processor run is complete or failed.</li>
      * <li>Or you can <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/processor-endpoints/get-processor-run">poll the get endpoint</a> for updates on the status of the processor run.</li>
      * </ul>
      */

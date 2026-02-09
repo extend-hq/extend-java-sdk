@@ -3,36 +3,153 @@
  */
 package ai.extend.types;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum ExtractionFieldResultType {
-    STRING("string"),
+public final class ExtractionFieldResultType {
+    public static final ExtractionFieldResultType NUMBER = new ExtractionFieldResultType(Value.NUMBER, "number");
 
-    NUMBER("number"),
+    public static final ExtractionFieldResultType STRING = new ExtractionFieldResultType(Value.STRING, "string");
 
-    CURRENCY("currency"),
+    public static final ExtractionFieldResultType BOOLEAN = new ExtractionFieldResultType(Value.BOOLEAN, "boolean");
 
-    BOOLEAN("boolean"),
+    public static final ExtractionFieldResultType CURRENCY = new ExtractionFieldResultType(Value.CURRENCY, "currency");
 
-    DATE("date"),
+    public static final ExtractionFieldResultType DATE = new ExtractionFieldResultType(Value.DATE, "date");
 
-    ENUM("enum"),
+    public static final ExtractionFieldResultType ENUM = new ExtractionFieldResultType(Value.ENUM, "enum");
 
-    ARRAY("array"),
+    public static final ExtractionFieldResultType SIGNATURE =
+            new ExtractionFieldResultType(Value.SIGNATURE, "signature");
 
-    OBJECT("object"),
+    public static final ExtractionFieldResultType ARRAY = new ExtractionFieldResultType(Value.ARRAY, "array");
 
-    SIGNATURE("signature");
+    public static final ExtractionFieldResultType OBJECT = new ExtractionFieldResultType(Value.OBJECT, "object");
 
-    private final String value;
+    private final Value value;
 
-    ExtractionFieldResultType(String value) {
+    private final String string;
+
+    ExtractionFieldResultType(Value value, String string) {
         this.value = value;
+        this.string = string;
     }
 
-    @JsonValue
+    public Value getEnumValue() {
+        return value;
+    }
+
     @java.lang.Override
+    @JsonValue
     public String toString() {
-        return this.value;
+        return this.string;
+    }
+
+    @java.lang.Override
+    public boolean equals(Object other) {
+        return (this == other)
+                || (other instanceof ExtractionFieldResultType
+                        && this.string.equals(((ExtractionFieldResultType) other).string));
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+        return this.string.hashCode();
+    }
+
+    public <T> T visit(Visitor<T> visitor) {
+        switch (value) {
+            case NUMBER:
+                return visitor.visitNumber();
+            case STRING:
+                return visitor.visitString();
+            case BOOLEAN:
+                return visitor.visitBoolean();
+            case CURRENCY:
+                return visitor.visitCurrency();
+            case DATE:
+                return visitor.visitDate();
+            case ENUM:
+                return visitor.visitEnum();
+            case SIGNATURE:
+                return visitor.visitSignature();
+            case ARRAY:
+                return visitor.visitArray();
+            case OBJECT:
+                return visitor.visitObject();
+            case UNKNOWN:
+            default:
+                return visitor.visitUnknown(string);
+        }
+    }
+
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static ExtractionFieldResultType valueOf(String value) {
+        switch (value) {
+            case "number":
+                return NUMBER;
+            case "string":
+                return STRING;
+            case "boolean":
+                return BOOLEAN;
+            case "currency":
+                return CURRENCY;
+            case "date":
+                return DATE;
+            case "enum":
+                return ENUM;
+            case "signature":
+                return SIGNATURE;
+            case "array":
+                return ARRAY;
+            case "object":
+                return OBJECT;
+            default:
+                return new ExtractionFieldResultType(Value.UNKNOWN, value);
+        }
+    }
+
+    public enum Value {
+        STRING,
+
+        NUMBER,
+
+        CURRENCY,
+
+        BOOLEAN,
+
+        DATE,
+
+        ENUM,
+
+        ARRAY,
+
+        OBJECT,
+
+        SIGNATURE,
+
+        UNKNOWN
+    }
+
+    public interface Visitor<T> {
+        T visitString();
+
+        T visitNumber();
+
+        T visitCurrency();
+
+        T visitBoolean();
+
+        T visitDate();
+
+        T visitEnum();
+
+        T visitArray();
+
+        T visitObject();
+
+        T visitSignature();
+
+        T visitUnknown(String unknownType);
     }
 }

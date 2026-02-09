@@ -4,7 +4,7 @@
 package ai.extend.resources.processorversion.types;
 
 import ai.extend.core.ObjectMappers;
-import ai.extend.types.ProcessorVersion;
+import ai.extend.types.LegacyProcessorVersion;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -22,12 +22,12 @@ import org.jetbrains.annotations.NotNull;
 public final class ProcessorVersionGetResponse {
     private final boolean success;
 
-    private final ProcessorVersion version;
+    private final LegacyProcessorVersion version;
 
     private final Map<String, Object> additionalProperties;
 
     private ProcessorVersionGetResponse(
-            boolean success, ProcessorVersion version, Map<String, Object> additionalProperties) {
+            boolean success, LegacyProcessorVersion version, Map<String, Object> additionalProperties) {
         this.success = success;
         this.version = version;
         this.additionalProperties = additionalProperties;
@@ -42,7 +42,7 @@ public final class ProcessorVersionGetResponse {
      * @return A ProcessorVersion object representing the requested version of the processor.
      */
     @JsonProperty("version")
-    public ProcessorVersion getVersion() {
+    public LegacyProcessorVersion getVersion() {
         return version;
     }
 
@@ -85,7 +85,7 @@ public final class ProcessorVersionGetResponse {
         /**
          * <p>A ProcessorVersion object representing the requested version of the processor.</p>
          */
-        _FinalStage version(@NotNull ProcessorVersion version);
+        _FinalStage version(@NotNull LegacyProcessorVersion version);
     }
 
     public interface _FinalStage {
@@ -96,7 +96,7 @@ public final class ProcessorVersionGetResponse {
     public static final class Builder implements SuccessStage, VersionStage, _FinalStage {
         private boolean success;
 
-        private ProcessorVersion version;
+        private LegacyProcessorVersion version;
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -124,7 +124,7 @@ public final class ProcessorVersionGetResponse {
          */
         @java.lang.Override
         @JsonSetter("version")
-        public _FinalStage version(@NotNull ProcessorVersion version) {
+        public _FinalStage version(@NotNull LegacyProcessorVersion version) {
             this.version = Objects.requireNonNull(version, "version must not be null");
             return this;
         }

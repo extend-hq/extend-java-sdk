@@ -6,7 +6,7 @@ package ai.extend.resources.processor.requests;
 import ai.extend.core.ObjectMappers;
 import ai.extend.resources.processor.types.ProcessorListRequestSortBy;
 import ai.extend.resources.processor.types.ProcessorListRequestSortDir;
-import ai.extend.types.ProcessorType;
+import ai.extend.types.LegacyProcessorType;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -23,7 +23,7 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ProcessorListRequest.Builder.class)
 public final class ProcessorListRequest {
-    private final Optional<ProcessorType> type;
+    private final Optional<LegacyProcessorType> type;
 
     private final Optional<String> nextPageToken;
 
@@ -36,7 +36,7 @@ public final class ProcessorListRequest {
     private final Map<String, Object> additionalProperties;
 
     private ProcessorListRequest(
-            Optional<ProcessorType> type,
+            Optional<LegacyProcessorType> type,
             Optional<String> nextPageToken,
             Optional<Integer> maxPageSize,
             Optional<ProcessorListRequestSortBy> sortBy,
@@ -54,7 +54,7 @@ public final class ProcessorListRequest {
      * @return Filter processors by type
      */
     @JsonProperty("type")
-    public Optional<ProcessorType> getType() {
+    public Optional<LegacyProcessorType> getType() {
         return type;
     }
 
@@ -125,7 +125,7 @@ public final class ProcessorListRequest {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-        private Optional<ProcessorType> type = Optional.empty();
+        private Optional<LegacyProcessorType> type = Optional.empty();
 
         private Optional<String> nextPageToken = Optional.empty();
 
@@ -153,12 +153,12 @@ public final class ProcessorListRequest {
          * <p>Filter processors by type</p>
          */
         @JsonSetter(value = "type", nulls = Nulls.SKIP)
-        public Builder type(Optional<ProcessorType> type) {
+        public Builder type(Optional<LegacyProcessorType> type) {
             this.type = type;
             return this;
         }
 
-        public Builder type(ProcessorType type) {
+        public Builder type(LegacyProcessorType type) {
             this.type = Optional.ofNullable(type);
             return this;
         }

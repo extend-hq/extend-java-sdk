@@ -4,7 +4,7 @@
 package ai.extend.resources.batchprocessorrun.types;
 
 import ai.extend.core.ObjectMappers;
-import ai.extend.types.BatchProcessorRun;
+import ai.extend.types.LegacyBatchProcessorRun;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -22,12 +22,12 @@ import org.jetbrains.annotations.NotNull;
 public final class BatchProcessorRunGetResponse {
     private final boolean success;
 
-    private final BatchProcessorRun batchProcessorRun;
+    private final LegacyBatchProcessorRun batchProcessorRun;
 
     private final Map<String, Object> additionalProperties;
 
     private BatchProcessorRunGetResponse(
-            boolean success, BatchProcessorRun batchProcessorRun, Map<String, Object> additionalProperties) {
+            boolean success, LegacyBatchProcessorRun batchProcessorRun, Map<String, Object> additionalProperties) {
         this.success = success;
         this.batchProcessorRun = batchProcessorRun;
         this.additionalProperties = additionalProperties;
@@ -39,7 +39,7 @@ public final class BatchProcessorRunGetResponse {
     }
 
     @JsonProperty("batchProcessorRun")
-    public BatchProcessorRun getBatchProcessorRun() {
+    public LegacyBatchProcessorRun getBatchProcessorRun() {
         return batchProcessorRun;
     }
 
@@ -79,7 +79,7 @@ public final class BatchProcessorRunGetResponse {
     }
 
     public interface BatchProcessorRunStage {
-        _FinalStage batchProcessorRun(@NotNull BatchProcessorRun batchProcessorRun);
+        _FinalStage batchProcessorRun(@NotNull LegacyBatchProcessorRun batchProcessorRun);
     }
 
     public interface _FinalStage {
@@ -90,7 +90,7 @@ public final class BatchProcessorRunGetResponse {
     public static final class Builder implements SuccessStage, BatchProcessorRunStage, _FinalStage {
         private boolean success;
 
-        private BatchProcessorRun batchProcessorRun;
+        private LegacyBatchProcessorRun batchProcessorRun;
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -113,7 +113,7 @@ public final class BatchProcessorRunGetResponse {
 
         @java.lang.Override
         @JsonSetter("batchProcessorRun")
-        public _FinalStage batchProcessorRun(@NotNull BatchProcessorRun batchProcessorRun) {
+        public _FinalStage batchProcessorRun(@NotNull LegacyBatchProcessorRun batchProcessorRun) {
             this.batchProcessorRun = Objects.requireNonNull(batchProcessorRun, "batchProcessorRun must not be null");
             return this;
         }

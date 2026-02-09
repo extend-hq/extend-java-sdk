@@ -32,11 +32,11 @@ public final class ProvidedProcessorOutput {
     @SuppressWarnings("unchecked")
     public <T> T visit(Visitor<T> visitor) {
         if (this.type == 0) {
-            return visitor.visit((ProvidedExtractionOutput) this.value);
+            return visitor.visit((ProvidedExtractOutput) this.value);
         } else if (this.type == 1) {
-            return visitor.visit((ProvidedClassifierOutput) this.value);
+            return visitor.visit((ProvidedClassifyOutput) this.value);
         } else if (this.type == 2) {
-            return visitor.visit((ProvidedSplitterOutput) this.value);
+            return visitor.visit((ProvidedSplitOutput) this.value);
         }
         throw new IllegalStateException("Failed to visit value. This should never happen.");
     }
@@ -61,24 +61,24 @@ public final class ProvidedProcessorOutput {
         return this.value.toString();
     }
 
-    public static ProvidedProcessorOutput of(ProvidedExtractionOutput value) {
+    public static ProvidedProcessorOutput of(ProvidedExtractOutput value) {
         return new ProvidedProcessorOutput(value, 0);
     }
 
-    public static ProvidedProcessorOutput of(ProvidedClassifierOutput value) {
+    public static ProvidedProcessorOutput of(ProvidedClassifyOutput value) {
         return new ProvidedProcessorOutput(value, 1);
     }
 
-    public static ProvidedProcessorOutput of(ProvidedSplitterOutput value) {
+    public static ProvidedProcessorOutput of(ProvidedSplitOutput value) {
         return new ProvidedProcessorOutput(value, 2);
     }
 
     public interface Visitor<T> {
-        T visit(ProvidedExtractionOutput value);
+        T visit(ProvidedExtractOutput value);
 
-        T visit(ProvidedClassifierOutput value);
+        T visit(ProvidedClassifyOutput value);
 
-        T visit(ProvidedSplitterOutput value);
+        T visit(ProvidedSplitOutput value);
     }
 
     static final class Deserializer extends StdDeserializer<ProvidedProcessorOutput> {
@@ -90,15 +90,15 @@ public final class ProvidedProcessorOutput {
         public ProvidedProcessorOutput deserialize(JsonParser p, DeserializationContext context) throws IOException {
             Object value = p.readValueAs(Object.class);
             try {
-                return of(ObjectMappers.JSON_MAPPER.convertValue(value, ProvidedExtractionOutput.class));
+                return of(ObjectMappers.JSON_MAPPER.convertValue(value, ProvidedExtractOutput.class));
             } catch (RuntimeException e) {
             }
             try {
-                return of(ObjectMappers.JSON_MAPPER.convertValue(value, ProvidedClassifierOutput.class));
+                return of(ObjectMappers.JSON_MAPPER.convertValue(value, ProvidedClassifyOutput.class));
             } catch (RuntimeException e) {
             }
             try {
-                return of(ObjectMappers.JSON_MAPPER.convertValue(value, ProvidedSplitterOutput.class));
+                return of(ObjectMappers.JSON_MAPPER.convertValue(value, ProvidedSplitOutput.class));
             } catch (RuntimeException e) {
             }
             throw new JsonParseException(p, "Failed to deserialize");
