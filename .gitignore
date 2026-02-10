@@ -15,9 +15,6 @@ build
 .idea/
 out/
 
-# VS Code
-.vscode/
-
 # Eclipse/IntelliJ APT
 generated_src/
 generated_testSrc/
