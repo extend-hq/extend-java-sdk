@@ -50,7 +50,7 @@ java {
 
 group = 'ai.extend'
 
-version = '1.0.0'
+version = '1.0.1'
 
 jar {
     dependsOn(":generatePomFileForMavenPublication")
@@ -81,7 +81,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'ai.extend'
             artifactId = 'extend-java-sdk'
-            version = '1.0.0'
+            version = '1.0.1'
             from components.java
             pom {
                 name = 'Extend.ai'
