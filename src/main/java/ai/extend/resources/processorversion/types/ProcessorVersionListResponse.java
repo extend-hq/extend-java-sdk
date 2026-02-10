@@ -4,7 +4,7 @@
 package ai.extend.resources.processorversion.types;
 
 import ai.extend.core.ObjectMappers;
-import ai.extend.types.ProcessorVersion;
+import ai.extend.types.LegacyProcessorVersion;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -24,12 +24,12 @@ import java.util.Objects;
 public final class ProcessorVersionListResponse {
     private final boolean success;
 
-    private final List<ProcessorVersion> versions;
+    private final List<LegacyProcessorVersion> versions;
 
     private final Map<String, Object> additionalProperties;
 
     private ProcessorVersionListResponse(
-            boolean success, List<ProcessorVersion> versions, Map<String, Object> additionalProperties) {
+            boolean success, List<LegacyProcessorVersion> versions, Map<String, Object> additionalProperties) {
         this.success = success;
         this.versions = versions;
         this.additionalProperties = additionalProperties;
@@ -44,7 +44,7 @@ public final class ProcessorVersionListResponse {
      * @return An array of ProcessorVersion objects representing all versions of the specified processor.
      */
     @JsonProperty("versions")
-    public List<ProcessorVersion> getVersions() {
+    public List<LegacyProcessorVersion> getVersions() {
         return versions;
     }
 
@@ -89,18 +89,18 @@ public final class ProcessorVersionListResponse {
         /**
          * <p>An array of ProcessorVersion objects representing all versions of the specified processor.</p>
          */
-        _FinalStage versions(List<ProcessorVersion> versions);
+        _FinalStage versions(List<LegacyProcessorVersion> versions);
 
-        _FinalStage addVersions(ProcessorVersion versions);
+        _FinalStage addVersions(LegacyProcessorVersion versions);
 
-        _FinalStage addAllVersions(List<ProcessorVersion> versions);
+        _FinalStage addAllVersions(List<LegacyProcessorVersion> versions);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements SuccessStage, _FinalStage {
         private boolean success;
 
-        private List<ProcessorVersion> versions = new ArrayList<>();
+        private List<LegacyProcessorVersion> versions = new ArrayList<>();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -126,8 +126,10 @@ public final class ProcessorVersionListResponse {
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage addAllVersions(List<ProcessorVersion> versions) {
-            this.versions.addAll(versions);
+        public _FinalStage addAllVersions(List<LegacyProcessorVersion> versions) {
+            if (versions != null) {
+                this.versions.addAll(versions);
+            }
             return this;
         }
 
@@ -136,7 +138,7 @@ public final class ProcessorVersionListResponse {
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage addVersions(ProcessorVersion versions) {
+        public _FinalStage addVersions(LegacyProcessorVersion versions) {
             this.versions.add(versions);
             return this;
         }
@@ -146,9 +148,11 @@ public final class ProcessorVersionListResponse {
          */
         @java.lang.Override
         @JsonSetter(value = "versions", nulls = Nulls.SKIP)
-        public _FinalStage versions(List<ProcessorVersion> versions) {
+        public _FinalStage versions(List<LegacyProcessorVersion> versions) {
             this.versions.clear();
-            this.versions.addAll(versions);
+            if (versions != null) {
+                this.versions.addAll(versions);
+            }
             return this;
         }
 

@@ -10,7 +10,7 @@ import ai.extend.resources.processor.requests.ProcessorListRequest;
 import ai.extend.resources.processor.requests.ProcessorUpdateRequest;
 import ai.extend.resources.processor.types.ProcessorCreateResponse;
 import ai.extend.resources.processor.types.ProcessorUpdateResponse;
-import ai.extend.types.ListProcessorsResponse;
+import ai.extend.types.LegacyListProcessorsResponse;
 import java.util.concurrent.CompletableFuture;
 
 public class AsyncProcessorClient {
@@ -33,21 +33,29 @@ public class AsyncProcessorClient {
     /**
      * List all processors in your organization
      */
-    public CompletableFuture<ListProcessorsResponse> list() {
+    public CompletableFuture<LegacyListProcessorsResponse> list() {
         return this.rawClient.list().thenApply(response -> response.body());
     }
 
     /**
      * List all processors in your organization
      */
-    public CompletableFuture<ListProcessorsResponse> list(ProcessorListRequest request) {
+    public CompletableFuture<LegacyListProcessorsResponse> list(RequestOptions requestOptions) {
+        return this.rawClient.list(requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * List all processors in your organization
+     */
+    public CompletableFuture<LegacyListProcessorsResponse> list(ProcessorListRequest request) {
         return this.rawClient.list(request).thenApply(response -> response.body());
     }
 
     /**
      * List all processors in your organization
      */
-    public CompletableFuture<ListProcessorsResponse> list(ProcessorListRequest request, RequestOptions requestOptions) {
+    public CompletableFuture<LegacyListProcessorsResponse> list(
+            ProcessorListRequest request, RequestOptions requestOptions) {
         return this.rawClient.list(request, requestOptions).thenApply(response -> response.body());
     }
 
@@ -71,6 +79,13 @@ public class AsyncProcessorClient {
      */
     public CompletableFuture<ProcessorUpdateResponse> update(String id) {
         return this.rawClient.update(id).thenApply(response -> response.body());
+    }
+
+    /**
+     * Update an existing processor in Extend
+     */
+    public CompletableFuture<ProcessorUpdateResponse> update(String id, RequestOptions requestOptions) {
+        return this.rawClient.update(id, requestOptions).thenApply(response -> response.body());
     }
 
     /**

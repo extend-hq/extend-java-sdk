@@ -3,26 +3,106 @@
  */
 package ai.extend.types;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum ExtractChunkingOptionsChunkSelectionStrategy {
-    INTELLIGENT("intelligent"),
+public final class ExtractChunkingOptionsChunkSelectionStrategy {
+    public static final ExtractChunkingOptionsChunkSelectionStrategy INTELLIGENT =
+            new ExtractChunkingOptionsChunkSelectionStrategy(Value.INTELLIGENT, "intelligent");
 
-    CONFIDENCE("confidence"),
+    public static final ExtractChunkingOptionsChunkSelectionStrategy TAKE_FIRST =
+            new ExtractChunkingOptionsChunkSelectionStrategy(Value.TAKE_FIRST, "take_first");
 
-    TAKE_FIRST("take_first"),
+    public static final ExtractChunkingOptionsChunkSelectionStrategy TAKE_LAST =
+            new ExtractChunkingOptionsChunkSelectionStrategy(Value.TAKE_LAST, "take_last");
 
-    TAKE_LAST("take_last");
+    public static final ExtractChunkingOptionsChunkSelectionStrategy CONFIDENCE =
+            new ExtractChunkingOptionsChunkSelectionStrategy(Value.CONFIDENCE, "confidence");
 
-    private final String value;
+    private final Value value;
 
-    ExtractChunkingOptionsChunkSelectionStrategy(String value) {
+    private final String string;
+
+    ExtractChunkingOptionsChunkSelectionStrategy(Value value, String string) {
         this.value = value;
+        this.string = string;
     }
 
-    @JsonValue
+    public Value getEnumValue() {
+        return value;
+    }
+
     @java.lang.Override
+    @JsonValue
     public String toString() {
-        return this.value;
+        return this.string;
+    }
+
+    @java.lang.Override
+    public boolean equals(Object other) {
+        return (this == other)
+                || (other instanceof ExtractChunkingOptionsChunkSelectionStrategy
+                        && this.string.equals(((ExtractChunkingOptionsChunkSelectionStrategy) other).string));
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+        return this.string.hashCode();
+    }
+
+    public <T> T visit(Visitor<T> visitor) {
+        switch (value) {
+            case INTELLIGENT:
+                return visitor.visitIntelligent();
+            case TAKE_FIRST:
+                return visitor.visitTakeFirst();
+            case TAKE_LAST:
+                return visitor.visitTakeLast();
+            case CONFIDENCE:
+                return visitor.visitConfidence();
+            case UNKNOWN:
+            default:
+                return visitor.visitUnknown(string);
+        }
+    }
+
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static ExtractChunkingOptionsChunkSelectionStrategy valueOf(String value) {
+        switch (value) {
+            case "intelligent":
+                return INTELLIGENT;
+            case "take_first":
+                return TAKE_FIRST;
+            case "take_last":
+                return TAKE_LAST;
+            case "confidence":
+                return CONFIDENCE;
+            default:
+                return new ExtractChunkingOptionsChunkSelectionStrategy(Value.UNKNOWN, value);
+        }
+    }
+
+    public enum Value {
+        INTELLIGENT,
+
+        CONFIDENCE,
+
+        TAKE_FIRST,
+
+        TAKE_LAST,
+
+        UNKNOWN
+    }
+
+    public interface Visitor<T> {
+        T visitIntelligent();
+
+        T visitConfidence();
+
+        T visitTakeFirst();
+
+        T visitTakeLast();
+
+        T visitUnknown(String unknownType);
     }
 }

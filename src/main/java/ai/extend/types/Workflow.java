@@ -19,30 +19,24 @@ import org.jetbrains.annotations.NotNull;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = Workflow.Builder.class)
 public final class Workflow {
-    private final String object;
-
     private final String id;
-
-    private final String version;
 
     private final String name;
 
     private final Map<String, Object> additionalProperties;
 
-    private Workflow(String object, String id, String version, String name, Map<String, Object> additionalProperties) {
-        this.object = object;
+    private Workflow(String id, String name, Map<String, Object> additionalProperties) {
         this.id = id;
-        this.version = version;
         this.name = name;
         this.additionalProperties = additionalProperties;
     }
 
     /**
-     * @return The type of response. In this case, it will always be <code>&quot;workflow&quot;</code>.
+     * @return The type of object. In this case, it will always be <code>&quot;workflow&quot;</code>.
      */
     @JsonProperty("object")
     public String getObject() {
-        return object;
+        return "workflow";
     }
 
     /**
@@ -52,15 +46,6 @@ public final class Workflow {
     @JsonProperty("id")
     public String getId() {
         return id;
-    }
-
-    /**
-     * @return The version of the workflow.
-     * <p>Examples: <code>&quot;3&quot;</code>, <code>&quot;draft&quot;</code></p>
-     */
-    @JsonProperty("version")
-    public String getVersion() {
-        return version;
     }
 
     /**
@@ -84,15 +69,12 @@ public final class Workflow {
     }
 
     private boolean equalTo(Workflow other) {
-        return object.equals(other.object)
-                && id.equals(other.id)
-                && version.equals(other.version)
-                && name.equals(other.name);
+        return id.equals(other.id) && name.equals(other.name);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.object, this.id, this.version, this.name);
+        return Objects.hash(this.id, this.name);
     }
 
     @java.lang.Override
@@ -100,17 +82,8 @@ public final class Workflow {
         return ObjectMappers.stringify(this);
     }
 
-    public static ObjectStage builder() {
+    public static IdStage builder() {
         return new Builder();
-    }
-
-    public interface ObjectStage {
-        /**
-         * <p>The type of response. In this case, it will always be <code>&quot;workflow&quot;</code>.</p>
-         */
-        IdStage object(@NotNull String object);
-
-        Builder from(Workflow other);
     }
 
     public interface IdStage {
@@ -118,15 +91,9 @@ public final class Workflow {
          * <p>The ID of the workflow.</p>
          * <p>Example: <code>&quot;workflow_BMlfq_yWM3sT-ZzvCnA3f&quot;</code></p>
          */
-        VersionStage id(@NotNull String id);
-    }
+        NameStage id(@NotNull String id);
 
-    public interface VersionStage {
-        /**
-         * <p>The version of the workflow.</p>
-         * <p>Examples: <code>&quot;3&quot;</code>, <code>&quot;draft&quot;</code></p>
-         */
-        NameStage version(@NotNull String version);
+        Builder from(Workflow other);
     }
 
     public interface NameStage {
@@ -142,12 +109,8 @@ public final class Workflow {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements ObjectStage, IdStage, VersionStage, NameStage, _FinalStage {
-        private String object;
-
+    public static final class Builder implements IdStage, NameStage, _FinalStage {
         private String id;
-
-        private String version;
 
         private String name;
 
@@ -158,22 +121,8 @@ public final class Workflow {
 
         @java.lang.Override
         public Builder from(Workflow other) {
-            object(other.getObject());
             id(other.getId());
-            version(other.getVersion());
             name(other.getName());
-            return this;
-        }
-
-        /**
-         * <p>The type of response. In this case, it will always be <code>&quot;workflow&quot;</code>.</p>
-         * <p>The type of response. In this case, it will always be <code>&quot;workflow&quot;</code>.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("object")
-        public IdStage object(@NotNull String object) {
-            this.object = Objects.requireNonNull(object, "object must not be null");
             return this;
         }
 
@@ -186,22 +135,8 @@ public final class Workflow {
          */
         @java.lang.Override
         @JsonSetter("id")
-        public VersionStage id(@NotNull String id) {
+        public NameStage id(@NotNull String id) {
             this.id = Objects.requireNonNull(id, "id must not be null");
-            return this;
-        }
-
-        /**
-         * <p>The version of the workflow.</p>
-         * <p>Examples: <code>&quot;3&quot;</code>, <code>&quot;draft&quot;</code></p>
-         * <p>The version of the workflow.</p>
-         * <p>Examples: <code>&quot;3&quot;</code>, <code>&quot;draft&quot;</code></p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("version")
-        public NameStage version(@NotNull String version) {
-            this.version = Objects.requireNonNull(version, "version must not be null");
             return this;
         }
 
@@ -221,7 +156,7 @@ public final class Workflow {
 
         @java.lang.Override
         public Workflow build() {
-            return new Workflow(object, id, version, name, additionalProperties);
+            return new Workflow(id, name, additionalProperties);
         }
     }
 }

@@ -4,97 +4,51 @@
 package ai.extend.types;
 
 import ai.extend.core.ObjectMappers;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import java.util.HashMap;
-import java.util.Map;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import java.io.IOException;
 import java.util.Objects;
-import java.util.Optional;
-import org.jetbrains.annotations.NotNull;
 
-@JsonInclude(JsonInclude.Include.NON_ABSENT)
-@JsonDeserialize(builder = StepRun.Builder.class)
+@JsonDeserialize(using = StepRun.Deserializer.class)
 public final class StepRun {
-    private final String object;
+    private final Object value;
 
-    private final String id;
+    private final int type;
 
-    private final StepRunStatus status;
-
-    private final StepRunStep step;
-
-    private final Optional<StepRunOutput> output;
-
-    private final Map<String, Object> additionalProperties;
-
-    private StepRun(
-            String object,
-            String id,
-            StepRunStatus status,
-            StepRunStep step,
-            Optional<StepRunOutput> output,
-            Map<String, Object> additionalProperties) {
-        this.object = object;
-        this.id = id;
-        this.status = status;
-        this.step = step;
-        this.output = output;
-        this.additionalProperties = additionalProperties;
+    private StepRun(Object value, int type) {
+        this.value = value;
+        this.type = type;
     }
 
-    /**
-     * @return The type of response. In this case, it will always be <code>&quot;workflow_step_run&quot;</code>.
-     */
-    @JsonProperty("object")
-    public String getObject() {
-        return object;
+    @JsonValue
+    public Object get() {
+        return this.value;
     }
 
-    /**
-     * @return The ID of the workflow step run.
-     * <p>Example: <code>&quot;workflow_step_run_xKm9pNv3qWsY_jL2tR5Dh&quot;</code></p>
-     */
-    @JsonProperty("id")
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * @return The status of the workflow step run:
-     * <ul>
-     * <li><code>&quot;PENDING&quot;</code> - The step run is waiting to be executed</li>
-     * <li><code>&quot;PROCESSING&quot;</code> - The step run is currently executing</li>
-     * <li><code>&quot;PROCESSED&quot;</code> - The step run completed successfully</li>
-     * <li><code>&quot;FAILED&quot;</code> - The step run encountered an error</li>
-     * <li><code>&quot;CANCELLED&quot;</code> - The step run was cancelled</li>
-     * </ul>
-     */
-    @JsonProperty("status")
-    public StepRunStatus getStatus() {
-        return status;
-    }
-
-    @JsonProperty("step")
-    public StepRunStep getStep() {
-        return step;
-    }
-
-    /**
-     * @return The output of the WorkflowStepRun. The shape of the output depends on the type of the WorkflowStep in the <code>step</code> field:
-     * <ul>
-     * <li>For <code>&quot;EXTERNAL_DATA_VALIDATION&quot;</code> steps - The output will be the same object that was returned by the external endpoint configured for this step</li>
-     * <li>For <code>&quot;RULE_VALIDATION&quot;</code> steps - See the below shape:</li>
-     * </ul>
-     */
-    @JsonProperty("output")
-    public Optional<StepRunOutput> getOutput() {
-        return output;
+    @SuppressWarnings("unchecked")
+    public <T> T visit(Visitor<T> visitor) {
+        if (this.type == 0) {
+            return visitor.visit((ParseStepRun) this.value);
+        } else if (this.type == 1) {
+            return visitor.visit((ExtractStepRun) this.value);
+        } else if (this.type == 2) {
+            return visitor.visit((ClassifyStepRun) this.value);
+        } else if (this.type == 3) {
+            return visitor.visit((SplitStepRun) this.value);
+        } else if (this.type == 4) {
+            return visitor.visit((MergeExtractStepRun) this.value);
+        } else if (this.type == 5) {
+            return visitor.visit((ConditionalExtractStepRun) this.value);
+        } else if (this.type == 6) {
+            return visitor.visit((RuleValidationStepRun) this.value);
+        } else if (this.type == 7) {
+            return visitor.visit((ExternalDataValidationStepRun) this.value);
+        }
+        throw new IllegalStateException("Failed to visit value. This should never happen.");
     }
 
     @java.lang.Override
@@ -103,200 +57,111 @@ public final class StepRun {
         return other instanceof StepRun && equalTo((StepRun) other);
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
     private boolean equalTo(StepRun other) {
-        return object.equals(other.object)
-                && id.equals(other.id)
-                && status.equals(other.status)
-                && step.equals(other.step)
-                && output.equals(other.output);
+        return value.equals(other.value);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.object, this.id, this.status, this.step, this.output);
+        return Objects.hash(this.value);
     }
 
     @java.lang.Override
     public String toString() {
-        return ObjectMappers.stringify(this);
+        return this.value.toString();
     }
 
-    public static ObjectStage builder() {
-        return new Builder();
+    public static StepRun of(ParseStepRun value) {
+        return new StepRun(value, 0);
     }
 
-    public interface ObjectStage {
-        /**
-         * <p>The type of response. In this case, it will always be <code>&quot;workflow_step_run&quot;</code>.</p>
-         */
-        IdStage object(@NotNull String object);
-
-        Builder from(StepRun other);
+    public static StepRun of(ExtractStepRun value) {
+        return new StepRun(value, 1);
     }
 
-    public interface IdStage {
-        /**
-         * <p>The ID of the workflow step run.</p>
-         * <p>Example: <code>&quot;workflow_step_run_xKm9pNv3qWsY_jL2tR5Dh&quot;</code></p>
-         */
-        StatusStage id(@NotNull String id);
+    public static StepRun of(ClassifyStepRun value) {
+        return new StepRun(value, 2);
     }
 
-    public interface StatusStage {
-        /**
-         * <p>The status of the workflow step run:</p>
-         * <ul>
-         * <li><code>&quot;PENDING&quot;</code> - The step run is waiting to be executed</li>
-         * <li><code>&quot;PROCESSING&quot;</code> - The step run is currently executing</li>
-         * <li><code>&quot;PROCESSED&quot;</code> - The step run completed successfully</li>
-         * <li><code>&quot;FAILED&quot;</code> - The step run encountered an error</li>
-         * <li><code>&quot;CANCELLED&quot;</code> - The step run was cancelled</li>
-         * </ul>
-         */
-        StepStage status(@NotNull StepRunStatus status);
+    public static StepRun of(SplitStepRun value) {
+        return new StepRun(value, 3);
     }
 
-    public interface StepStage {
-        _FinalStage step(@NotNull StepRunStep step);
+    public static StepRun of(MergeExtractStepRun value) {
+        return new StepRun(value, 4);
     }
 
-    public interface _FinalStage {
-        StepRun build();
-
-        /**
-         * <p>The output of the WorkflowStepRun. The shape of the output depends on the type of the WorkflowStep in the <code>step</code> field:</p>
-         * <ul>
-         * <li>For <code>&quot;EXTERNAL_DATA_VALIDATION&quot;</code> steps - The output will be the same object that was returned by the external endpoint configured for this step</li>
-         * <li>For <code>&quot;RULE_VALIDATION&quot;</code> steps - See the below shape:</li>
-         * </ul>
-         */
-        _FinalStage output(Optional<StepRunOutput> output);
-
-        _FinalStage output(StepRunOutput output);
+    public static StepRun of(ConditionalExtractStepRun value) {
+        return new StepRun(value, 5);
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements ObjectStage, IdStage, StatusStage, StepStage, _FinalStage {
-        private String object;
+    public static StepRun of(RuleValidationStepRun value) {
+        return new StepRun(value, 6);
+    }
 
-        private String id;
+    public static StepRun of(ExternalDataValidationStepRun value) {
+        return new StepRun(value, 7);
+    }
 
-        private StepRunStatus status;
+    public interface Visitor<T> {
+        T visit(ParseStepRun value);
 
-        private StepRunStep step;
+        T visit(ExtractStepRun value);
 
-        private Optional<StepRunOutput> output = Optional.empty();
+        T visit(ClassifyStepRun value);
 
-        @JsonAnySetter
-        private Map<String, Object> additionalProperties = new HashMap<>();
+        T visit(SplitStepRun value);
 
-        private Builder() {}
+        T visit(MergeExtractStepRun value);
 
-        @java.lang.Override
-        public Builder from(StepRun other) {
-            object(other.getObject());
-            id(other.getId());
-            status(other.getStatus());
-            step(other.getStep());
-            output(other.getOutput());
-            return this;
-        }
+        T visit(ConditionalExtractStepRun value);
 
-        /**
-         * <p>The type of response. In this case, it will always be <code>&quot;workflow_step_run&quot;</code>.</p>
-         * <p>The type of response. In this case, it will always be <code>&quot;workflow_step_run&quot;</code>.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("object")
-        public IdStage object(@NotNull String object) {
-            this.object = Objects.requireNonNull(object, "object must not be null");
-            return this;
-        }
+        T visit(RuleValidationStepRun value);
 
-        /**
-         * <p>The ID of the workflow step run.</p>
-         * <p>Example: <code>&quot;workflow_step_run_xKm9pNv3qWsY_jL2tR5Dh&quot;</code></p>
-         * <p>The ID of the workflow step run.</p>
-         * <p>Example: <code>&quot;workflow_step_run_xKm9pNv3qWsY_jL2tR5Dh&quot;</code></p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("id")
-        public StatusStage id(@NotNull String id) {
-            this.id = Objects.requireNonNull(id, "id must not be null");
-            return this;
-        }
+        T visit(ExternalDataValidationStepRun value);
+    }
 
-        /**
-         * <p>The status of the workflow step run:</p>
-         * <ul>
-         * <li><code>&quot;PENDING&quot;</code> - The step run is waiting to be executed</li>
-         * <li><code>&quot;PROCESSING&quot;</code> - The step run is currently executing</li>
-         * <li><code>&quot;PROCESSED&quot;</code> - The step run completed successfully</li>
-         * <li><code>&quot;FAILED&quot;</code> - The step run encountered an error</li>
-         * <li><code>&quot;CANCELLED&quot;</code> - The step run was cancelled</li>
-         * </ul>
-         * <p>The status of the workflow step run:</p>
-         * <ul>
-         * <li><code>&quot;PENDING&quot;</code> - The step run is waiting to be executed</li>
-         * <li><code>&quot;PROCESSING&quot;</code> - The step run is currently executing</li>
-         * <li><code>&quot;PROCESSED&quot;</code> - The step run completed successfully</li>
-         * <li><code>&quot;FAILED&quot;</code> - The step run encountered an error</li>
-         * <li><code>&quot;CANCELLED&quot;</code> - The step run was cancelled</li>
-         * </ul>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("status")
-        public StepStage status(@NotNull StepRunStatus status) {
-            this.status = Objects.requireNonNull(status, "status must not be null");
-            return this;
+    static final class Deserializer extends StdDeserializer<StepRun> {
+        Deserializer() {
+            super(StepRun.class);
         }
 
         @java.lang.Override
-        @JsonSetter("step")
-        public _FinalStage step(@NotNull StepRunStep step) {
-            this.step = Objects.requireNonNull(step, "step must not be null");
-            return this;
-        }
-
-        /**
-         * <p>The output of the WorkflowStepRun. The shape of the output depends on the type of the WorkflowStep in the <code>step</code> field:</p>
-         * <ul>
-         * <li>For <code>&quot;EXTERNAL_DATA_VALIDATION&quot;</code> steps - The output will be the same object that was returned by the external endpoint configured for this step</li>
-         * <li>For <code>&quot;RULE_VALIDATION&quot;</code> steps - See the below shape:</li>
-         * </ul>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage output(StepRunOutput output) {
-            this.output = Optional.ofNullable(output);
-            return this;
-        }
-
-        /**
-         * <p>The output of the WorkflowStepRun. The shape of the output depends on the type of the WorkflowStep in the <code>step</code> field:</p>
-         * <ul>
-         * <li>For <code>&quot;EXTERNAL_DATA_VALIDATION&quot;</code> steps - The output will be the same object that was returned by the external endpoint configured for this step</li>
-         * <li>For <code>&quot;RULE_VALIDATION&quot;</code> steps - See the below shape:</li>
-         * </ul>
-         */
-        @java.lang.Override
-        @JsonSetter(value = "output", nulls = Nulls.SKIP)
-        public _FinalStage output(Optional<StepRunOutput> output) {
-            this.output = output;
-            return this;
-        }
-
-        @java.lang.Override
-        public StepRun build() {
-            return new StepRun(object, id, status, step, output, additionalProperties);
+        public StepRun deserialize(JsonParser p, DeserializationContext context) throws IOException {
+            Object value = p.readValueAs(Object.class);
+            try {
+                return of(ObjectMappers.JSON_MAPPER.convertValue(value, ParseStepRun.class));
+            } catch (RuntimeException e) {
+            }
+            try {
+                return of(ObjectMappers.JSON_MAPPER.convertValue(value, ExtractStepRun.class));
+            } catch (RuntimeException e) {
+            }
+            try {
+                return of(ObjectMappers.JSON_MAPPER.convertValue(value, ClassifyStepRun.class));
+            } catch (RuntimeException e) {
+            }
+            try {
+                return of(ObjectMappers.JSON_MAPPER.convertValue(value, SplitStepRun.class));
+            } catch (RuntimeException e) {
+            }
+            try {
+                return of(ObjectMappers.JSON_MAPPER.convertValue(value, MergeExtractStepRun.class));
+            } catch (RuntimeException e) {
+            }
+            try {
+                return of(ObjectMappers.JSON_MAPPER.convertValue(value, ConditionalExtractStepRun.class));
+            } catch (RuntimeException e) {
+            }
+            try {
+                return of(ObjectMappers.JSON_MAPPER.convertValue(value, RuleValidationStepRun.class));
+            } catch (RuntimeException e) {
+            }
+            try {
+                return of(ObjectMappers.JSON_MAPPER.convertValue(value, ExternalDataValidationStepRun.class));
+            } catch (RuntimeException e) {
+            }
+            throw new JsonParseException(p, "Failed to deserialize");
         }
     }
 }

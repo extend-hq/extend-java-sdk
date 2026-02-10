@@ -20,15 +20,13 @@ import org.jetbrains.annotations.NotNull;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = EvaluationSet.Builder.class)
 public final class EvaluationSet {
-    private final String object;
-
     private final String id;
 
     private final String name;
 
     private final String description;
 
-    private final String processorId;
+    private final EvaluationSetEntity entity;
 
     private final OffsetDateTime createdAt;
 
@@ -37,30 +35,28 @@ public final class EvaluationSet {
     private final Map<String, Object> additionalProperties;
 
     private EvaluationSet(
-            String object,
             String id,
             String name,
             String description,
-            String processorId,
+            EvaluationSetEntity entity,
             OffsetDateTime createdAt,
             OffsetDateTime updatedAt,
             Map<String, Object> additionalProperties) {
-        this.object = object;
         this.id = id;
         this.name = name;
         this.description = description;
-        this.processorId = processorId;
+        this.entity = entity;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.additionalProperties = additionalProperties;
     }
 
     /**
-     * @return The type of response. In this case, it will always be <code>&quot;evaluation_set&quot;</code>.
+     * @return The type of object. In this case, it will always be <code>&quot;evaluation_set&quot;</code>.
      */
     @JsonProperty("object")
     public String getObject() {
-        return object;
+        return "evaluation_set";
     }
 
     /**
@@ -91,27 +87,18 @@ public final class EvaluationSet {
     }
 
     /**
-     * @return The ID of the processor associated with this evaluation set.
-     * <p>Example: <code>&quot;dp_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+     * @return The extractor, classifier, or splitter associated with this evaluation set.
      */
-    @JsonProperty("processorId")
-    public String getProcessorId() {
-        return processorId;
+    @JsonProperty("entity")
+    public EvaluationSetEntity getEntity() {
+        return entity;
     }
 
-    /**
-     * @return The time (in UTC) at which the evaluation set was created. Will follow the RFC 3339 format.
-     * <p>Example: <code>&quot;2024-03-21T15:30:00Z&quot;</code></p>
-     */
     @JsonProperty("createdAt")
     public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
-    /**
-     * @return The time (in UTC) at which the evaluation set was last updated. Will follow the RFC 3339 format.
-     * <p>Example: <code>&quot;2024-03-21T16:45:00Z&quot;</code></p>
-     */
     @JsonProperty("updatedAt")
     public OffsetDateTime getUpdatedAt() {
         return updatedAt;
@@ -129,19 +116,17 @@ public final class EvaluationSet {
     }
 
     private boolean equalTo(EvaluationSet other) {
-        return object.equals(other.object)
-                && id.equals(other.id)
+        return id.equals(other.id)
                 && name.equals(other.name)
                 && description.equals(other.description)
-                && processorId.equals(other.processorId)
+                && entity.equals(other.entity)
                 && createdAt.equals(other.createdAt)
                 && updatedAt.equals(other.updatedAt);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(
-                this.object, this.id, this.name, this.description, this.processorId, this.createdAt, this.updatedAt);
+        return Objects.hash(this.id, this.name, this.description, this.entity, this.createdAt, this.updatedAt);
     }
 
     @java.lang.Override
@@ -149,17 +134,8 @@ public final class EvaluationSet {
         return ObjectMappers.stringify(this);
     }
 
-    public static ObjectStage builder() {
+    public static IdStage builder() {
         return new Builder();
-    }
-
-    public interface ObjectStage {
-        /**
-         * <p>The type of response. In this case, it will always be <code>&quot;evaluation_set&quot;</code>.</p>
-         */
-        IdStage object(@NotNull String object);
-
-        Builder from(EvaluationSet other);
     }
 
     public interface IdStage {
@@ -168,6 +144,8 @@ public final class EvaluationSet {
          * <p>Example: <code>&quot;ev_2LcgeY_mp2T5yPaEuq5Lw&quot;</code></p>
          */
         NameStage id(@NotNull String id);
+
+        Builder from(EvaluationSet other);
     }
 
     public interface NameStage {
@@ -183,30 +161,21 @@ public final class EvaluationSet {
          * <p>A description of the evaluation set.</p>
          * <p>Example: <code>&quot;Q4 2023 vendor invoices for accuracy testing&quot;</code></p>
          */
-        ProcessorIdStage description(@NotNull String description);
+        EntityStage description(@NotNull String description);
     }
 
-    public interface ProcessorIdStage {
+    public interface EntityStage {
         /**
-         * <p>The ID of the processor associated with this evaluation set.</p>
-         * <p>Example: <code>&quot;dp_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         * <p>The extractor, classifier, or splitter associated with this evaluation set.</p>
          */
-        CreatedAtStage processorId(@NotNull String processorId);
+        CreatedAtStage entity(@NotNull EvaluationSetEntity entity);
     }
 
     public interface CreatedAtStage {
-        /**
-         * <p>The time (in UTC) at which the evaluation set was created. Will follow the RFC 3339 format.</p>
-         * <p>Example: <code>&quot;2024-03-21T15:30:00Z&quot;</code></p>
-         */
         UpdatedAtStage createdAt(@NotNull OffsetDateTime createdAt);
     }
 
     public interface UpdatedAtStage {
-        /**
-         * <p>The time (in UTC) at which the evaluation set was last updated. Will follow the RFC 3339 format.</p>
-         * <p>Example: <code>&quot;2024-03-21T16:45:00Z&quot;</code></p>
-         */
         _FinalStage updatedAt(@NotNull OffsetDateTime updatedAt);
     }
 
@@ -216,23 +185,14 @@ public final class EvaluationSet {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder
-            implements ObjectStage,
-                    IdStage,
-                    NameStage,
-                    DescriptionStage,
-                    ProcessorIdStage,
-                    CreatedAtStage,
-                    UpdatedAtStage,
-                    _FinalStage {
-        private String object;
-
+            implements IdStage, NameStage, DescriptionStage, EntityStage, CreatedAtStage, UpdatedAtStage, _FinalStage {
         private String id;
 
         private String name;
 
         private String description;
 
-        private String processorId;
+        private EvaluationSetEntity entity;
 
         private OffsetDateTime createdAt;
 
@@ -245,25 +205,12 @@ public final class EvaluationSet {
 
         @java.lang.Override
         public Builder from(EvaluationSet other) {
-            object(other.getObject());
             id(other.getId());
             name(other.getName());
             description(other.getDescription());
-            processorId(other.getProcessorId());
+            entity(other.getEntity());
             createdAt(other.getCreatedAt());
             updatedAt(other.getUpdatedAt());
-            return this;
-        }
-
-        /**
-         * <p>The type of response. In this case, it will always be <code>&quot;evaluation_set&quot;</code>.</p>
-         * <p>The type of response. In this case, it will always be <code>&quot;evaluation_set&quot;</code>.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("object")
-        public IdStage object(@NotNull String object) {
-            this.object = Objects.requireNonNull(object, "object must not be null");
             return this;
         }
 
@@ -304,32 +251,23 @@ public final class EvaluationSet {
          */
         @java.lang.Override
         @JsonSetter("description")
-        public ProcessorIdStage description(@NotNull String description) {
+        public EntityStage description(@NotNull String description) {
             this.description = Objects.requireNonNull(description, "description must not be null");
             return this;
         }
 
         /**
-         * <p>The ID of the processor associated with this evaluation set.</p>
-         * <p>Example: <code>&quot;dp_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
-         * <p>The ID of the processor associated with this evaluation set.</p>
-         * <p>Example: <code>&quot;dp_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         * <p>The extractor, classifier, or splitter associated with this evaluation set.</p>
+         * <p>The extractor, classifier, or splitter associated with this evaluation set.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        @JsonSetter("processorId")
-        public CreatedAtStage processorId(@NotNull String processorId) {
-            this.processorId = Objects.requireNonNull(processorId, "processorId must not be null");
+        @JsonSetter("entity")
+        public CreatedAtStage entity(@NotNull EvaluationSetEntity entity) {
+            this.entity = Objects.requireNonNull(entity, "entity must not be null");
             return this;
         }
 
-        /**
-         * <p>The time (in UTC) at which the evaluation set was created. Will follow the RFC 3339 format.</p>
-         * <p>Example: <code>&quot;2024-03-21T15:30:00Z&quot;</code></p>
-         * <p>The time (in UTC) at which the evaluation set was created. Will follow the RFC 3339 format.</p>
-         * <p>Example: <code>&quot;2024-03-21T15:30:00Z&quot;</code></p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
         @java.lang.Override
         @JsonSetter("createdAt")
         public UpdatedAtStage createdAt(@NotNull OffsetDateTime createdAt) {
@@ -337,13 +275,6 @@ public final class EvaluationSet {
             return this;
         }
 
-        /**
-         * <p>The time (in UTC) at which the evaluation set was last updated. Will follow the RFC 3339 format.</p>
-         * <p>Example: <code>&quot;2024-03-21T16:45:00Z&quot;</code></p>
-         * <p>The time (in UTC) at which the evaluation set was last updated. Will follow the RFC 3339 format.</p>
-         * <p>Example: <code>&quot;2024-03-21T16:45:00Z&quot;</code></p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
         @java.lang.Override
         @JsonSetter("updatedAt")
         public _FinalStage updatedAt(@NotNull OffsetDateTime updatedAt) {
@@ -353,8 +284,7 @@ public final class EvaluationSet {
 
         @java.lang.Override
         public EvaluationSet build() {
-            return new EvaluationSet(
-                    object, id, name, description, processorId, createdAt, updatedAt, additionalProperties);
+            return new EvaluationSet(id, name, description, entity, createdAt, updatedAt, additionalProperties);
         }
     }
 }

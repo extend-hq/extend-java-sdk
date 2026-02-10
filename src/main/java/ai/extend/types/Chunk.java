@@ -22,8 +22,6 @@ import org.jetbrains.annotations.NotNull;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = Chunk.Builder.class)
 public final class Chunk {
-    private final String object;
-
     private final ChunkType type;
 
     private final String content;
@@ -35,13 +33,11 @@ public final class Chunk {
     private final Map<String, Object> additionalProperties;
 
     private Chunk(
-            String object,
             ChunkType type,
             String content,
             ChunkMetadata metadata,
             List<Block> blocks,
             Map<String, Object> additionalProperties) {
-        this.object = object;
         this.type = type;
         this.content = content;
         this.metadata = metadata;
@@ -54,7 +50,7 @@ public final class Chunk {
      */
     @JsonProperty("object")
     public String getObject() {
-        return object;
+        return "chunk";
     }
 
     /**
@@ -101,8 +97,7 @@ public final class Chunk {
     }
 
     private boolean equalTo(Chunk other) {
-        return object.equals(other.object)
-                && type.equals(other.type)
+        return type.equals(other.type)
                 && content.equals(other.content)
                 && metadata.equals(other.metadata)
                 && blocks.equals(other.blocks);
@@ -110,7 +105,7 @@ public final class Chunk {
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.object, this.type, this.content, this.metadata, this.blocks);
+        return Objects.hash(this.type, this.content, this.metadata, this.blocks);
     }
 
     @java.lang.Override
@@ -118,17 +113,8 @@ public final class Chunk {
         return ObjectMappers.stringify(this);
     }
 
-    public static ObjectStage builder() {
+    public static TypeStage builder() {
         return new Builder();
-    }
-
-    public interface ObjectStage {
-        /**
-         * <p>The type of object. In this case, it will always be <code>&quot;chunk&quot;</code>.</p>
-         */
-        TypeStage object(@NotNull String object);
-
-        Builder from(Chunk other);
     }
 
     public interface TypeStage {
@@ -136,6 +122,8 @@ public final class Chunk {
          * <p>The type of chunk.</p>
          */
         ContentStage type(@NotNull ChunkType type);
+
+        Builder from(Chunk other);
     }
 
     public interface ContentStage {
@@ -166,9 +154,7 @@ public final class Chunk {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements ObjectStage, TypeStage, ContentStage, MetadataStage, _FinalStage {
-        private String object;
-
+    public static final class Builder implements TypeStage, ContentStage, MetadataStage, _FinalStage {
         private ChunkType type;
 
         private String content;
@@ -184,23 +170,10 @@ public final class Chunk {
 
         @java.lang.Override
         public Builder from(Chunk other) {
-            object(other.getObject());
             type(other.getType());
             content(other.getContent());
             metadata(other.getMetadata());
             blocks(other.getBlocks());
-            return this;
-        }
-
-        /**
-         * <p>The type of object. In this case, it will always be <code>&quot;chunk&quot;</code>.</p>
-         * <p>The type of object. In this case, it will always be <code>&quot;chunk&quot;</code>.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("object")
-        public TypeStage object(@NotNull String object) {
-            this.object = Objects.requireNonNull(object, "object must not be null");
             return this;
         }
 
@@ -246,7 +219,9 @@ public final class Chunk {
          */
         @java.lang.Override
         public _FinalStage addAllBlocks(List<Block> blocks) {
-            this.blocks.addAll(blocks);
+            if (blocks != null) {
+                this.blocks.addAll(blocks);
+            }
             return this;
         }
 
@@ -267,13 +242,15 @@ public final class Chunk {
         @JsonSetter(value = "blocks", nulls = Nulls.SKIP)
         public _FinalStage blocks(List<Block> blocks) {
             this.blocks.clear();
-            this.blocks.addAll(blocks);
+            if (blocks != null) {
+                this.blocks.addAll(blocks);
+            }
             return this;
         }
 
         @java.lang.Override
         public Chunk build() {
-            return new Chunk(object, type, content, metadata, blocks, additionalProperties);
+            return new Chunk(type, content, metadata, blocks, additionalProperties);
         }
     }
 }

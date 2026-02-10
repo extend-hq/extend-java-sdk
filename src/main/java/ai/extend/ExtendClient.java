@@ -6,23 +6,37 @@ package ai.extend;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.core.Suppliers;
-import ai.extend.requests.ParseAsyncRequest;
+import ai.extend.requests.ClassifyRequest;
+import ai.extend.requests.EditRequest;
+import ai.extend.requests.ExtractRequest;
 import ai.extend.requests.ParseRequest;
+import ai.extend.requests.SplitRequest;
 import ai.extend.resources.batchprocessorrun.BatchProcessorRunClient;
-import ai.extend.resources.batchworkflowrun.BatchWorkflowRunClient;
-import ai.extend.resources.edit.EditClient;
-import ai.extend.resources.evaluationset.EvaluationSetClient;
-import ai.extend.resources.evaluationsetitem.EvaluationSetItemClient;
-import ai.extend.resources.file.FileClient;
-import ai.extend.resources.parserrun.ParserRunClient;
+import ai.extend.resources.classifiers.ClassifiersClient;
+import ai.extend.resources.classifierversions.ClassifierVersionsClient;
+import ai.extend.resources.classifyruns.ClassifyRunsClient;
+import ai.extend.resources.editruns.EditRunsClient;
+import ai.extend.resources.evaluationsetitems.EvaluationSetItemsClient;
+import ai.extend.resources.evaluationsetruns.EvaluationSetRunsClient;
+import ai.extend.resources.evaluationsets.EvaluationSetsClient;
+import ai.extend.resources.extractors.ExtractorsClient;
+import ai.extend.resources.extractorversions.ExtractorVersionsClient;
+import ai.extend.resources.extractruns.ExtractRunsClient;
+import ai.extend.resources.files.FilesClient;
+import ai.extend.resources.parseruns.ParseRunsClient;
 import ai.extend.resources.processor.ProcessorClient;
 import ai.extend.resources.processorrun.ProcessorRunClient;
 import ai.extend.resources.processorversion.ProcessorVersionClient;
-import ai.extend.resources.workflow.WorkflowClient;
-import ai.extend.resources.workflowrun.WorkflowRunClient;
-import ai.extend.resources.workflowrunoutput.WorkflowRunOutputClient;
-import ai.extend.types.ParserRun;
-import ai.extend.types.ParserRunStatus;
+import ai.extend.resources.splitruns.SplitRunsClient;
+import ai.extend.resources.splitters.SplittersClient;
+import ai.extend.resources.splitterversions.SplitterVersionsClient;
+import ai.extend.resources.workflowruns.WorkflowRunsClient;
+import ai.extend.resources.workflows.WorkflowsClient;
+import ai.extend.types.ClassifyRun;
+import ai.extend.types.EditRun;
+import ai.extend.types.ExtractRun;
+import ai.extend.types.ParseRun;
+import ai.extend.types.SplitRun;
 import java.util.function.Supplier;
 
 public class ExtendClient {
@@ -30,9 +44,33 @@ public class ExtendClient {
 
     private final RawExtendClient rawClient;
 
-    protected final Supplier<WorkflowRunClient> workflowRunClient;
+    protected final Supplier<FilesClient> filesClient;
 
-    protected final Supplier<BatchWorkflowRunClient> batchWorkflowRunClient;
+    protected final Supplier<ParseRunsClient> parseRunsClient;
+
+    protected final Supplier<EditRunsClient> editRunsClient;
+
+    protected final Supplier<ExtractRunsClient> extractRunsClient;
+
+    protected final Supplier<ExtractorsClient> extractorsClient;
+
+    protected final Supplier<ExtractorVersionsClient> extractorVersionsClient;
+
+    protected final Supplier<ClassifyRunsClient> classifyRunsClient;
+
+    protected final Supplier<ClassifiersClient> classifiersClient;
+
+    protected final Supplier<ClassifierVersionsClient> classifierVersionsClient;
+
+    protected final Supplier<SplitRunsClient> splitRunsClient;
+
+    protected final Supplier<SplittersClient> splittersClient;
+
+    protected final Supplier<SplitterVersionsClient> splitterVersionsClient;
+
+    protected final Supplier<WorkflowsClient> workflowsClient;
+
+    protected final Supplier<WorkflowRunsClient> workflowRunsClient;
 
     protected final Supplier<ProcessorRunClient> processorRunClient;
 
@@ -40,38 +78,38 @@ public class ExtendClient {
 
     protected final Supplier<ProcessorVersionClient> processorVersionClient;
 
-    protected final Supplier<ParserRunClient> parserRunClient;
-
-    protected final Supplier<EditClient> editClient;
-
-    protected final Supplier<FileClient> fileClient;
-
-    protected final Supplier<EvaluationSetClient> evaluationSetClient;
-
-    protected final Supplier<EvaluationSetItemClient> evaluationSetItemClient;
-
-    protected final Supplier<WorkflowRunOutputClient> workflowRunOutputClient;
-
     protected final Supplier<BatchProcessorRunClient> batchProcessorRunClient;
 
-    protected final Supplier<WorkflowClient> workflowClient;
+    protected final Supplier<EvaluationSetsClient> evaluationSetsClient;
+
+    protected final Supplier<EvaluationSetItemsClient> evaluationSetItemsClient;
+
+    protected final Supplier<EvaluationSetRunsClient> evaluationSetRunsClient;
 
     public ExtendClient(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         this.rawClient = new RawExtendClient(clientOptions);
-        this.workflowRunClient = Suppliers.memoize(() -> new WorkflowRunClient(clientOptions));
-        this.batchWorkflowRunClient = Suppliers.memoize(() -> new BatchWorkflowRunClient(clientOptions));
+        this.filesClient = Suppliers.memoize(() -> new FilesClient(clientOptions));
+        this.parseRunsClient = Suppliers.memoize(() -> new ParseRunsClient(clientOptions));
+        this.editRunsClient = Suppliers.memoize(() -> new EditRunsClient(clientOptions));
+        this.extractRunsClient = Suppliers.memoize(() -> new ExtractRunsClient(clientOptions));
+        this.extractorsClient = Suppliers.memoize(() -> new ExtractorsClient(clientOptions));
+        this.extractorVersionsClient = Suppliers.memoize(() -> new ExtractorVersionsClient(clientOptions));
+        this.classifyRunsClient = Suppliers.memoize(() -> new ClassifyRunsClient(clientOptions));
+        this.classifiersClient = Suppliers.memoize(() -> new ClassifiersClient(clientOptions));
+        this.classifierVersionsClient = Suppliers.memoize(() -> new ClassifierVersionsClient(clientOptions));
+        this.splitRunsClient = Suppliers.memoize(() -> new SplitRunsClient(clientOptions));
+        this.splittersClient = Suppliers.memoize(() -> new SplittersClient(clientOptions));
+        this.splitterVersionsClient = Suppliers.memoize(() -> new SplitterVersionsClient(clientOptions));
+        this.workflowsClient = Suppliers.memoize(() -> new WorkflowsClient(clientOptions));
+        this.workflowRunsClient = Suppliers.memoize(() -> new WorkflowRunsClient(clientOptions));
         this.processorRunClient = Suppliers.memoize(() -> new ProcessorRunClient(clientOptions));
         this.processorClient = Suppliers.memoize(() -> new ProcessorClient(clientOptions));
         this.processorVersionClient = Suppliers.memoize(() -> new ProcessorVersionClient(clientOptions));
-        this.parserRunClient = Suppliers.memoize(() -> new ParserRunClient(clientOptions));
-        this.editClient = Suppliers.memoize(() -> new EditClient(clientOptions));
-        this.fileClient = Suppliers.memoize(() -> new FileClient(clientOptions));
-        this.evaluationSetClient = Suppliers.memoize(() -> new EvaluationSetClient(clientOptions));
-        this.evaluationSetItemClient = Suppliers.memoize(() -> new EvaluationSetItemClient(clientOptions));
-        this.workflowRunOutputClient = Suppliers.memoize(() -> new WorkflowRunOutputClient(clientOptions));
         this.batchProcessorRunClient = Suppliers.memoize(() -> new BatchProcessorRunClient(clientOptions));
-        this.workflowClient = Suppliers.memoize(() -> new WorkflowClient(clientOptions));
+        this.evaluationSetsClient = Suppliers.memoize(() -> new EvaluationSetsClient(clientOptions));
+        this.evaluationSetItemsClient = Suppliers.memoize(() -> new EvaluationSetItemsClient(clientOptions));
+        this.evaluationSetRunsClient = Suppliers.memoize(() -> new EvaluationSetRunsClient(clientOptions));
     }
 
     /**
@@ -82,59 +120,159 @@ public class ExtendClient {
     }
 
     /**
-     * Parse files to get cleaned, chunked target content (e.g. markdown).
+     * Parse a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
+     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /parse_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
-     * <p>For more details, see the <a href="/product/parsing/parse">Parse File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/parsing/parse">Parse File guide</a>.</p>
      */
-    public ParserRun parse(ParseRequest request) {
+    public ParseRun parse(ParseRequest request) {
         return this.rawClient.parse(request).body();
     }
 
     /**
-     * Parse files to get cleaned, chunked target content (e.g. markdown).
+     * Parse a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
+     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /parse_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
-     * <p>For more details, see the <a href="/product/parsing/parse">Parse File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/parsing/parse">Parse File guide</a>.</p>
      */
-    public ParserRun parse(ParseRequest request, RequestOptions requestOptions) {
+    public ParseRun parse(ParseRequest request, RequestOptions requestOptions) {
         return this.rawClient.parse(request, requestOptions).body();
     }
 
     /**
-     * Parse files <strong>asynchronously</strong> to get cleaned, chunked target content (e.g. markdown).
-     * <p>The Parse Async endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
-     * <p>Parse files asynchronously and get a parser run ID that can be used to check status and retrieve results with the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/parse-endpoints/get-parser-run">Get Parser Run</a> endpoint.</p>
-     * <p>This is useful for:</p>
-     * <ul>
-     * <li>Large files that may take longer to process</li>
-     * <li>Avoiding timeout issues with synchronous parsing.</li>
-     * </ul>
-     * <p>For more details, see the <a href="/product/parsing/parse">Parse File guide</a>.</p>
+     * Edit a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
+     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /edit_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
+     * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/editing/edit">Edit File guide</a>.</p>
      */
-    public ParserRunStatus parseAsync(ParseAsyncRequest request) {
-        return this.rawClient.parseAsync(request).body();
+    public EditRun edit(EditRequest request) {
+        return this.rawClient.edit(request).body();
     }
 
     /**
-     * Parse files <strong>asynchronously</strong> to get cleaned, chunked target content (e.g. markdown).
-     * <p>The Parse Async endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
-     * <p>Parse files asynchronously and get a parser run ID that can be used to check status and retrieve results with the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/parse-endpoints/get-parser-run">Get Parser Run</a> endpoint.</p>
-     * <p>This is useful for:</p>
-     * <ul>
-     * <li>Large files that may take longer to process</li>
-     * <li>Avoiding timeout issues with synchronous parsing.</li>
-     * </ul>
-     * <p>For more details, see the <a href="/product/parsing/parse">Parse File guide</a>.</p>
+     * Edit a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
+     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /edit_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
+     * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/editing/edit">Edit File guide</a>.</p>
      */
-    public ParserRunStatus parseAsync(ParseAsyncRequest request, RequestOptions requestOptions) {
-        return this.rawClient.parseAsync(request, requestOptions).body();
+    public EditRun edit(EditRequest request, RequestOptions requestOptions) {
+        return this.rawClient.edit(request, requestOptions).body();
     }
 
-    public WorkflowRunClient workflowRun() {
-        return this.workflowRunClient.get();
+    /**
+     * Extract structured data from a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
+     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /extract_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
+     * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor or an inline configuration.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/extracting/extract">Extract File guide</a>.</p>
+     */
+    public ExtractRun extract(ExtractRequest request) {
+        return this.rawClient.extract(request).body();
     }
 
-    public BatchWorkflowRunClient batchWorkflowRun() {
-        return this.batchWorkflowRunClient.get();
+    /**
+     * Extract structured data from a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
+     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /extract_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
+     * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor or an inline configuration.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/extracting/extract">Extract File guide</a>.</p>
+     */
+    public ExtractRun extract(ExtractRequest request, RequestOptions requestOptions) {
+        return this.rawClient.extract(request, requestOptions).body();
+    }
+
+    /**
+     * Classify a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
+     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /classify_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
+     * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/classifying/classify">Classify File guide</a>.</p>
+     */
+    public ClassifyRun classify(ClassifyRequest request) {
+        return this.rawClient.classify(request).body();
+    }
+
+    /**
+     * Classify a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
+     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /classify_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
+     * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/classifying/classify">Classify File guide</a>.</p>
+     */
+    public ClassifyRun classify(ClassifyRequest request, RequestOptions requestOptions) {
+        return this.rawClient.classify(request, requestOptions).body();
+    }
+
+    /**
+     * Split a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
+     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /split_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
+     * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/splitting/split">Split File guide</a>.</p>
+     */
+    public SplitRun split(SplitRequest request) {
+        return this.rawClient.split(request).body();
+    }
+
+    /**
+     * Split a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
+     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /split_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
+     * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/splitting/split">Split File guide</a>.</p>
+     */
+    public SplitRun split(SplitRequest request, RequestOptions requestOptions) {
+        return this.rawClient.split(request, requestOptions).body();
+    }
+
+    public FilesClient files() {
+        return this.filesClient.get();
+    }
+
+    public ParseRunsClient parseRuns() {
+        return this.parseRunsClient.get();
+    }
+
+    public EditRunsClient editRuns() {
+        return this.editRunsClient.get();
+    }
+
+    public ExtractRunsClient extractRuns() {
+        return this.extractRunsClient.get();
+    }
+
+    public ExtractorsClient extractors() {
+        return this.extractorsClient.get();
+    }
+
+    public ExtractorVersionsClient extractorVersions() {
+        return this.extractorVersionsClient.get();
+    }
+
+    public ClassifyRunsClient classifyRuns() {
+        return this.classifyRunsClient.get();
+    }
+
+    public ClassifiersClient classifiers() {
+        return this.classifiersClient.get();
+    }
+
+    public ClassifierVersionsClient classifierVersions() {
+        return this.classifierVersionsClient.get();
+    }
+
+    public SplitRunsClient splitRuns() {
+        return this.splitRunsClient.get();
+    }
+
+    public SplittersClient splitters() {
+        return this.splittersClient.get();
+    }
+
+    public SplitterVersionsClient splitterVersions() {
+        return this.splitterVersionsClient.get();
+    }
+
+    public WorkflowsClient workflows() {
+        return this.workflowsClient.get();
+    }
+
+    public WorkflowRunsClient workflowRuns() {
+        return this.workflowRunsClient.get();
     }
 
     public ProcessorRunClient processorRun() {
@@ -149,36 +287,20 @@ public class ExtendClient {
         return this.processorVersionClient.get();
     }
 
-    public ParserRunClient parserRun() {
-        return this.parserRunClient.get();
-    }
-
-    public EditClient edit() {
-        return this.editClient.get();
-    }
-
-    public FileClient file() {
-        return this.fileClient.get();
-    }
-
-    public EvaluationSetClient evaluationSet() {
-        return this.evaluationSetClient.get();
-    }
-
-    public EvaluationSetItemClient evaluationSetItem() {
-        return this.evaluationSetItemClient.get();
-    }
-
-    public WorkflowRunOutputClient workflowRunOutput() {
-        return this.workflowRunOutputClient.get();
-    }
-
     public BatchProcessorRunClient batchProcessorRun() {
         return this.batchProcessorRunClient.get();
     }
 
-    public WorkflowClient workflow() {
-        return this.workflowClient.get();
+    public EvaluationSetsClient evaluationSets() {
+        return this.evaluationSetsClient.get();
+    }
+
+    public EvaluationSetItemsClient evaluationSetItems() {
+        return this.evaluationSetItemsClient.get();
+    }
+
+    public EvaluationSetRunsClient evaluationSetRuns() {
+        return this.evaluationSetRunsClient.get();
     }
 
     public static ExtendClientBuilder builder() {

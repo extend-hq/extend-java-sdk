@@ -5,10 +5,10 @@ package ai.extend.resources.processorrun.requests;
 
 import ai.extend.core.ObjectMappers;
 import ai.extend.resources.processorrun.types.ProcessorRunListRequestSource;
-import ai.extend.types.ProcessorStatus;
-import ai.extend.types.ProcessorType;
-import ai.extend.types.SortByEnum;
-import ai.extend.types.SortDirEnum;
+import ai.extend.types.LegacyProcessorStatus;
+import ai.extend.types.LegacyProcessorType;
+import ai.extend.types.LegacySortByEnum;
+import ai.extend.types.LegacySortDirEnum;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -25,11 +25,11 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ProcessorRunListRequest.Builder.class)
 public final class ProcessorRunListRequest {
-    private final Optional<ProcessorStatus> status;
+    private final Optional<LegacyProcessorStatus> status;
 
     private final Optional<String> processorId;
 
-    private final Optional<ProcessorType> processorType;
+    private final Optional<LegacyProcessorType> processorType;
 
     private final Optional<String> sourceId;
 
@@ -37,9 +37,9 @@ public final class ProcessorRunListRequest {
 
     private final Optional<String> fileNameContains;
 
-    private final Optional<SortByEnum> sortBy;
+    private final Optional<LegacySortByEnum> sortBy;
 
-    private final Optional<SortDirEnum> sortDir;
+    private final Optional<LegacySortDirEnum> sortDir;
 
     private final Optional<String> nextPageToken;
 
@@ -48,14 +48,14 @@ public final class ProcessorRunListRequest {
     private final Map<String, Object> additionalProperties;
 
     private ProcessorRunListRequest(
-            Optional<ProcessorStatus> status,
+            Optional<LegacyProcessorStatus> status,
             Optional<String> processorId,
-            Optional<ProcessorType> processorType,
+            Optional<LegacyProcessorType> processorType,
             Optional<String> sourceId,
             Optional<ProcessorRunListRequestSource> source,
             Optional<String> fileNameContains,
-            Optional<SortByEnum> sortBy,
-            Optional<SortDirEnum> sortDir,
+            Optional<LegacySortByEnum> sortBy,
+            Optional<LegacySortDirEnum> sortDir,
             Optional<String> nextPageToken,
             Optional<Integer> maxPageSize,
             Map<String, Object> additionalProperties) {
@@ -84,13 +84,13 @@ public final class ProcessorRunListRequest {
      * </ul>
      */
     @JsonProperty("status")
-    public Optional<ProcessorStatus> getStatus() {
+    public Optional<LegacyProcessorStatus> getStatus() {
         return status;
     }
 
     /**
      * @return Filters processor runs by the processor ID. If not provided, runs for all processors are returned.
-     * <p>Example: <code>&quot;dp_BMdfq_yWM3sT-ZzvCnA3f&quot;</code></p>
+     * <p>Example: <code>&quot;ex_BMdfq_yWM3sT-ZzvCnA3f&quot;</code></p>
      */
     @JsonProperty("processorId")
     public Optional<String> getProcessorId() {
@@ -102,7 +102,7 @@ public final class ProcessorRunListRequest {
      * <p>Example: <code>&quot;EXTRACT&quot;</code></p>
      */
     @JsonProperty("processorType")
-    public Optional<ProcessorType> getProcessorType() {
+    public Optional<LegacyProcessorType> getProcessorType() {
         return processorType;
     }
 
@@ -146,7 +146,7 @@ public final class ProcessorRunListRequest {
      * @return Sorts the processor runs by the given field.
      */
     @JsonProperty("sortBy")
-    public Optional<SortByEnum> getSortBy() {
+    public Optional<LegacySortByEnum> getSortBy() {
         return sortBy;
     }
 
@@ -154,7 +154,7 @@ public final class ProcessorRunListRequest {
      * @return Sorts the processor runs in ascending or descending order. Ascending order means the earliest processor run is returned first.
      */
     @JsonProperty("sortDir")
-    public Optional<SortDirEnum> getSortDir() {
+    public Optional<LegacySortDirEnum> getSortDir() {
         return sortDir;
     }
 
@@ -218,11 +218,11 @@ public final class ProcessorRunListRequest {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-        private Optional<ProcessorStatus> status = Optional.empty();
+        private Optional<LegacyProcessorStatus> status = Optional.empty();
 
         private Optional<String> processorId = Optional.empty();
 
-        private Optional<ProcessorType> processorType = Optional.empty();
+        private Optional<LegacyProcessorType> processorType = Optional.empty();
 
         private Optional<String> sourceId = Optional.empty();
 
@@ -230,9 +230,9 @@ public final class ProcessorRunListRequest {
 
         private Optional<String> fileNameContains = Optional.empty();
 
-        private Optional<SortByEnum> sortBy = Optional.empty();
+        private Optional<LegacySortByEnum> sortBy = Optional.empty();
 
-        private Optional<SortDirEnum> sortDir = Optional.empty();
+        private Optional<LegacySortDirEnum> sortDir = Optional.empty();
 
         private Optional<String> nextPageToken = Optional.empty();
 
@@ -269,19 +269,19 @@ public final class ProcessorRunListRequest {
          * </ul>
          */
         @JsonSetter(value = "status", nulls = Nulls.SKIP)
-        public Builder status(Optional<ProcessorStatus> status) {
+        public Builder status(Optional<LegacyProcessorStatus> status) {
             this.status = status;
             return this;
         }
 
-        public Builder status(ProcessorStatus status) {
+        public Builder status(LegacyProcessorStatus status) {
             this.status = Optional.ofNullable(status);
             return this;
         }
 
         /**
          * <p>Filters processor runs by the processor ID. If not provided, runs for all processors are returned.</p>
-         * <p>Example: <code>&quot;dp_BMdfq_yWM3sT-ZzvCnA3f&quot;</code></p>
+         * <p>Example: <code>&quot;ex_BMdfq_yWM3sT-ZzvCnA3f&quot;</code></p>
          */
         @JsonSetter(value = "processorId", nulls = Nulls.SKIP)
         public Builder processorId(Optional<String> processorId) {
@@ -299,12 +299,12 @@ public final class ProcessorRunListRequest {
          * <p>Example: <code>&quot;EXTRACT&quot;</code></p>
          */
         @JsonSetter(value = "processorType", nulls = Nulls.SKIP)
-        public Builder processorType(Optional<ProcessorType> processorType) {
+        public Builder processorType(Optional<LegacyProcessorType> processorType) {
             this.processorType = processorType;
             return this;
         }
 
-        public Builder processorType(ProcessorType processorType) {
+        public Builder processorType(LegacyProcessorType processorType) {
             this.processorType = Optional.ofNullable(processorType);
             return this;
         }
@@ -367,12 +367,12 @@ public final class ProcessorRunListRequest {
          * <p>Sorts the processor runs by the given field.</p>
          */
         @JsonSetter(value = "sortBy", nulls = Nulls.SKIP)
-        public Builder sortBy(Optional<SortByEnum> sortBy) {
+        public Builder sortBy(Optional<LegacySortByEnum> sortBy) {
             this.sortBy = sortBy;
             return this;
         }
 
-        public Builder sortBy(SortByEnum sortBy) {
+        public Builder sortBy(LegacySortByEnum sortBy) {
             this.sortBy = Optional.ofNullable(sortBy);
             return this;
         }
@@ -381,12 +381,12 @@ public final class ProcessorRunListRequest {
          * <p>Sorts the processor runs in ascending or descending order. Ascending order means the earliest processor run is returned first.</p>
          */
         @JsonSetter(value = "sortDir", nulls = Nulls.SKIP)
-        public Builder sortDir(Optional<SortDirEnum> sortDir) {
+        public Builder sortDir(Optional<LegacySortDirEnum> sortDir) {
             this.sortDir = sortDir;
             return this;
         }
 
-        public Builder sortDir(SortDirEnum sortDir) {
+        public Builder sortDir(LegacySortDirEnum sortDir) {
             this.sortDir = Optional.ofNullable(sortDir);
             return this;
         }

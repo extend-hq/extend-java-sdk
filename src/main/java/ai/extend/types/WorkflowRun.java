@@ -3,9 +3,12 @@
  */
 package ai.extend.types;
 
+import ai.extend.core.Nullable;
+import ai.extend.core.NullableNonemptyFilter;
 import ai.extend.core.ObjectMappers;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,29 +28,29 @@ import org.jetbrains.annotations.NotNull;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = WorkflowRun.Builder.class)
 public final class WorkflowRun {
-    private final String object;
-
     private final String id;
 
-    private final String name;
+    private final WorkflowSummary workflow;
 
-    private final String url;
+    private final WorkflowVersionSummary workflowVersion;
 
-    private final WorkflowStatus status;
+    private final String dashboardUrl;
+
+    private final WorkflowRunStatus status;
 
     private final Map<String, Object> metadata;
 
     private final Optional<String> batchId;
 
-    private final List<File> files;
+    private final List<FileSummary> files;
 
     private final Optional<String> failureReason;
 
     private final Optional<String> failureMessage;
 
-    private final OffsetDateTime initialRunAt;
+    private final Optional<OffsetDateTime> initialRunAt;
 
-    private final Optional<String> reviewedBy;
+    private final Optional<String> reviewedByUser;
 
     private final boolean reviewed;
 
@@ -59,43 +62,37 @@ public final class WorkflowRun {
 
     private final Optional<OffsetDateTime> endTime;
 
-    private final List<ProcessorRun> outputs;
-
     private final List<StepRun> stepRuns;
 
-    private final Workflow workflow;
-
-    private final Optional<WorkflowRunCredits> usage;
+    private final Optional<RunUsage> usage;
 
     private final Map<String, Object> additionalProperties;
 
     private WorkflowRun(
-            String object,
             String id,
-            String name,
-            String url,
-            WorkflowStatus status,
+            WorkflowSummary workflow,
+            WorkflowVersionSummary workflowVersion,
+            String dashboardUrl,
+            WorkflowRunStatus status,
             Map<String, Object> metadata,
             Optional<String> batchId,
-            List<File> files,
+            List<FileSummary> files,
             Optional<String> failureReason,
             Optional<String> failureMessage,
-            OffsetDateTime initialRunAt,
-            Optional<String> reviewedBy,
+            Optional<OffsetDateTime> initialRunAt,
+            Optional<String> reviewedByUser,
             boolean reviewed,
             Optional<String> rejectionNote,
             Optional<OffsetDateTime> reviewedAt,
             Optional<OffsetDateTime> startTime,
             Optional<OffsetDateTime> endTime,
-            List<ProcessorRun> outputs,
             List<StepRun> stepRuns,
-            Workflow workflow,
-            Optional<WorkflowRunCredits> usage,
+            Optional<RunUsage> usage,
             Map<String, Object> additionalProperties) {
-        this.object = object;
         this.id = id;
-        this.name = name;
-        this.url = url;
+        this.workflow = workflow;
+        this.workflowVersion = workflowVersion;
+        this.dashboardUrl = dashboardUrl;
         this.status = status;
         this.metadata = metadata;
         this.batchId = batchId;
@@ -103,25 +100,23 @@ public final class WorkflowRun {
         this.failureReason = failureReason;
         this.failureMessage = failureMessage;
         this.initialRunAt = initialRunAt;
-        this.reviewedBy = reviewedBy;
+        this.reviewedByUser = reviewedByUser;
         this.reviewed = reviewed;
         this.rejectionNote = rejectionNote;
         this.reviewedAt = reviewedAt;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.outputs = outputs;
         this.stepRuns = stepRuns;
-        this.workflow = workflow;
         this.usage = usage;
         this.additionalProperties = additionalProperties;
     }
 
     /**
-     * @return The type of response. In this case, it will always be <code>&quot;workflow_run&quot;</code>.
+     * @return The type of object. In this case, it will always be <code>&quot;workflow_run&quot;</code>.
      */
     @JsonProperty("object")
     public String getObject() {
-        return object;
+        return "workflow_run";
     }
 
     /**
@@ -133,26 +128,27 @@ public final class WorkflowRun {
         return id;
     }
 
-    /**
-     * @return The name of the workflow run.
-     * <p>Example: <code>&quot;myFirstFile.pdf&quot;</code></p>
-     */
-    @JsonProperty("name")
-    public String getName() {
-        return name;
+    @JsonProperty("workflow")
+    public WorkflowSummary getWorkflow() {
+        return workflow;
+    }
+
+    @JsonProperty("workflowVersion")
+    public WorkflowVersionSummary getWorkflowVersion() {
+        return workflowVersion;
     }
 
     /**
-     * @return A URL to view this workflow run in the Extend UI.
-     * <p>Example: <code>&quot;https://dashboard.extend.ai/workflows/workflow_Bk9mNp2qWs5_xL8vR4tYh?workflowRunId=workflow_run_Zj3nMx7ZPd9f4c2WQ_kAg&quot;</code></p>
+     * @return A URL to view this workflow run in the Extend dashboard.
+     * <p>Example: <code>&quot;https://dashboard.extend.ai/workflows/workflow_run_xKm9pNv3qWsY_jL2tR5Dh&quot;</code></p>
      */
-    @JsonProperty("url")
-    public String getUrl() {
-        return url;
+    @JsonProperty("dashboardUrl")
+    public String getDashboardUrl() {
+        return dashboardUrl;
     }
 
     @JsonProperty("status")
-    public WorkflowStatus getStatus() {
+    public WorkflowRunStatus getStatus() {
         return status;
     }
 
@@ -168,48 +164,63 @@ public final class WorkflowRun {
      * @return The batch ID of the WorkflowRun. If this WorkflowRun was created as part of a batch of files, all runs in that batch will have the same batch ID.
      * <p>Example: <code>&quot;batch_7Ws31-F5&quot;</code></p>
      */
-    @JsonProperty("batchId")
+    @JsonIgnore
     public Optional<String> getBatchId() {
+        if (batchId == null) {
+            return Optional.empty();
+        }
         return batchId;
     }
 
     @JsonProperty("files")
-    public List<File> getFiles() {
+    public List<FileSummary> getFiles() {
         return files;
     }
 
     /**
      * @return The reason why the workflow run failed. Will only be included if the workflow run status is &quot;FAILED&quot;.
      */
-    @JsonProperty("failureReason")
+    @JsonIgnore
     public Optional<String> getFailureReason() {
+        if (failureReason == null) {
+            return Optional.empty();
+        }
         return failureReason;
     }
 
     /**
      * @return A more detailed message about the failure. Will only be included if the workflow run status is &quot;FAILED&quot;.
      */
-    @JsonProperty("failureMessage")
+    @JsonIgnore
     public Optional<String> getFailureMessage() {
+        if (failureMessage == null) {
+            return Optional.empty();
+        }
         return failureMessage;
     }
 
     /**
-     * @return The time (in UTC) at which the workflow run was created. Will follow the RFC 3339 format.
+     * @return The time (in UTC) at which the workflow run was created. Will follow the RFC 3339 format. Will be null if the run hasn't started yet.
      * <p>Example: <code>&quot;2025-04-28T17:01:39.285Z&quot;</code></p>
      */
-    @JsonProperty("initialRunAt")
-    public OffsetDateTime getInitialRunAt() {
+    @JsonIgnore
+    public Optional<OffsetDateTime> getInitialRunAt() {
+        if (initialRunAt == null) {
+            return Optional.empty();
+        }
         return initialRunAt;
     }
 
     /**
-     * @return The email address of the person who reviewed the workflow run. Will not be included if the workflow run has not been reviewed.
+     * @return The email address of the person who reviewed the workflow run. Will be null if the workflow run has not been reviewed.
      * <p>Example: <code>&quot;jane.doe@example.com&quot;</code></p>
      */
-    @JsonProperty("reviewedBy")
-    public Optional<String> getReviewedBy() {
-        return reviewedBy;
+    @JsonIgnore
+    public Optional<String> getReviewedByUser() {
+        if (reviewedByUser == null) {
+            return Optional.empty();
+        }
+        return reviewedByUser;
     }
 
     /**
@@ -224,59 +235,123 @@ public final class WorkflowRun {
      * @return A note that is added if a workflow run is rejected.
      * <p>Example: <code>&quot;Invalid invoice format&quot;</code></p>
      */
-    @JsonProperty("rejectionNote")
+    @JsonIgnore
     public Optional<String> getRejectionNote() {
+        if (rejectionNote == null) {
+            return Optional.empty();
+        }
         return rejectionNote;
     }
 
     /**
-     * @return The time (in UTC) at which the workflow run was reviewed. Will follow the RFC 3339 format. Will not be included if the workflow run has not been reviewed.
+     * @return The time (in UTC) at which the workflow run was reviewed. Will follow the RFC 3339 format. Will be null if the workflow run has not been reviewed.
      * <p>Example: <code>&quot;2024-03-21T16:45:00Z&quot;</code></p>
      */
-    @JsonProperty("reviewedAt")
+    @JsonIgnore
     public Optional<OffsetDateTime> getReviewedAt() {
+        if (reviewedAt == null) {
+            return Optional.empty();
+        }
         return reviewedAt;
     }
 
     /**
-     * @return The time (in UTC) at which the workflow run started executing. This will always be after the <code>initialRunAt</code> time. Will follow the RFC 3339 format. Will not be included if the workflow run has not started executing.
+     * @return The time (in UTC) at which the workflow run started executing. This will always be after the <code>initialRunAt</code> time. Will follow the RFC 3339 format. Will be null if the workflow run has not started executing.
      * <p>Example: <code>&quot;2024-03-21T15:30:00Z&quot;</code></p>
      */
-    @JsonProperty("startTime")
+    @JsonIgnore
     public Optional<OffsetDateTime> getStartTime() {
+        if (startTime == null) {
+            return Optional.empty();
+        }
         return startTime;
     }
 
     /**
-     * @return The time (in UTC) that the workflow finished executing. Will follow the RFC 3339 format. Will not be included if the workflow run has not finished executing.
+     * @return The time (in UTC) that the workflow finished executing. Will follow the RFC 3339 format. Will be null if the workflow run has not finished executing.
      * <p>Example: <code>&quot;2024-03-21T15:35:00Z&quot;</code></p>
      */
-    @JsonProperty("endTime")
+    @JsonIgnore
     public Optional<OffsetDateTime> getEndTime() {
+        if (endTime == null) {
+            return Optional.empty();
+        }
         return endTime;
     }
 
-    @JsonProperty("outputs")
-    public List<ProcessorRun> getOutputs() {
-        return outputs;
-    }
-
     /**
-     * @return An array of WorkflowStepRun objects. Each WorkflowStepRun represents a single run of a WorkflowStep and contains details about the step and the run's output.
-     * <p>Note: This field currently supports External Data Validation and Rule Validation step types. Document processor run outputs are included in the outputs field.</p>
+     * @return An array of WorkflowStepRun objects. Each WorkflowStepRun represents a single run of a WorkflowStep and contains details about the step's execution and result.
      */
     @JsonProperty("stepRuns")
     public List<StepRun> getStepRuns() {
         return stepRuns;
     }
 
-    @JsonProperty("workflow")
-    public Workflow getWorkflow() {
-        return workflow;
+    @JsonIgnore
+    public Optional<RunUsage> getUsage() {
+        if (usage == null) {
+            return Optional.empty();
+        }
+        return usage;
     }
 
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("batchId")
+    private Optional<String> _getBatchId() {
+        return batchId;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("failureReason")
+    private Optional<String> _getFailureReason() {
+        return failureReason;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("failureMessage")
+    private Optional<String> _getFailureMessage() {
+        return failureMessage;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("initialRunAt")
+    private Optional<OffsetDateTime> _getInitialRunAt() {
+        return initialRunAt;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("reviewedByUser")
+    private Optional<String> _getReviewedByUser() {
+        return reviewedByUser;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("rejectionNote")
+    private Optional<String> _getRejectionNote() {
+        return rejectionNote;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("reviewedAt")
+    private Optional<OffsetDateTime> _getReviewedAt() {
+        return reviewedAt;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("startTime")
+    private Optional<OffsetDateTime> _getStartTime() {
+        return startTime;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("endTime")
+    private Optional<OffsetDateTime> _getEndTime() {
+        return endTime;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
     @JsonProperty("usage")
-    public Optional<WorkflowRunCredits> getUsage() {
+    private Optional<RunUsage> _getUsage() {
         return usage;
     }
 
@@ -292,10 +367,10 @@ public final class WorkflowRun {
     }
 
     private boolean equalTo(WorkflowRun other) {
-        return object.equals(other.object)
-                && id.equals(other.id)
-                && name.equals(other.name)
-                && url.equals(other.url)
+        return id.equals(other.id)
+                && workflow.equals(other.workflow)
+                && workflowVersion.equals(other.workflowVersion)
+                && dashboardUrl.equals(other.dashboardUrl)
                 && status.equals(other.status)
                 && metadata.equals(other.metadata)
                 && batchId.equals(other.batchId)
@@ -303,25 +378,23 @@ public final class WorkflowRun {
                 && failureReason.equals(other.failureReason)
                 && failureMessage.equals(other.failureMessage)
                 && initialRunAt.equals(other.initialRunAt)
-                && reviewedBy.equals(other.reviewedBy)
+                && reviewedByUser.equals(other.reviewedByUser)
                 && reviewed == other.reviewed
                 && rejectionNote.equals(other.rejectionNote)
                 && reviewedAt.equals(other.reviewedAt)
                 && startTime.equals(other.startTime)
                 && endTime.equals(other.endTime)
-                && outputs.equals(other.outputs)
                 && stepRuns.equals(other.stepRuns)
-                && workflow.equals(other.workflow)
                 && usage.equals(other.usage);
     }
 
     @java.lang.Override
     public int hashCode() {
         return Objects.hash(
-                this.object,
                 this.id,
-                this.name,
-                this.url,
+                this.workflow,
+                this.workflowVersion,
+                this.dashboardUrl,
                 this.status,
                 this.metadata,
                 this.batchId,
@@ -329,15 +402,13 @@ public final class WorkflowRun {
                 this.failureReason,
                 this.failureMessage,
                 this.initialRunAt,
-                this.reviewedBy,
+                this.reviewedByUser,
                 this.reviewed,
                 this.rejectionNote,
                 this.reviewedAt,
                 this.startTime,
                 this.endTime,
-                this.outputs,
                 this.stepRuns,
-                this.workflow,
                 this.usage);
     }
 
@@ -346,17 +417,8 @@ public final class WorkflowRun {
         return ObjectMappers.stringify(this);
     }
 
-    public static ObjectStage builder() {
+    public static IdStage builder() {
         return new Builder();
-    }
-
-    public interface ObjectStage {
-        /**
-         * <p>The type of response. In this case, it will always be <code>&quot;workflow_run&quot;</code>.</p>
-         */
-        IdStage object(@NotNull String object);
-
-        Builder from(WorkflowRun other);
     }
 
     public interface IdStage {
@@ -364,46 +426,36 @@ public final class WorkflowRun {
          * <p>The ID of the workflow run.</p>
          * <p>Example: <code>&quot;workflow_run_xKm9pNv3qWsY_jL2tR5Dh&quot;</code></p>
          */
-        NameStage id(@NotNull String id);
+        WorkflowStage id(@NotNull String id);
+
+        Builder from(WorkflowRun other);
     }
 
-    public interface NameStage {
-        /**
-         * <p>The name of the workflow run.</p>
-         * <p>Example: <code>&quot;myFirstFile.pdf&quot;</code></p>
-         */
-        UrlStage name(@NotNull String name);
+    public interface WorkflowStage {
+        WorkflowVersionStage workflow(@NotNull WorkflowSummary workflow);
     }
 
-    public interface UrlStage {
+    public interface WorkflowVersionStage {
+        DashboardUrlStage workflowVersion(@NotNull WorkflowVersionSummary workflowVersion);
+    }
+
+    public interface DashboardUrlStage {
         /**
-         * <p>A URL to view this workflow run in the Extend UI.</p>
-         * <p>Example: <code>&quot;https://dashboard.extend.ai/workflows/workflow_Bk9mNp2qWs5_xL8vR4tYh?workflowRunId=workflow_run_Zj3nMx7ZPd9f4c2WQ_kAg&quot;</code></p>
+         * <p>A URL to view this workflow run in the Extend dashboard.</p>
+         * <p>Example: <code>&quot;https://dashboard.extend.ai/workflows/workflow_run_xKm9pNv3qWsY_jL2tR5Dh&quot;</code></p>
          */
-        StatusStage url(@NotNull String url);
+        StatusStage dashboardUrl(@NotNull String dashboardUrl);
     }
 
     public interface StatusStage {
-        InitialRunAtStage status(@NotNull WorkflowStatus status);
-    }
-
-    public interface InitialRunAtStage {
-        /**
-         * <p>The time (in UTC) at which the workflow run was created. Will follow the RFC 3339 format.</p>
-         * <p>Example: <code>&quot;2025-04-28T17:01:39.285Z&quot;</code></p>
-         */
-        ReviewedStage initialRunAt(@NotNull OffsetDateTime initialRunAt);
+        ReviewedStage status(@NotNull WorkflowRunStatus status);
     }
 
     public interface ReviewedStage {
         /**
          * <p>Whether the workflow run has been reviewed.</p>
          */
-        WorkflowStage reviewed(boolean reviewed);
-    }
-
-    public interface WorkflowStage {
-        _FinalStage workflow(@NotNull Workflow workflow);
+        _FinalStage reviewed(boolean reviewed);
     }
 
     public interface _FinalStage {
@@ -426,11 +478,13 @@ public final class WorkflowRun {
 
         _FinalStage batchId(String batchId);
 
-        _FinalStage files(List<File> files);
+        _FinalStage batchId(Nullable<String> batchId);
 
-        _FinalStage addFiles(File files);
+        _FinalStage files(List<FileSummary> files);
 
-        _FinalStage addAllFiles(List<File> files);
+        _FinalStage addFiles(FileSummary files);
+
+        _FinalStage addAllFiles(List<FileSummary> files);
 
         /**
          * <p>The reason why the workflow run failed. Will only be included if the workflow run status is &quot;FAILED&quot;.</p>
@@ -439,6 +493,8 @@ public final class WorkflowRun {
 
         _FinalStage failureReason(String failureReason);
 
+        _FinalStage failureReason(Nullable<String> failureReason);
+
         /**
          * <p>A more detailed message about the failure. Will only be included if the workflow run status is &quot;FAILED&quot;.</p>
          */
@@ -446,13 +502,27 @@ public final class WorkflowRun {
 
         _FinalStage failureMessage(String failureMessage);
 
+        _FinalStage failureMessage(Nullable<String> failureMessage);
+
         /**
-         * <p>The email address of the person who reviewed the workflow run. Will not be included if the workflow run has not been reviewed.</p>
+         * <p>The time (in UTC) at which the workflow run was created. Will follow the RFC 3339 format. Will be null if the run hasn't started yet.</p>
+         * <p>Example: <code>&quot;2025-04-28T17:01:39.285Z&quot;</code></p>
+         */
+        _FinalStage initialRunAt(Optional<OffsetDateTime> initialRunAt);
+
+        _FinalStage initialRunAt(OffsetDateTime initialRunAt);
+
+        _FinalStage initialRunAt(Nullable<OffsetDateTime> initialRunAt);
+
+        /**
+         * <p>The email address of the person who reviewed the workflow run. Will be null if the workflow run has not been reviewed.</p>
          * <p>Example: <code>&quot;jane.doe@example.com&quot;</code></p>
          */
-        _FinalStage reviewedBy(Optional<String> reviewedBy);
+        _FinalStage reviewedByUser(Optional<String> reviewedByUser);
 
-        _FinalStage reviewedBy(String reviewedBy);
+        _FinalStage reviewedByUser(String reviewedByUser);
+
+        _FinalStage reviewedByUser(Nullable<String> reviewedByUser);
 
         /**
          * <p>A note that is added if a workflow run is rejected.</p>
@@ -462,39 +532,40 @@ public final class WorkflowRun {
 
         _FinalStage rejectionNote(String rejectionNote);
 
+        _FinalStage rejectionNote(Nullable<String> rejectionNote);
+
         /**
-         * <p>The time (in UTC) at which the workflow run was reviewed. Will follow the RFC 3339 format. Will not be included if the workflow run has not been reviewed.</p>
+         * <p>The time (in UTC) at which the workflow run was reviewed. Will follow the RFC 3339 format. Will be null if the workflow run has not been reviewed.</p>
          * <p>Example: <code>&quot;2024-03-21T16:45:00Z&quot;</code></p>
          */
         _FinalStage reviewedAt(Optional<OffsetDateTime> reviewedAt);
 
         _FinalStage reviewedAt(OffsetDateTime reviewedAt);
 
+        _FinalStage reviewedAt(Nullable<OffsetDateTime> reviewedAt);
+
         /**
-         * <p>The time (in UTC) at which the workflow run started executing. This will always be after the <code>initialRunAt</code> time. Will follow the RFC 3339 format. Will not be included if the workflow run has not started executing.</p>
+         * <p>The time (in UTC) at which the workflow run started executing. This will always be after the <code>initialRunAt</code> time. Will follow the RFC 3339 format. Will be null if the workflow run has not started executing.</p>
          * <p>Example: <code>&quot;2024-03-21T15:30:00Z&quot;</code></p>
          */
         _FinalStage startTime(Optional<OffsetDateTime> startTime);
 
         _FinalStage startTime(OffsetDateTime startTime);
 
+        _FinalStage startTime(Nullable<OffsetDateTime> startTime);
+
         /**
-         * <p>The time (in UTC) that the workflow finished executing. Will follow the RFC 3339 format. Will not be included if the workflow run has not finished executing.</p>
+         * <p>The time (in UTC) that the workflow finished executing. Will follow the RFC 3339 format. Will be null if the workflow run has not finished executing.</p>
          * <p>Example: <code>&quot;2024-03-21T15:35:00Z&quot;</code></p>
          */
         _FinalStage endTime(Optional<OffsetDateTime> endTime);
 
         _FinalStage endTime(OffsetDateTime endTime);
 
-        _FinalStage outputs(List<ProcessorRun> outputs);
-
-        _FinalStage addOutputs(ProcessorRun outputs);
-
-        _FinalStage addAllOutputs(List<ProcessorRun> outputs);
+        _FinalStage endTime(Nullable<OffsetDateTime> endTime);
 
         /**
-         * <p>An array of WorkflowStepRun objects. Each WorkflowStepRun represents a single run of a WorkflowStep and contains details about the step and the run's output.</p>
-         * <p>Note: This field currently supports External Data Validation and Rule Validation step types. Document processor run outputs are included in the outputs field.</p>
+         * <p>An array of WorkflowStepRun objects. Each WorkflowStepRun represents a single run of a WorkflowStep and contains details about the step's execution and result.</p>
          */
         _FinalStage stepRuns(List<StepRun> stepRuns);
 
@@ -502,43 +573,37 @@ public final class WorkflowRun {
 
         _FinalStage addAllStepRuns(List<StepRun> stepRuns);
 
-        _FinalStage usage(Optional<WorkflowRunCredits> usage);
+        _FinalStage usage(Optional<RunUsage> usage);
 
-        _FinalStage usage(WorkflowRunCredits usage);
+        _FinalStage usage(RunUsage usage);
+
+        _FinalStage usage(Nullable<RunUsage> usage);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder
-            implements ObjectStage,
-                    IdStage,
-                    NameStage,
-                    UrlStage,
-                    StatusStage,
-                    InitialRunAtStage,
-                    ReviewedStage,
+            implements IdStage,
                     WorkflowStage,
+                    WorkflowVersionStage,
+                    DashboardUrlStage,
+                    StatusStage,
+                    ReviewedStage,
                     _FinalStage {
-        private String object;
-
         private String id;
 
-        private String name;
+        private WorkflowSummary workflow;
 
-        private String url;
+        private WorkflowVersionSummary workflowVersion;
 
-        private WorkflowStatus status;
+        private String dashboardUrl;
 
-        private OffsetDateTime initialRunAt;
+        private WorkflowRunStatus status;
 
         private boolean reviewed;
 
-        private Workflow workflow;
-
-        private Optional<WorkflowRunCredits> usage = Optional.empty();
+        private Optional<RunUsage> usage = Optional.empty();
 
         private List<StepRun> stepRuns = new ArrayList<>();
-
-        private List<ProcessorRun> outputs = new ArrayList<>();
 
         private Optional<OffsetDateTime> endTime = Optional.empty();
 
@@ -548,13 +613,15 @@ public final class WorkflowRun {
 
         private Optional<String> rejectionNote = Optional.empty();
 
-        private Optional<String> reviewedBy = Optional.empty();
+        private Optional<String> reviewedByUser = Optional.empty();
+
+        private Optional<OffsetDateTime> initialRunAt = Optional.empty();
 
         private Optional<String> failureMessage = Optional.empty();
 
         private Optional<String> failureReason = Optional.empty();
 
-        private List<File> files = new ArrayList<>();
+        private List<FileSummary> files = new ArrayList<>();
 
         private Optional<String> batchId = Optional.empty();
 
@@ -567,10 +634,10 @@ public final class WorkflowRun {
 
         @java.lang.Override
         public Builder from(WorkflowRun other) {
-            object(other.getObject());
             id(other.getId());
-            name(other.getName());
-            url(other.getUrl());
+            workflow(other.getWorkflow());
+            workflowVersion(other.getWorkflowVersion());
+            dashboardUrl(other.getDashboardUrl());
             status(other.getStatus());
             metadata(other.getMetadata());
             batchId(other.getBatchId());
@@ -578,28 +645,14 @@ public final class WorkflowRun {
             failureReason(other.getFailureReason());
             failureMessage(other.getFailureMessage());
             initialRunAt(other.getInitialRunAt());
-            reviewedBy(other.getReviewedBy());
+            reviewedByUser(other.getReviewedByUser());
             reviewed(other.getReviewed());
             rejectionNote(other.getRejectionNote());
             reviewedAt(other.getReviewedAt());
             startTime(other.getStartTime());
             endTime(other.getEndTime());
-            outputs(other.getOutputs());
             stepRuns(other.getStepRuns());
-            workflow(other.getWorkflow());
             usage(other.getUsage());
-            return this;
-        }
-
-        /**
-         * <p>The type of response. In this case, it will always be <code>&quot;workflow_run&quot;</code>.</p>
-         * <p>The type of response. In this case, it will always be <code>&quot;workflow_run&quot;</code>.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("object")
-        public IdStage object(@NotNull String object) {
-            this.object = Objects.requireNonNull(object, "object must not be null");
             return this;
         }
 
@@ -612,57 +665,43 @@ public final class WorkflowRun {
          */
         @java.lang.Override
         @JsonSetter("id")
-        public NameStage id(@NotNull String id) {
+        public WorkflowStage id(@NotNull String id) {
             this.id = Objects.requireNonNull(id, "id must not be null");
             return this;
         }
 
-        /**
-         * <p>The name of the workflow run.</p>
-         * <p>Example: <code>&quot;myFirstFile.pdf&quot;</code></p>
-         * <p>The name of the workflow run.</p>
-         * <p>Example: <code>&quot;myFirstFile.pdf&quot;</code></p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
         @java.lang.Override
-        @JsonSetter("name")
-        public UrlStage name(@NotNull String name) {
-            this.name = Objects.requireNonNull(name, "name must not be null");
+        @JsonSetter("workflow")
+        public WorkflowVersionStage workflow(@NotNull WorkflowSummary workflow) {
+            this.workflow = Objects.requireNonNull(workflow, "workflow must not be null");
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter("workflowVersion")
+        public DashboardUrlStage workflowVersion(@NotNull WorkflowVersionSummary workflowVersion) {
+            this.workflowVersion = Objects.requireNonNull(workflowVersion, "workflowVersion must not be null");
             return this;
         }
 
         /**
-         * <p>A URL to view this workflow run in the Extend UI.</p>
-         * <p>Example: <code>&quot;https://dashboard.extend.ai/workflows/workflow_Bk9mNp2qWs5_xL8vR4tYh?workflowRunId=workflow_run_Zj3nMx7ZPd9f4c2WQ_kAg&quot;</code></p>
-         * <p>A URL to view this workflow run in the Extend UI.</p>
-         * <p>Example: <code>&quot;https://dashboard.extend.ai/workflows/workflow_Bk9mNp2qWs5_xL8vR4tYh?workflowRunId=workflow_run_Zj3nMx7ZPd9f4c2WQ_kAg&quot;</code></p>
+         * <p>A URL to view this workflow run in the Extend dashboard.</p>
+         * <p>Example: <code>&quot;https://dashboard.extend.ai/workflows/workflow_run_xKm9pNv3qWsY_jL2tR5Dh&quot;</code></p>
+         * <p>A URL to view this workflow run in the Extend dashboard.</p>
+         * <p>Example: <code>&quot;https://dashboard.extend.ai/workflows/workflow_run_xKm9pNv3qWsY_jL2tR5Dh&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        @JsonSetter("url")
-        public StatusStage url(@NotNull String url) {
-            this.url = Objects.requireNonNull(url, "url must not be null");
+        @JsonSetter("dashboardUrl")
+        public StatusStage dashboardUrl(@NotNull String dashboardUrl) {
+            this.dashboardUrl = Objects.requireNonNull(dashboardUrl, "dashboardUrl must not be null");
             return this;
         }
 
         @java.lang.Override
         @JsonSetter("status")
-        public InitialRunAtStage status(@NotNull WorkflowStatus status) {
+        public ReviewedStage status(@NotNull WorkflowRunStatus status) {
             this.status = Objects.requireNonNull(status, "status must not be null");
-            return this;
-        }
-
-        /**
-         * <p>The time (in UTC) at which the workflow run was created. Will follow the RFC 3339 format.</p>
-         * <p>Example: <code>&quot;2025-04-28T17:01:39.285Z&quot;</code></p>
-         * <p>The time (in UTC) at which the workflow run was created. Will follow the RFC 3339 format.</p>
-         * <p>Example: <code>&quot;2025-04-28T17:01:39.285Z&quot;</code></p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("initialRunAt")
-        public ReviewedStage initialRunAt(@NotNull OffsetDateTime initialRunAt) {
-            this.initialRunAt = Objects.requireNonNull(initialRunAt, "initialRunAt must not be null");
             return this;
         }
 
@@ -673,45 +712,50 @@ public final class WorkflowRun {
          */
         @java.lang.Override
         @JsonSetter("reviewed")
-        public WorkflowStage reviewed(boolean reviewed) {
+        public _FinalStage reviewed(boolean reviewed) {
             this.reviewed = reviewed;
             return this;
         }
 
         @java.lang.Override
-        @JsonSetter("workflow")
-        public _FinalStage workflow(@NotNull Workflow workflow) {
-            this.workflow = Objects.requireNonNull(workflow, "workflow must not be null");
+        public _FinalStage usage(Nullable<RunUsage> usage) {
+            if (usage.isNull()) {
+                this.usage = null;
+            } else if (usage.isEmpty()) {
+                this.usage = Optional.empty();
+            } else {
+                this.usage = Optional.of(usage.get());
+            }
             return this;
         }
 
         @java.lang.Override
-        public _FinalStage usage(WorkflowRunCredits usage) {
+        public _FinalStage usage(RunUsage usage) {
             this.usage = Optional.ofNullable(usage);
             return this;
         }
 
         @java.lang.Override
         @JsonSetter(value = "usage", nulls = Nulls.SKIP)
-        public _FinalStage usage(Optional<WorkflowRunCredits> usage) {
+        public _FinalStage usage(Optional<RunUsage> usage) {
             this.usage = usage;
             return this;
         }
 
         /**
-         * <p>An array of WorkflowStepRun objects. Each WorkflowStepRun represents a single run of a WorkflowStep and contains details about the step and the run's output.</p>
-         * <p>Note: This field currently supports External Data Validation and Rule Validation step types. Document processor run outputs are included in the outputs field.</p>
+         * <p>An array of WorkflowStepRun objects. Each WorkflowStepRun represents a single run of a WorkflowStep and contains details about the step's execution and result.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
         public _FinalStage addAllStepRuns(List<StepRun> stepRuns) {
-            this.stepRuns.addAll(stepRuns);
+            if (stepRuns != null) {
+                this.stepRuns.addAll(stepRuns);
+            }
             return this;
         }
 
         /**
-         * <p>An array of WorkflowStepRun objects. Each WorkflowStepRun represents a single run of a WorkflowStep and contains details about the step and the run's output.</p>
-         * <p>Note: This field currently supports External Data Validation and Rule Validation step types. Document processor run outputs are included in the outputs field.</p>
+         * <p>An array of WorkflowStepRun objects. Each WorkflowStepRun represents a single run of a WorkflowStep and contains details about the step's execution and result.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -721,39 +765,37 @@ public final class WorkflowRun {
         }
 
         /**
-         * <p>An array of WorkflowStepRun objects. Each WorkflowStepRun represents a single run of a WorkflowStep and contains details about the step and the run's output.</p>
-         * <p>Note: This field currently supports External Data Validation and Rule Validation step types. Document processor run outputs are included in the outputs field.</p>
+         * <p>An array of WorkflowStepRun objects. Each WorkflowStepRun represents a single run of a WorkflowStep and contains details about the step's execution and result.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "stepRuns", nulls = Nulls.SKIP)
         public _FinalStage stepRuns(List<StepRun> stepRuns) {
             this.stepRuns.clear();
-            this.stepRuns.addAll(stepRuns);
-            return this;
-        }
-
-        @java.lang.Override
-        public _FinalStage addAllOutputs(List<ProcessorRun> outputs) {
-            this.outputs.addAll(outputs);
-            return this;
-        }
-
-        @java.lang.Override
-        public _FinalStage addOutputs(ProcessorRun outputs) {
-            this.outputs.add(outputs);
-            return this;
-        }
-
-        @java.lang.Override
-        @JsonSetter(value = "outputs", nulls = Nulls.SKIP)
-        public _FinalStage outputs(List<ProcessorRun> outputs) {
-            this.outputs.clear();
-            this.outputs.addAll(outputs);
+            if (stepRuns != null) {
+                this.stepRuns.addAll(stepRuns);
+            }
             return this;
         }
 
         /**
-         * <p>The time (in UTC) that the workflow finished executing. Will follow the RFC 3339 format. Will not be included if the workflow run has not finished executing.</p>
+         * <p>The time (in UTC) that the workflow finished executing. Will follow the RFC 3339 format. Will be null if the workflow run has not finished executing.</p>
+         * <p>Example: <code>&quot;2024-03-21T15:35:00Z&quot;</code></p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage endTime(Nullable<OffsetDateTime> endTime) {
+            if (endTime.isNull()) {
+                this.endTime = null;
+            } else if (endTime.isEmpty()) {
+                this.endTime = Optional.empty();
+            } else {
+                this.endTime = Optional.of(endTime.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>The time (in UTC) that the workflow finished executing. Will follow the RFC 3339 format. Will be null if the workflow run has not finished executing.</p>
          * <p>Example: <code>&quot;2024-03-21T15:35:00Z&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
@@ -764,7 +806,7 @@ public final class WorkflowRun {
         }
 
         /**
-         * <p>The time (in UTC) that the workflow finished executing. Will follow the RFC 3339 format. Will not be included if the workflow run has not finished executing.</p>
+         * <p>The time (in UTC) that the workflow finished executing. Will follow the RFC 3339 format. Will be null if the workflow run has not finished executing.</p>
          * <p>Example: <code>&quot;2024-03-21T15:35:00Z&quot;</code></p>
          */
         @java.lang.Override
@@ -775,7 +817,24 @@ public final class WorkflowRun {
         }
 
         /**
-         * <p>The time (in UTC) at which the workflow run started executing. This will always be after the <code>initialRunAt</code> time. Will follow the RFC 3339 format. Will not be included if the workflow run has not started executing.</p>
+         * <p>The time (in UTC) at which the workflow run started executing. This will always be after the <code>initialRunAt</code> time. Will follow the RFC 3339 format. Will be null if the workflow run has not started executing.</p>
+         * <p>Example: <code>&quot;2024-03-21T15:30:00Z&quot;</code></p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage startTime(Nullable<OffsetDateTime> startTime) {
+            if (startTime.isNull()) {
+                this.startTime = null;
+            } else if (startTime.isEmpty()) {
+                this.startTime = Optional.empty();
+            } else {
+                this.startTime = Optional.of(startTime.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>The time (in UTC) at which the workflow run started executing. This will always be after the <code>initialRunAt</code> time. Will follow the RFC 3339 format. Will be null if the workflow run has not started executing.</p>
          * <p>Example: <code>&quot;2024-03-21T15:30:00Z&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
@@ -786,7 +845,7 @@ public final class WorkflowRun {
         }
 
         /**
-         * <p>The time (in UTC) at which the workflow run started executing. This will always be after the <code>initialRunAt</code> time. Will follow the RFC 3339 format. Will not be included if the workflow run has not started executing.</p>
+         * <p>The time (in UTC) at which the workflow run started executing. This will always be after the <code>initialRunAt</code> time. Will follow the RFC 3339 format. Will be null if the workflow run has not started executing.</p>
          * <p>Example: <code>&quot;2024-03-21T15:30:00Z&quot;</code></p>
          */
         @java.lang.Override
@@ -797,7 +856,24 @@ public final class WorkflowRun {
         }
 
         /**
-         * <p>The time (in UTC) at which the workflow run was reviewed. Will follow the RFC 3339 format. Will not be included if the workflow run has not been reviewed.</p>
+         * <p>The time (in UTC) at which the workflow run was reviewed. Will follow the RFC 3339 format. Will be null if the workflow run has not been reviewed.</p>
+         * <p>Example: <code>&quot;2024-03-21T16:45:00Z&quot;</code></p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage reviewedAt(Nullable<OffsetDateTime> reviewedAt) {
+            if (reviewedAt.isNull()) {
+                this.reviewedAt = null;
+            } else if (reviewedAt.isEmpty()) {
+                this.reviewedAt = Optional.empty();
+            } else {
+                this.reviewedAt = Optional.of(reviewedAt.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>The time (in UTC) at which the workflow run was reviewed. Will follow the RFC 3339 format. Will be null if the workflow run has not been reviewed.</p>
          * <p>Example: <code>&quot;2024-03-21T16:45:00Z&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
@@ -808,13 +884,30 @@ public final class WorkflowRun {
         }
 
         /**
-         * <p>The time (in UTC) at which the workflow run was reviewed. Will follow the RFC 3339 format. Will not be included if the workflow run has not been reviewed.</p>
+         * <p>The time (in UTC) at which the workflow run was reviewed. Will follow the RFC 3339 format. Will be null if the workflow run has not been reviewed.</p>
          * <p>Example: <code>&quot;2024-03-21T16:45:00Z&quot;</code></p>
          */
         @java.lang.Override
         @JsonSetter(value = "reviewedAt", nulls = Nulls.SKIP)
         public _FinalStage reviewedAt(Optional<OffsetDateTime> reviewedAt) {
             this.reviewedAt = reviewedAt;
+            return this;
+        }
+
+        /**
+         * <p>A note that is added if a workflow run is rejected.</p>
+         * <p>Example: <code>&quot;Invalid invoice format&quot;</code></p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage rejectionNote(Nullable<String> rejectionNote) {
+            if (rejectionNote.isNull()) {
+                this.rejectionNote = null;
+            } else if (rejectionNote.isEmpty()) {
+                this.rejectionNote = Optional.empty();
+            } else {
+                this.rejectionNote = Optional.of(rejectionNote.get());
+            }
             return this;
         }
 
@@ -841,24 +934,96 @@ public final class WorkflowRun {
         }
 
         /**
-         * <p>The email address of the person who reviewed the workflow run. Will not be included if the workflow run has not been reviewed.</p>
+         * <p>The email address of the person who reviewed the workflow run. Will be null if the workflow run has not been reviewed.</p>
          * <p>Example: <code>&quot;jane.doe@example.com&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage reviewedBy(String reviewedBy) {
-            this.reviewedBy = Optional.ofNullable(reviewedBy);
+        public _FinalStage reviewedByUser(Nullable<String> reviewedByUser) {
+            if (reviewedByUser.isNull()) {
+                this.reviewedByUser = null;
+            } else if (reviewedByUser.isEmpty()) {
+                this.reviewedByUser = Optional.empty();
+            } else {
+                this.reviewedByUser = Optional.of(reviewedByUser.get());
+            }
             return this;
         }
 
         /**
-         * <p>The email address of the person who reviewed the workflow run. Will not be included if the workflow run has not been reviewed.</p>
+         * <p>The email address of the person who reviewed the workflow run. Will be null if the workflow run has not been reviewed.</p>
+         * <p>Example: <code>&quot;jane.doe@example.com&quot;</code></p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage reviewedByUser(String reviewedByUser) {
+            this.reviewedByUser = Optional.ofNullable(reviewedByUser);
+            return this;
+        }
+
+        /**
+         * <p>The email address of the person who reviewed the workflow run. Will be null if the workflow run has not been reviewed.</p>
          * <p>Example: <code>&quot;jane.doe@example.com&quot;</code></p>
          */
         @java.lang.Override
-        @JsonSetter(value = "reviewedBy", nulls = Nulls.SKIP)
-        public _FinalStage reviewedBy(Optional<String> reviewedBy) {
-            this.reviewedBy = reviewedBy;
+        @JsonSetter(value = "reviewedByUser", nulls = Nulls.SKIP)
+        public _FinalStage reviewedByUser(Optional<String> reviewedByUser) {
+            this.reviewedByUser = reviewedByUser;
+            return this;
+        }
+
+        /**
+         * <p>The time (in UTC) at which the workflow run was created. Will follow the RFC 3339 format. Will be null if the run hasn't started yet.</p>
+         * <p>Example: <code>&quot;2025-04-28T17:01:39.285Z&quot;</code></p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage initialRunAt(Nullable<OffsetDateTime> initialRunAt) {
+            if (initialRunAt.isNull()) {
+                this.initialRunAt = null;
+            } else if (initialRunAt.isEmpty()) {
+                this.initialRunAt = Optional.empty();
+            } else {
+                this.initialRunAt = Optional.of(initialRunAt.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>The time (in UTC) at which the workflow run was created. Will follow the RFC 3339 format. Will be null if the run hasn't started yet.</p>
+         * <p>Example: <code>&quot;2025-04-28T17:01:39.285Z&quot;</code></p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage initialRunAt(OffsetDateTime initialRunAt) {
+            this.initialRunAt = Optional.ofNullable(initialRunAt);
+            return this;
+        }
+
+        /**
+         * <p>The time (in UTC) at which the workflow run was created. Will follow the RFC 3339 format. Will be null if the run hasn't started yet.</p>
+         * <p>Example: <code>&quot;2025-04-28T17:01:39.285Z&quot;</code></p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "initialRunAt", nulls = Nulls.SKIP)
+        public _FinalStage initialRunAt(Optional<OffsetDateTime> initialRunAt) {
+            this.initialRunAt = initialRunAt;
+            return this;
+        }
+
+        /**
+         * <p>A more detailed message about the failure. Will only be included if the workflow run status is &quot;FAILED&quot;.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage failureMessage(Nullable<String> failureMessage) {
+            if (failureMessage.isNull()) {
+                this.failureMessage = null;
+            } else if (failureMessage.isEmpty()) {
+                this.failureMessage = Optional.empty();
+            } else {
+                this.failureMessage = Optional.of(failureMessage.get());
+            }
             return this;
         }
 
@@ -887,6 +1052,22 @@ public final class WorkflowRun {
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
+        public _FinalStage failureReason(Nullable<String> failureReason) {
+            if (failureReason.isNull()) {
+                this.failureReason = null;
+            } else if (failureReason.isEmpty()) {
+                this.failureReason = Optional.empty();
+            } else {
+                this.failureReason = Optional.of(failureReason.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>The reason why the workflow run failed. Will only be included if the workflow run status is &quot;FAILED&quot;.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
         public _FinalStage failureReason(String failureReason) {
             this.failureReason = Optional.ofNullable(failureReason);
             return this;
@@ -903,22 +1084,43 @@ public final class WorkflowRun {
         }
 
         @java.lang.Override
-        public _FinalStage addAllFiles(List<File> files) {
-            this.files.addAll(files);
+        public _FinalStage addAllFiles(List<FileSummary> files) {
+            if (files != null) {
+                this.files.addAll(files);
+            }
             return this;
         }
 
         @java.lang.Override
-        public _FinalStage addFiles(File files) {
+        public _FinalStage addFiles(FileSummary files) {
             this.files.add(files);
             return this;
         }
 
         @java.lang.Override
         @JsonSetter(value = "files", nulls = Nulls.SKIP)
-        public _FinalStage files(List<File> files) {
+        public _FinalStage files(List<FileSummary> files) {
             this.files.clear();
-            this.files.addAll(files);
+            if (files != null) {
+                this.files.addAll(files);
+            }
+            return this;
+        }
+
+        /**
+         * <p>The batch ID of the WorkflowRun. If this WorkflowRun was created as part of a batch of files, all runs in that batch will have the same batch ID.</p>
+         * <p>Example: <code>&quot;batch_7Ws31-F5&quot;</code></p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage batchId(Nullable<String> batchId) {
+            if (batchId.isNull()) {
+                this.batchId = null;
+            } else if (batchId.isEmpty()) {
+                this.batchId = Optional.empty();
+            } else {
+                this.batchId = Optional.of(batchId.get());
+            }
             return this;
         }
 
@@ -960,7 +1162,9 @@ public final class WorkflowRun {
          */
         @java.lang.Override
         public _FinalStage putAllMetadata(Map<String, Object> metadata) {
-            this.metadata.putAll(metadata);
+            if (metadata != null) {
+                this.metadata.putAll(metadata);
+            }
             return this;
         }
 
@@ -971,17 +1175,19 @@ public final class WorkflowRun {
         @JsonSetter(value = "metadata", nulls = Nulls.SKIP)
         public _FinalStage metadata(Map<String, Object> metadata) {
             this.metadata.clear();
-            this.metadata.putAll(metadata);
+            if (metadata != null) {
+                this.metadata.putAll(metadata);
+            }
             return this;
         }
 
         @java.lang.Override
         public WorkflowRun build() {
             return new WorkflowRun(
-                    object,
                     id,
-                    name,
-                    url,
+                    workflow,
+                    workflowVersion,
+                    dashboardUrl,
                     status,
                     metadata,
                     batchId,
@@ -989,15 +1195,13 @@ public final class WorkflowRun {
                     failureReason,
                     failureMessage,
                     initialRunAt,
-                    reviewedBy,
+                    reviewedByUser,
                     reviewed,
                     rejectionNote,
                     reviewedAt,
                     startTime,
                     endTime,
-                    outputs,
                     stepRuns,
-                    workflow,
                     usage,
                     additionalProperties);
         }

@@ -26,8 +26,6 @@ public final class FileContentsPagesItem {
 
     private final Optional<Double> pageWidth;
 
-    private final Optional<String> rawText;
-
     private final Optional<String> markdown;
 
     private final Optional<String> html;
@@ -38,14 +36,12 @@ public final class FileContentsPagesItem {
             int pageNumber,
             Optional<Double> pageHeight,
             Optional<Double> pageWidth,
-            Optional<String> rawText,
             Optional<String> markdown,
             Optional<String> html,
             Map<String, Object> additionalProperties) {
         this.pageNumber = pageNumber;
         this.pageHeight = pageHeight;
         this.pageWidth = pageWidth;
-        this.rawText = rawText;
         this.markdown = markdown;
         this.html = html;
         this.additionalProperties = additionalProperties;
@@ -59,26 +55,24 @@ public final class FileContentsPagesItem {
         return pageNumber;
     }
 
+    /**
+     * @return The height of the page in points. Available for PDF and IMG file types.
+     */
     @JsonProperty("pageHeight")
     public Optional<Double> getPageHeight() {
         return pageHeight;
     }
 
+    /**
+     * @return The width of the page in points. Available for PDF and IMG file types.
+     */
     @JsonProperty("pageWidth")
     public Optional<Double> getPageWidth() {
         return pageWidth;
     }
 
     /**
-     * @return The raw text content extracted from this page.
-     */
-    @JsonProperty("rawText")
-    public Optional<String> getRawText() {
-        return rawText;
-    }
-
-    /**
-     * @return Cleaned and structured markdown content of this page.
+     * @return Cleaned and structured markdown content of this page. Available for PDF and IMG file types when the <code>markdown</code> query parameter is set to true.
      */
     @JsonProperty("markdown")
     public Optional<String> getMarkdown() {
@@ -86,7 +80,7 @@ public final class FileContentsPagesItem {
     }
 
     /**
-     * @return Cleaned and structured html content of the page. Available for DOCX file types (that were not auto-converted to PDFs). Only included if the <code>html</code> query parameter is set to true in the endpoint request.
+     * @return HTML content of the page. Available for DOCX file types when the <code>html</code> query parameter is set to true.
      */
     @JsonProperty("html")
     public Optional<String> getHtml() {
@@ -108,14 +102,13 @@ public final class FileContentsPagesItem {
         return pageNumber == other.pageNumber
                 && pageHeight.equals(other.pageHeight)
                 && pageWidth.equals(other.pageWidth)
-                && rawText.equals(other.rawText)
                 && markdown.equals(other.markdown)
                 && html.equals(other.html);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.pageNumber, this.pageHeight, this.pageWidth, this.rawText, this.markdown, this.html);
+        return Objects.hash(this.pageNumber, this.pageHeight, this.pageWidth, this.markdown, this.html);
     }
 
     @java.lang.Override
@@ -139,30 +132,29 @@ public final class FileContentsPagesItem {
     public interface _FinalStage {
         FileContentsPagesItem build();
 
+        /**
+         * <p>The height of the page in points. Available for PDF and IMG file types.</p>
+         */
         _FinalStage pageHeight(Optional<Double> pageHeight);
 
         _FinalStage pageHeight(Double pageHeight);
 
+        /**
+         * <p>The width of the page in points. Available for PDF and IMG file types.</p>
+         */
         _FinalStage pageWidth(Optional<Double> pageWidth);
 
         _FinalStage pageWidth(Double pageWidth);
 
         /**
-         * <p>The raw text content extracted from this page.</p>
-         */
-        _FinalStage rawText(Optional<String> rawText);
-
-        _FinalStage rawText(String rawText);
-
-        /**
-         * <p>Cleaned and structured markdown content of this page.</p>
+         * <p>Cleaned and structured markdown content of this page. Available for PDF and IMG file types when the <code>markdown</code> query parameter is set to true.</p>
          */
         _FinalStage markdown(Optional<String> markdown);
 
         _FinalStage markdown(String markdown);
 
         /**
-         * <p>Cleaned and structured html content of the page. Available for DOCX file types (that were not auto-converted to PDFs). Only included if the <code>html</code> query parameter is set to true in the endpoint request.</p>
+         * <p>HTML content of the page. Available for DOCX file types when the <code>html</code> query parameter is set to true.</p>
          */
         _FinalStage html(Optional<String> html);
 
@@ -176,8 +168,6 @@ public final class FileContentsPagesItem {
         private Optional<String> html = Optional.empty();
 
         private Optional<String> markdown = Optional.empty();
-
-        private Optional<String> rawText = Optional.empty();
 
         private Optional<Double> pageWidth = Optional.empty();
 
@@ -193,7 +183,6 @@ public final class FileContentsPagesItem {
             pageNumber(other.getPageNumber());
             pageHeight(other.getPageHeight());
             pageWidth(other.getPageWidth());
-            rawText(other.getRawText());
             markdown(other.getMarkdown());
             html(other.getHtml());
             return this;
@@ -212,7 +201,7 @@ public final class FileContentsPagesItem {
         }
 
         /**
-         * <p>Cleaned and structured html content of the page. Available for DOCX file types (that were not auto-converted to PDFs). Only included if the <code>html</code> query parameter is set to true in the endpoint request.</p>
+         * <p>HTML content of the page. Available for DOCX file types when the <code>html</code> query parameter is set to true.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -222,7 +211,7 @@ public final class FileContentsPagesItem {
         }
 
         /**
-         * <p>Cleaned and structured html content of the page. Available for DOCX file types (that were not auto-converted to PDFs). Only included if the <code>html</code> query parameter is set to true in the endpoint request.</p>
+         * <p>HTML content of the page. Available for DOCX file types when the <code>html</code> query parameter is set to true.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "html", nulls = Nulls.SKIP)
@@ -232,7 +221,7 @@ public final class FileContentsPagesItem {
         }
 
         /**
-         * <p>Cleaned and structured markdown content of this page.</p>
+         * <p>Cleaned and structured markdown content of this page. Available for PDF and IMG file types when the <code>markdown</code> query parameter is set to true.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -242,7 +231,7 @@ public final class FileContentsPagesItem {
         }
 
         /**
-         * <p>Cleaned and structured markdown content of this page.</p>
+         * <p>Cleaned and structured markdown content of this page. Available for PDF and IMG file types when the <code>markdown</code> query parameter is set to true.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "markdown", nulls = Nulls.SKIP)
@@ -252,31 +241,18 @@ public final class FileContentsPagesItem {
         }
 
         /**
-         * <p>The raw text content extracted from this page.</p>
+         * <p>The width of the page in points. Available for PDF and IMG file types.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
-        @java.lang.Override
-        public _FinalStage rawText(String rawText) {
-            this.rawText = Optional.ofNullable(rawText);
-            return this;
-        }
-
-        /**
-         * <p>The raw text content extracted from this page.</p>
-         */
-        @java.lang.Override
-        @JsonSetter(value = "rawText", nulls = Nulls.SKIP)
-        public _FinalStage rawText(Optional<String> rawText) {
-            this.rawText = rawText;
-            return this;
-        }
-
         @java.lang.Override
         public _FinalStage pageWidth(Double pageWidth) {
             this.pageWidth = Optional.ofNullable(pageWidth);
             return this;
         }
 
+        /**
+         * <p>The width of the page in points. Available for PDF and IMG file types.</p>
+         */
         @java.lang.Override
         @JsonSetter(value = "pageWidth", nulls = Nulls.SKIP)
         public _FinalStage pageWidth(Optional<Double> pageWidth) {
@@ -284,12 +260,19 @@ public final class FileContentsPagesItem {
             return this;
         }
 
+        /**
+         * <p>The height of the page in points. Available for PDF and IMG file types.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
         @java.lang.Override
         public _FinalStage pageHeight(Double pageHeight) {
             this.pageHeight = Optional.ofNullable(pageHeight);
             return this;
         }
 
+        /**
+         * <p>The height of the page in points. Available for PDF and IMG file types.</p>
+         */
         @java.lang.Override
         @JsonSetter(value = "pageHeight", nulls = Nulls.SKIP)
         public _FinalStage pageHeight(Optional<Double> pageHeight) {
@@ -299,8 +282,7 @@ public final class FileContentsPagesItem {
 
         @java.lang.Override
         public FileContentsPagesItem build() {
-            return new FileContentsPagesItem(
-                    pageNumber, pageHeight, pageWidth, rawText, markdown, html, additionalProperties);
+            return new FileContentsPagesItem(pageNumber, pageHeight, pageWidth, markdown, html, additionalProperties);
         }
     }
 }

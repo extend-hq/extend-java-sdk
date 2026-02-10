@@ -6,6 +6,10 @@ package ai.extend.core;
 public final class Environment {
     public static final Environment PRODUCTION = new Environment("https://api.extend.ai");
 
+    public static final Environment PRODUCTION_US_2 = new Environment("https://api.us2.extend.app");
+
+    public static final Environment PRODUCTION_EU_1 = new Environment("https://api.eu1.extend.ai");
+
     private final String url;
 
     private Environment(String url) {

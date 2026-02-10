@@ -25,14 +25,16 @@ public class BatchProcessorRunClient {
     }
 
     /**
-     * Retrieve details about a batch processor run, including evaluation runs
+     * Retrieve details about a batch processor run, including evaluation runs.
+     * <p><strong>Deprecated:</strong> This endpoint is maintained for backwards compatibility only and will be replaced in a future API version. Use <a href="/2026-02-09/developers/api-reference/endpoints/evaluation/get-evaluation-set-run">Get Evaluation Set Run</a> for interacting with evaluation set runs.</p>
      */
     public BatchProcessorRunGetResponse get(String id) {
         return this.rawClient.get(id).body();
     }
 
     /**
-     * Retrieve details about a batch processor run, including evaluation runs
+     * Retrieve details about a batch processor run, including evaluation runs.
+     * <p><strong>Deprecated:</strong> This endpoint is maintained for backwards compatibility only and will be replaced in a future API version. Use <a href="/2026-02-09/developers/api-reference/endpoints/evaluation/get-evaluation-set-run">Get Evaluation Set Run</a> for interacting with evaluation set runs.</p>
      */
     public BatchProcessorRunGetResponse get(String id, RequestOptions requestOptions) {
         return this.rawClient.get(id, requestOptions).body();

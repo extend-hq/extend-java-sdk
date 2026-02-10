@@ -30,16 +30,20 @@ public final class ParseRequest {
 
     private final Optional<ParseConfig> config;
 
+    private final Optional<Map<String, Object>> metadata;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseRequest(
             Optional<ParseRequestResponseType> responseType,
             ParseRequestFile file,
             Optional<ParseConfig> config,
+            Optional<Map<String, Object>> metadata,
             Map<String, Object> additionalProperties) {
         this.responseType = responseType;
         this.file = file;
         this.config = config;
+        this.metadata = metadata;
         this.additionalProperties = additionalProperties;
     }
 
@@ -56,7 +60,7 @@ public final class ParseRequest {
     }
 
     /**
-     * @return A file object containing either a URL or a fileId.
+     * @return The file to be parsed. Files can be provided as a URL or an Extend file ID.
      */
     @JsonProperty("file")
     public ParseRequestFile getFile() {
@@ -66,6 +70,11 @@ public final class ParseRequest {
     @JsonProperty("config")
     public Optional<ParseConfig> getConfig() {
         return config;
+    }
+
+    @JsonProperty("metadata")
+    public Optional<Map<String, Object>> getMetadata() {
+        return metadata;
     }
 
     @java.lang.Override
@@ -80,12 +89,15 @@ public final class ParseRequest {
     }
 
     private boolean equalTo(ParseRequest other) {
-        return responseType.equals(other.responseType) && file.equals(other.file) && config.equals(other.config);
+        return responseType.equals(other.responseType)
+                && file.equals(other.file)
+                && config.equals(other.config)
+                && metadata.equals(other.metadata);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.responseType, this.file, this.config);
+        return Objects.hash(this.responseType, this.file, this.config, this.metadata);
     }
 
     @java.lang.Override
@@ -99,7 +111,7 @@ public final class ParseRequest {
 
     public interface FileStage {
         /**
-         * <p>A file object containing either a URL or a fileId.</p>
+         * <p>The file to be parsed. Files can be provided as a URL or an Extend file ID.</p>
          */
         _FinalStage file(@NotNull ParseRequestFile file);
 
@@ -123,11 +135,17 @@ public final class ParseRequest {
         _FinalStage config(Optional<ParseConfig> config);
 
         _FinalStage config(ParseConfig config);
+
+        _FinalStage metadata(Optional<Map<String, Object>> metadata);
+
+        _FinalStage metadata(Map<String, Object> metadata);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements FileStage, _FinalStage {
         private ParseRequestFile file;
+
+        private Optional<Map<String, Object>> metadata = Optional.empty();
 
         private Optional<ParseConfig> config = Optional.empty();
 
@@ -143,18 +161,32 @@ public final class ParseRequest {
             responseType(other.getResponseType());
             file(other.getFile());
             config(other.getConfig());
+            metadata(other.getMetadata());
             return this;
         }
 
         /**
-         * <p>A file object containing either a URL or a fileId.</p>
-         * <p>A file object containing either a URL or a fileId.</p>
+         * <p>The file to be parsed. Files can be provided as a URL or an Extend file ID.</p>
+         * <p>The file to be parsed. Files can be provided as a URL or an Extend file ID.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
         @JsonSetter("file")
         public _FinalStage file(@NotNull ParseRequestFile file) {
             this.file = Objects.requireNonNull(file, "file must not be null");
+            return this;
+        }
+
+        @java.lang.Override
+        public _FinalStage metadata(Map<String, Object> metadata) {
+            this.metadata = Optional.ofNullable(metadata);
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter(value = "metadata", nulls = Nulls.SKIP)
+        public _FinalStage metadata(Optional<Map<String, Object>> metadata) {
+            this.metadata = metadata;
             return this;
         }
 
@@ -201,7 +233,7 @@ public final class ParseRequest {
 
         @java.lang.Override
         public ParseRequest build() {
-            return new ParseRequest(responseType, file, config, additionalProperties);
+            return new ParseRequest(responseType, file, config, metadata, additionalProperties);
         }
     }
 }

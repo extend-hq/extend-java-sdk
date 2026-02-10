@@ -3,22 +3,95 @@
  */
 package ai.extend.types;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum ExtractChunkingOptionsChunkingStrategy {
-    STANDARD("standard"),
+public final class ExtractChunkingOptionsChunkingStrategy {
+    public static final ExtractChunkingOptionsChunkingStrategy SEMANTIC =
+            new ExtractChunkingOptionsChunkingStrategy(Value.SEMANTIC, "semantic");
 
-    SEMANTIC("semantic");
+    public static final ExtractChunkingOptionsChunkingStrategy CONTEXTUAL =
+            new ExtractChunkingOptionsChunkingStrategy(Value.CONTEXTUAL, "contextual");
 
-    private final String value;
+    public static final ExtractChunkingOptionsChunkingStrategy STANDARD =
+            new ExtractChunkingOptionsChunkingStrategy(Value.STANDARD, "standard");
 
-    ExtractChunkingOptionsChunkingStrategy(String value) {
+    private final Value value;
+
+    private final String string;
+
+    ExtractChunkingOptionsChunkingStrategy(Value value, String string) {
         this.value = value;
+        this.string = string;
     }
 
-    @JsonValue
+    public Value getEnumValue() {
+        return value;
+    }
+
     @java.lang.Override
+    @JsonValue
     public String toString() {
-        return this.value;
+        return this.string;
+    }
+
+    @java.lang.Override
+    public boolean equals(Object other) {
+        return (this == other)
+                || (other instanceof ExtractChunkingOptionsChunkingStrategy
+                        && this.string.equals(((ExtractChunkingOptionsChunkingStrategy) other).string));
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+        return this.string.hashCode();
+    }
+
+    public <T> T visit(Visitor<T> visitor) {
+        switch (value) {
+            case SEMANTIC:
+                return visitor.visitSemantic();
+            case CONTEXTUAL:
+                return visitor.visitContextual();
+            case STANDARD:
+                return visitor.visitStandard();
+            case UNKNOWN:
+            default:
+                return visitor.visitUnknown(string);
+        }
+    }
+
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static ExtractChunkingOptionsChunkingStrategy valueOf(String value) {
+        switch (value) {
+            case "semantic":
+                return SEMANTIC;
+            case "contextual":
+                return CONTEXTUAL;
+            case "standard":
+                return STANDARD;
+            default:
+                return new ExtractChunkingOptionsChunkingStrategy(Value.UNKNOWN, value);
+        }
+    }
+
+    public enum Value {
+        STANDARD,
+
+        SEMANTIC,
+
+        CONTEXTUAL,
+
+        UNKNOWN
+    }
+
+    public interface Visitor<T> {
+        T visitStandard();
+
+        T visitSemantic();
+
+        T visitContextual();
+
+        T visitUnknown(String unknownType);
     }
 }

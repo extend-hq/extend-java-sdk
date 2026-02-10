@@ -19,7 +19,7 @@ public class ExtendClientBuilder {
 
     private String token = null;
 
-    private String extendApiVersion = "2025-04-21";
+    private String extendApiVersion = "2026-02-09";
 
     private Environment environment = Environment.PRODUCTION;
 
@@ -226,6 +226,9 @@ public class ExtendClientBuilder {
     protected void validateConfiguration() {}
 
     public ExtendClient build() {
+        if (token == null) {
+            throw new RuntimeException("Please provide token");
+        }
         validateConfiguration();
         return new ExtendClient(buildClientOptions());
     }
