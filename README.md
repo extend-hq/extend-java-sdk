@@ -60,7 +60,7 @@ import ai.extend.types.*;
 ExtractRun extractRun = client.extract(ExtractRequest.builder()
     .file(ExtractRequestFile.of(FileFromUrl.builder().url("https://example.com/invoice.pdf").build()))
     .extractor(ExtractRequestExtractor.of(
-        ExtractorReference.builder().id("ext_abc123").build()))
+        ExtractorReference.builder().id("ex_abc123").build()))
     .build());
 
 // Classify a document
@@ -97,7 +97,7 @@ ExtractRun result = client.extractRuns().createAndPoll(
         .file(ExtractRunsCreateRequestFile.of(
             FileFromUrl.builder().url("https://example.com/invoice.pdf").build()))
         .extractor(ExtractRunsCreateRequestExtractor.of(
-            ExtractorReference.builder().id("ext_abc123").build()))
+            ExtractorReference.builder().id("ex_abc123").build()))
         .build()
 );
 
@@ -195,6 +195,27 @@ if (result.isSignedUrlEvent()) {
     Map<String, Object> fullPayload = webhooks.fetchSignedPayload(signedEvent);
 } else {
     Map<String, Object> event = result.getEvent();
+}
+```
+
+## Running workflows
+
+Workflows chain multiple processing steps (extraction, classification, splitting, etc.) into a single pipeline. Run a workflow by passing a workflow ID and a file:
+
+```java
+WorkflowRun result = client.workflowRuns().createAndPoll(
+    WorkflowRunsCreateRequest.builder()
+        .file(WorkflowRunsCreateRequestFile.of(
+            FileFromUrl.builder().url("https://example.com/invoice.pdf").build()))
+        .workflow(WorkflowReference.builder().id("workflow_abc123").build())
+        .build()
+);
+
+System.out.println(result.getStatus()); // PROCESSED
+
+for (var stepRun : result.getStepRuns().orElse(List.of())) {
+    System.out.println(stepRun.getStep().getType());   // "EXTRACT", "CLASSIFY", etc.
+    System.out.println(stepRun.getResult());
 }
 ```
 
