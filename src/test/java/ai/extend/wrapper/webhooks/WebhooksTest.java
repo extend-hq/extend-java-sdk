@@ -115,7 +115,8 @@ class WebhooksTest {
                 WebhookEvent event = webhooks.verifyAndParse(body, headers, SECRET);
 
                 assertTrue(event.isWorkflowRunCompleted());
-                assertEquals("evt_123", event.getWorkflowRunCompleted().orElseThrow().getEventId());
+                assertEquals(
+                        "evt_123", event.getWorkflowRunCompleted().orElseThrow().getEventId());
                 assertNotNull(event.getWorkflowRunCompleted().orElseThrow().getPayload());
             }
 
@@ -128,7 +129,8 @@ class WebhooksTest {
                 WebhookEvent event = webhooks.verifyAndParse(body, headers, SECRET);
 
                 assertTrue(event.isExtractRunProcessed());
-                assertEquals("evt_456", event.getExtractRunProcessed().orElseThrow().getEventId());
+                assertEquals(
+                        "evt_456", event.getExtractRunProcessed().orElseThrow().getEventId());
             }
 
             @Test
@@ -305,7 +307,8 @@ class WebhooksTest {
 
                 WebhookEvent event = webhooks.verifyAndParse(body, headers, SECRET);
                 assertTrue(event.isWorkflowRunCompleted());
-                assertEquals("evt_123", event.getWorkflowRunCompleted().orElseThrow().getEventId());
+                assertEquals(
+                        "evt_123", event.getWorkflowRunCompleted().orElseThrow().getEventId());
             }
 
             @Test
