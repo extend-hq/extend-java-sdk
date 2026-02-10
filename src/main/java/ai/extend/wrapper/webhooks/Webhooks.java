@@ -110,8 +110,7 @@ public class Webhooks implements Closeable {
      */
     public WebhookEvent verifyAndParse(String body, Map<String, String> headers, String signingSecret)
             throws WebhookSignatureVerificationError, SignedUrlNotAllowedError {
-        RawWebhookEvent raw =
-                verifyAndParseWithOptions(body, headers, signingSecret, VerifyAndParseOptions.defaults());
+        RawWebhookEvent raw = verifyAndParseWithOptions(body, headers, signingSecret, VerifyAndParseOptions.defaults());
         return raw.getEvent();
     }
 
@@ -385,8 +384,9 @@ public class Webhooks implements Closeable {
             return null;
         }
         if (!(value instanceof Map)) {
-            throw new WebhookSignatureVerificationError(
-                    String.format("Expected '%s' to be an object, got %s", field, value.getClass().getSimpleName()));
+            throw new WebhookSignatureVerificationError(String.format(
+                    "Expected '%s' to be an object, got %s",
+                    field, value.getClass().getSimpleName()));
         }
         return (Map<String, Object>) value;
     }

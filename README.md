@@ -77,9 +77,10 @@ SplitRun splitRun = client.split(SplitRequest.builder()
         SplitterReference.builder().id("spl_abc123").build()))
     .build());
 
-// Fill form fields in a PDF
+// Edit a PDF with instructions
 EditRun editRun = client.edit(EditRequest.builder()
     .file(EditRequestFile.of(FileFromUrl.builder().url("https://example.com/form.pdf").build()))
+    .config(EditConfig.builder().instructions("Fill out the applicant name as Jane Doe").build())
     .build());
 ```
 
