@@ -27,6 +27,8 @@ public class ExtractRunsClient extends ai.extend.resources.extractruns.ExtractRu
     static {
         NON_TERMINAL_STATUSES = new HashSet<ProcessorRunStatus>();
         NON_TERMINAL_STATUSES.add(ProcessorRunStatus.PROCESSING);
+        NON_TERMINAL_STATUSES.add(ProcessorRunStatus.valueOf("PENDING"));
+        NON_TERMINAL_STATUSES.add(ProcessorRunStatus.valueOf("CANCELLING"));
     }
 
     public ExtractRunsClient(ClientOptions clientOptions) {

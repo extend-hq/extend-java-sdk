@@ -27,6 +27,8 @@ public class ClassifyRunsClient extends ai.extend.resources.classifyruns.Classif
     static {
         NON_TERMINAL_STATUSES = new HashSet<ProcessorRunStatus>();
         NON_TERMINAL_STATUSES.add(ProcessorRunStatus.PROCESSING);
+        NON_TERMINAL_STATUSES.add(ProcessorRunStatus.valueOf("PENDING"));
+        NON_TERMINAL_STATUSES.add(ProcessorRunStatus.valueOf("CANCELLING"));
     }
 
     public ClassifyRunsClient(ClientOptions clientOptions) {

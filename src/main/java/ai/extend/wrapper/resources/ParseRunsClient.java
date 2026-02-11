@@ -26,6 +26,8 @@ public class ParseRunsClient extends ai.extend.resources.parseruns.ParseRunsClie
     static {
         NON_TERMINAL_STATUSES = new HashSet<ParseRunStatusEnum>();
         NON_TERMINAL_STATUSES.add(ParseRunStatusEnum.PROCESSING);
+        NON_TERMINAL_STATUSES.add(ParseRunStatusEnum.valueOf("PENDING"));
+        NON_TERMINAL_STATUSES.add(ParseRunStatusEnum.valueOf("CANCELLING"));
     }
 
     public ParseRunsClient(ClientOptions clientOptions) {
