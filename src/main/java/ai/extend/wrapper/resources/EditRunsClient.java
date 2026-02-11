@@ -27,6 +27,8 @@ public class EditRunsClient extends ai.extend.resources.editruns.EditRunsClient 
     static {
         NON_TERMINAL_STATUSES = new HashSet<EditRunStatus>();
         NON_TERMINAL_STATUSES.add(EditRunStatus.PROCESSING);
+        NON_TERMINAL_STATUSES.add(EditRunStatus.valueOf("PENDING"));
+        NON_TERMINAL_STATUSES.add(EditRunStatus.valueOf("CANCELLING"));
     }
 
     public EditRunsClient(ClientOptions clientOptions) {
