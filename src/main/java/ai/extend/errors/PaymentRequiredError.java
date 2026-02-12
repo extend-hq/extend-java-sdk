@@ -4,21 +4,20 @@
 package ai.extend.errors;
 
 import ai.extend.core.ExtendClientApiException;
-import ai.extend.types.ApiError;
 import okhttp3.Response;
 
 public final class PaymentRequiredError extends ExtendClientApiException {
     /**
      * The body of the response that triggered the exception.
      */
-    private final ApiError body;
+    private final Object body;
 
-    public PaymentRequiredError(ApiError body) {
+    public PaymentRequiredError(Object body) {
         super("PaymentRequiredError", 402, body);
         this.body = body;
     }
 
-    public PaymentRequiredError(ApiError body, Response rawResponse) {
+    public PaymentRequiredError(Object body, Response rawResponse) {
         super("PaymentRequiredError", 402, body, rawResponse);
         this.body = body;
     }
@@ -27,7 +26,7 @@ public final class PaymentRequiredError extends ExtendClientApiException {
      * @return the body
      */
     @java.lang.Override
-    public ApiError body() {
+    public Object body() {
         return this.body;
     }
 }

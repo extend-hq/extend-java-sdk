@@ -40,13 +40,6 @@ public class ProcessorRunClient {
     /**
      * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
      */
-    public ProcessorRunListResponse list(RequestOptions requestOptions) {
-        return this.rawClient.list(requestOptions).body();
-    }
-
-    /**
-     * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
-     */
     public ProcessorRunListResponse list(ProcessorRunListRequest request) {
         return this.rawClient.list(request).body();
     }

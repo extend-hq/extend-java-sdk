@@ -43,7 +43,7 @@ public final class FileContentsSheetsItem {
     }
 
     /**
-     * @return The raw text content of the sheet in CSV format.
+     * @return The raw text content of the sheet.
      */
     @JsonProperty("rawText")
     public Optional<String> getRawText() {
@@ -92,7 +92,7 @@ public final class FileContentsSheetsItem {
         FileContentsSheetsItem build();
 
         /**
-         * <p>The raw text content of the sheet in CSV format.</p>
+         * <p>The raw text content of the sheet.</p>
          */
         _FinalStage rawText(Optional<String> rawText);
 
@@ -130,7 +130,7 @@ public final class FileContentsSheetsItem {
         }
 
         /**
-         * <p>The raw text content of the sheet in CSV format.</p>
+         * <p>The raw text content of the sheet.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -140,7 +140,7 @@ public final class FileContentsSheetsItem {
         }
 
         /**
-         * <p>The raw text content of the sheet in CSV format.</p>
+         * <p>The raw text content of the sheet.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "rawText", nulls = Nulls.SKIP)

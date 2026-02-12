@@ -23,6 +23,7 @@ import ai.extend.resources.processorrun.types.ProcessorRunCreateResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunDeleteResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunGetResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunListResponse;
+import ai.extend.types.Error;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -49,13 +50,6 @@ public class AsyncRawProcessorRunClient {
      */
     public CompletableFuture<ExtendClientHttpResponse<ProcessorRunListResponse>> list() {
         return list(ProcessorRunListRequest.builder().build());
-    }
-
-    /**
-     * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
-     */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunListResponse>> list(RequestOptions requestOptions) {
-        return list(ProcessorRunListRequest.builder().build(), requestOptions);
     }
 
     /**
@@ -113,11 +107,6 @@ public class AsyncRawProcessorRunClient {
             QueryStringMapper.addQueryParameter(
                     httpUrl, "maxPageSize", request.getMaxPageSize().get(), false);
         }
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
         Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
@@ -133,13 +122,14 @@ public class AsyncRawProcessorRunClient {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
-                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
                         future.complete(new ExtendClientHttpResponse<>(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ProcessorRunListResponse.class),
+                                ObjectMappers.JSON_MAPPER.readValue(
+                                        responseBody.string(), ProcessorRunListResponse.class),
                                 response));
                         return;
                     }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     try {
                         switch (response.code()) {
                             case 400:
@@ -149,16 +139,18 @@ public class AsyncRawProcessorRunClient {
                                 return;
                             case 401:
                                 future.completeExceptionally(new UnauthorizedError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class),
                                         response));
                                 return;
                         }
                     } catch (JsonProcessingException ignored) {
                         // unable to map error response, throwing generic error
                     }
-                    Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
                     future.completeExceptionally(new ExtendClientApiException(
-                            "Error with status code " + response.code(), response.code(), errorBody, response));
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
                     return;
                 } catch (IOException e) {
                     future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
@@ -206,14 +198,10 @@ public class AsyncRawProcessorRunClient {
      */
     public CompletableFuture<ExtendClientHttpResponse<ProcessorRunCreateResponse>> create(
             ProcessorRunCreateRequest request, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
-                .addPathSegments("processor_runs");
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
+                .addPathSegments("processor_runs")
+                .build();
         RequestBody body;
         try {
             body = RequestBody.create(
@@ -222,7 +210,7 @@ public class AsyncRawProcessorRunClient {
             throw new ExtendClientException("Failed to serialize request", e);
         }
         Request okhttpRequest = new Request.Builder()
-                .url(httpUrl.build())
+                .url(httpUrl)
                 .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
@@ -237,14 +225,14 @@ public class AsyncRawProcessorRunClient {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
-                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
                         future.complete(new ExtendClientHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
-                                        responseBodyString, ProcessorRunCreateResponse.class),
+                                        responseBody.string(), ProcessorRunCreateResponse.class),
                                 response));
                         return;
                     }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     try {
                         switch (response.code()) {
                             case 400:
@@ -254,7 +242,7 @@ public class AsyncRawProcessorRunClient {
                                 return;
                             case 401:
                                 future.completeExceptionally(new UnauthorizedError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class),
                                         response));
                                 return;
                             case 404:
@@ -271,9 +259,11 @@ public class AsyncRawProcessorRunClient {
                     } catch (JsonProcessingException ignored) {
                         // unable to map error response, throwing generic error
                     }
-                    Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
                     future.completeExceptionally(new ExtendClientApiException(
-                            "Error with status code " + response.code(), response.code(), errorBody, response));
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
                     return;
                 } catch (IOException e) {
                     future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
@@ -302,17 +292,13 @@ public class AsyncRawProcessorRunClient {
      */
     public CompletableFuture<ExtendClientHttpResponse<ProcessorRunGetResponse>> get(
             String id, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("processor_runs")
-                .addPathSegment(id);
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
+                .addPathSegment(id)
+                .build();
         Request okhttpRequest = new Request.Builder()
-                .url(httpUrl.build())
+                .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json")
@@ -326,13 +312,14 @@ public class AsyncRawProcessorRunClient {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
-                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
                         future.complete(new ExtendClientHttpResponse<>(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ProcessorRunGetResponse.class),
+                                ObjectMappers.JSON_MAPPER.readValue(
+                                        responseBody.string(), ProcessorRunGetResponse.class),
                                 response));
                         return;
                     }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     try {
                         switch (response.code()) {
                             case 400:
@@ -342,7 +329,7 @@ public class AsyncRawProcessorRunClient {
                                 return;
                             case 401:
                                 future.completeExceptionally(new UnauthorizedError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class),
                                         response));
                                 return;
                             case 404:
@@ -354,9 +341,11 @@ public class AsyncRawProcessorRunClient {
                     } catch (JsonProcessingException ignored) {
                         // unable to map error response, throwing generic error
                     }
-                    Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
                     future.completeExceptionally(new ExtendClientApiException(
-                            "Error with status code " + response.code(), response.code(), errorBody, response));
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
                     return;
                 } catch (IOException e) {
                     future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
@@ -385,17 +374,13 @@ public class AsyncRawProcessorRunClient {
      */
     public CompletableFuture<ExtendClientHttpResponse<ProcessorRunDeleteResponse>> delete(
             String id, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("processor_runs")
-                .addPathSegment(id);
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
+                .addPathSegment(id)
+                .build();
         Request okhttpRequest = new Request.Builder()
-                .url(httpUrl.build())
+                .url(httpUrl)
                 .method("DELETE", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json")
@@ -409,14 +394,14 @@ public class AsyncRawProcessorRunClient {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
-                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
                         future.complete(new ExtendClientHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
-                                        responseBodyString, ProcessorRunDeleteResponse.class),
+                                        responseBody.string(), ProcessorRunDeleteResponse.class),
                                 response));
                         return;
                     }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     try {
                         switch (response.code()) {
                             case 404:
@@ -433,9 +418,11 @@ public class AsyncRawProcessorRunClient {
                     } catch (JsonProcessingException ignored) {
                         // unable to map error response, throwing generic error
                     }
-                    Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
                     future.completeExceptionally(new ExtendClientApiException(
-                            "Error with status code " + response.code(), response.code(), errorBody, response));
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
                     return;
                 } catch (IOException e) {
                     future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
@@ -464,18 +451,14 @@ public class AsyncRawProcessorRunClient {
      */
     public CompletableFuture<ExtendClientHttpResponse<ProcessorRunCancelResponse>> cancel(
             String id, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("processor_runs")
                 .addPathSegment(id)
-                .addPathSegments("cancel");
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
+                .addPathSegments("cancel")
+                .build();
         Request okhttpRequest = new Request.Builder()
-                .url(httpUrl.build())
+                .url(httpUrl)
                 .method("POST", RequestBody.create("", null))
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json")
@@ -489,14 +472,14 @@ public class AsyncRawProcessorRunClient {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
-                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
                         future.complete(new ExtendClientHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
-                                        responseBodyString, ProcessorRunCancelResponse.class),
+                                        responseBody.string(), ProcessorRunCancelResponse.class),
                                 response));
                         return;
                     }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     try {
                         switch (response.code()) {
                             case 400:
@@ -506,7 +489,7 @@ public class AsyncRawProcessorRunClient {
                                 return;
                             case 401:
                                 future.completeExceptionally(new UnauthorizedError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class),
                                         response));
                                 return;
                             case 404:
@@ -518,9 +501,11 @@ public class AsyncRawProcessorRunClient {
                     } catch (JsonProcessingException ignored) {
                         // unable to map error response, throwing generic error
                     }
-                    Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
                     future.completeExceptionally(new ExtendClientApiException(
-                            "Error with status code " + response.code(), response.code(), errorBody, response));
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
                     return;
                 } catch (IOException e) {
                     future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));

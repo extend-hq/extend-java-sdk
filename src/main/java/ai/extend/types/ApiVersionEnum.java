@@ -3,127 +3,28 @@
  */
 package ai.extend.types;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public final class ApiVersionEnum {
-    public static final ApiVersionEnum TWO_THOUSAND_TWENTY_FIVE_0421 =
-            new ApiVersionEnum(Value.TWO_THOUSAND_TWENTY_FIVE_0421, "2025-04-21");
+public enum ApiVersionEnum {
+    TWO_THOUSAND_TWENTY_FIVE_0421("2025-04-21"),
 
-    public static final ApiVersionEnum TWO_THOUSAND_TWENTY_SIX_0209 =
-            new ApiVersionEnum(Value.TWO_THOUSAND_TWENTY_SIX_0209, "2026-02-09");
+    TWO_THOUSAND_TWENTY_FOUR_1223("2024-12-23"),
 
-    public static final ApiVersionEnum TWO_THOUSAND_TWENTY_FOUR_1223 =
-            new ApiVersionEnum(Value.TWO_THOUSAND_TWENTY_FOUR_1223, "2024-12-23");
+    TWO_THOUSAND_TWENTY_FOUR_1114("2024-11-14"),
 
-    public static final ApiVersionEnum TWO_THOUSAND_TWENTY_FOUR_0730 =
-            new ApiVersionEnum(Value.TWO_THOUSAND_TWENTY_FOUR_0730, "2024-07-30");
+    TWO_THOUSAND_TWENTY_FOUR_0730("2024-07-30"),
 
-    public static final ApiVersionEnum TWO_THOUSAND_TWENTY_FOUR_0201 =
-            new ApiVersionEnum(Value.TWO_THOUSAND_TWENTY_FOUR_0201, "2024-02-01");
+    TWO_THOUSAND_TWENTY_FOUR_0201("2024-02-01");
 
-    public static final ApiVersionEnum TWO_THOUSAND_TWENTY_FOUR_1114 =
-            new ApiVersionEnum(Value.TWO_THOUSAND_TWENTY_FOUR_1114, "2024-11-14");
+    private final String value;
 
-    private final Value value;
-
-    private final String string;
-
-    ApiVersionEnum(Value value, String string) {
+    ApiVersionEnum(String value) {
         this.value = value;
-        this.string = string;
     }
 
-    public Value getEnumValue() {
-        return value;
-    }
-
-    @java.lang.Override
     @JsonValue
+    @java.lang.Override
     public String toString() {
-        return this.string;
-    }
-
-    @java.lang.Override
-    public boolean equals(Object other) {
-        return (this == other)
-                || (other instanceof ApiVersionEnum && this.string.equals(((ApiVersionEnum) other).string));
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-        return this.string.hashCode();
-    }
-
-    public <T> T visit(Visitor<T> visitor) {
-        switch (value) {
-            case TWO_THOUSAND_TWENTY_FIVE_0421:
-                return visitor.visitTwoThousandTwentyFive0421();
-            case TWO_THOUSAND_TWENTY_SIX_0209:
-                return visitor.visitTwoThousandTwentySix0209();
-            case TWO_THOUSAND_TWENTY_FOUR_1223:
-                return visitor.visitTwoThousandTwentyFour1223();
-            case TWO_THOUSAND_TWENTY_FOUR_0730:
-                return visitor.visitTwoThousandTwentyFour0730();
-            case TWO_THOUSAND_TWENTY_FOUR_0201:
-                return visitor.visitTwoThousandTwentyFour0201();
-            case TWO_THOUSAND_TWENTY_FOUR_1114:
-                return visitor.visitTwoThousandTwentyFour1114();
-            case UNKNOWN:
-            default:
-                return visitor.visitUnknown(string);
-        }
-    }
-
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static ApiVersionEnum valueOf(String value) {
-        switch (value) {
-            case "2025-04-21":
-                return TWO_THOUSAND_TWENTY_FIVE_0421;
-            case "2026-02-09":
-                return TWO_THOUSAND_TWENTY_SIX_0209;
-            case "2024-12-23":
-                return TWO_THOUSAND_TWENTY_FOUR_1223;
-            case "2024-07-30":
-                return TWO_THOUSAND_TWENTY_FOUR_0730;
-            case "2024-02-01":
-                return TWO_THOUSAND_TWENTY_FOUR_0201;
-            case "2024-11-14":
-                return TWO_THOUSAND_TWENTY_FOUR_1114;
-            default:
-                return new ApiVersionEnum(Value.UNKNOWN, value);
-        }
-    }
-
-    public enum Value {
-        TWO_THOUSAND_TWENTY_SIX_0209,
-
-        TWO_THOUSAND_TWENTY_FIVE_0421,
-
-        TWO_THOUSAND_TWENTY_FOUR_1223,
-
-        TWO_THOUSAND_TWENTY_FOUR_1114,
-
-        TWO_THOUSAND_TWENTY_FOUR_0730,
-
-        TWO_THOUSAND_TWENTY_FOUR_0201,
-
-        UNKNOWN
-    }
-
-    public interface Visitor<T> {
-        T visitTwoThousandTwentySix0209();
-
-        T visitTwoThousandTwentyFive0421();
-
-        T visitTwoThousandTwentyFour1223();
-
-        T visitTwoThousandTwentyFour1114();
-
-        T visitTwoThousandTwentyFour0730();
-
-        T visitTwoThousandTwentyFour0201();
-
-        T visitUnknown(String unknownType);
+        return this.value;
     }
 }

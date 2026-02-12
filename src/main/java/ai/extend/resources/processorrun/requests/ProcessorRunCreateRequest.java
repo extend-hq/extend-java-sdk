@@ -5,7 +5,7 @@ package ai.extend.resources.processorrun.requests;
 
 import ai.extend.core.ObjectMappers;
 import ai.extend.resources.processorrun.types.ProcessorRunCreateRequestConfig;
-import ai.extend.types.LegacyProcessorRunFileInput;
+import ai.extend.types.ProcessorRunFileInput;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -27,7 +27,7 @@ public final class ProcessorRunCreateRequest {
 
     private final Optional<String> version;
 
-    private final Optional<LegacyProcessorRunFileInput> file;
+    private final Optional<ProcessorRunFileInput> file;
 
     private final Optional<String> rawText;
 
@@ -44,7 +44,7 @@ public final class ProcessorRunCreateRequest {
     private ProcessorRunCreateRequest(
             String processorId,
             Optional<String> version,
-            Optional<LegacyProcessorRunFileInput> file,
+            Optional<ProcessorRunFileInput> file,
             Optional<String> rawText,
             Optional<Boolean> sync,
             Optional<Integer> priority,
@@ -84,7 +84,7 @@ public final class ProcessorRunCreateRequest {
      * @return The file to be processed. One of <code>file</code> or <code>rawText</code> must be provided. Supported file types can be found <a href="/product/general/supported-file-types">here</a>.
      */
     @JsonProperty("file")
-    public Optional<LegacyProcessorRunFileInput> getFile() {
+    public Optional<ProcessorRunFileInput> getFile() {
         return file;
     }
 
@@ -198,9 +198,9 @@ public final class ProcessorRunCreateRequest {
         /**
          * <p>The file to be processed. One of <code>file</code> or <code>rawText</code> must be provided. Supported file types can be found <a href="/product/general/supported-file-types">here</a>.</p>
          */
-        _FinalStage file(Optional<LegacyProcessorRunFileInput> file);
+        _FinalStage file(Optional<ProcessorRunFileInput> file);
 
-        _FinalStage file(LegacyProcessorRunFileInput file);
+        _FinalStage file(ProcessorRunFileInput file);
 
         /**
          * <p>A raw string to be processed. Can be used in place of file when passing raw text data streams. One of <code>file</code> or <code>rawText</code> must be provided.</p>
@@ -254,7 +254,7 @@ public final class ProcessorRunCreateRequest {
 
         private Optional<String> rawText = Optional.empty();
 
-        private Optional<LegacyProcessorRunFileInput> file = Optional.empty();
+        private Optional<ProcessorRunFileInput> file = Optional.empty();
 
         private Optional<String> version = Optional.empty();
 
@@ -392,7 +392,7 @@ public final class ProcessorRunCreateRequest {
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage file(LegacyProcessorRunFileInput file) {
+        public _FinalStage file(ProcessorRunFileInput file) {
             this.file = Optional.ofNullable(file);
             return this;
         }
@@ -402,7 +402,7 @@ public final class ProcessorRunCreateRequest {
          */
         @java.lang.Override
         @JsonSetter(value = "file", nulls = Nulls.SKIP)
-        public _FinalStage file(Optional<LegacyProcessorRunFileInput> file) {
+        public _FinalStage file(Optional<ProcessorRunFileInput> file) {
             this.file = file;
             return this;
         }

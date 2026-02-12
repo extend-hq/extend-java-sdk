@@ -3,151 +3,36 @@
  */
 package ai.extend.types;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public final class ExtractionFieldType {
-    public static final ExtractionFieldType NUMBER = new ExtractionFieldType(Value.NUMBER, "number");
+public enum ExtractionFieldType {
+    STRING("string"),
 
-    public static final ExtractionFieldType STRING = new ExtractionFieldType(Value.STRING, "string");
+    NUMBER("number"),
 
-    public static final ExtractionFieldType BOOLEAN = new ExtractionFieldType(Value.BOOLEAN, "boolean");
+    CURRENCY("currency"),
 
-    public static final ExtractionFieldType CURRENCY = new ExtractionFieldType(Value.CURRENCY, "currency");
+    BOOLEAN("boolean"),
 
-    public static final ExtractionFieldType DATE = new ExtractionFieldType(Value.DATE, "date");
+    DATE("date"),
 
-    public static final ExtractionFieldType ENUM = new ExtractionFieldType(Value.ENUM, "enum");
+    ARRAY("array"),
 
-    public static final ExtractionFieldType SIGNATURE = new ExtractionFieldType(Value.SIGNATURE, "signature");
+    ENUM("enum"),
 
-    public static final ExtractionFieldType ARRAY = new ExtractionFieldType(Value.ARRAY, "array");
+    OBJECT("object"),
 
-    public static final ExtractionFieldType OBJECT = new ExtractionFieldType(Value.OBJECT, "object");
+    SIGNATURE("signature");
 
-    private final Value value;
+    private final String value;
 
-    private final String string;
-
-    ExtractionFieldType(Value value, String string) {
+    ExtractionFieldType(String value) {
         this.value = value;
-        this.string = string;
     }
 
-    public Value getEnumValue() {
-        return value;
-    }
-
-    @java.lang.Override
     @JsonValue
+    @java.lang.Override
     public String toString() {
-        return this.string;
-    }
-
-    @java.lang.Override
-    public boolean equals(Object other) {
-        return (this == other)
-                || (other instanceof ExtractionFieldType && this.string.equals(((ExtractionFieldType) other).string));
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-        return this.string.hashCode();
-    }
-
-    public <T> T visit(Visitor<T> visitor) {
-        switch (value) {
-            case NUMBER:
-                return visitor.visitNumber();
-            case STRING:
-                return visitor.visitString();
-            case BOOLEAN:
-                return visitor.visitBoolean();
-            case CURRENCY:
-                return visitor.visitCurrency();
-            case DATE:
-                return visitor.visitDate();
-            case ENUM:
-                return visitor.visitEnum();
-            case SIGNATURE:
-                return visitor.visitSignature();
-            case ARRAY:
-                return visitor.visitArray();
-            case OBJECT:
-                return visitor.visitObject();
-            case UNKNOWN:
-            default:
-                return visitor.visitUnknown(string);
-        }
-    }
-
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static ExtractionFieldType valueOf(String value) {
-        switch (value) {
-            case "number":
-                return NUMBER;
-            case "string":
-                return STRING;
-            case "boolean":
-                return BOOLEAN;
-            case "currency":
-                return CURRENCY;
-            case "date":
-                return DATE;
-            case "enum":
-                return ENUM;
-            case "signature":
-                return SIGNATURE;
-            case "array":
-                return ARRAY;
-            case "object":
-                return OBJECT;
-            default:
-                return new ExtractionFieldType(Value.UNKNOWN, value);
-        }
-    }
-
-    public enum Value {
-        STRING,
-
-        NUMBER,
-
-        CURRENCY,
-
-        BOOLEAN,
-
-        DATE,
-
-        ARRAY,
-
-        ENUM,
-
-        OBJECT,
-
-        SIGNATURE,
-
-        UNKNOWN
-    }
-
-    public interface Visitor<T> {
-        T visitString();
-
-        T visitNumber();
-
-        T visitCurrency();
-
-        T visitBoolean();
-
-        T visitDate();
-
-        T visitArray();
-
-        T visitEnum();
-
-        T visitObject();
-
-        T visitSignature();
-
-        T visitUnknown(String unknownType);
+        return this.value;
     }
 }

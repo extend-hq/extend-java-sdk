@@ -3,112 +3,28 @@
  */
 package ai.extend.types;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public final class FigureDetailsFigureType {
-    public static final FigureDetailsFigureType OTHER = new FigureDetailsFigureType(Value.OTHER, "other");
+public enum FigureDetailsFigureType {
+    OTHER("other"),
 
-    public static final FigureDetailsFigureType LOGO = new FigureDetailsFigureType(Value.LOGO, "logo");
+    CHART("chart"),
 
-    public static final FigureDetailsFigureType CHART = new FigureDetailsFigureType(Value.CHART, "chart");
+    IMAGE("image"),
 
-    public static final FigureDetailsFigureType IMAGE = new FigureDetailsFigureType(Value.IMAGE, "image");
+    DIAGRAM("diagram"),
 
-    public static final FigureDetailsFigureType DIAGRAM = new FigureDetailsFigureType(Value.DIAGRAM, "diagram");
+    LOGO("logo");
 
-    private final Value value;
+    private final String value;
 
-    private final String string;
-
-    FigureDetailsFigureType(Value value, String string) {
+    FigureDetailsFigureType(String value) {
         this.value = value;
-        this.string = string;
     }
 
-    public Value getEnumValue() {
-        return value;
-    }
-
-    @java.lang.Override
     @JsonValue
+    @java.lang.Override
     public String toString() {
-        return this.string;
-    }
-
-    @java.lang.Override
-    public boolean equals(Object other) {
-        return (this == other)
-                || (other instanceof FigureDetailsFigureType
-                        && this.string.equals(((FigureDetailsFigureType) other).string));
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-        return this.string.hashCode();
-    }
-
-    public <T> T visit(Visitor<T> visitor) {
-        switch (value) {
-            case OTHER:
-                return visitor.visitOther();
-            case LOGO:
-                return visitor.visitLogo();
-            case CHART:
-                return visitor.visitChart();
-            case IMAGE:
-                return visitor.visitImage();
-            case DIAGRAM:
-                return visitor.visitDiagram();
-            case UNKNOWN:
-            default:
-                return visitor.visitUnknown(string);
-        }
-    }
-
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static FigureDetailsFigureType valueOf(String value) {
-        switch (value) {
-            case "other":
-                return OTHER;
-            case "logo":
-                return LOGO;
-            case "chart":
-                return CHART;
-            case "image":
-                return IMAGE;
-            case "diagram":
-                return DIAGRAM;
-            default:
-                return new FigureDetailsFigureType(Value.UNKNOWN, value);
-        }
-    }
-
-    public enum Value {
-        OTHER,
-
-        CHART,
-
-        IMAGE,
-
-        DIAGRAM,
-
-        LOGO,
-
-        UNKNOWN
-    }
-
-    public interface Visitor<T> {
-        T visitOther();
-
-        T visitChart();
-
-        T visitImage();
-
-        T visitDiagram();
-
-        T visitLogo();
-
-        T visitUnknown(String unknownType);
+        return this.value;
     }
 }

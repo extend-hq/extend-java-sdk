@@ -3,91 +3,203 @@
  */
 package ai.extend.types;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import ai.extend.core.ObjectMappers;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 
+@JsonInclude(JsonInclude.Include.NON_ABSENT)
+@JsonDeserialize(builder = EditRunStatus.Builder.class)
 public final class EditRunStatus {
-    public static final EditRunStatus PROCESSING = new EditRunStatus(Value.PROCESSING, "PROCESSING");
+    private final String id;
 
-    public static final EditRunStatus PROCESSED = new EditRunStatus(Value.PROCESSED, "PROCESSED");
+    private final EditRunStatusStatus status;
 
-    public static final EditRunStatus FAILED = new EditRunStatus(Value.FAILED, "FAILED");
+    private final Optional<String> failureReason;
 
-    private final Value value;
+    private final Map<String, Object> additionalProperties;
 
-    private final String string;
-
-    EditRunStatus(Value value, String string) {
-        this.value = value;
-        this.string = string;
+    private EditRunStatus(
+            String id,
+            EditRunStatusStatus status,
+            Optional<String> failureReason,
+            Map<String, Object> additionalProperties) {
+        this.id = id;
+        this.status = status;
+        this.failureReason = failureReason;
+        this.additionalProperties = additionalProperties;
     }
 
-    public Value getEnumValue() {
-        return value;
+    /**
+     * @return The type of object. Will always be <code>&quot;edit_run_status&quot;</code>.
+     */
+    @JsonProperty("object")
+    public String getObject() {
+        return "edit_run_status";
     }
 
-    @java.lang.Override
-    @JsonValue
-    public String toString() {
-        return this.string;
+    /**
+     * @return A unique identifier for the edit run. Will always start with <code>&quot;edit_run_&quot;</code>
+     * <p>Example: <code>&quot;edit_run_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+     */
+    @JsonProperty("id")
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * @return The status of the edit run.
+     */
+    @JsonProperty("status")
+    public EditRunStatusStatus getStatus() {
+        return status;
+    }
+
+    /**
+     * @return The reason for failure if status is &quot;FAILED&quot;.
+     */
+    @JsonProperty("failureReason")
+    public Optional<String> getFailureReason() {
+        return failureReason;
     }
 
     @java.lang.Override
     public boolean equals(Object other) {
-        return (this == other)
-                || (other instanceof EditRunStatus && this.string.equals(((EditRunStatus) other).string));
+        if (this == other) return true;
+        return other instanceof EditRunStatus && equalTo((EditRunStatus) other);
+    }
+
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
+    }
+
+    private boolean equalTo(EditRunStatus other) {
+        return id.equals(other.id) && status.equals(other.status) && failureReason.equals(other.failureReason);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return this.string.hashCode();
+        return Objects.hash(this.id, this.status, this.failureReason);
     }
 
-    public <T> T visit(Visitor<T> visitor) {
-        switch (value) {
-            case PROCESSING:
-                return visitor.visitProcessing();
-            case PROCESSED:
-                return visitor.visitProcessed();
-            case FAILED:
-                return visitor.visitFailed();
-            case UNKNOWN:
-            default:
-                return visitor.visitUnknown(string);
+    @java.lang.Override
+    public String toString() {
+        return ObjectMappers.stringify(this);
+    }
+
+    public static IdStage builder() {
+        return new Builder();
+    }
+
+    public interface IdStage {
+        /**
+         * <p>A unique identifier for the edit run. Will always start with <code>&quot;edit_run_&quot;</code></p>
+         * <p>Example: <code>&quot;edit_run_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         */
+        StatusStage id(@NotNull String id);
+
+        Builder from(EditRunStatus other);
+    }
+
+    public interface StatusStage {
+        /**
+         * <p>The status of the edit run.</p>
+         */
+        _FinalStage status(@NotNull EditRunStatusStatus status);
+    }
+
+    public interface _FinalStage {
+        EditRunStatus build();
+
+        /**
+         * <p>The reason for failure if status is &quot;FAILED&quot;.</p>
+         */
+        _FinalStage failureReason(Optional<String> failureReason);
+
+        _FinalStage failureReason(String failureReason);
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static final class Builder implements IdStage, StatusStage, _FinalStage {
+        private String id;
+
+        private EditRunStatusStatus status;
+
+        private Optional<String> failureReason = Optional.empty();
+
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
+
+        private Builder() {}
+
+        @java.lang.Override
+        public Builder from(EditRunStatus other) {
+            id(other.getId());
+            status(other.getStatus());
+            failureReason(other.getFailureReason());
+            return this;
         }
-    }
 
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static EditRunStatus valueOf(String value) {
-        switch (value) {
-            case "PROCESSING":
-                return PROCESSING;
-            case "PROCESSED":
-                return PROCESSED;
-            case "FAILED":
-                return FAILED;
-            default:
-                return new EditRunStatus(Value.UNKNOWN, value);
+        /**
+         * <p>A unique identifier for the edit run. Will always start with <code>&quot;edit_run_&quot;</code></p>
+         * <p>Example: <code>&quot;edit_run_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         * <p>A unique identifier for the edit run. Will always start with <code>&quot;edit_run_&quot;</code></p>
+         * <p>Example: <code>&quot;edit_run_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        @JsonSetter("id")
+        public StatusStage id(@NotNull String id) {
+            this.id = Objects.requireNonNull(id, "id must not be null");
+            return this;
         }
-    }
 
-    public enum Value {
-        PROCESSING,
+        /**
+         * <p>The status of the edit run.</p>
+         * <p>The status of the edit run.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        @JsonSetter("status")
+        public _FinalStage status(@NotNull EditRunStatusStatus status) {
+            this.status = Objects.requireNonNull(status, "status must not be null");
+            return this;
+        }
 
-        PROCESSED,
+        /**
+         * <p>The reason for failure if status is &quot;FAILED&quot;.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage failureReason(String failureReason) {
+            this.failureReason = Optional.ofNullable(failureReason);
+            return this;
+        }
 
-        FAILED,
+        /**
+         * <p>The reason for failure if status is &quot;FAILED&quot;.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "failureReason", nulls = Nulls.SKIP)
+        public _FinalStage failureReason(Optional<String> failureReason) {
+            this.failureReason = failureReason;
+            return this;
+        }
 
-        UNKNOWN
-    }
-
-    public interface Visitor<T> {
-        T visitProcessing();
-
-        T visitProcessed();
-
-        T visitFailed();
-
-        T visitUnknown(String unknownType);
+        @java.lang.Override
+        public EditRunStatus build() {
+            return new EditRunStatus(id, status, failureReason, additionalProperties);
+        }
     }
 }

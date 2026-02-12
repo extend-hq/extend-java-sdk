@@ -3,137 +3,32 @@
  */
 package ai.extend.resources.processorrun.types;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public final class ProcessorRunListRequestSource {
-    public static final ProcessorRunListRequestSource API = new ProcessorRunListRequestSource(Value.API, "API");
+public enum ProcessorRunListRequestSource {
+    ADMIN("ADMIN"),
 
-    public static final ProcessorRunListRequestSource PLAYGROUND =
-            new ProcessorRunListRequestSource(Value.PLAYGROUND, "PLAYGROUND");
+    BATCH_PROCESSOR_RUN("BATCH_PROCESSOR_RUN"),
 
-    public static final ProcessorRunListRequestSource WORKFLOW_CONFIGURATION =
-            new ProcessorRunListRequestSource(Value.WORKFLOW_CONFIGURATION, "WORKFLOW_CONFIGURATION");
+    PLAYGROUND("PLAYGROUND"),
 
-    public static final ProcessorRunListRequestSource BATCH_PROCESSOR_RUN =
-            new ProcessorRunListRequestSource(Value.BATCH_PROCESSOR_RUN, "BATCH_PROCESSOR_RUN");
+    WORKFLOW_CONFIGURATION("WORKFLOW_CONFIGURATION"),
 
-    public static final ProcessorRunListRequestSource WORKFLOW_RUN =
-            new ProcessorRunListRequestSource(Value.WORKFLOW_RUN, "WORKFLOW_RUN");
+    WORKFLOW_RUN("WORKFLOW_RUN"),
 
-    public static final ProcessorRunListRequestSource ADMIN = new ProcessorRunListRequestSource(Value.ADMIN, "ADMIN");
+    STUDIO("STUDIO"),
 
-    public static final ProcessorRunListRequestSource STUDIO =
-            new ProcessorRunListRequestSource(Value.STUDIO, "STUDIO");
+    API("API");
 
-    private final Value value;
+    private final String value;
 
-    private final String string;
-
-    ProcessorRunListRequestSource(Value value, String string) {
+    ProcessorRunListRequestSource(String value) {
         this.value = value;
-        this.string = string;
     }
 
-    public Value getEnumValue() {
-        return value;
-    }
-
-    @java.lang.Override
     @JsonValue
+    @java.lang.Override
     public String toString() {
-        return this.string;
-    }
-
-    @java.lang.Override
-    public boolean equals(Object other) {
-        return (this == other)
-                || (other instanceof ProcessorRunListRequestSource
-                        && this.string.equals(((ProcessorRunListRequestSource) other).string));
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-        return this.string.hashCode();
-    }
-
-    public <T> T visit(Visitor<T> visitor) {
-        switch (value) {
-            case API:
-                return visitor.visitApi();
-            case PLAYGROUND:
-                return visitor.visitPlayground();
-            case WORKFLOW_CONFIGURATION:
-                return visitor.visitWorkflowConfiguration();
-            case BATCH_PROCESSOR_RUN:
-                return visitor.visitBatchProcessorRun();
-            case WORKFLOW_RUN:
-                return visitor.visitWorkflowRun();
-            case ADMIN:
-                return visitor.visitAdmin();
-            case STUDIO:
-                return visitor.visitStudio();
-            case UNKNOWN:
-            default:
-                return visitor.visitUnknown(string);
-        }
-    }
-
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static ProcessorRunListRequestSource valueOf(String value) {
-        switch (value) {
-            case "API":
-                return API;
-            case "PLAYGROUND":
-                return PLAYGROUND;
-            case "WORKFLOW_CONFIGURATION":
-                return WORKFLOW_CONFIGURATION;
-            case "BATCH_PROCESSOR_RUN":
-                return BATCH_PROCESSOR_RUN;
-            case "WORKFLOW_RUN":
-                return WORKFLOW_RUN;
-            case "ADMIN":
-                return ADMIN;
-            case "STUDIO":
-                return STUDIO;
-            default:
-                return new ProcessorRunListRequestSource(Value.UNKNOWN, value);
-        }
-    }
-
-    public enum Value {
-        ADMIN,
-
-        BATCH_PROCESSOR_RUN,
-
-        PLAYGROUND,
-
-        WORKFLOW_CONFIGURATION,
-
-        WORKFLOW_RUN,
-
-        STUDIO,
-
-        API,
-
-        UNKNOWN
-    }
-
-    public interface Visitor<T> {
-        T visitAdmin();
-
-        T visitBatchProcessorRun();
-
-        T visitPlayground();
-
-        T visitWorkflowConfiguration();
-
-        T visitWorkflowRun();
-
-        T visitStudio();
-
-        T visitApi();
-
-        T visitUnknown(String unknownType);
+        return this.value;
     }
 }

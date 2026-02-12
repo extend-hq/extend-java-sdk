@@ -23,7 +23,13 @@ import java.util.Optional;
 public final class ParseConfigAdvancedOptions {
     private final Optional<Boolean> pageRotationEnabled;
 
+    private final Optional<Boolean> agenticOcrEnabled;
+
     private final Optional<List<PageRangesItem>> pageRanges;
+
+    private final Optional<ParseConfigAdvancedOptionsExcelParsingMode> excelParsingMode;
+
+    private final Optional<Boolean> excelSkipHiddenContent;
 
     private final Optional<Double> verticalGroupingThreshold;
 
@@ -33,12 +39,18 @@ public final class ParseConfigAdvancedOptions {
 
     private ParseConfigAdvancedOptions(
             Optional<Boolean> pageRotationEnabled,
+            Optional<Boolean> agenticOcrEnabled,
             Optional<List<PageRangesItem>> pageRanges,
+            Optional<ParseConfigAdvancedOptionsExcelParsingMode> excelParsingMode,
+            Optional<Boolean> excelSkipHiddenContent,
             Optional<Double> verticalGroupingThreshold,
             Optional<ParseConfigAdvancedOptionsReturnOcr> returnOcr,
             Map<String, Object> additionalProperties) {
         this.pageRotationEnabled = pageRotationEnabled;
+        this.agenticOcrEnabled = agenticOcrEnabled;
         this.pageRanges = pageRanges;
+        this.excelParsingMode = excelParsingMode;
+        this.excelSkipHiddenContent = excelSkipHiddenContent;
         this.verticalGroupingThreshold = verticalGroupingThreshold;
         this.returnOcr = returnOcr;
         this.additionalProperties = additionalProperties;
@@ -52,9 +64,38 @@ public final class ParseConfigAdvancedOptions {
         return pageRotationEnabled;
     }
 
+    /**
+     * @return Whether to enable agentic OCR corrections using VLM-based review and correction of OCR errors for messy handwriting and poorly scanned text. Deprecated - use <code>blockOptions.text.agentic</code> or <code>blockOptions.tables.agentic</code> instead for more granular control.
+     */
+    @JsonProperty("agenticOcrEnabled")
+    public Optional<Boolean> getAgenticOcrEnabled() {
+        return agenticOcrEnabled;
+    }
+
     @JsonProperty("pageRanges")
     public Optional<List<PageRangesItem>> getPageRanges() {
         return pageRanges;
+    }
+
+    /**
+     * @return Controls how Excel files are parsed.
+     * <ul>
+     * <li><code>basic</code>: Fast, deterministic parsing.</li>
+     * <li><code>advanced</code>: Enable layout block detection for complex spreadsheets.</li>
+     * </ul>
+     * <p>For <code>.xls</code> files, <code>basic</code> mode is always used.</p>
+     */
+    @JsonProperty("excelParsingMode")
+    public Optional<ParseConfigAdvancedOptionsExcelParsingMode> getExcelParsingMode() {
+        return excelParsingMode;
+    }
+
+    /**
+     * @return Whether to exclude hidden rows, columns, and sheets when parsing Excel files.
+     */
+    @JsonProperty("excelSkipHiddenContent")
+    public Optional<Boolean> getExcelSkipHiddenContent() {
+        return excelSkipHiddenContent;
     }
 
     /**
@@ -86,14 +127,24 @@ public final class ParseConfigAdvancedOptions {
 
     private boolean equalTo(ParseConfigAdvancedOptions other) {
         return pageRotationEnabled.equals(other.pageRotationEnabled)
+                && agenticOcrEnabled.equals(other.agenticOcrEnabled)
                 && pageRanges.equals(other.pageRanges)
+                && excelParsingMode.equals(other.excelParsingMode)
+                && excelSkipHiddenContent.equals(other.excelSkipHiddenContent)
                 && verticalGroupingThreshold.equals(other.verticalGroupingThreshold)
                 && returnOcr.equals(other.returnOcr);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.pageRotationEnabled, this.pageRanges, this.verticalGroupingThreshold, this.returnOcr);
+        return Objects.hash(
+                this.pageRotationEnabled,
+                this.agenticOcrEnabled,
+                this.pageRanges,
+                this.excelParsingMode,
+                this.excelSkipHiddenContent,
+                this.verticalGroupingThreshold,
+                this.returnOcr);
     }
 
     @java.lang.Override
@@ -109,7 +160,13 @@ public final class ParseConfigAdvancedOptions {
     public static final class Builder {
         private Optional<Boolean> pageRotationEnabled = Optional.empty();
 
+        private Optional<Boolean> agenticOcrEnabled = Optional.empty();
+
         private Optional<List<PageRangesItem>> pageRanges = Optional.empty();
+
+        private Optional<ParseConfigAdvancedOptionsExcelParsingMode> excelParsingMode = Optional.empty();
+
+        private Optional<Boolean> excelSkipHiddenContent = Optional.empty();
 
         private Optional<Double> verticalGroupingThreshold = Optional.empty();
 
@@ -122,7 +179,10 @@ public final class ParseConfigAdvancedOptions {
 
         public Builder from(ParseConfigAdvancedOptions other) {
             pageRotationEnabled(other.getPageRotationEnabled());
+            agenticOcrEnabled(other.getAgenticOcrEnabled());
             pageRanges(other.getPageRanges());
+            excelParsingMode(other.getExcelParsingMode());
+            excelSkipHiddenContent(other.getExcelSkipHiddenContent());
             verticalGroupingThreshold(other.getVerticalGroupingThreshold());
             returnOcr(other.getReturnOcr());
             return this;
@@ -142,6 +202,20 @@ public final class ParseConfigAdvancedOptions {
             return this;
         }
 
+        /**
+         * <p>Whether to enable agentic OCR corrections using VLM-based review and correction of OCR errors for messy handwriting and poorly scanned text. Deprecated - use <code>blockOptions.text.agentic</code> or <code>blockOptions.tables.agentic</code> instead for more granular control.</p>
+         */
+        @JsonSetter(value = "agenticOcrEnabled", nulls = Nulls.SKIP)
+        public Builder agenticOcrEnabled(Optional<Boolean> agenticOcrEnabled) {
+            this.agenticOcrEnabled = agenticOcrEnabled;
+            return this;
+        }
+
+        public Builder agenticOcrEnabled(Boolean agenticOcrEnabled) {
+            this.agenticOcrEnabled = Optional.ofNullable(agenticOcrEnabled);
+            return this;
+        }
+
         @JsonSetter(value = "pageRanges", nulls = Nulls.SKIP)
         public Builder pageRanges(Optional<List<PageRangesItem>> pageRanges) {
             this.pageRanges = pageRanges;
@@ -150,6 +224,39 @@ public final class ParseConfigAdvancedOptions {
 
         public Builder pageRanges(List<PageRangesItem> pageRanges) {
             this.pageRanges = Optional.ofNullable(pageRanges);
+            return this;
+        }
+
+        /**
+         * <p>Controls how Excel files are parsed.</p>
+         * <ul>
+         * <li><code>basic</code>: Fast, deterministic parsing.</li>
+         * <li><code>advanced</code>: Enable layout block detection for complex spreadsheets.</li>
+         * </ul>
+         * <p>For <code>.xls</code> files, <code>basic</code> mode is always used.</p>
+         */
+        @JsonSetter(value = "excelParsingMode", nulls = Nulls.SKIP)
+        public Builder excelParsingMode(Optional<ParseConfigAdvancedOptionsExcelParsingMode> excelParsingMode) {
+            this.excelParsingMode = excelParsingMode;
+            return this;
+        }
+
+        public Builder excelParsingMode(ParseConfigAdvancedOptionsExcelParsingMode excelParsingMode) {
+            this.excelParsingMode = Optional.ofNullable(excelParsingMode);
+            return this;
+        }
+
+        /**
+         * <p>Whether to exclude hidden rows, columns, and sheets when parsing Excel files.</p>
+         */
+        @JsonSetter(value = "excelSkipHiddenContent", nulls = Nulls.SKIP)
+        public Builder excelSkipHiddenContent(Optional<Boolean> excelSkipHiddenContent) {
+            this.excelSkipHiddenContent = excelSkipHiddenContent;
+            return this;
+        }
+
+        public Builder excelSkipHiddenContent(Boolean excelSkipHiddenContent) {
+            this.excelSkipHiddenContent = Optional.ofNullable(excelSkipHiddenContent);
             return this;
         }
 
@@ -183,7 +290,14 @@ public final class ParseConfigAdvancedOptions {
 
         public ParseConfigAdvancedOptions build() {
             return new ParseConfigAdvancedOptions(
-                    pageRotationEnabled, pageRanges, verticalGroupingThreshold, returnOcr, additionalProperties);
+                    pageRotationEnabled,
+                    agenticOcrEnabled,
+                    pageRanges,
+                    excelParsingMode,
+                    excelSkipHiddenContent,
+                    verticalGroupingThreshold,
+                    returnOcr,
+                    additionalProperties);
         }
     }
 }

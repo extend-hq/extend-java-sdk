@@ -3,90 +3,24 @@
  */
 package ai.extend.types;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public final class ChunkType {
-    public static final ChunkType SECTION = new ChunkType(Value.SECTION, "section");
+public enum ChunkType {
+    PAGE("page"),
 
-    public static final ChunkType DOCUMENT = new ChunkType(Value.DOCUMENT, "document");
+    DOCUMENT("document"),
 
-    public static final ChunkType PAGE = new ChunkType(Value.PAGE, "page");
+    SECTION("section");
 
-    private final Value value;
+    private final String value;
 
-    private final String string;
-
-    ChunkType(Value value, String string) {
+    ChunkType(String value) {
         this.value = value;
-        this.string = string;
     }
 
-    public Value getEnumValue() {
-        return value;
-    }
-
-    @java.lang.Override
     @JsonValue
+    @java.lang.Override
     public String toString() {
-        return this.string;
-    }
-
-    @java.lang.Override
-    public boolean equals(Object other) {
-        return (this == other) || (other instanceof ChunkType && this.string.equals(((ChunkType) other).string));
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-        return this.string.hashCode();
-    }
-
-    public <T> T visit(Visitor<T> visitor) {
-        switch (value) {
-            case SECTION:
-                return visitor.visitSection();
-            case DOCUMENT:
-                return visitor.visitDocument();
-            case PAGE:
-                return visitor.visitPage();
-            case UNKNOWN:
-            default:
-                return visitor.visitUnknown(string);
-        }
-    }
-
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static ChunkType valueOf(String value) {
-        switch (value) {
-            case "section":
-                return SECTION;
-            case "document":
-                return DOCUMENT;
-            case "page":
-                return PAGE;
-            default:
-                return new ChunkType(Value.UNKNOWN, value);
-        }
-    }
-
-    public enum Value {
-        PAGE,
-
-        DOCUMENT,
-
-        SECTION,
-
-        UNKNOWN
-    }
-
-    public interface Visitor<T> {
-        T visitPage();
-
-        T visitDocument();
-
-        T visitSection();
-
-        T visitUnknown(String unknownType);
+        return this.value;
     }
 }

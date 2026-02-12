@@ -65,9 +65,9 @@ public class ExtendClientApiException extends ExtendClientException {
         return this.headers;
     }
 
-    @Override
+    @java.lang.Override
     public String toString() {
         return "ExtendClientApiException{" + "message: " + getMessage() + ", statusCode: " + statusCode + ", body: "
-                + ObjectMappers.stringify(body) + "}";
+                + body + "}";
     }
 }

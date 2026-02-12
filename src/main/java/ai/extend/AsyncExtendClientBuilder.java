@@ -19,7 +19,7 @@ public class AsyncExtendClientBuilder {
 
     private String token = null;
 
-    private String extendApiVersion = "2026-02-09";
+    private String extendApiVersion = "2025-04-21";
 
     private Environment environment = Environment.PRODUCTION;
 

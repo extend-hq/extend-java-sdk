@@ -4,7 +4,7 @@
 package ai.extend.resources.processorrun.types;
 
 import ai.extend.core.ObjectMappers;
-import ai.extend.types.LegacyProcessorRunSummary;
+import ai.extend.types.ProcessorRunSummary;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -25,7 +25,7 @@ import java.util.Optional;
 public final class ProcessorRunListResponse {
     private final boolean success;
 
-    private final List<LegacyProcessorRunSummary> processorRuns;
+    private final List<ProcessorRunSummary> processorRuns;
 
     private final Optional<String> nextPageToken;
 
@@ -33,7 +33,7 @@ public final class ProcessorRunListResponse {
 
     private ProcessorRunListResponse(
             boolean success,
-            List<LegacyProcessorRunSummary> processorRuns,
+            List<ProcessorRunSummary> processorRuns,
             Optional<String> nextPageToken,
             Map<String, Object> additionalProperties) {
         this.success = success;
@@ -48,7 +48,7 @@ public final class ProcessorRunListResponse {
     }
 
     @JsonProperty("processorRuns")
-    public List<LegacyProcessorRunSummary> getProcessorRuns() {
+    public List<ProcessorRunSummary> getProcessorRuns() {
         return processorRuns;
     }
 
@@ -97,11 +97,11 @@ public final class ProcessorRunListResponse {
     public interface _FinalStage {
         ProcessorRunListResponse build();
 
-        _FinalStage processorRuns(List<LegacyProcessorRunSummary> processorRuns);
+        _FinalStage processorRuns(List<ProcessorRunSummary> processorRuns);
 
-        _FinalStage addProcessorRuns(LegacyProcessorRunSummary processorRuns);
+        _FinalStage addProcessorRuns(ProcessorRunSummary processorRuns);
 
-        _FinalStage addAllProcessorRuns(List<LegacyProcessorRunSummary> processorRuns);
+        _FinalStage addAllProcessorRuns(List<ProcessorRunSummary> processorRuns);
 
         _FinalStage nextPageToken(Optional<String> nextPageToken);
 
@@ -114,7 +114,7 @@ public final class ProcessorRunListResponse {
 
         private Optional<String> nextPageToken = Optional.empty();
 
-        private List<LegacyProcessorRunSummary> processorRuns = new ArrayList<>();
+        private List<ProcessorRunSummary> processorRuns = new ArrayList<>();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -150,26 +150,22 @@ public final class ProcessorRunListResponse {
         }
 
         @java.lang.Override
-        public _FinalStage addAllProcessorRuns(List<LegacyProcessorRunSummary> processorRuns) {
-            if (processorRuns != null) {
-                this.processorRuns.addAll(processorRuns);
-            }
+        public _FinalStage addAllProcessorRuns(List<ProcessorRunSummary> processorRuns) {
+            this.processorRuns.addAll(processorRuns);
             return this;
         }
 
         @java.lang.Override
-        public _FinalStage addProcessorRuns(LegacyProcessorRunSummary processorRuns) {
+        public _FinalStage addProcessorRuns(ProcessorRunSummary processorRuns) {
             this.processorRuns.add(processorRuns);
             return this;
         }
 
         @java.lang.Override
         @JsonSetter(value = "processorRuns", nulls = Nulls.SKIP)
-        public _FinalStage processorRuns(List<LegacyProcessorRunSummary> processorRuns) {
+        public _FinalStage processorRuns(List<ProcessorRunSummary> processorRuns) {
             this.processorRuns.clear();
-            if (processorRuns != null) {
-                this.processorRuns.addAll(processorRuns);
-            }
+            this.processorRuns.addAll(processorRuns);
             return this;
         }
 

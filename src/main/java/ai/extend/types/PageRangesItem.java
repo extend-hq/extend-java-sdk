@@ -10,21 +10,23 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = PageRangesItem.Builder.class)
 public final class PageRangesItem {
-    private final int start;
+    private final Optional<Integer> start;
 
-    private final int end;
+    private final Optional<Integer> end;
 
     private final Map<String, Object> additionalProperties;
 
-    private PageRangesItem(int start, int end, Map<String, Object> additionalProperties) {
+    private PageRangesItem(Optional<Integer> start, Optional<Integer> end, Map<String, Object> additionalProperties) {
         this.start = start;
         this.end = end;
         this.additionalProperties = additionalProperties;
@@ -34,7 +36,7 @@ public final class PageRangesItem {
      * @return The start page of the range.
      */
     @JsonProperty("start")
-    public int getStart() {
+    public Optional<Integer> getStart() {
         return start;
     }
 
@@ -42,7 +44,7 @@ public final class PageRangesItem {
      * @return The end page of the range.
      */
     @JsonProperty("end")
-    public int getEnd() {
+    public Optional<Integer> getEnd() {
         return end;
     }
 
@@ -58,7 +60,7 @@ public final class PageRangesItem {
     }
 
     private boolean equalTo(PageRangesItem other) {
-        return start == other.start && end == other.end;
+        return start.equals(other.start) && end.equals(other.end);
     }
 
     @java.lang.Override
@@ -71,42 +73,21 @@ public final class PageRangesItem {
         return ObjectMappers.stringify(this);
     }
 
-    public static StartStage builder() {
+    public static Builder builder() {
         return new Builder();
     }
 
-    public interface StartStage {
-        /**
-         * <p>The start page of the range.</p>
-         */
-        EndStage start(int start);
-
-        Builder from(PageRangesItem other);
-    }
-
-    public interface EndStage {
-        /**
-         * <p>The end page of the range.</p>
-         */
-        _FinalStage end(int end);
-    }
-
-    public interface _FinalStage {
-        PageRangesItem build();
-    }
-
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements StartStage, EndStage, _FinalStage {
-        private int start;
+    public static final class Builder {
+        private Optional<Integer> start = Optional.empty();
 
-        private int end;
+        private Optional<Integer> end = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
-        @java.lang.Override
         public Builder from(PageRangesItem other) {
             start(other.getStart());
             end(other.getEnd());
@@ -115,29 +96,32 @@ public final class PageRangesItem {
 
         /**
          * <p>The start page of the range.</p>
-         * <p>The start page of the range.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
          */
-        @java.lang.Override
-        @JsonSetter("start")
-        public EndStage start(int start) {
+        @JsonSetter(value = "start", nulls = Nulls.SKIP)
+        public Builder start(Optional<Integer> start) {
             this.start = start;
+            return this;
+        }
+
+        public Builder start(Integer start) {
+            this.start = Optional.ofNullable(start);
             return this;
         }
 
         /**
          * <p>The end page of the range.</p>
-         * <p>The end page of the range.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
          */
-        @java.lang.Override
-        @JsonSetter("end")
-        public _FinalStage end(int end) {
+        @JsonSetter(value = "end", nulls = Nulls.SKIP)
+        public Builder end(Optional<Integer> end) {
             this.end = end;
             return this;
         }
 
-        @java.lang.Override
+        public Builder end(Integer end) {
+            this.end = Optional.ofNullable(end);
+            return this;
+        }
+
         public PageRangesItem build() {
             return new PageRangesItem(start, end, additionalProperties);
         }

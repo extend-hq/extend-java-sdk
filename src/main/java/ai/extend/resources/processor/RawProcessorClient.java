@@ -21,7 +21,8 @@ import ai.extend.resources.processor.requests.ProcessorListRequest;
 import ai.extend.resources.processor.requests.ProcessorUpdateRequest;
 import ai.extend.resources.processor.types.ProcessorCreateResponse;
 import ai.extend.resources.processor.types.ProcessorUpdateResponse;
-import ai.extend.types.LegacyListProcessorsResponse;
+import ai.extend.types.Error;
+import ai.extend.types.ListProcessorsResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import okhttp3.Headers;
@@ -42,28 +43,21 @@ public class RawProcessorClient {
     /**
      * List all processors in your organization
      */
-    public ExtendClientHttpResponse<LegacyListProcessorsResponse> list() {
+    public ExtendClientHttpResponse<ListProcessorsResponse> list() {
         return list(ProcessorListRequest.builder().build());
     }
 
     /**
      * List all processors in your organization
      */
-    public ExtendClientHttpResponse<LegacyListProcessorsResponse> list(RequestOptions requestOptions) {
-        return list(ProcessorListRequest.builder().build(), requestOptions);
-    }
-
-    /**
-     * List all processors in your organization
-     */
-    public ExtendClientHttpResponse<LegacyListProcessorsResponse> list(ProcessorListRequest request) {
+    public ExtendClientHttpResponse<ListProcessorsResponse> list(ProcessorListRequest request) {
         return list(request, null);
     }
 
     /**
      * List all processors in your organization
      */
-    public ExtendClientHttpResponse<LegacyListProcessorsResponse> list(
+    public ExtendClientHttpResponse<ListProcessorsResponse> list(
             ProcessorListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -88,11 +82,6 @@ public class RawProcessorClient {
             QueryStringMapper.addQueryParameter(
                     httpUrl, "sortDir", request.getSortDir().get(), false);
         }
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
         Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
@@ -105,12 +94,12 @@ public class RawProcessorClient {
         }
         try (Response response = client.newCall(okhttpRequest).execute()) {
             ResponseBody responseBody = response.body();
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
                 return new ExtendClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, LegacyListProcessorsResponse.class),
+                        ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), ListProcessorsResponse.class),
                         response);
             }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             try {
                 switch (response.code()) {
                     case 400:
@@ -118,7 +107,7 @@ public class RawProcessorClient {
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                     case 401:
                         throw new UnauthorizedError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class), response);
                     case 429:
                         throw new TooManyRequestsError(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
@@ -129,9 +118,11 @@ public class RawProcessorClient {
             } catch (JsonProcessingException ignored) {
                 // unable to map error response, throwing generic error
             }
-            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
             throw new ExtendClientApiException(
-                    "Error with status code " + response.code(), response.code(), errorBody, response);
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
         } catch (IOException e) {
             throw new ExtendClientException("Network error executing HTTP request", e);
         }
@@ -149,14 +140,10 @@ public class RawProcessorClient {
      */
     public ExtendClientHttpResponse<ProcessorCreateResponse> create(
             ProcessorCreateRequest request, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
-                .addPathSegments("processors");
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
+                .addPathSegments("processors")
+                .build();
         RequestBody body;
         try {
             body = RequestBody.create(
@@ -165,7 +152,7 @@ public class RawProcessorClient {
             throw new ExtendClientException("Failed to serialize request", e);
         }
         Request okhttpRequest = new Request.Builder()
-                .url(httpUrl.build())
+                .url(httpUrl)
                 .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
@@ -177,12 +164,12 @@ public class RawProcessorClient {
         }
         try (Response response = client.newCall(okhttpRequest).execute()) {
             ResponseBody responseBody = response.body();
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
                 return new ExtendClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ProcessorCreateResponse.class),
+                        ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), ProcessorCreateResponse.class),
                         response);
             }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             try {
                 switch (response.code()) {
                     case 400:
@@ -190,7 +177,7 @@ public class RawProcessorClient {
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                     case 401:
                         throw new UnauthorizedError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class), response);
                     case 404:
                         throw new NotFoundError(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
@@ -198,9 +185,11 @@ public class RawProcessorClient {
             } catch (JsonProcessingException ignored) {
                 // unable to map error response, throwing generic error
             }
-            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
             throw new ExtendClientApiException(
-                    "Error with status code " + response.code(), response.code(), errorBody, response);
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
         } catch (IOException e) {
             throw new ExtendClientException("Network error executing HTTP request", e);
         }
@@ -216,13 +205,6 @@ public class RawProcessorClient {
     /**
      * Update an existing processor in Extend
      */
-    public ExtendClientHttpResponse<ProcessorUpdateResponse> update(String id, RequestOptions requestOptions) {
-        return update(id, ProcessorUpdateRequest.builder().build(), requestOptions);
-    }
-
-    /**
-     * Update an existing processor in Extend
-     */
     public ExtendClientHttpResponse<ProcessorUpdateResponse> update(String id, ProcessorUpdateRequest request) {
         return update(id, request, null);
     }
@@ -232,15 +214,11 @@ public class RawProcessorClient {
      */
     public ExtendClientHttpResponse<ProcessorUpdateResponse> update(
             String id, ProcessorUpdateRequest request, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("processors")
-                .addPathSegment(id);
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
+                .addPathSegment(id)
+                .build();
         RequestBody body;
         try {
             body = RequestBody.create(
@@ -249,7 +227,7 @@ public class RawProcessorClient {
             throw new ExtendClientException("Failed to serialize request", e);
         }
         Request okhttpRequest = new Request.Builder()
-                .url(httpUrl.build())
+                .url(httpUrl)
                 .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
@@ -261,12 +239,12 @@ public class RawProcessorClient {
         }
         try (Response response = client.newCall(okhttpRequest).execute()) {
             ResponseBody responseBody = response.body();
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
                 return new ExtendClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ProcessorUpdateResponse.class),
+                        ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), ProcessorUpdateResponse.class),
                         response);
             }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             try {
                 switch (response.code()) {
                     case 400:
@@ -274,7 +252,7 @@ public class RawProcessorClient {
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                     case 401:
                         throw new UnauthorizedError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class), response);
                     case 404:
                         throw new NotFoundError(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
@@ -282,9 +260,11 @@ public class RawProcessorClient {
             } catch (JsonProcessingException ignored) {
                 // unable to map error response, throwing generic error
             }
-            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
             throw new ExtendClientApiException(
-                    "Error with status code " + response.code(), response.code(), errorBody, response);
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
         } catch (IOException e) {
             throw new ExtendClientException("Network error executing HTTP request", e);
         }

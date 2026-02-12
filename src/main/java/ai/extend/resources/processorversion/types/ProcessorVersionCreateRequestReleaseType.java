@@ -3,84 +3,22 @@
  */
 package ai.extend.resources.processorversion.types;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public final class ProcessorVersionCreateRequestReleaseType {
-    public static final ProcessorVersionCreateRequestReleaseType MINOR =
-            new ProcessorVersionCreateRequestReleaseType(Value.MINOR, "minor");
+public enum ProcessorVersionCreateRequestReleaseType {
+    MAJOR("major"),
 
-    public static final ProcessorVersionCreateRequestReleaseType MAJOR =
-            new ProcessorVersionCreateRequestReleaseType(Value.MAJOR, "major");
+    MINOR("minor");
 
-    private final Value value;
+    private final String value;
 
-    private final String string;
-
-    ProcessorVersionCreateRequestReleaseType(Value value, String string) {
+    ProcessorVersionCreateRequestReleaseType(String value) {
         this.value = value;
-        this.string = string;
     }
 
-    public Value getEnumValue() {
-        return value;
-    }
-
-    @java.lang.Override
     @JsonValue
+    @java.lang.Override
     public String toString() {
-        return this.string;
-    }
-
-    @java.lang.Override
-    public boolean equals(Object other) {
-        return (this == other)
-                || (other instanceof ProcessorVersionCreateRequestReleaseType
-                        && this.string.equals(((ProcessorVersionCreateRequestReleaseType) other).string));
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-        return this.string.hashCode();
-    }
-
-    public <T> T visit(Visitor<T> visitor) {
-        switch (value) {
-            case MINOR:
-                return visitor.visitMinor();
-            case MAJOR:
-                return visitor.visitMajor();
-            case UNKNOWN:
-            default:
-                return visitor.visitUnknown(string);
-        }
-    }
-
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static ProcessorVersionCreateRequestReleaseType valueOf(String value) {
-        switch (value) {
-            case "minor":
-                return MINOR;
-            case "major":
-                return MAJOR;
-            default:
-                return new ProcessorVersionCreateRequestReleaseType(Value.UNKNOWN, value);
-        }
-    }
-
-    public enum Value {
-        MAJOR,
-
-        MINOR,
-
-        UNKNOWN
-    }
-
-    public interface Visitor<T> {
-        T visitMajor();
-
-        T visitMinor();
-
-        T visitUnknown(String unknownType);
+        return this.value;
     }
 }

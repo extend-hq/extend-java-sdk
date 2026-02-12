@@ -23,6 +23,7 @@ import ai.extend.resources.processorrun.types.ProcessorRunCreateResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunDeleteResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunGetResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunListResponse;
+import ai.extend.types.Error;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import okhttp3.Headers;
@@ -45,13 +46,6 @@ public class RawProcessorRunClient {
      */
     public ExtendClientHttpResponse<ProcessorRunListResponse> list() {
         return list(ProcessorRunListRequest.builder().build());
-    }
-
-    /**
-     * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
-     */
-    public ExtendClientHttpResponse<ProcessorRunListResponse> list(RequestOptions requestOptions) {
-        return list(ProcessorRunListRequest.builder().build(), requestOptions);
     }
 
     /**
@@ -109,11 +103,6 @@ public class RawProcessorRunClient {
             QueryStringMapper.addQueryParameter(
                     httpUrl, "maxPageSize", request.getMaxPageSize().get(), false);
         }
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
         Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
@@ -126,12 +115,12 @@ public class RawProcessorRunClient {
         }
         try (Response response = client.newCall(okhttpRequest).execute()) {
             ResponseBody responseBody = response.body();
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
                 return new ExtendClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ProcessorRunListResponse.class),
+                        ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), ProcessorRunListResponse.class),
                         response);
             }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             try {
                 switch (response.code()) {
                     case 400:
@@ -139,14 +128,16 @@ public class RawProcessorRunClient {
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                     case 401:
                         throw new UnauthorizedError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class), response);
                 }
             } catch (JsonProcessingException ignored) {
                 // unable to map error response, throwing generic error
             }
-            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
             throw new ExtendClientApiException(
-                    "Error with status code " + response.code(), response.code(), errorBody, response);
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
         } catch (IOException e) {
             throw new ExtendClientException("Network error executing HTTP request", e);
         }
@@ -184,14 +175,10 @@ public class RawProcessorRunClient {
      */
     public ExtendClientHttpResponse<ProcessorRunCreateResponse> create(
             ProcessorRunCreateRequest request, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
-                .addPathSegments("processor_runs");
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
+                .addPathSegments("processor_runs")
+                .build();
         RequestBody body;
         try {
             body = RequestBody.create(
@@ -200,7 +187,7 @@ public class RawProcessorRunClient {
             throw new ExtendClientException("Failed to serialize request", e);
         }
         Request okhttpRequest = new Request.Builder()
-                .url(httpUrl.build())
+                .url(httpUrl)
                 .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
@@ -212,12 +199,12 @@ public class RawProcessorRunClient {
         }
         try (Response response = client.newCall(okhttpRequest).execute()) {
             ResponseBody responseBody = response.body();
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
                 return new ExtendClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ProcessorRunCreateResponse.class),
+                        ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), ProcessorRunCreateResponse.class),
                         response);
             }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             try {
                 switch (response.code()) {
                     case 400:
@@ -225,7 +212,7 @@ public class RawProcessorRunClient {
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                     case 401:
                         throw new UnauthorizedError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class), response);
                     case 404:
                         throw new NotFoundError(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
@@ -236,9 +223,11 @@ public class RawProcessorRunClient {
             } catch (JsonProcessingException ignored) {
                 // unable to map error response, throwing generic error
             }
-            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
             throw new ExtendClientApiException(
-                    "Error with status code " + response.code(), response.code(), errorBody, response);
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
         } catch (IOException e) {
             throw new ExtendClientException("Network error executing HTTP request", e);
         }
@@ -257,17 +246,13 @@ public class RawProcessorRunClient {
      * <p>A common use case for this endpoint is to poll for the status and final output of an async processor run when using the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/processor-endpoints/run-processor">Run Processor</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
     public ExtendClientHttpResponse<ProcessorRunGetResponse> get(String id, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("processor_runs")
-                .addPathSegment(id);
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
+                .addPathSegment(id)
+                .build();
         Request okhttpRequest = new Request.Builder()
-                .url(httpUrl.build())
+                .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json")
@@ -278,12 +263,12 @@ public class RawProcessorRunClient {
         }
         try (Response response = client.newCall(okhttpRequest).execute()) {
             ResponseBody responseBody = response.body();
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
                 return new ExtendClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ProcessorRunGetResponse.class),
+                        ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), ProcessorRunGetResponse.class),
                         response);
             }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             try {
                 switch (response.code()) {
                     case 400:
@@ -291,7 +276,7 @@ public class RawProcessorRunClient {
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                     case 401:
                         throw new UnauthorizedError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class), response);
                     case 404:
                         throw new NotFoundError(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
@@ -299,9 +284,11 @@ public class RawProcessorRunClient {
             } catch (JsonProcessingException ignored) {
                 // unable to map error response, throwing generic error
             }
-            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
             throw new ExtendClientApiException(
-                    "Error with status code " + response.code(), response.code(), errorBody, response);
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
         } catch (IOException e) {
             throw new ExtendClientException("Network error executing HTTP request", e);
         }
@@ -320,17 +307,13 @@ public class RawProcessorRunClient {
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
     public ExtendClientHttpResponse<ProcessorRunDeleteResponse> delete(String id, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("processor_runs")
-                .addPathSegment(id);
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
+                .addPathSegment(id)
+                .build();
         Request okhttpRequest = new Request.Builder()
-                .url(httpUrl.build())
+                .url(httpUrl)
                 .method("DELETE", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json")
@@ -341,12 +324,12 @@ public class RawProcessorRunClient {
         }
         try (Response response = client.newCall(okhttpRequest).execute()) {
             ResponseBody responseBody = response.body();
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
                 return new ExtendClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ProcessorRunDeleteResponse.class),
+                        ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), ProcessorRunDeleteResponse.class),
                         response);
             }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             try {
                 switch (response.code()) {
                     case 404:
@@ -359,9 +342,11 @@ public class RawProcessorRunClient {
             } catch (JsonProcessingException ignored) {
                 // unable to map error response, throwing generic error
             }
-            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
             throw new ExtendClientApiException(
-                    "Error with status code " + response.code(), response.code(), errorBody, response);
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
         } catch (IOException e) {
             throw new ExtendClientException("Network error executing HTTP request", e);
         }
@@ -380,18 +365,14 @@ public class RawProcessorRunClient {
      * <p>Note: Only processor runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Processor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
     public ExtendClientHttpResponse<ProcessorRunCancelResponse> cancel(String id, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("processor_runs")
                 .addPathSegment(id)
-                .addPathSegments("cancel");
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
+                .addPathSegments("cancel")
+                .build();
         Request okhttpRequest = new Request.Builder()
-                .url(httpUrl.build())
+                .url(httpUrl)
                 .method("POST", RequestBody.create("", null))
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json")
@@ -402,12 +383,12 @@ public class RawProcessorRunClient {
         }
         try (Response response = client.newCall(okhttpRequest).execute()) {
             ResponseBody responseBody = response.body();
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
                 return new ExtendClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ProcessorRunCancelResponse.class),
+                        ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), ProcessorRunCancelResponse.class),
                         response);
             }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             try {
                 switch (response.code()) {
                     case 400:
@@ -415,7 +396,7 @@ public class RawProcessorRunClient {
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                     case 401:
                         throw new UnauthorizedError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class), response);
                     case 404:
                         throw new NotFoundError(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
@@ -423,9 +404,11 @@ public class RawProcessorRunClient {
             } catch (JsonProcessingException ignored) {
                 // unable to map error response, throwing generic error
             }
-            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
             throw new ExtendClientApiException(
-                    "Error with status code " + response.code(), response.code(), errorBody, response);
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
         } catch (IOException e) {
             throw new ExtendClientException("Network error executing HTTP request", e);
         }

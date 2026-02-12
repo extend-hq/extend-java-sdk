@@ -3,12 +3,9 @@
  */
 package ai.extend.types;
 
-import ai.extend.core.Nullable;
-import ai.extend.core.NullableNonemptyFilter;
 import ai.extend.core.ObjectMappers;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -26,40 +23,40 @@ import org.jetbrains.annotations.NotNull;
 public final class EditRun {
     private final String id;
 
-    private final FileSummary file;
+    private final String fileId;
+
+    private final Optional<EditRunEditedFile> editedFile;
 
     private final EditRunStatus status;
 
     private final Optional<String> failureReason;
 
-    private final Optional<String> failureMessage;
+    private final EditRunConfig config;
 
-    private final EditConfig config;
+    private final Optional<Map<String, Object>> output;
 
-    private final Optional<EditRunOutput> output;
+    private final EditRunMetrics metrics;
 
-    private final Optional<EditRunMetrics> metrics;
-
-    private final Optional<RunUsage> usage;
+    private final Optional<EditRunUsage> usage;
 
     private final Map<String, Object> additionalProperties;
 
     private EditRun(
             String id,
-            FileSummary file,
+            String fileId,
+            Optional<EditRunEditedFile> editedFile,
             EditRunStatus status,
             Optional<String> failureReason,
-            Optional<String> failureMessage,
-            EditConfig config,
-            Optional<EditRunOutput> output,
-            Optional<EditRunMetrics> metrics,
-            Optional<RunUsage> usage,
+            EditRunConfig config,
+            Optional<Map<String, Object>> output,
+            EditRunMetrics metrics,
+            Optional<EditRunUsage> usage,
             Map<String, Object> additionalProperties) {
         this.id = id;
-        this.file = file;
+        this.fileId = fileId;
+        this.editedFile = editedFile;
         this.status = status;
         this.failureReason = failureReason;
-        this.failureMessage = failureMessage;
         this.config = config;
         this.output = output;
         this.metrics = metrics;
@@ -76,8 +73,8 @@ public final class EditRun {
     }
 
     /**
-     * @return A unique identifier for the edit run.
-     * <p>Example: <code>&quot;edr_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+     * @return A unique identifier for the edit run. Will always start with <code>&quot;edit_run_&quot;</code>
+     * <p>Example: <code>&quot;edit_run_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
      */
     @JsonProperty("id")
     public String getId() {
@@ -85,136 +82,63 @@ public final class EditRun {
     }
 
     /**
-     * @return The input file that was submitted for editing.
+     * @return The identifier of the input file that was edited.
      */
-    @JsonProperty("file")
-    public FileSummary getFile() {
-        return file;
+    @JsonProperty("fileId")
+    public String getFileId() {
+        return fileId;
     }
 
     /**
-     * @return The status of the edit run:
-     * <ul>
-     * <li><code>&quot;PROCESSING&quot;</code> - The file is still being processed</li>
-     * <li><code>&quot;PROCESSED&quot;</code> - The file was successfully edited</li>
-     * <li><code>&quot;FAILED&quot;</code> - The editing failed (see <code>failureReason</code> for details)</li>
-     * </ul>
+     * @return Information about the edited output file. Only present when status is &quot;PROCESSED&quot;.
      */
+    @JsonProperty("editedFile")
+    public Optional<EditRunEditedFile> getEditedFile() {
+        return editedFile;
+    }
+
     @JsonProperty("status")
     public EditRunStatus getStatus() {
         return status;
     }
 
     /**
-     * @return The reason for failure.
-     * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
-     * <p>Possible values include:</p>
-     * <ul>
-     * <li><code>UNABLE_TO_DOWNLOAD_FILE</code> - Failed to load the requested file</li>
-     * <li><code>FILE_TYPE_NOT_SUPPORTED</code> - File type not supported. Edit runs currently require a PDF</li>
-     * <li><code>FILE_SIZE_TOO_LARGE</code> - The file exceeds the maximum allowed size</li>
-     * <li><code>CORRUPT_FILE</code> - The file appears to be corrupted and cannot be edited</li>
-     * <li><code>FIELD_DETECTION_ERROR</code> - An error occurred during field detection</li>
-     * <li><code>PASSWORD_PROTECTED_FILE</code> - The file is password protected and cannot be edited</li>
-     * <li><code>FAILED_TO_CONVERT_TO_PDF</code> - The file could not be converted to PDF for processing</li>
-     * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
-     * <li><code>INVALID_OPTIONS</code> - The provided configuration options are invalid</li>
-     * <li><code>EMPTY_SCHEMA</code> - No schema was provided and no fields could be detected</li>
-     * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to process the file</li>
-     * </ul>
-     * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
+     * @return The reason for failure if status is &quot;FAILED&quot;.
      */
-    @JsonIgnore
+    @JsonProperty("failureReason")
     public Optional<String> getFailureReason() {
-        if (failureReason == null) {
-            return Optional.empty();
-        }
         return failureReason;
     }
 
     /**
-     * @return A human-readable description of the failure.
-     * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
-     */
-    @JsonIgnore
-    public Optional<String> getFailureMessage() {
-        if (failureMessage == null) {
-            return Optional.empty();
-        }
-        return failureMessage;
-    }
-
-    /**
-     * @return The configuration used for this edit run, including any default values that were applied.
+     * @return The configuration used for this edit run.
      */
     @JsonProperty("config")
-    public EditConfig getConfig() {
+    public EditRunConfig getConfig() {
         return config;
     }
 
     /**
-     * @return The output of the edit run.
-     * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+     * @return The extracted/detected field values from the edited document.
      */
-    @JsonIgnore
-    public Optional<EditRunOutput> getOutput() {
-        if (output == null) {
-            return Optional.empty();
-        }
+    @JsonProperty("output")
+    public Optional<Map<String, Object>> getOutput() {
         return output;
     }
 
     /**
      * @return Metrics about the editing process.
-     * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
      */
-    @JsonIgnore
-    public Optional<EditRunMetrics> getMetrics() {
-        if (metrics == null) {
-            return Optional.empty();
-        }
+    @JsonProperty("metrics")
+    public EditRunMetrics getMetrics() {
         return metrics;
     }
 
     /**
-     * @return Usage credits consumed by this run.
-     * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
+     * @return Usage credits consumed by this edit run.
      */
-    @JsonIgnore
-    public Optional<RunUsage> getUsage() {
-        if (usage == null) {
-            return Optional.empty();
-        }
-        return usage;
-    }
-
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
-    @JsonProperty("failureReason")
-    private Optional<String> _getFailureReason() {
-        return failureReason;
-    }
-
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
-    @JsonProperty("failureMessage")
-    private Optional<String> _getFailureMessage() {
-        return failureMessage;
-    }
-
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
-    @JsonProperty("output")
-    private Optional<EditRunOutput> _getOutput() {
-        return output;
-    }
-
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
-    @JsonProperty("metrics")
-    private Optional<EditRunMetrics> _getMetrics() {
-        return metrics;
-    }
-
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
     @JsonProperty("usage")
-    private Optional<RunUsage> _getUsage() {
+    public Optional<EditRunUsage> getUsage() {
         return usage;
     }
 
@@ -231,10 +155,10 @@ public final class EditRun {
 
     private boolean equalTo(EditRun other) {
         return id.equals(other.id)
-                && file.equals(other.file)
+                && fileId.equals(other.fileId)
+                && editedFile.equals(other.editedFile)
                 && status.equals(other.status)
                 && failureReason.equals(other.failureReason)
-                && failureMessage.equals(other.failureMessage)
                 && config.equals(other.config)
                 && output.equals(other.output)
                 && metrics.equals(other.metrics)
@@ -245,10 +169,10 @@ public final class EditRun {
     public int hashCode() {
         return Objects.hash(
                 this.id,
-                this.file,
+                this.fileId,
+                this.editedFile,
                 this.status,
                 this.failureReason,
-                this.failureMessage,
                 this.config,
                 this.output,
                 this.metrics,
@@ -266,128 +190,91 @@ public final class EditRun {
 
     public interface IdStage {
         /**
-         * <p>A unique identifier for the edit run.</p>
-         * <p>Example: <code>&quot;edr_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         * <p>A unique identifier for the edit run. Will always start with <code>&quot;edit_run_&quot;</code></p>
+         * <p>Example: <code>&quot;edit_run_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
          */
-        FileStage id(@NotNull String id);
+        FileIdStage id(@NotNull String id);
 
         Builder from(EditRun other);
     }
 
-    public interface FileStage {
+    public interface FileIdStage {
         /**
-         * <p>The input file that was submitted for editing.</p>
+         * <p>The identifier of the input file that was edited.</p>
          */
-        StatusStage file(@NotNull FileSummary file);
+        StatusStage fileId(@NotNull String fileId);
     }
 
     public interface StatusStage {
-        /**
-         * <p>The status of the edit run:</p>
-         * <ul>
-         * <li><code>&quot;PROCESSING&quot;</code> - The file is still being processed</li>
-         * <li><code>&quot;PROCESSED&quot;</code> - The file was successfully edited</li>
-         * <li><code>&quot;FAILED&quot;</code> - The editing failed (see <code>failureReason</code> for details)</li>
-         * </ul>
-         */
         ConfigStage status(@NotNull EditRunStatus status);
     }
 
     public interface ConfigStage {
         /**
-         * <p>The configuration used for this edit run, including any default values that were applied.</p>
+         * <p>The configuration used for this edit run.</p>
          */
-        _FinalStage config(@NotNull EditConfig config);
+        MetricsStage config(@NotNull EditRunConfig config);
+    }
+
+    public interface MetricsStage {
+        /**
+         * <p>Metrics about the editing process.</p>
+         */
+        _FinalStage metrics(@NotNull EditRunMetrics metrics);
     }
 
     public interface _FinalStage {
         EditRun build();
 
         /**
-         * <p>The reason for failure.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
-         * <p>Possible values include:</p>
-         * <ul>
-         * <li><code>UNABLE_TO_DOWNLOAD_FILE</code> - Failed to load the requested file</li>
-         * <li><code>FILE_TYPE_NOT_SUPPORTED</code> - File type not supported. Edit runs currently require a PDF</li>
-         * <li><code>FILE_SIZE_TOO_LARGE</code> - The file exceeds the maximum allowed size</li>
-         * <li><code>CORRUPT_FILE</code> - The file appears to be corrupted and cannot be edited</li>
-         * <li><code>FIELD_DETECTION_ERROR</code> - An error occurred during field detection</li>
-         * <li><code>PASSWORD_PROTECTED_FILE</code> - The file is password protected and cannot be edited</li>
-         * <li><code>FAILED_TO_CONVERT_TO_PDF</code> - The file could not be converted to PDF for processing</li>
-         * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
-         * <li><code>INVALID_OPTIONS</code> - The provided configuration options are invalid</li>
-         * <li><code>EMPTY_SCHEMA</code> - No schema was provided and no fields could be detected</li>
-         * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to process the file</li>
-         * </ul>
-         * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
+         * <p>Information about the edited output file. Only present when status is &quot;PROCESSED&quot;.</p>
+         */
+        _FinalStage editedFile(Optional<EditRunEditedFile> editedFile);
+
+        _FinalStage editedFile(EditRunEditedFile editedFile);
+
+        /**
+         * <p>The reason for failure if status is &quot;FAILED&quot;.</p>
          */
         _FinalStage failureReason(Optional<String> failureReason);
 
         _FinalStage failureReason(String failureReason);
 
-        _FinalStage failureReason(Nullable<String> failureReason);
+        /**
+         * <p>The extracted/detected field values from the edited document.</p>
+         */
+        _FinalStage output(Optional<Map<String, Object>> output);
+
+        _FinalStage output(Map<String, Object> output);
 
         /**
-         * <p>A human-readable description of the failure.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
+         * <p>Usage credits consumed by this edit run.</p>
          */
-        _FinalStage failureMessage(Optional<String> failureMessage);
+        _FinalStage usage(Optional<EditRunUsage> usage);
 
-        _FinalStage failureMessage(String failureMessage);
-
-        _FinalStage failureMessage(Nullable<String> failureMessage);
-
-        /**
-         * <p>The output of the edit run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
-         */
-        _FinalStage output(Optional<EditRunOutput> output);
-
-        _FinalStage output(EditRunOutput output);
-
-        _FinalStage output(Nullable<EditRunOutput> output);
-
-        /**
-         * <p>Metrics about the editing process.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
-         */
-        _FinalStage metrics(Optional<EditRunMetrics> metrics);
-
-        _FinalStage metrics(EditRunMetrics metrics);
-
-        _FinalStage metrics(Nullable<EditRunMetrics> metrics);
-
-        /**
-         * <p>Usage credits consumed by this run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
-         */
-        _FinalStage usage(Optional<RunUsage> usage);
-
-        _FinalStage usage(RunUsage usage);
-
-        _FinalStage usage(Nullable<RunUsage> usage);
+        _FinalStage usage(EditRunUsage usage);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements IdStage, FileStage, StatusStage, ConfigStage, _FinalStage {
+    public static final class Builder
+            implements IdStage, FileIdStage, StatusStage, ConfigStage, MetricsStage, _FinalStage {
         private String id;
 
-        private FileSummary file;
+        private String fileId;
 
         private EditRunStatus status;
 
-        private EditConfig config;
+        private EditRunConfig config;
 
-        private Optional<RunUsage> usage = Optional.empty();
+        private EditRunMetrics metrics;
 
-        private Optional<EditRunMetrics> metrics = Optional.empty();
+        private Optional<EditRunUsage> usage = Optional.empty();
 
-        private Optional<EditRunOutput> output = Optional.empty();
-
-        private Optional<String> failureMessage = Optional.empty();
+        private Optional<Map<String, Object>> output = Optional.empty();
 
         private Optional<String> failureReason = Optional.empty();
+
+        private Optional<EditRunEditedFile> editedFile = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -397,10 +284,10 @@ public final class EditRun {
         @java.lang.Override
         public Builder from(EditRun other) {
             id(other.getId());
-            file(other.getFile());
+            fileId(other.getFileId());
+            editedFile(other.getEditedFile());
             status(other.getStatus());
             failureReason(other.getFailureReason());
-            failureMessage(other.getFailureMessage());
             config(other.getConfig());
             output(other.getOutput());
             metrics(other.getMetrics());
@@ -409,46 +296,31 @@ public final class EditRun {
         }
 
         /**
-         * <p>A unique identifier for the edit run.</p>
-         * <p>Example: <code>&quot;edr_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
-         * <p>A unique identifier for the edit run.</p>
-         * <p>Example: <code>&quot;edr_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         * <p>A unique identifier for the edit run. Will always start with <code>&quot;edit_run_&quot;</code></p>
+         * <p>Example: <code>&quot;edit_run_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         * <p>A unique identifier for the edit run. Will always start with <code>&quot;edit_run_&quot;</code></p>
+         * <p>Example: <code>&quot;edit_run_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
         @JsonSetter("id")
-        public FileStage id(@NotNull String id) {
+        public FileIdStage id(@NotNull String id) {
             this.id = Objects.requireNonNull(id, "id must not be null");
             return this;
         }
 
         /**
-         * <p>The input file that was submitted for editing.</p>
-         * <p>The input file that was submitted for editing.</p>
+         * <p>The identifier of the input file that was edited.</p>
+         * <p>The identifier of the input file that was edited.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        @JsonSetter("file")
-        public StatusStage file(@NotNull FileSummary file) {
-            this.file = Objects.requireNonNull(file, "file must not be null");
+        @JsonSetter("fileId")
+        public StatusStage fileId(@NotNull String fileId) {
+            this.fileId = Objects.requireNonNull(fileId, "fileId must not be null");
             return this;
         }
 
-        /**
-         * <p>The status of the edit run:</p>
-         * <ul>
-         * <li><code>&quot;PROCESSING&quot;</code> - The file is still being processed</li>
-         * <li><code>&quot;PROCESSED&quot;</code> - The file was successfully edited</li>
-         * <li><code>&quot;FAILED&quot;</code> - The editing failed (see <code>failureReason</code> for details)</li>
-         * </ul>
-         * <p>The status of the edit run:</p>
-         * <ul>
-         * <li><code>&quot;PROCESSING&quot;</code> - The file is still being processed</li>
-         * <li><code>&quot;PROCESSED&quot;</code> - The file was successfully edited</li>
-         * <li><code>&quot;FAILED&quot;</code> - The editing failed (see <code>failureReason</code> for details)</li>
-         * </ul>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
         @java.lang.Override
         @JsonSetter("status")
         public ConfigStage status(@NotNull EditRunStatus status) {
@@ -457,223 +329,71 @@ public final class EditRun {
         }
 
         /**
-         * <p>The configuration used for this edit run, including any default values that were applied.</p>
-         * <p>The configuration used for this edit run, including any default values that were applied.</p>
+         * <p>The configuration used for this edit run.</p>
+         * <p>The configuration used for this edit run.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
         @JsonSetter("config")
-        public _FinalStage config(@NotNull EditConfig config) {
+        public MetricsStage config(@NotNull EditRunConfig config) {
             this.config = Objects.requireNonNull(config, "config must not be null");
             return this;
         }
 
         /**
-         * <p>Usage credits consumed by this run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
+         * <p>Metrics about the editing process.</p>
+         * <p>Metrics about the editing process.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage usage(Nullable<RunUsage> usage) {
-            if (usage.isNull()) {
-                this.usage = null;
-            } else if (usage.isEmpty()) {
-                this.usage = Optional.empty();
-            } else {
-                this.usage = Optional.of(usage.get());
-            }
+        @JsonSetter("metrics")
+        public _FinalStage metrics(@NotNull EditRunMetrics metrics) {
+            this.metrics = Objects.requireNonNull(metrics, "metrics must not be null");
             return this;
         }
 
         /**
-         * <p>Usage credits consumed by this run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
+         * <p>Usage credits consumed by this edit run.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage usage(RunUsage usage) {
+        public _FinalStage usage(EditRunUsage usage) {
             this.usage = Optional.ofNullable(usage);
             return this;
         }
 
         /**
-         * <p>Usage credits consumed by this run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
+         * <p>Usage credits consumed by this edit run.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "usage", nulls = Nulls.SKIP)
-        public _FinalStage usage(Optional<RunUsage> usage) {
+        public _FinalStage usage(Optional<EditRunUsage> usage) {
             this.usage = usage;
             return this;
         }
 
         /**
-         * <p>Metrics about the editing process.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+         * <p>The extracted/detected field values from the edited document.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage metrics(Nullable<EditRunMetrics> metrics) {
-            if (metrics.isNull()) {
-                this.metrics = null;
-            } else if (metrics.isEmpty()) {
-                this.metrics = Optional.empty();
-            } else {
-                this.metrics = Optional.of(metrics.get());
-            }
-            return this;
-        }
-
-        /**
-         * <p>Metrics about the editing process.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage metrics(EditRunMetrics metrics) {
-            this.metrics = Optional.ofNullable(metrics);
-            return this;
-        }
-
-        /**
-         * <p>Metrics about the editing process.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
-         */
-        @java.lang.Override
-        @JsonSetter(value = "metrics", nulls = Nulls.SKIP)
-        public _FinalStage metrics(Optional<EditRunMetrics> metrics) {
-            this.metrics = metrics;
-            return this;
-        }
-
-        /**
-         * <p>The output of the edit run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage output(Nullable<EditRunOutput> output) {
-            if (output.isNull()) {
-                this.output = null;
-            } else if (output.isEmpty()) {
-                this.output = Optional.empty();
-            } else {
-                this.output = Optional.of(output.get());
-            }
-            return this;
-        }
-
-        /**
-         * <p>The output of the edit run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage output(EditRunOutput output) {
+        public _FinalStage output(Map<String, Object> output) {
             this.output = Optional.ofNullable(output);
             return this;
         }
 
         /**
-         * <p>The output of the edit run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+         * <p>The extracted/detected field values from the edited document.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "output", nulls = Nulls.SKIP)
-        public _FinalStage output(Optional<EditRunOutput> output) {
+        public _FinalStage output(Optional<Map<String, Object>> output) {
             this.output = output;
             return this;
         }
 
         /**
-         * <p>A human-readable description of the failure.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage failureMessage(Nullable<String> failureMessage) {
-            if (failureMessage.isNull()) {
-                this.failureMessage = null;
-            } else if (failureMessage.isEmpty()) {
-                this.failureMessage = Optional.empty();
-            } else {
-                this.failureMessage = Optional.of(failureMessage.get());
-            }
-            return this;
-        }
-
-        /**
-         * <p>A human-readable description of the failure.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage failureMessage(String failureMessage) {
-            this.failureMessage = Optional.ofNullable(failureMessage);
-            return this;
-        }
-
-        /**
-         * <p>A human-readable description of the failure.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
-         */
-        @java.lang.Override
-        @JsonSetter(value = "failureMessage", nulls = Nulls.SKIP)
-        public _FinalStage failureMessage(Optional<String> failureMessage) {
-            this.failureMessage = failureMessage;
-            return this;
-        }
-
-        /**
-         * <p>The reason for failure.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
-         * <p>Possible values include:</p>
-         * <ul>
-         * <li><code>UNABLE_TO_DOWNLOAD_FILE</code> - Failed to load the requested file</li>
-         * <li><code>FILE_TYPE_NOT_SUPPORTED</code> - File type not supported. Edit runs currently require a PDF</li>
-         * <li><code>FILE_SIZE_TOO_LARGE</code> - The file exceeds the maximum allowed size</li>
-         * <li><code>CORRUPT_FILE</code> - The file appears to be corrupted and cannot be edited</li>
-         * <li><code>FIELD_DETECTION_ERROR</code> - An error occurred during field detection</li>
-         * <li><code>PASSWORD_PROTECTED_FILE</code> - The file is password protected and cannot be edited</li>
-         * <li><code>FAILED_TO_CONVERT_TO_PDF</code> - The file could not be converted to PDF for processing</li>
-         * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
-         * <li><code>INVALID_OPTIONS</code> - The provided configuration options are invalid</li>
-         * <li><code>EMPTY_SCHEMA</code> - No schema was provided and no fields could be detected</li>
-         * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to process the file</li>
-         * </ul>
-         * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage failureReason(Nullable<String> failureReason) {
-            if (failureReason.isNull()) {
-                this.failureReason = null;
-            } else if (failureReason.isEmpty()) {
-                this.failureReason = Optional.empty();
-            } else {
-                this.failureReason = Optional.of(failureReason.get());
-            }
-            return this;
-        }
-
-        /**
-         * <p>The reason for failure.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
-         * <p>Possible values include:</p>
-         * <ul>
-         * <li><code>UNABLE_TO_DOWNLOAD_FILE</code> - Failed to load the requested file</li>
-         * <li><code>FILE_TYPE_NOT_SUPPORTED</code> - File type not supported. Edit runs currently require a PDF</li>
-         * <li><code>FILE_SIZE_TOO_LARGE</code> - The file exceeds the maximum allowed size</li>
-         * <li><code>CORRUPT_FILE</code> - The file appears to be corrupted and cannot be edited</li>
-         * <li><code>FIELD_DETECTION_ERROR</code> - An error occurred during field detection</li>
-         * <li><code>PASSWORD_PROTECTED_FILE</code> - The file is password protected and cannot be edited</li>
-         * <li><code>FAILED_TO_CONVERT_TO_PDF</code> - The file could not be converted to PDF for processing</li>
-         * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
-         * <li><code>INVALID_OPTIONS</code> - The provided configuration options are invalid</li>
-         * <li><code>EMPTY_SCHEMA</code> - No schema was provided and no fields could be detected</li>
-         * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to process the file</li>
-         * </ul>
-         * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
+         * <p>The reason for failure if status is &quot;FAILED&quot;.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -683,23 +403,7 @@ public final class EditRun {
         }
 
         /**
-         * <p>The reason for failure.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
-         * <p>Possible values include:</p>
-         * <ul>
-         * <li><code>UNABLE_TO_DOWNLOAD_FILE</code> - Failed to load the requested file</li>
-         * <li><code>FILE_TYPE_NOT_SUPPORTED</code> - File type not supported. Edit runs currently require a PDF</li>
-         * <li><code>FILE_SIZE_TOO_LARGE</code> - The file exceeds the maximum allowed size</li>
-         * <li><code>CORRUPT_FILE</code> - The file appears to be corrupted and cannot be edited</li>
-         * <li><code>FIELD_DETECTION_ERROR</code> - An error occurred during field detection</li>
-         * <li><code>PASSWORD_PROTECTED_FILE</code> - The file is password protected and cannot be edited</li>
-         * <li><code>FAILED_TO_CONVERT_TO_PDF</code> - The file could not be converted to PDF for processing</li>
-         * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
-         * <li><code>INVALID_OPTIONS</code> - The provided configuration options are invalid</li>
-         * <li><code>EMPTY_SCHEMA</code> - No schema was provided and no fields could be detected</li>
-         * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to process the file</li>
-         * </ul>
-         * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
+         * <p>The reason for failure if status is &quot;FAILED&quot;.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "failureReason", nulls = Nulls.SKIP)
@@ -708,14 +412,34 @@ public final class EditRun {
             return this;
         }
 
+        /**
+         * <p>Information about the edited output file. Only present when status is &quot;PROCESSED&quot;.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage editedFile(EditRunEditedFile editedFile) {
+            this.editedFile = Optional.ofNullable(editedFile);
+            return this;
+        }
+
+        /**
+         * <p>Information about the edited output file. Only present when status is &quot;PROCESSED&quot;.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "editedFile", nulls = Nulls.SKIP)
+        public _FinalStage editedFile(Optional<EditRunEditedFile> editedFile) {
+            this.editedFile = editedFile;
+            return this;
+        }
+
         @java.lang.Override
         public EditRun build() {
             return new EditRun(
                     id,
-                    file,
+                    fileId,
+                    editedFile,
                     status,
                     failureReason,
-                    failureMessage,
                     config,
                     output,
                     metrics,

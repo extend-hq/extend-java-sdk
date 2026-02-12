@@ -3,84 +3,22 @@
  */
 package ai.extend.resources.processor.types;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public final class ProcessorListRequestSortBy {
-    public static final ProcessorListRequestSortBy UPDATED_AT =
-            new ProcessorListRequestSortBy(Value.UPDATED_AT, "updatedAt");
+public enum ProcessorListRequestSortBy {
+    CREATED_AT("createdAt"),
 
-    public static final ProcessorListRequestSortBy CREATED_AT =
-            new ProcessorListRequestSortBy(Value.CREATED_AT, "createdAt");
+    UPDATED_AT("updatedAt");
 
-    private final Value value;
+    private final String value;
 
-    private final String string;
-
-    ProcessorListRequestSortBy(Value value, String string) {
+    ProcessorListRequestSortBy(String value) {
         this.value = value;
-        this.string = string;
     }
 
-    public Value getEnumValue() {
-        return value;
-    }
-
-    @java.lang.Override
     @JsonValue
+    @java.lang.Override
     public String toString() {
-        return this.string;
-    }
-
-    @java.lang.Override
-    public boolean equals(Object other) {
-        return (this == other)
-                || (other instanceof ProcessorListRequestSortBy
-                        && this.string.equals(((ProcessorListRequestSortBy) other).string));
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-        return this.string.hashCode();
-    }
-
-    public <T> T visit(Visitor<T> visitor) {
-        switch (value) {
-            case UPDATED_AT:
-                return visitor.visitUpdatedAt();
-            case CREATED_AT:
-                return visitor.visitCreatedAt();
-            case UNKNOWN:
-            default:
-                return visitor.visitUnknown(string);
-        }
-    }
-
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static ProcessorListRequestSortBy valueOf(String value) {
-        switch (value) {
-            case "updatedAt":
-                return UPDATED_AT;
-            case "createdAt":
-                return CREATED_AT;
-            default:
-                return new ProcessorListRequestSortBy(Value.UNKNOWN, value);
-        }
-    }
-
-    public enum Value {
-        CREATED_AT,
-
-        UPDATED_AT,
-
-        UNKNOWN
-    }
-
-    public interface Visitor<T> {
-        T visitCreatedAt();
-
-        T visitUpdatedAt();
-
-        T visitUnknown(String unknownType);
+        return this.value;
     }
 }

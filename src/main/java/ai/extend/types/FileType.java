@@ -3,140 +3,34 @@
  */
 package ai.extend.types;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public final class FileType {
-    public static final FileType IMG = new FileType(Value.IMG, "IMG");
+public enum FileType {
+    PDF("PDF"),
 
-    public static final FileType PDF = new FileType(Value.PDF, "PDF");
+    CSV("CSV"),
 
-    public static final FileType TXT = new FileType(Value.TXT, "TXT");
+    IMG("IMG"),
 
-    public static final FileType EXCEL = new FileType(Value.EXCEL, "EXCEL");
+    TXT("TXT"),
 
-    public static final FileType HTML = new FileType(Value.HTML, "HTML");
+    DOCX("DOCX"),
 
-    public static final FileType XML = new FileType(Value.XML, "XML");
+    EXCEL("EXCEL"),
 
-    public static final FileType CSV = new FileType(Value.CSV, "CSV");
+    XML("XML"),
 
-    public static final FileType DOCX = new FileType(Value.DOCX, "DOCX");
+    HTML("HTML");
 
-    private final Value value;
+    private final String value;
 
-    private final String string;
-
-    FileType(Value value, String string) {
+    FileType(String value) {
         this.value = value;
-        this.string = string;
     }
 
-    public Value getEnumValue() {
-        return value;
-    }
-
-    @java.lang.Override
     @JsonValue
+    @java.lang.Override
     public String toString() {
-        return this.string;
-    }
-
-    @java.lang.Override
-    public boolean equals(Object other) {
-        return (this == other) || (other instanceof FileType && this.string.equals(((FileType) other).string));
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-        return this.string.hashCode();
-    }
-
-    public <T> T visit(Visitor<T> visitor) {
-        switch (value) {
-            case IMG:
-                return visitor.visitImg();
-            case PDF:
-                return visitor.visitPdf();
-            case TXT:
-                return visitor.visitTxt();
-            case EXCEL:
-                return visitor.visitExcel();
-            case HTML:
-                return visitor.visitHtml();
-            case XML:
-                return visitor.visitXml();
-            case CSV:
-                return visitor.visitCsv();
-            case DOCX:
-                return visitor.visitDocx();
-            case UNKNOWN:
-            default:
-                return visitor.visitUnknown(string);
-        }
-    }
-
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static FileType valueOf(String value) {
-        switch (value) {
-            case "IMG":
-                return IMG;
-            case "PDF":
-                return PDF;
-            case "TXT":
-                return TXT;
-            case "EXCEL":
-                return EXCEL;
-            case "HTML":
-                return HTML;
-            case "XML":
-                return XML;
-            case "CSV":
-                return CSV;
-            case "DOCX":
-                return DOCX;
-            default:
-                return new FileType(Value.UNKNOWN, value);
-        }
-    }
-
-    public enum Value {
-        PDF,
-
-        CSV,
-
-        IMG,
-
-        TXT,
-
-        DOCX,
-
-        EXCEL,
-
-        XML,
-
-        HTML,
-
-        UNKNOWN
-    }
-
-    public interface Visitor<T> {
-        T visitPdf();
-
-        T visitCsv();
-
-        T visitImg();
-
-        T visitTxt();
-
-        T visitDocx();
-
-        T visitExcel();
-
-        T visitXml();
-
-        T visitHtml();
-
-        T visitUnknown(String unknownType);
+        return this.value;
     }
 }

@@ -3,82 +3,22 @@
  */
 package ai.extend.types;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public final class ParseRequestResponseType {
-    public static final ParseRequestResponseType URL = new ParseRequestResponseType(Value.URL, "url");
+public enum ParseRequestResponseType {
+    JSON("json"),
 
-    public static final ParseRequestResponseType JSON = new ParseRequestResponseType(Value.JSON, "json");
+    URL("url");
 
-    private final Value value;
+    private final String value;
 
-    private final String string;
-
-    ParseRequestResponseType(Value value, String string) {
+    ParseRequestResponseType(String value) {
         this.value = value;
-        this.string = string;
     }
 
-    public Value getEnumValue() {
-        return value;
-    }
-
-    @java.lang.Override
     @JsonValue
+    @java.lang.Override
     public String toString() {
-        return this.string;
-    }
-
-    @java.lang.Override
-    public boolean equals(Object other) {
-        return (this == other)
-                || (other instanceof ParseRequestResponseType
-                        && this.string.equals(((ParseRequestResponseType) other).string));
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-        return this.string.hashCode();
-    }
-
-    public <T> T visit(Visitor<T> visitor) {
-        switch (value) {
-            case URL:
-                return visitor.visitUrl();
-            case JSON:
-                return visitor.visitJson();
-            case UNKNOWN:
-            default:
-                return visitor.visitUnknown(string);
-        }
-    }
-
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static ParseRequestResponseType valueOf(String value) {
-        switch (value) {
-            case "url":
-                return URL;
-            case "json":
-                return JSON;
-            default:
-                return new ParseRequestResponseType(Value.UNKNOWN, value);
-        }
-    }
-
-    public enum Value {
-        JSON,
-
-        URL,
-
-        UNKNOWN
-    }
-
-    public interface Visitor<T> {
-        T visitJson();
-
-        T visitUrl();
-
-        T visitUnknown(String unknownType);
+        return this.value;
     }
 }

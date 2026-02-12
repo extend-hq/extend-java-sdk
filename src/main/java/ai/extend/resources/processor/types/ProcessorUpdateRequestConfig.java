@@ -3,9 +3,9 @@
  */
 package ai.extend.resources.processor.types;
 
-import ai.extend.types.LegacyClassificationConfig;
-import ai.extend.types.LegacyExtractionConfig;
-import ai.extend.types.LegacySplitterConfig;
+import ai.extend.types.ClassificationConfig;
+import ai.extend.types.ExtractionConfig;
+import ai.extend.types.SplitterConfig;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,15 +29,15 @@ public final class ProcessorUpdateRequestConfig {
         return value.visit(visitor);
     }
 
-    public static ProcessorUpdateRequestConfig classify(LegacyClassificationConfig value) {
+    public static ProcessorUpdateRequestConfig classify(ClassificationConfig value) {
         return new ProcessorUpdateRequestConfig(new ClassifyValue(value));
     }
 
-    public static ProcessorUpdateRequestConfig extract(LegacyExtractionConfig value) {
+    public static ProcessorUpdateRequestConfig extract(ExtractionConfig value) {
         return new ProcessorUpdateRequestConfig(new ExtractValue(value));
     }
 
-    public static ProcessorUpdateRequestConfig splitter(LegacySplitterConfig value) {
+    public static ProcessorUpdateRequestConfig splitter(SplitterConfig value) {
         return new ProcessorUpdateRequestConfig(new SplitterValue(value));
     }
 
@@ -57,21 +57,21 @@ public final class ProcessorUpdateRequestConfig {
         return value instanceof _UnknownValue;
     }
 
-    public Optional<LegacyClassificationConfig> getClassify() {
+    public Optional<ClassificationConfig> getClassify() {
         if (isClassify()) {
             return Optional.of(((ClassifyValue) value).value);
         }
         return Optional.empty();
     }
 
-    public Optional<LegacyExtractionConfig> getExtract() {
+    public Optional<ExtractionConfig> getExtract() {
         if (isExtract()) {
             return Optional.of(((ExtractValue) value).value);
         }
         return Optional.empty();
     }
 
-    public Optional<LegacySplitterConfig> getSplitter() {
+    public Optional<SplitterConfig> getSplitter() {
         if (isSplitter()) {
             return Optional.of(((SplitterValue) value).value);
         }
@@ -91,11 +91,11 @@ public final class ProcessorUpdateRequestConfig {
     }
 
     public interface Visitor<T> {
-        T visitClassify(LegacyClassificationConfig classify);
+        T visitClassify(ClassificationConfig classify);
 
-        T visitExtract(LegacyExtractionConfig extract);
+        T visitExtract(ExtractionConfig extract);
 
-        T visitSplitter(LegacySplitterConfig splitter);
+        T visitSplitter(SplitterConfig splitter);
 
         T _visitUnknown(Object unknownType);
     }
@@ -115,12 +115,12 @@ public final class ProcessorUpdateRequestConfig {
     @JsonIgnoreProperties("type")
     private static final class ClassifyValue implements Value {
         @JsonUnwrapped
-        private LegacyClassificationConfig value;
+        private ClassificationConfig value;
 
         @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
         private ClassifyValue() {}
 
-        private ClassifyValue(LegacyClassificationConfig value) {
+        private ClassifyValue(ClassificationConfig value) {
             this.value = value;
         }
 
@@ -154,12 +154,12 @@ public final class ProcessorUpdateRequestConfig {
     @JsonIgnoreProperties("type")
     private static final class ExtractValue implements Value {
         @JsonUnwrapped
-        private LegacyExtractionConfig value;
+        private ExtractionConfig value;
 
         @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
         private ExtractValue() {}
 
-        private ExtractValue(LegacyExtractionConfig value) {
+        private ExtractValue(ExtractionConfig value) {
             this.value = value;
         }
 
@@ -193,12 +193,12 @@ public final class ProcessorUpdateRequestConfig {
     @JsonIgnoreProperties("type")
     private static final class SplitterValue implements Value {
         @JsonUnwrapped
-        private LegacySplitterConfig value;
+        private SplitterConfig value;
 
         @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
         private SplitterValue() {}
 
-        private SplitterValue(LegacySplitterConfig value) {
+        private SplitterValue(SplitterConfig value) {
             this.value = value;
         }
 

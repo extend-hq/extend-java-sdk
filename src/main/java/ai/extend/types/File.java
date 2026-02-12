@@ -3,12 +3,9 @@
  */
 package ai.extend.types;
 
-import ai.extend.core.Nullable;
-import ai.extend.core.NullableNonemptyFilter;
 import ai.extend.core.ObjectMappers;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = File.Builder.class)
 public final class File {
+    private final String object;
+
     private final String id;
 
     private final String name;
@@ -43,9 +42,12 @@ public final class File {
 
     private final OffsetDateTime updatedAt;
 
+    private final Optional<FileCredits> usage;
+
     private final Map<String, Object> additionalProperties;
 
     private File(
+            String object,
             String id,
             String name,
             Optional<FileType> type,
@@ -55,7 +57,9 @@ public final class File {
             FileMetadata metadata,
             OffsetDateTime createdAt,
             OffsetDateTime updatedAt,
+            Optional<FileCredits> usage,
             Map<String, Object> additionalProperties) {
+        this.object = object;
         this.id = id;
         this.name = name;
         this.type = type;
@@ -65,19 +69,20 @@ public final class File {
         this.metadata = metadata;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.usage = usage;
         this.additionalProperties = additionalProperties;
     }
 
     /**
-     * @return The type of object. Will always be <code>&quot;file&quot;</code>.
+     * @return The type of response. In this case, it will always be &quot;file&quot;.
      */
     @JsonProperty("object")
     public String getObject() {
-        return "file";
+        return object;
     }
 
     /**
-     * @return ID for the file.
+     * @return Extend's internal ID for the file. It will always start with <code>&quot;file_&quot;</code>.
      * <p>Example: <code>&quot;file_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
      */
     @JsonProperty("id")
@@ -95,51 +100,31 @@ public final class File {
     }
 
     /**
-     * @return The type of the file.
-     * <p><strong>Availability:</strong> Present when the file type could be determined.</p>
+     * @return The type of the file
      */
-    @JsonIgnore
+    @JsonProperty("type")
     public Optional<FileType> getType() {
-        if (type == null) {
-            return Optional.empty();
-        }
         return type;
     }
 
     /**
      * @return A presigned URL to download the file. Expires after 15 minutes.
-     * <p><strong>Availability:</strong> Present on <code>GET /files/{id}</code>. Not present on <code>POST /files/upload</code> or when the file is embedded in other resources (e.g., in run responses).</p>
      */
-    @JsonIgnore
+    @JsonProperty("presignedUrl")
     public Optional<String> getPresignedUrl() {
-        if (presignedUrl == null) {
-            return Optional.empty();
-        }
         return presignedUrl;
     }
 
     /**
-     * @return ID of the parent file.
-     * <p><strong>Availability:</strong> Present for files created via a Splitter in a workflow.</p>
+     * @return The ID of the parent file. Only included if this file is a derivative of another file, for instance if it was created via a Splitter in a workflow.
      */
-    @JsonIgnore
+    @JsonProperty("parentFileId")
     public Optional<String> getParentFileId() {
-        if (parentFileId == null) {
-            return Optional.empty();
-        }
         return parentFileId;
     }
 
-    /**
-     * @return <strong>Deprecated:</strong> Use the <code>POST /parse_runs</code> endpoint instead to parse and retrieve file contents. The parse runs endpoint provides more control over parsing configuration and better performance.
-     * <p>The parsed content of the file. This field will only contain data after the file has been parsed via a parse run, extract run, classify run, split run, edit run, or workflow run.</p>
-     * <p><strong>Availability:</strong> Only present and populated on <code>GET /files/{id}</code> when the file has been previously parsed and the corresponding query parameters are set to true. Will be <code>null</code> on <code>POST /files/upload</code> and for files that haven't been parsed. The structure varies based on file type.</p>
-     */
-    @JsonIgnore
+    @JsonProperty("contents")
     public Optional<FileContents> getContents() {
-        if (contents == null) {
-            return Optional.empty();
-        }
         return contents;
     }
 
@@ -148,38 +133,27 @@ public final class File {
         return metadata;
     }
 
+    /**
+     * @return The time (in UTC) at which the file was created. Will follow the RFC 3339 format.
+     * <p>Example: <code>&quot;2024-03-21T15:30:00Z&quot;</code></p>
+     */
     @JsonProperty("createdAt")
     public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
+    /**
+     * @return The time (in UTC) at which the file was last updated. Will follow the RFC 3339 format.
+     * <p>Example: <code>&quot;2024-03-21T16:45:00Z&quot;</code></p>
+     */
     @JsonProperty("updatedAt")
     public OffsetDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
-    @JsonProperty("type")
-    private Optional<FileType> _getType() {
-        return type;
-    }
-
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
-    @JsonProperty("presignedUrl")
-    private Optional<String> _getPresignedUrl() {
-        return presignedUrl;
-    }
-
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
-    @JsonProperty("parentFileId")
-    private Optional<String> _getParentFileId() {
-        return parentFileId;
-    }
-
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
-    @JsonProperty("contents")
-    private Optional<FileContents> _getContents() {
-        return contents;
+    @JsonProperty("usage")
+    public Optional<FileCredits> getUsage() {
+        return usage;
     }
 
     @java.lang.Override
@@ -194,7 +168,8 @@ public final class File {
     }
 
     private boolean equalTo(File other) {
-        return id.equals(other.id)
+        return object.equals(other.object)
+                && id.equals(other.id)
                 && name.equals(other.name)
                 && type.equals(other.type)
                 && presignedUrl.equals(other.presignedUrl)
@@ -202,12 +177,14 @@ public final class File {
                 && contents.equals(other.contents)
                 && metadata.equals(other.metadata)
                 && createdAt.equals(other.createdAt)
-                && updatedAt.equals(other.updatedAt);
+                && updatedAt.equals(other.updatedAt)
+                && usage.equals(other.usage);
     }
 
     @java.lang.Override
     public int hashCode() {
         return Objects.hash(
+                this.object,
                 this.id,
                 this.name,
                 this.type,
@@ -216,7 +193,8 @@ public final class File {
                 this.contents,
                 this.metadata,
                 this.createdAt,
-                this.updatedAt);
+                this.updatedAt,
+                this.usage);
     }
 
     @java.lang.Override
@@ -224,18 +202,25 @@ public final class File {
         return ObjectMappers.stringify(this);
     }
 
-    public static IdStage builder() {
+    public static ObjectStage builder() {
         return new Builder();
+    }
+
+    public interface ObjectStage {
+        /**
+         * <p>The type of response. In this case, it will always be &quot;file&quot;.</p>
+         */
+        IdStage object(@NotNull String object);
+
+        Builder from(File other);
     }
 
     public interface IdStage {
         /**
-         * <p>ID for the file.</p>
+         * <p>Extend's internal ID for the file. It will always start with <code>&quot;file_&quot;</code>.</p>
          * <p>Example: <code>&quot;file_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
          */
         NameStage id(@NotNull String id);
-
-        Builder from(File other);
     }
 
     public interface NameStage {
@@ -251,10 +236,18 @@ public final class File {
     }
 
     public interface CreatedAtStage {
+        /**
+         * <p>The time (in UTC) at which the file was created. Will follow the RFC 3339 format.</p>
+         * <p>Example: <code>&quot;2024-03-21T15:30:00Z&quot;</code></p>
+         */
         UpdatedAtStage createdAt(@NotNull OffsetDateTime createdAt);
     }
 
     public interface UpdatedAtStage {
+        /**
+         * <p>The time (in UTC) at which the file was last updated. Will follow the RFC 3339 format.</p>
+         * <p>Example: <code>&quot;2024-03-21T16:45:00Z&quot;</code></p>
+         */
         _FinalStage updatedAt(@NotNull OffsetDateTime updatedAt);
     }
 
@@ -262,50 +255,40 @@ public final class File {
         File build();
 
         /**
-         * <p>The type of the file.</p>
-         * <p><strong>Availability:</strong> Present when the file type could be determined.</p>
+         * <p>The type of the file</p>
          */
         _FinalStage type(Optional<FileType> type);
 
         _FinalStage type(FileType type);
 
-        _FinalStage type(Nullable<FileType> type);
-
         /**
          * <p>A presigned URL to download the file. Expires after 15 minutes.</p>
-         * <p><strong>Availability:</strong> Present on <code>GET /files/{id}</code>. Not present on <code>POST /files/upload</code> or when the file is embedded in other resources (e.g., in run responses).</p>
          */
         _FinalStage presignedUrl(Optional<String> presignedUrl);
 
         _FinalStage presignedUrl(String presignedUrl);
 
-        _FinalStage presignedUrl(Nullable<String> presignedUrl);
-
         /**
-         * <p>ID of the parent file.</p>
-         * <p><strong>Availability:</strong> Present for files created via a Splitter in a workflow.</p>
+         * <p>The ID of the parent file. Only included if this file is a derivative of another file, for instance if it was created via a Splitter in a workflow.</p>
          */
         _FinalStage parentFileId(Optional<String> parentFileId);
 
         _FinalStage parentFileId(String parentFileId);
 
-        _FinalStage parentFileId(Nullable<String> parentFileId);
-
-        /**
-         * <p><strong>Deprecated:</strong> Use the <code>POST /parse_runs</code> endpoint instead to parse and retrieve file contents. The parse runs endpoint provides more control over parsing configuration and better performance.</p>
-         * <p>The parsed content of the file. This field will only contain data after the file has been parsed via a parse run, extract run, classify run, split run, edit run, or workflow run.</p>
-         * <p><strong>Availability:</strong> Only present and populated on <code>GET /files/{id}</code> when the file has been previously parsed and the corresponding query parameters are set to true. Will be <code>null</code> on <code>POST /files/upload</code> and for files that haven't been parsed. The structure varies based on file type.</p>
-         */
         _FinalStage contents(Optional<FileContents> contents);
 
         _FinalStage contents(FileContents contents);
 
-        _FinalStage contents(Nullable<FileContents> contents);
+        _FinalStage usage(Optional<FileCredits> usage);
+
+        _FinalStage usage(FileCredits usage);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder
-            implements IdStage, NameStage, MetadataStage, CreatedAtStage, UpdatedAtStage, _FinalStage {
+            implements ObjectStage, IdStage, NameStage, MetadataStage, CreatedAtStage, UpdatedAtStage, _FinalStage {
+        private String object;
+
         private String id;
 
         private String name;
@@ -315,6 +298,8 @@ public final class File {
         private OffsetDateTime createdAt;
 
         private OffsetDateTime updatedAt;
+
+        private Optional<FileCredits> usage = Optional.empty();
 
         private Optional<FileContents> contents = Optional.empty();
 
@@ -331,6 +316,7 @@ public final class File {
 
         @java.lang.Override
         public Builder from(File other) {
+            object(other.getObject());
             id(other.getId());
             name(other.getName());
             type(other.getType());
@@ -340,13 +326,26 @@ public final class File {
             metadata(other.getMetadata());
             createdAt(other.getCreatedAt());
             updatedAt(other.getUpdatedAt());
+            usage(other.getUsage());
             return this;
         }
 
         /**
-         * <p>ID for the file.</p>
+         * <p>The type of response. In this case, it will always be &quot;file&quot;.</p>
+         * <p>The type of response. In this case, it will always be &quot;file&quot;.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        @JsonSetter("object")
+        public IdStage object(@NotNull String object) {
+            this.object = Objects.requireNonNull(object, "object must not be null");
+            return this;
+        }
+
+        /**
+         * <p>Extend's internal ID for the file. It will always start with <code>&quot;file_&quot;</code>.</p>
          * <p>Example: <code>&quot;file_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
-         * <p>ID for the file.</p>
+         * <p>Extend's internal ID for the file. It will always start with <code>&quot;file_&quot;</code>.</p>
          * <p>Example: <code>&quot;file_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
@@ -378,6 +377,13 @@ public final class File {
             return this;
         }
 
+        /**
+         * <p>The time (in UTC) at which the file was created. Will follow the RFC 3339 format.</p>
+         * <p>Example: <code>&quot;2024-03-21T15:30:00Z&quot;</code></p>
+         * <p>The time (in UTC) at which the file was created. Will follow the RFC 3339 format.</p>
+         * <p>Example: <code>&quot;2024-03-21T15:30:00Z&quot;</code></p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
         @java.lang.Override
         @JsonSetter("createdAt")
         public UpdatedAtStage createdAt(@NotNull OffsetDateTime createdAt) {
@@ -385,6 +391,13 @@ public final class File {
             return this;
         }
 
+        /**
+         * <p>The time (in UTC) at which the file was last updated. Will follow the RFC 3339 format.</p>
+         * <p>Example: <code>&quot;2024-03-21T16:45:00Z&quot;</code></p>
+         * <p>The time (in UTC) at which the file was last updated. Will follow the RFC 3339 format.</p>
+         * <p>Example: <code>&quot;2024-03-21T16:45:00Z&quot;</code></p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
         @java.lang.Override
         @JsonSetter("updatedAt")
         public _FinalStage updatedAt(@NotNull OffsetDateTime updatedAt) {
@@ -392,41 +405,25 @@ public final class File {
             return this;
         }
 
-        /**
-         * <p><strong>Deprecated:</strong> Use the <code>POST /parse_runs</code> endpoint instead to parse and retrieve file contents. The parse runs endpoint provides more control over parsing configuration and better performance.</p>
-         * <p>The parsed content of the file. This field will only contain data after the file has been parsed via a parse run, extract run, classify run, split run, edit run, or workflow run.</p>
-         * <p><strong>Availability:</strong> Only present and populated on <code>GET /files/{id}</code> when the file has been previously parsed and the corresponding query parameters are set to true. Will be <code>null</code> on <code>POST /files/upload</code> and for files that haven't been parsed. The structure varies based on file type.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
         @java.lang.Override
-        public _FinalStage contents(Nullable<FileContents> contents) {
-            if (contents.isNull()) {
-                this.contents = null;
-            } else if (contents.isEmpty()) {
-                this.contents = Optional.empty();
-            } else {
-                this.contents = Optional.of(contents.get());
-            }
+        public _FinalStage usage(FileCredits usage) {
+            this.usage = Optional.ofNullable(usage);
             return this;
         }
 
-        /**
-         * <p><strong>Deprecated:</strong> Use the <code>POST /parse_runs</code> endpoint instead to parse and retrieve file contents. The parse runs endpoint provides more control over parsing configuration and better performance.</p>
-         * <p>The parsed content of the file. This field will only contain data after the file has been parsed via a parse run, extract run, classify run, split run, edit run, or workflow run.</p>
-         * <p><strong>Availability:</strong> Only present and populated on <code>GET /files/{id}</code> when the file has been previously parsed and the corresponding query parameters are set to true. Will be <code>null</code> on <code>POST /files/upload</code> and for files that haven't been parsed. The structure varies based on file type.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
+        @java.lang.Override
+        @JsonSetter(value = "usage", nulls = Nulls.SKIP)
+        public _FinalStage usage(Optional<FileCredits> usage) {
+            this.usage = usage;
+            return this;
+        }
+
         @java.lang.Override
         public _FinalStage contents(FileContents contents) {
             this.contents = Optional.ofNullable(contents);
             return this;
         }
 
-        /**
-         * <p><strong>Deprecated:</strong> Use the <code>POST /parse_runs</code> endpoint instead to parse and retrieve file contents. The parse runs endpoint provides more control over parsing configuration and better performance.</p>
-         * <p>The parsed content of the file. This field will only contain data after the file has been parsed via a parse run, extract run, classify run, split run, edit run, or workflow run.</p>
-         * <p><strong>Availability:</strong> Only present and populated on <code>GET /files/{id}</code> when the file has been previously parsed and the corresponding query parameters are set to true. Will be <code>null</code> on <code>POST /files/upload</code> and for files that haven't been parsed. The structure varies based on file type.</p>
-         */
         @java.lang.Override
         @JsonSetter(value = "contents", nulls = Nulls.SKIP)
         public _FinalStage contents(Optional<FileContents> contents) {
@@ -435,25 +432,7 @@ public final class File {
         }
 
         /**
-         * <p>ID of the parent file.</p>
-         * <p><strong>Availability:</strong> Present for files created via a Splitter in a workflow.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage parentFileId(Nullable<String> parentFileId) {
-            if (parentFileId.isNull()) {
-                this.parentFileId = null;
-            } else if (parentFileId.isEmpty()) {
-                this.parentFileId = Optional.empty();
-            } else {
-                this.parentFileId = Optional.of(parentFileId.get());
-            }
-            return this;
-        }
-
-        /**
-         * <p>ID of the parent file.</p>
-         * <p><strong>Availability:</strong> Present for files created via a Splitter in a workflow.</p>
+         * <p>The ID of the parent file. Only included if this file is a derivative of another file, for instance if it was created via a Splitter in a workflow.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -463,8 +442,7 @@ public final class File {
         }
 
         /**
-         * <p>ID of the parent file.</p>
-         * <p><strong>Availability:</strong> Present for files created via a Splitter in a workflow.</p>
+         * <p>The ID of the parent file. Only included if this file is a derivative of another file, for instance if it was created via a Splitter in a workflow.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "parentFileId", nulls = Nulls.SKIP)
@@ -475,24 +453,6 @@ public final class File {
 
         /**
          * <p>A presigned URL to download the file. Expires after 15 minutes.</p>
-         * <p><strong>Availability:</strong> Present on <code>GET /files/{id}</code>. Not present on <code>POST /files/upload</code> or when the file is embedded in other resources (e.g., in run responses).</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage presignedUrl(Nullable<String> presignedUrl) {
-            if (presignedUrl.isNull()) {
-                this.presignedUrl = null;
-            } else if (presignedUrl.isEmpty()) {
-                this.presignedUrl = Optional.empty();
-            } else {
-                this.presignedUrl = Optional.of(presignedUrl.get());
-            }
-            return this;
-        }
-
-        /**
-         * <p>A presigned URL to download the file. Expires after 15 minutes.</p>
-         * <p><strong>Availability:</strong> Present on <code>GET /files/{id}</code>. Not present on <code>POST /files/upload</code> or when the file is embedded in other resources (e.g., in run responses).</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -503,7 +463,6 @@ public final class File {
 
         /**
          * <p>A presigned URL to download the file. Expires after 15 minutes.</p>
-         * <p><strong>Availability:</strong> Present on <code>GET /files/{id}</code>. Not present on <code>POST /files/upload</code> or when the file is embedded in other resources (e.g., in run responses).</p>
          */
         @java.lang.Override
         @JsonSetter(value = "presignedUrl", nulls = Nulls.SKIP)
@@ -513,25 +472,7 @@ public final class File {
         }
 
         /**
-         * <p>The type of the file.</p>
-         * <p><strong>Availability:</strong> Present when the file type could be determined.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage type(Nullable<FileType> type) {
-            if (type.isNull()) {
-                this.type = null;
-            } else if (type.isEmpty()) {
-                this.type = Optional.empty();
-            } else {
-                this.type = Optional.of(type.get());
-            }
-            return this;
-        }
-
-        /**
-         * <p>The type of the file.</p>
-         * <p><strong>Availability:</strong> Present when the file type could be determined.</p>
+         * <p>The type of the file</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -541,8 +482,7 @@ public final class File {
         }
 
         /**
-         * <p>The type of the file.</p>
-         * <p><strong>Availability:</strong> Present when the file type could be determined.</p>
+         * <p>The type of the file</p>
          */
         @java.lang.Override
         @JsonSetter(value = "type", nulls = Nulls.SKIP)
@@ -554,6 +494,7 @@ public final class File {
         @java.lang.Override
         public File build() {
             return new File(
+                    object,
                     id,
                     name,
                     type,
@@ -563,6 +504,7 @@ public final class File {
                     metadata,
                     createdAt,
                     updatedAt,
+                    usage,
                     additionalProperties);
         }
     }

@@ -211,9 +211,7 @@ public final class ExtractionFieldResultReference {
          */
         @java.lang.Override
         public _FinalStage addAllBoundingBoxes(List<ExtractionFieldResultReferenceBoundingBoxesItem> boundingBoxes) {
-            if (boundingBoxes != null) {
-                this.boundingBoxes.addAll(boundingBoxes);
-            }
+            this.boundingBoxes.addAll(boundingBoxes);
             return this;
         }
 
@@ -234,9 +232,7 @@ public final class ExtractionFieldResultReference {
         @JsonSetter(value = "boundingBoxes", nulls = Nulls.SKIP)
         public _FinalStage boundingBoxes(List<ExtractionFieldResultReferenceBoundingBoxesItem> boundingBoxes) {
             this.boundingBoxes.clear();
-            if (boundingBoxes != null) {
-                this.boundingBoxes.addAll(boundingBoxes);
-            }
+            this.boundingBoxes.addAll(boundingBoxes);
             return this;
         }
 

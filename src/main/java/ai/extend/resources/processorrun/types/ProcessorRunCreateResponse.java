@@ -4,7 +4,7 @@
 package ai.extend.resources.processorrun.types;
 
 import ai.extend.core.ObjectMappers;
-import ai.extend.types.LegacyProcessorRun;
+import ai.extend.types.ProcessorRun;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -22,12 +22,12 @@ import org.jetbrains.annotations.NotNull;
 public final class ProcessorRunCreateResponse {
     private final boolean success;
 
-    private final LegacyProcessorRun processorRun;
+    private final ProcessorRun processorRun;
 
     private final Map<String, Object> additionalProperties;
 
     private ProcessorRunCreateResponse(
-            boolean success, LegacyProcessorRun processorRun, Map<String, Object> additionalProperties) {
+            boolean success, ProcessorRun processorRun, Map<String, Object> additionalProperties) {
         this.success = success;
         this.processorRun = processorRun;
         this.additionalProperties = additionalProperties;
@@ -39,7 +39,7 @@ public final class ProcessorRunCreateResponse {
     }
 
     @JsonProperty("processorRun")
-    public LegacyProcessorRun getProcessorRun() {
+    public ProcessorRun getProcessorRun() {
         return processorRun;
     }
 
@@ -79,7 +79,7 @@ public final class ProcessorRunCreateResponse {
     }
 
     public interface ProcessorRunStage {
-        _FinalStage processorRun(@NotNull LegacyProcessorRun processorRun);
+        _FinalStage processorRun(@NotNull ProcessorRun processorRun);
     }
 
     public interface _FinalStage {
@@ -90,7 +90,7 @@ public final class ProcessorRunCreateResponse {
     public static final class Builder implements SuccessStage, ProcessorRunStage, _FinalStage {
         private boolean success;
 
-        private LegacyProcessorRun processorRun;
+        private ProcessorRun processorRun;
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -113,7 +113,7 @@ public final class ProcessorRunCreateResponse {
 
         @java.lang.Override
         @JsonSetter("processorRun")
-        public _FinalStage processorRun(@NotNull LegacyProcessorRun processorRun) {
+        public _FinalStage processorRun(@NotNull ProcessorRun processorRun) {
             this.processorRun = Objects.requireNonNull(processorRun, "processorRun must not be null");
             return this;
         }

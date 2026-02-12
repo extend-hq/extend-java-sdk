@@ -12,26 +12,23 @@ import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
 import ai.extend.core.RequestOptions;
 import ai.extend.errors.BadRequestError;
-import ai.extend.errors.ForbiddenError;
 import ai.extend.errors.InternalServerError;
 import ai.extend.errors.NotFoundError;
 import ai.extend.errors.PaymentRequiredError;
-import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
-import ai.extend.requests.ClassifyRequest;
-import ai.extend.requests.EditRequest;
-import ai.extend.requests.ExtractRequest;
+import ai.extend.requests.ParseAsyncRequest;
 import ai.extend.requests.ParseRequest;
-import ai.extend.requests.SplitRequest;
-import ai.extend.types.ApiError;
-import ai.extend.types.ClassifyRun;
-import ai.extend.types.EditRun;
-import ai.extend.types.ExtractRun;
-import ai.extend.types.ParseRun;
-import ai.extend.types.SplitRun;
+import ai.extend.requests.PostFilesRequest;
+import ai.extend.types.Error;
+import ai.extend.types.ExtendError;
+import ai.extend.types.ParserRun;
+import ai.extend.types.ParserRunStatus;
+import ai.extend.types.PostFilesResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -48,22 +45,83 @@ public class RawExtendClient {
     }
 
     /**
-     * Parse a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /parse_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/parsing/parse">Parse File guide</a>.</p>
+     * Create a new file in Extend for use in an evaluation set. This endpoint is deprecated, use /files/upload instead.
      */
-    public ExtendClientHttpResponse<ParseRun> parse(ParseRequest request) {
+    public ExtendClientHttpResponse<PostFilesResponse> createFile(PostFilesRequest request) {
+        return createFile(request, null);
+    }
+
+    /**
+     * Create a new file in Extend for use in an evaluation set. This endpoint is deprecated, use /files/upload instead.
+     */
+    public ExtendClientHttpResponse<PostFilesResponse> createFile(
+            PostFilesRequest request, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("files")
+                .build();
+        RequestBody body;
+        try {
+            body = RequestBody.create(
+                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
+        } catch (JsonProcessingException e) {
+            throw new ExtendClientException("Failed to serialize request", e);
+        }
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("POST", body)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            if (response.isSuccessful()) {
+                return new ExtendClientHttpResponse<>(
+                        ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), PostFilesResponse.class), response);
+            }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            try {
+                switch (response.code()) {
+                    case 400:
+                        throw new BadRequestError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 401:
+                        throw new UnauthorizedError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class), response);
+                }
+            } catch (JsonProcessingException ignored) {
+                // unable to map error response, throwing generic error
+            }
+            throw new ExtendClientApiException(
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
+        } catch (IOException e) {
+            throw new ExtendClientException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
+     * Parse files to get cleaned, chunked target content (e.g. markdown).
+     * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
+     * <p>For more details, see the <a href="/product/parsing/parse">Parse File guide</a>.</p>
+     */
+    public ExtendClientHttpResponse<ParserRun> parse(ParseRequest request) {
         return parse(request, null);
     }
 
     /**
-     * Parse a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /parse_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
+     * Parse files to get cleaned, chunked target content (e.g. markdown).
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/parsing/parse">Parse File guide</a>.</p>
+     * <p>For more details, see the <a href="/product/parsing/parse">Parse File guide</a>.</p>
      */
-    public ExtendClientHttpResponse<ParseRun> parse(ParseRequest request, RequestOptions requestOptions) {
+    public ExtendClientHttpResponse<ParserRun> parse(ParseRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("parse");
@@ -71,15 +129,15 @@ public class RawExtendClient {
             QueryStringMapper.addQueryParameter(
                     httpUrl, "responseType", request.getResponseType().get(), false);
         }
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("file", request.getFile());
+        if (request.getConfig().isPresent()) {
+            properties.put("config", request.getConfig());
         }
         RequestBody body;
         try {
             body = RequestBody.create(
-                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
+                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(properties), MediaTypes.APPLICATION_JSON);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -96,11 +154,11 @@ public class RawExtendClient {
         }
         try (Response response = client.newCall(okhttpRequest).execute()) {
             ResponseBody responseBody = response.body();
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
                 return new ExtendClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ParseRun.class), response);
+                        ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), ParserRun.class), response);
             }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             try {
                 switch (response.code()) {
                     case 400:
@@ -108,22 +166,16 @@ public class RawExtendClient {
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                     case 401:
                         throw new UnauthorizedError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class), response);
                     case 402:
                         throw new PaymentRequiredError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
-                    case 403:
-                        throw new ForbiddenError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                     case 404:
                         throw new NotFoundError(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                     case 422:
                         throw new UnprocessableEntityError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
-                    case 429:
-                        throw new TooManyRequestsError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtendError.class), response);
                     case 500:
                         throw new InternalServerError(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
@@ -131,39 +183,48 @@ public class RawExtendClient {
             } catch (JsonProcessingException ignored) {
                 // unable to map error response, throwing generic error
             }
-            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
             throw new ExtendClientApiException(
-                    "Error with status code " + response.code(), response.code(), errorBody, response);
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
         } catch (IOException e) {
             throw new ExtendClientException("Network error executing HTTP request", e);
         }
     }
 
     /**
-     * Edit a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /edit_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/editing/edit">Edit File guide</a>.</p>
+     * Parse files <strong>asynchronously</strong> to get cleaned, chunked target content (e.g. markdown).
+     * <p>The Parse Async endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
+     * <p>Parse files asynchronously and get a parser run ID that can be used to check status and retrieve results with the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/parse-endpoints/get-parser-run">Get Parser Run</a> endpoint.</p>
+     * <p>This is useful for:</p>
+     * <ul>
+     * <li>Large files that may take longer to process</li>
+     * <li>Avoiding timeout issues with synchronous parsing.</li>
+     * </ul>
+     * <p>For more details, see the <a href="/product/parsing/parse">Parse File guide</a>.</p>
      */
-    public ExtendClientHttpResponse<EditRun> edit(EditRequest request) {
-        return edit(request, null);
+    public ExtendClientHttpResponse<ParserRunStatus> parseAsync(ParseAsyncRequest request) {
+        return parseAsync(request, null);
     }
 
     /**
-     * Edit a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /edit_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/editing/edit">Edit File guide</a>.</p>
+     * Parse files <strong>asynchronously</strong> to get cleaned, chunked target content (e.g. markdown).
+     * <p>The Parse Async endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
+     * <p>Parse files asynchronously and get a parser run ID that can be used to check status and retrieve results with the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/parse-endpoints/get-parser-run">Get Parser Run</a> endpoint.</p>
+     * <p>This is useful for:</p>
+     * <ul>
+     * <li>Large files that may take longer to process</li>
+     * <li>Avoiding timeout issues with synchronous parsing.</li>
+     * </ul>
+     * <p>For more details, see the <a href="/product/parsing/parse">Parse File guide</a>.</p>
      */
-    public ExtendClientHttpResponse<EditRun> edit(EditRequest request, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+    public ExtendClientHttpResponse<ParserRunStatus> parseAsync(
+            ParseAsyncRequest request, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
-                .addPathSegments("edit");
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
+                .addPathSegments("parse/async")
+                .build();
         RequestBody body;
         try {
             body = RequestBody.create(
@@ -172,7 +233,7 @@ public class RawExtendClient {
             throw new ExtendClientException("Failed to serialize request", e);
         }
         Request okhttpRequest = new Request.Builder()
-                .url(httpUrl.build())
+                .url(httpUrl)
                 .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
@@ -184,11 +245,11 @@ public class RawExtendClient {
         }
         try (Response response = client.newCall(okhttpRequest).execute()) {
             ResponseBody responseBody = response.body();
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
                 return new ExtendClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EditRun.class), response);
+                        ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), ParserRunStatus.class), response);
             }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             try {
                 switch (response.code()) {
                     case 400:
@@ -196,296 +257,16 @@ public class RawExtendClient {
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
                     case 401:
                         throw new UnauthorizedError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                    case 402:
-                        throw new PaymentRequiredError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
-                    case 403:
-                        throw new ForbiddenError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
-                    case 404:
-                        throw new NotFoundError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                    case 422:
-                        throw new UnprocessableEntityError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
-                    case 429:
-                        throw new TooManyRequestsError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                    case 500:
-                        throw new InternalServerError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class), response);
                 }
             } catch (JsonProcessingException ignored) {
                 // unable to map error response, throwing generic error
             }
-            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
             throw new ExtendClientApiException(
-                    "Error with status code " + response.code(), response.code(), errorBody, response);
-        } catch (IOException e) {
-            throw new ExtendClientException("Network error executing HTTP request", e);
-        }
-    }
-
-    /**
-     * Extract structured data from a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /extract_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/extracting/extract">Extract File guide</a>.</p>
-     */
-    public ExtendClientHttpResponse<ExtractRun> extract(ExtractRequest request) {
-        return extract(request, null);
-    }
-
-    /**
-     * Extract structured data from a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /extract_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/extracting/extract">Extract File guide</a>.</p>
-     */
-    public ExtendClientHttpResponse<ExtractRun> extract(ExtractRequest request, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("extract");
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
-        RequestBody body;
-        try {
-            body = RequestBody.create(
-                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new ExtendClientException("Failed to serialize request", e);
-        }
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl.build())
-                .method("POST", body)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtractRun.class), response);
-            }
-            try {
-                switch (response.code()) {
-                    case 400:
-                        throw new BadRequestError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                    case 401:
-                        throw new UnauthorizedError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                    case 402:
-                        throw new PaymentRequiredError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
-                    case 403:
-                        throw new ForbiddenError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
-                    case 404:
-                        throw new NotFoundError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                    case 422:
-                        throw new UnprocessableEntityError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
-                    case 429:
-                        throw new TooManyRequestsError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                    case 500:
-                        throw new InternalServerError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                }
-            } catch (JsonProcessingException ignored) {
-                // unable to map error response, throwing generic error
-            }
-            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
-            throw new ExtendClientApiException(
-                    "Error with status code " + response.code(), response.code(), errorBody, response);
-        } catch (IOException e) {
-            throw new ExtendClientException("Network error executing HTTP request", e);
-        }
-    }
-
-    /**
-     * Classify a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /classify_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/classifying/classify">Classify File guide</a>.</p>
-     */
-    public ExtendClientHttpResponse<ClassifyRun> classify(ClassifyRequest request) {
-        return classify(request, null);
-    }
-
-    /**
-     * Classify a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /classify_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/classifying/classify">Classify File guide</a>.</p>
-     */
-    public ExtendClientHttpResponse<ClassifyRun> classify(ClassifyRequest request, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("classify");
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
-        RequestBody body;
-        try {
-            body = RequestBody.create(
-                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new ExtendClientException("Failed to serialize request", e);
-        }
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl.build())
-                .method("POST", body)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ClassifyRun.class), response);
-            }
-            try {
-                switch (response.code()) {
-                    case 400:
-                        throw new BadRequestError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                    case 401:
-                        throw new UnauthorizedError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                    case 402:
-                        throw new PaymentRequiredError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
-                    case 403:
-                        throw new ForbiddenError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
-                    case 404:
-                        throw new NotFoundError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                    case 422:
-                        throw new UnprocessableEntityError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
-                    case 429:
-                        throw new TooManyRequestsError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                    case 500:
-                        throw new InternalServerError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                }
-            } catch (JsonProcessingException ignored) {
-                // unable to map error response, throwing generic error
-            }
-            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
-            throw new ExtendClientApiException(
-                    "Error with status code " + response.code(), response.code(), errorBody, response);
-        } catch (IOException e) {
-            throw new ExtendClientException("Network error executing HTTP request", e);
-        }
-    }
-
-    /**
-     * Split a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /split_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/splitting/split">Split File guide</a>.</p>
-     */
-    public ExtendClientHttpResponse<SplitRun> split(SplitRequest request) {
-        return split(request, null);
-    }
-
-    /**
-     * Split a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /split_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/splitting/split">Split File guide</a>.</p>
-     */
-    public ExtendClientHttpResponse<SplitRun> split(SplitRequest request, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("split");
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
-        RequestBody body;
-        try {
-            body = RequestBody.create(
-                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new ExtendClientException("Failed to serialize request", e);
-        }
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl.build())
-                .method("POST", body)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, SplitRun.class), response);
-            }
-            try {
-                switch (response.code()) {
-                    case 400:
-                        throw new BadRequestError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                    case 401:
-                        throw new UnauthorizedError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                    case 402:
-                        throw new PaymentRequiredError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
-                    case 403:
-                        throw new ForbiddenError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
-                    case 404:
-                        throw new NotFoundError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                    case 422:
-                        throw new UnprocessableEntityError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
-                    case 429:
-                        throw new TooManyRequestsError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                    case 500:
-                        throw new InternalServerError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                }
-            } catch (JsonProcessingException ignored) {
-                // unable to map error response, throwing generic error
-            }
-            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
-            throw new ExtendClientApiException(
-                    "Error with status code " + response.code(), response.code(), errorBody, response);
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
         } catch (IOException e) {
             throw new ExtendClientException("Network error executing HTTP request", e);
         }

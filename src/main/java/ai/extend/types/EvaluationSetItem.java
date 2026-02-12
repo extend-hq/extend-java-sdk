@@ -19,35 +19,39 @@ import org.jetbrains.annotations.NotNull;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = EvaluationSetItem.Builder.class)
 public final class EvaluationSetItem {
+    private final String object;
+
     private final String id;
 
     private final String evaluationSetId;
 
-    private final FileSummary file;
+    private final String fileId;
 
     private final ProvidedProcessorOutput expectedOutput;
 
     private final Map<String, Object> additionalProperties;
 
     private EvaluationSetItem(
+            String object,
             String id,
             String evaluationSetId,
-            FileSummary file,
+            String fileId,
             ProvidedProcessorOutput expectedOutput,
             Map<String, Object> additionalProperties) {
+        this.object = object;
         this.id = id;
         this.evaluationSetId = evaluationSetId;
-        this.file = file;
+        this.fileId = fileId;
         this.expectedOutput = expectedOutput;
         this.additionalProperties = additionalProperties;
     }
 
     /**
-     * @return The type of object. In this case, it will always be <code>&quot;evaluation_set_item&quot;</code>.
+     * @return The type of response. In this case, it will always be <code>&quot;evaluation_set_item&quot;</code>.
      */
     @JsonProperty("object")
     public String getObject() {
-        return "evaluation_set_item";
+        return object;
     }
 
     /**
@@ -69,15 +73,16 @@ public final class EvaluationSetItem {
     }
 
     /**
-     * @return A summary of the file associated with the evaluation set item.
+     * @return Extend's internal ID for the file. It will always start with &quot;file_&quot;.
+     * <p>Example: <code>&quot;file_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
      */
-    @JsonProperty("file")
-    public FileSummary getFile() {
-        return file;
+    @JsonProperty("fileId")
+    public String getFileId() {
+        return fileId;
     }
 
     /**
-     * @return The expected output that will be used to evaluate the performance of the extractor, classifier, or splitter associated with the evaluation set. This must conform to the output schema of the entity associated with the evaluation set.
+     * @return The expected output that will be used to evaluate the processor's performance. This will confirm to the output type schema of the processor.
      */
     @JsonProperty("expectedOutput")
     public ProvidedProcessorOutput getExpectedOutput() {
@@ -96,15 +101,16 @@ public final class EvaluationSetItem {
     }
 
     private boolean equalTo(EvaluationSetItem other) {
-        return id.equals(other.id)
+        return object.equals(other.object)
+                && id.equals(other.id)
                 && evaluationSetId.equals(other.evaluationSetId)
-                && file.equals(other.file)
+                && fileId.equals(other.fileId)
                 && expectedOutput.equals(other.expectedOutput);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.id, this.evaluationSetId, this.file, this.expectedOutput);
+        return Objects.hash(this.object, this.id, this.evaluationSetId, this.fileId, this.expectedOutput);
     }
 
     @java.lang.Override
@@ -112,8 +118,17 @@ public final class EvaluationSetItem {
         return ObjectMappers.stringify(this);
     }
 
-    public static IdStage builder() {
+    public static ObjectStage builder() {
         return new Builder();
+    }
+
+    public interface ObjectStage {
+        /**
+         * <p>The type of response. In this case, it will always be <code>&quot;evaluation_set_item&quot;</code>.</p>
+         */
+        IdStage object(@NotNull String object);
+
+        Builder from(EvaluationSetItem other);
     }
 
     public interface IdStage {
@@ -122,8 +137,6 @@ public final class EvaluationSetItem {
          * <p>Example: <code>&quot;evi_kR9mNP12Qw4yTv8BdR3H&quot;</code></p>
          */
         EvaluationSetIdStage id(@NotNull String id);
-
-        Builder from(EvaluationSetItem other);
     }
 
     public interface EvaluationSetIdStage {
@@ -131,19 +144,20 @@ public final class EvaluationSetItem {
          * <p>The ID of the evaluation set that this item belongs to.</p>
          * <p>Example: <code>&quot;ev_2LcgeY_mp2T5yPaEuq5Lw&quot;</code></p>
          */
-        FileStage evaluationSetId(@NotNull String evaluationSetId);
+        FileIdStage evaluationSetId(@NotNull String evaluationSetId);
     }
 
-    public interface FileStage {
+    public interface FileIdStage {
         /**
-         * <p>A summary of the file associated with the evaluation set item.</p>
+         * <p>Extend's internal ID for the file. It will always start with &quot;file_&quot;.</p>
+         * <p>Example: <code>&quot;file_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
          */
-        ExpectedOutputStage file(@NotNull FileSummary file);
+        ExpectedOutputStage fileId(@NotNull String fileId);
     }
 
     public interface ExpectedOutputStage {
         /**
-         * <p>The expected output that will be used to evaluate the performance of the extractor, classifier, or splitter associated with the evaluation set. This must conform to the output schema of the entity associated with the evaluation set.</p>
+         * <p>The expected output that will be used to evaluate the processor's performance. This will confirm to the output type schema of the processor.</p>
          */
         _FinalStage expectedOutput(@NotNull ProvidedProcessorOutput expectedOutput);
     }
@@ -154,12 +168,14 @@ public final class EvaluationSetItem {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder
-            implements IdStage, EvaluationSetIdStage, FileStage, ExpectedOutputStage, _FinalStage {
+            implements ObjectStage, IdStage, EvaluationSetIdStage, FileIdStage, ExpectedOutputStage, _FinalStage {
+        private String object;
+
         private String id;
 
         private String evaluationSetId;
 
-        private FileSummary file;
+        private String fileId;
 
         private ProvidedProcessorOutput expectedOutput;
 
@@ -170,10 +186,23 @@ public final class EvaluationSetItem {
 
         @java.lang.Override
         public Builder from(EvaluationSetItem other) {
+            object(other.getObject());
             id(other.getId());
             evaluationSetId(other.getEvaluationSetId());
-            file(other.getFile());
+            fileId(other.getFileId());
             expectedOutput(other.getExpectedOutput());
+            return this;
+        }
+
+        /**
+         * <p>The type of response. In this case, it will always be <code>&quot;evaluation_set_item&quot;</code>.</p>
+         * <p>The type of response. In this case, it will always be <code>&quot;evaluation_set_item&quot;</code>.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        @JsonSetter("object")
+        public IdStage object(@NotNull String object) {
+            this.object = Objects.requireNonNull(object, "object must not be null");
             return this;
         }
 
@@ -200,26 +229,28 @@ public final class EvaluationSetItem {
          */
         @java.lang.Override
         @JsonSetter("evaluationSetId")
-        public FileStage evaluationSetId(@NotNull String evaluationSetId) {
+        public FileIdStage evaluationSetId(@NotNull String evaluationSetId) {
             this.evaluationSetId = Objects.requireNonNull(evaluationSetId, "evaluationSetId must not be null");
             return this;
         }
 
         /**
-         * <p>A summary of the file associated with the evaluation set item.</p>
-         * <p>A summary of the file associated with the evaluation set item.</p>
+         * <p>Extend's internal ID for the file. It will always start with &quot;file_&quot;.</p>
+         * <p>Example: <code>&quot;file_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         * <p>Extend's internal ID for the file. It will always start with &quot;file_&quot;.</p>
+         * <p>Example: <code>&quot;file_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        @JsonSetter("file")
-        public ExpectedOutputStage file(@NotNull FileSummary file) {
-            this.file = Objects.requireNonNull(file, "file must not be null");
+        @JsonSetter("fileId")
+        public ExpectedOutputStage fileId(@NotNull String fileId) {
+            this.fileId = Objects.requireNonNull(fileId, "fileId must not be null");
             return this;
         }
 
         /**
-         * <p>The expected output that will be used to evaluate the performance of the extractor, classifier, or splitter associated with the evaluation set. This must conform to the output schema of the entity associated with the evaluation set.</p>
-         * <p>The expected output that will be used to evaluate the performance of the extractor, classifier, or splitter associated with the evaluation set. This must conform to the output schema of the entity associated with the evaluation set.</p>
+         * <p>The expected output that will be used to evaluate the processor's performance. This will confirm to the output type schema of the processor.</p>
+         * <p>The expected output that will be used to evaluate the processor's performance. This will confirm to the output type schema of the processor.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -231,7 +262,7 @@ public final class EvaluationSetItem {
 
         @java.lang.Override
         public EvaluationSetItem build() {
-            return new EvaluationSetItem(id, evaluationSetId, file, expectedOutput, additionalProperties);
+            return new EvaluationSetItem(object, id, evaluationSetId, fileId, expectedOutput, additionalProperties);
         }
     }
 }

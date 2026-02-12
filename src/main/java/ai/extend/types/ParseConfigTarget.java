@@ -3,81 +3,22 @@
  */
 package ai.extend.types;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public final class ParseConfigTarget {
-    public static final ParseConfigTarget SPATIAL = new ParseConfigTarget(Value.SPATIAL, "spatial");
+public enum ParseConfigTarget {
+    MARKDOWN("markdown"),
 
-    public static final ParseConfigTarget MARKDOWN = new ParseConfigTarget(Value.MARKDOWN, "markdown");
+    SPATIAL("spatial");
 
-    private final Value value;
+    private final String value;
 
-    private final String string;
-
-    ParseConfigTarget(Value value, String string) {
+    ParseConfigTarget(String value) {
         this.value = value;
-        this.string = string;
     }
 
-    public Value getEnumValue() {
-        return value;
-    }
-
-    @java.lang.Override
     @JsonValue
+    @java.lang.Override
     public String toString() {
-        return this.string;
-    }
-
-    @java.lang.Override
-    public boolean equals(Object other) {
-        return (this == other)
-                || (other instanceof ParseConfigTarget && this.string.equals(((ParseConfigTarget) other).string));
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-        return this.string.hashCode();
-    }
-
-    public <T> T visit(Visitor<T> visitor) {
-        switch (value) {
-            case SPATIAL:
-                return visitor.visitSpatial();
-            case MARKDOWN:
-                return visitor.visitMarkdown();
-            case UNKNOWN:
-            default:
-                return visitor.visitUnknown(string);
-        }
-    }
-
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static ParseConfigTarget valueOf(String value) {
-        switch (value) {
-            case "spatial":
-                return SPATIAL;
-            case "markdown":
-                return MARKDOWN;
-            default:
-                return new ParseConfigTarget(Value.UNKNOWN, value);
-        }
-    }
-
-    public enum Value {
-        MARKDOWN,
-
-        SPATIAL,
-
-        UNKNOWN
-    }
-
-    public interface Visitor<T> {
-        T visitMarkdown();
-
-        T visitSpatial();
-
-        T visitUnknown(String unknownType);
+        return this.value;
     }
 }

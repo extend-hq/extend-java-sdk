@@ -12,26 +12,23 @@ import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
 import ai.extend.core.RequestOptions;
 import ai.extend.errors.BadRequestError;
-import ai.extend.errors.ForbiddenError;
 import ai.extend.errors.InternalServerError;
 import ai.extend.errors.NotFoundError;
 import ai.extend.errors.PaymentRequiredError;
-import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
-import ai.extend.requests.ClassifyRequest;
-import ai.extend.requests.EditRequest;
-import ai.extend.requests.ExtractRequest;
+import ai.extend.requests.ParseAsyncRequest;
 import ai.extend.requests.ParseRequest;
-import ai.extend.requests.SplitRequest;
-import ai.extend.types.ApiError;
-import ai.extend.types.ClassifyRun;
-import ai.extend.types.EditRun;
-import ai.extend.types.ExtractRun;
-import ai.extend.types.ParseRun;
-import ai.extend.types.SplitRun;
+import ai.extend.requests.PostFilesRequest;
+import ai.extend.types.Error;
+import ai.extend.types.ExtendError;
+import ai.extend.types.ParserRun;
+import ai.extend.types.ParserRunStatus;
+import ai.extend.types.PostFilesResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -52,22 +49,101 @@ public class AsyncRawExtendClient {
     }
 
     /**
-     * Parse a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /parse_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/parsing/parse">Parse File guide</a>.</p>
+     * Create a new file in Extend for use in an evaluation set. This endpoint is deprecated, use /files/upload instead.
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRun>> parse(ParseRequest request) {
+    public CompletableFuture<ExtendClientHttpResponse<PostFilesResponse>> createFile(PostFilesRequest request) {
+        return createFile(request, null);
+    }
+
+    /**
+     * Create a new file in Extend for use in an evaluation set. This endpoint is deprecated, use /files/upload instead.
+     */
+    public CompletableFuture<ExtendClientHttpResponse<PostFilesResponse>> createFile(
+            PostFilesRequest request, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("files")
+                .build();
+        RequestBody body;
+        try {
+            body = RequestBody.create(
+                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
+        } catch (JsonProcessingException e) {
+            throw new ExtendClientException("Failed to serialize request", e);
+        }
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("POST", body)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<ExtendClientHttpResponse<PostFilesResponse>> future = new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful()) {
+                        future.complete(new ExtendClientHttpResponse<>(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), PostFilesResponse.class),
+                                response));
+                        return;
+                    }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    try {
+                        switch (response.code()) {
+                            case 400:
+                                future.completeExceptionally(new BadRequestError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                            case 401:
+                                future.completeExceptionally(new UnauthorizedError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class),
+                                        response));
+                                return;
+                        }
+                    } catch (JsonProcessingException ignored) {
+                        // unable to map error response, throwing generic error
+                    }
+                    future.completeExceptionally(new ExtendClientApiException(
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
+    }
+
+    /**
+     * Parse files to get cleaned, chunked target content (e.g. markdown).
+     * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
+     * <p>For more details, see the <a href="/product/parsing/parse">Parse File guide</a>.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ParserRun>> parse(ParseRequest request) {
         return parse(request, null);
     }
 
     /**
-     * Parse a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /parse_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
+     * Parse files to get cleaned, chunked target content (e.g. markdown).
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/parsing/parse">Parse File guide</a>.</p>
+     * <p>For more details, see the <a href="/product/parsing/parse">Parse File guide</a>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRun>> parse(
+    public CompletableFuture<ExtendClientHttpResponse<ParserRun>> parse(
             ParseRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -76,15 +152,15 @@ public class AsyncRawExtendClient {
             QueryStringMapper.addQueryParameter(
                     httpUrl, "responseType", request.getResponseType().get(), false);
         }
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("file", request.getFile());
+        if (request.getConfig().isPresent()) {
+            properties.put("config", request.getConfig());
         }
         RequestBody body;
         try {
             body = RequestBody.create(
-                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
+                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(properties), MediaTypes.APPLICATION_JSON);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -99,17 +175,17 @@ public class AsyncRawExtendClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ParseRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientHttpResponse<ParserRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
-                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
                         future.complete(new ExtendClientHttpResponse<>(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ParseRun.class), response));
+                                ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), ParserRun.class), response));
                         return;
                     }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     try {
                         switch (response.code()) {
                             case 400:
@@ -119,17 +195,12 @@ public class AsyncRawExtendClient {
                                 return;
                             case 401:
                                 future.completeExceptionally(new UnauthorizedError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class),
                                         response));
                                 return;
                             case 402:
                                 future.completeExceptionally(new PaymentRequiredError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
-                                        response));
-                                return;
-                            case 403:
-                                future.completeExceptionally(new ForbiddenError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
                                         response));
                                 return;
                             case 404:
@@ -139,12 +210,7 @@ public class AsyncRawExtendClient {
                                 return;
                             case 422:
                                 future.completeExceptionally(new UnprocessableEntityError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
-                                        response));
-                                return;
-                            case 429:
-                                future.completeExceptionally(new TooManyRequestsError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtendError.class),
                                         response));
                                 return;
                             case 500:
@@ -156,9 +222,11 @@ public class AsyncRawExtendClient {
                     } catch (JsonProcessingException ignored) {
                         // unable to map error response, throwing generic error
                     }
-                    Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
                     future.completeExceptionally(new ExtendClientApiException(
-                            "Error with status code " + response.code(), response.code(), errorBody, response));
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
                     return;
                 } catch (IOException e) {
                     future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
@@ -174,31 +242,37 @@ public class AsyncRawExtendClient {
     }
 
     /**
-     * Edit a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /edit_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/editing/edit">Edit File guide</a>.</p>
+     * Parse files <strong>asynchronously</strong> to get cleaned, chunked target content (e.g. markdown).
+     * <p>The Parse Async endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
+     * <p>Parse files asynchronously and get a parser run ID that can be used to check status and retrieve results with the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/parse-endpoints/get-parser-run">Get Parser Run</a> endpoint.</p>
+     * <p>This is useful for:</p>
+     * <ul>
+     * <li>Large files that may take longer to process</li>
+     * <li>Avoiding timeout issues with synchronous parsing.</li>
+     * </ul>
+     * <p>For more details, see the <a href="/product/parsing/parse">Parse File guide</a>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EditRun>> edit(EditRequest request) {
-        return edit(request, null);
+    public CompletableFuture<ExtendClientHttpResponse<ParserRunStatus>> parseAsync(ParseAsyncRequest request) {
+        return parseAsync(request, null);
     }
 
     /**
-     * Edit a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /edit_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/editing/edit">Edit File guide</a>.</p>
+     * Parse files <strong>asynchronously</strong> to get cleaned, chunked target content (e.g. markdown).
+     * <p>The Parse Async endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
+     * <p>Parse files asynchronously and get a parser run ID that can be used to check status and retrieve results with the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/parse-endpoints/get-parser-run">Get Parser Run</a> endpoint.</p>
+     * <p>This is useful for:</p>
+     * <ul>
+     * <li>Large files that may take longer to process</li>
+     * <li>Avoiding timeout issues with synchronous parsing.</li>
+     * </ul>
+     * <p>For more details, see the <a href="/product/parsing/parse">Parse File guide</a>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EditRun>> edit(
-            EditRequest request, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+    public CompletableFuture<ExtendClientHttpResponse<ParserRunStatus>> parseAsync(
+            ParseAsyncRequest request, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
-                .addPathSegments("edit");
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
+                .addPathSegments("parse/async")
+                .build();
         RequestBody body;
         try {
             body = RequestBody.create(
@@ -207,7 +281,7 @@ public class AsyncRawExtendClient {
             throw new ExtendClientException("Failed to serialize request", e);
         }
         Request okhttpRequest = new Request.Builder()
-                .url(httpUrl.build())
+                .url(httpUrl)
                 .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
@@ -217,17 +291,18 @@ public class AsyncRawExtendClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<EditRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientHttpResponse<ParserRunStatus>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
-                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
                         future.complete(new ExtendClientHttpResponse<>(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EditRun.class), response));
+                                ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), ParserRunStatus.class),
+                                response));
                         return;
                     }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     try {
                         switch (response.code()) {
                             case 400:
@@ -237,400 +312,18 @@ public class AsyncRawExtendClient {
                                 return;
                             case 401:
                                 future.completeExceptionally(new UnauthorizedError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                                        response));
-                                return;
-                            case 402:
-                                future.completeExceptionally(new PaymentRequiredError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
-                                        response));
-                                return;
-                            case 403:
-                                future.completeExceptionally(new ForbiddenError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
-                                        response));
-                                return;
-                            case 404:
-                                future.completeExceptionally(new NotFoundError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                                        response));
-                                return;
-                            case 422:
-                                future.completeExceptionally(new UnprocessableEntityError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
-                                        response));
-                                return;
-                            case 429:
-                                future.completeExceptionally(new TooManyRequestsError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                                        response));
-                                return;
-                            case 500:
-                                future.completeExceptionally(new InternalServerError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class),
                                         response));
                                 return;
                         }
                     } catch (JsonProcessingException ignored) {
                         // unable to map error response, throwing generic error
                     }
-                    Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
                     future.completeExceptionally(new ExtendClientApiException(
-                            "Error with status code " + response.code(), response.code(), errorBody, response));
-                    return;
-                } catch (IOException e) {
-                    future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
-            }
-        });
-        return future;
-    }
-
-    /**
-     * Extract structured data from a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /extract_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/extracting/extract">Extract File guide</a>.</p>
-     */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRun>> extract(ExtractRequest request) {
-        return extract(request, null);
-    }
-
-    /**
-     * Extract structured data from a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /extract_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/extracting/extract">Extract File guide</a>.</p>
-     */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRun>> extract(
-            ExtractRequest request, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("extract");
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
-        RequestBody body;
-        try {
-            body = RequestBody.create(
-                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new ExtendClientException("Failed to serialize request", e);
-        }
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl.build())
-                .method("POST", body)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        CompletableFuture<ExtendClientHttpResponse<ExtractRun>> future = new CompletableFuture<>();
-        client.newCall(okhttpRequest).enqueue(new Callback() {
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try (ResponseBody responseBody = response.body()) {
-                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-                    if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtractRun.class), response));
-                        return;
-                    }
-                    try {
-                        switch (response.code()) {
-                            case 400:
-                                future.completeExceptionally(new BadRequestError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                                        response));
-                                return;
-                            case 401:
-                                future.completeExceptionally(new UnauthorizedError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                                        response));
-                                return;
-                            case 402:
-                                future.completeExceptionally(new PaymentRequiredError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
-                                        response));
-                                return;
-                            case 403:
-                                future.completeExceptionally(new ForbiddenError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
-                                        response));
-                                return;
-                            case 404:
-                                future.completeExceptionally(new NotFoundError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                                        response));
-                                return;
-                            case 422:
-                                future.completeExceptionally(new UnprocessableEntityError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
-                                        response));
-                                return;
-                            case 429:
-                                future.completeExceptionally(new TooManyRequestsError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                                        response));
-                                return;
-                            case 500:
-                                future.completeExceptionally(new InternalServerError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                                        response));
-                                return;
-                        }
-                    } catch (JsonProcessingException ignored) {
-                        // unable to map error response, throwing generic error
-                    }
-                    Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
-                    future.completeExceptionally(new ExtendClientApiException(
-                            "Error with status code " + response.code(), response.code(), errorBody, response));
-                    return;
-                } catch (IOException e) {
-                    future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
-            }
-        });
-        return future;
-    }
-
-    /**
-     * Classify a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /classify_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/classifying/classify">Classify File guide</a>.</p>
-     */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> classify(ClassifyRequest request) {
-        return classify(request, null);
-    }
-
-    /**
-     * Classify a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /classify_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/classifying/classify">Classify File guide</a>.</p>
-     */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> classify(
-            ClassifyRequest request, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("classify");
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
-        RequestBody body;
-        try {
-            body = RequestBody.create(
-                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new ExtendClientException("Failed to serialize request", e);
-        }
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl.build())
-                .method("POST", body)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> future = new CompletableFuture<>();
-        client.newCall(okhttpRequest).enqueue(new Callback() {
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try (ResponseBody responseBody = response.body()) {
-                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-                    if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ClassifyRun.class), response));
-                        return;
-                    }
-                    try {
-                        switch (response.code()) {
-                            case 400:
-                                future.completeExceptionally(new BadRequestError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                                        response));
-                                return;
-                            case 401:
-                                future.completeExceptionally(new UnauthorizedError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                                        response));
-                                return;
-                            case 402:
-                                future.completeExceptionally(new PaymentRequiredError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
-                                        response));
-                                return;
-                            case 403:
-                                future.completeExceptionally(new ForbiddenError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
-                                        response));
-                                return;
-                            case 404:
-                                future.completeExceptionally(new NotFoundError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                                        response));
-                                return;
-                            case 422:
-                                future.completeExceptionally(new UnprocessableEntityError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
-                                        response));
-                                return;
-                            case 429:
-                                future.completeExceptionally(new TooManyRequestsError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                                        response));
-                                return;
-                            case 500:
-                                future.completeExceptionally(new InternalServerError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                                        response));
-                                return;
-                        }
-                    } catch (JsonProcessingException ignored) {
-                        // unable to map error response, throwing generic error
-                    }
-                    Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
-                    future.completeExceptionally(new ExtendClientApiException(
-                            "Error with status code " + response.code(), response.code(), errorBody, response));
-                    return;
-                } catch (IOException e) {
-                    future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
-            }
-        });
-        return future;
-    }
-
-    /**
-     * Split a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /split_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/splitting/split">Split File guide</a>.</p>
-     */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRun>> split(SplitRequest request) {
-        return split(request, null);
-    }
-
-    /**
-     * Split a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
-     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /split_runs</code> with webhooks or polling instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/splitting/split">Split File guide</a>.</p>
-     */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRun>> split(
-            SplitRequest request, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("split");
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
-        RequestBody body;
-        try {
-            body = RequestBody.create(
-                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new ExtendClientException("Failed to serialize request", e);
-        }
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl.build())
-                .method("POST", body)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        CompletableFuture<ExtendClientHttpResponse<SplitRun>> future = new CompletableFuture<>();
-        client.newCall(okhttpRequest).enqueue(new Callback() {
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try (ResponseBody responseBody = response.body()) {
-                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-                    if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, SplitRun.class), response));
-                        return;
-                    }
-                    try {
-                        switch (response.code()) {
-                            case 400:
-                                future.completeExceptionally(new BadRequestError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                                        response));
-                                return;
-                            case 401:
-                                future.completeExceptionally(new UnauthorizedError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                                        response));
-                                return;
-                            case 402:
-                                future.completeExceptionally(new PaymentRequiredError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
-                                        response));
-                                return;
-                            case 403:
-                                future.completeExceptionally(new ForbiddenError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
-                                        response));
-                                return;
-                            case 404:
-                                future.completeExceptionally(new NotFoundError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                                        response));
-                                return;
-                            case 422:
-                                future.completeExceptionally(new UnprocessableEntityError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
-                                        response));
-                                return;
-                            case 429:
-                                future.completeExceptionally(new TooManyRequestsError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                                        response));
-                                return;
-                            case 500:
-                                future.completeExceptionally(new InternalServerError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                                        response));
-                                return;
-                        }
-                    } catch (JsonProcessingException ignored) {
-                        // unable to map error response, throwing generic error
-                    }
-                    Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
-                    future.completeExceptionally(new ExtendClientApiException(
-                            "Error with status code " + response.code(), response.code(), errorBody, response));
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
                     return;
                 } catch (IOException e) {
                     future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));

@@ -10,115 +10,93 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = EditRunMetrics.Builder.class)
 public final class EditRunMetrics {
-    private final double processingTimeMs;
+    private final Optional<Double> processingTimeMs;
 
-    private final int pageCount;
+    private final Optional<Integer> fieldCount;
 
-    private final int fieldCount;
+    private final Optional<Integer> pageCount;
 
-    private final int fieldsDetectedCount;
+    private final Optional<Double> fieldFillingTimeMs;
 
-    private final int fieldsAnnotatedCount;
+    private final Optional<Double> fieldDetectionTimeMs;
 
-    private final double fieldDetectionTimeMs;
-
-    private final double fieldAnnotationTimeMs;
-
-    private final double fieldFillingTimeMs;
+    private final Optional<Double> fieldAnnotationTimeMs;
 
     private final Map<String, Object> additionalProperties;
 
     private EditRunMetrics(
-            double processingTimeMs,
-            int pageCount,
-            int fieldCount,
-            int fieldsDetectedCount,
-            int fieldsAnnotatedCount,
-            double fieldDetectionTimeMs,
-            double fieldAnnotationTimeMs,
-            double fieldFillingTimeMs,
+            Optional<Double> processingTimeMs,
+            Optional<Integer> fieldCount,
+            Optional<Integer> pageCount,
+            Optional<Double> fieldFillingTimeMs,
+            Optional<Double> fieldDetectionTimeMs,
+            Optional<Double> fieldAnnotationTimeMs,
             Map<String, Object> additionalProperties) {
         this.processingTimeMs = processingTimeMs;
-        this.pageCount = pageCount;
         this.fieldCount = fieldCount;
-        this.fieldsDetectedCount = fieldsDetectedCount;
-        this.fieldsAnnotatedCount = fieldsAnnotatedCount;
+        this.pageCount = pageCount;
+        this.fieldFillingTimeMs = fieldFillingTimeMs;
         this.fieldDetectionTimeMs = fieldDetectionTimeMs;
         this.fieldAnnotationTimeMs = fieldAnnotationTimeMs;
-        this.fieldFillingTimeMs = fieldFillingTimeMs;
         this.additionalProperties = additionalProperties;
     }
 
     /**
-     * @return Total processing time in milliseconds.
+     * @return Total processing time in milliseconds
      */
     @JsonProperty("processingTimeMs")
-    public double getProcessingTimeMs() {
+    public Optional<Double> getProcessingTimeMs() {
         return processingTimeMs;
+    }
+
+    /**
+     * @return The number of fields detected in the document.
+     */
+    @JsonProperty("fieldCount")
+    public Optional<Integer> getFieldCount() {
+        return fieldCount;
     }
 
     /**
      * @return The number of pages in the document.
      */
     @JsonProperty("pageCount")
-    public int getPageCount() {
+    public Optional<Integer> getPageCount() {
         return pageCount;
     }
 
     /**
-     * @return The total number of fields in the schema.
+     * @return The time taken to fill the fields in the document.
      */
-    @JsonProperty("fieldCount")
-    public int getFieldCount() {
-        return fieldCount;
+    @JsonProperty("fieldFillingTimeMs")
+    public Optional<Double> getFieldFillingTimeMs() {
+        return fieldFillingTimeMs;
     }
 
     /**
-     * @return The number of fields that were automatically detected.
-     */
-    @JsonProperty("fieldsDetectedCount")
-    public int getFieldsDetectedCount() {
-        return fieldsDetectedCount;
-    }
-
-    /**
-     * @return The number of fields that were annotated with bounding boxes.
-     */
-    @JsonProperty("fieldsAnnotatedCount")
-    public int getFieldsAnnotatedCount() {
-        return fieldsAnnotatedCount;
-    }
-
-    /**
-     * @return The time taken to detect fields in the document, in milliseconds.
+     * @return The time taken to detect the fields in the document.
      */
     @JsonProperty("fieldDetectionTimeMs")
-    public double getFieldDetectionTimeMs() {
+    public Optional<Double> getFieldDetectionTimeMs() {
         return fieldDetectionTimeMs;
     }
 
     /**
-     * @return The time taken to annotate field positions in the document, in milliseconds.
+     * @return The time taken to annotate the fields in the document.
      */
     @JsonProperty("fieldAnnotationTimeMs")
-    public double getFieldAnnotationTimeMs() {
+    public Optional<Double> getFieldAnnotationTimeMs() {
         return fieldAnnotationTimeMs;
-    }
-
-    /**
-     * @return The time taken to fill the fields in the document, in milliseconds.
-     */
-    @JsonProperty("fieldFillingTimeMs")
-    public double getFieldFillingTimeMs() {
-        return fieldFillingTimeMs;
     }
 
     @java.lang.Override
@@ -133,27 +111,23 @@ public final class EditRunMetrics {
     }
 
     private boolean equalTo(EditRunMetrics other) {
-        return processingTimeMs == other.processingTimeMs
-                && pageCount == other.pageCount
-                && fieldCount == other.fieldCount
-                && fieldsDetectedCount == other.fieldsDetectedCount
-                && fieldsAnnotatedCount == other.fieldsAnnotatedCount
-                && fieldDetectionTimeMs == other.fieldDetectionTimeMs
-                && fieldAnnotationTimeMs == other.fieldAnnotationTimeMs
-                && fieldFillingTimeMs == other.fieldFillingTimeMs;
+        return processingTimeMs.equals(other.processingTimeMs)
+                && fieldCount.equals(other.fieldCount)
+                && pageCount.equals(other.pageCount)
+                && fieldFillingTimeMs.equals(other.fieldFillingTimeMs)
+                && fieldDetectionTimeMs.equals(other.fieldDetectionTimeMs)
+                && fieldAnnotationTimeMs.equals(other.fieldAnnotationTimeMs);
     }
 
     @java.lang.Override
     public int hashCode() {
         return Objects.hash(
                 this.processingTimeMs,
-                this.pageCount,
                 this.fieldCount,
-                this.fieldsDetectedCount,
-                this.fieldsAnnotatedCount,
+                this.pageCount,
+                this.fieldFillingTimeMs,
                 this.fieldDetectionTimeMs,
-                this.fieldAnnotationTimeMs,
-                this.fieldFillingTimeMs);
+                this.fieldAnnotationTimeMs);
     }
 
     @java.lang.Override
@@ -161,224 +135,131 @@ public final class EditRunMetrics {
         return ObjectMappers.stringify(this);
     }
 
-    public static ProcessingTimeMsStage builder() {
+    public static Builder builder() {
         return new Builder();
     }
 
-    public interface ProcessingTimeMsStage {
-        /**
-         * <p>Total processing time in milliseconds.</p>
-         */
-        PageCountStage processingTimeMs(double processingTimeMs);
-
-        Builder from(EditRunMetrics other);
-    }
-
-    public interface PageCountStage {
-        /**
-         * <p>The number of pages in the document.</p>
-         */
-        FieldCountStage pageCount(int pageCount);
-    }
-
-    public interface FieldCountStage {
-        /**
-         * <p>The total number of fields in the schema.</p>
-         */
-        FieldsDetectedCountStage fieldCount(int fieldCount);
-    }
-
-    public interface FieldsDetectedCountStage {
-        /**
-         * <p>The number of fields that were automatically detected.</p>
-         */
-        FieldsAnnotatedCountStage fieldsDetectedCount(int fieldsDetectedCount);
-    }
-
-    public interface FieldsAnnotatedCountStage {
-        /**
-         * <p>The number of fields that were annotated with bounding boxes.</p>
-         */
-        FieldDetectionTimeMsStage fieldsAnnotatedCount(int fieldsAnnotatedCount);
-    }
-
-    public interface FieldDetectionTimeMsStage {
-        /**
-         * <p>The time taken to detect fields in the document, in milliseconds.</p>
-         */
-        FieldAnnotationTimeMsStage fieldDetectionTimeMs(double fieldDetectionTimeMs);
-    }
-
-    public interface FieldAnnotationTimeMsStage {
-        /**
-         * <p>The time taken to annotate field positions in the document, in milliseconds.</p>
-         */
-        FieldFillingTimeMsStage fieldAnnotationTimeMs(double fieldAnnotationTimeMs);
-    }
-
-    public interface FieldFillingTimeMsStage {
-        /**
-         * <p>The time taken to fill the fields in the document, in milliseconds.</p>
-         */
-        _FinalStage fieldFillingTimeMs(double fieldFillingTimeMs);
-    }
-
-    public interface _FinalStage {
-        EditRunMetrics build();
-    }
-
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder
-            implements ProcessingTimeMsStage,
-                    PageCountStage,
-                    FieldCountStage,
-                    FieldsDetectedCountStage,
-                    FieldsAnnotatedCountStage,
-                    FieldDetectionTimeMsStage,
-                    FieldAnnotationTimeMsStage,
-                    FieldFillingTimeMsStage,
-                    _FinalStage {
-        private double processingTimeMs;
+    public static final class Builder {
+        private Optional<Double> processingTimeMs = Optional.empty();
 
-        private int pageCount;
+        private Optional<Integer> fieldCount = Optional.empty();
 
-        private int fieldCount;
+        private Optional<Integer> pageCount = Optional.empty();
 
-        private int fieldsDetectedCount;
+        private Optional<Double> fieldFillingTimeMs = Optional.empty();
 
-        private int fieldsAnnotatedCount;
+        private Optional<Double> fieldDetectionTimeMs = Optional.empty();
 
-        private double fieldDetectionTimeMs;
-
-        private double fieldAnnotationTimeMs;
-
-        private double fieldFillingTimeMs;
+        private Optional<Double> fieldAnnotationTimeMs = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
-        @java.lang.Override
         public Builder from(EditRunMetrics other) {
             processingTimeMs(other.getProcessingTimeMs());
-            pageCount(other.getPageCount());
             fieldCount(other.getFieldCount());
-            fieldsDetectedCount(other.getFieldsDetectedCount());
-            fieldsAnnotatedCount(other.getFieldsAnnotatedCount());
+            pageCount(other.getPageCount());
+            fieldFillingTimeMs(other.getFieldFillingTimeMs());
             fieldDetectionTimeMs(other.getFieldDetectionTimeMs());
             fieldAnnotationTimeMs(other.getFieldAnnotationTimeMs());
-            fieldFillingTimeMs(other.getFieldFillingTimeMs());
             return this;
         }
 
         /**
-         * <p>Total processing time in milliseconds.</p>
-         * <p>Total processing time in milliseconds.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
+         * <p>Total processing time in milliseconds</p>
          */
-        @java.lang.Override
-        @JsonSetter("processingTimeMs")
-        public PageCountStage processingTimeMs(double processingTimeMs) {
+        @JsonSetter(value = "processingTimeMs", nulls = Nulls.SKIP)
+        public Builder processingTimeMs(Optional<Double> processingTimeMs) {
             this.processingTimeMs = processingTimeMs;
             return this;
         }
 
-        /**
-         * <p>The number of pages in the document.</p>
-         * <p>The number of pages in the document.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("pageCount")
-        public FieldCountStage pageCount(int pageCount) {
-            this.pageCount = pageCount;
+        public Builder processingTimeMs(Double processingTimeMs) {
+            this.processingTimeMs = Optional.ofNullable(processingTimeMs);
             return this;
         }
 
         /**
-         * <p>The total number of fields in the schema.</p>
-         * <p>The total number of fields in the schema.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
+         * <p>The number of fields detected in the document.</p>
          */
-        @java.lang.Override
-        @JsonSetter("fieldCount")
-        public FieldsDetectedCountStage fieldCount(int fieldCount) {
+        @JsonSetter(value = "fieldCount", nulls = Nulls.SKIP)
+        public Builder fieldCount(Optional<Integer> fieldCount) {
             this.fieldCount = fieldCount;
             return this;
         }
 
-        /**
-         * <p>The number of fields that were automatically detected.</p>
-         * <p>The number of fields that were automatically detected.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("fieldsDetectedCount")
-        public FieldsAnnotatedCountStage fieldsDetectedCount(int fieldsDetectedCount) {
-            this.fieldsDetectedCount = fieldsDetectedCount;
+        public Builder fieldCount(Integer fieldCount) {
+            this.fieldCount = Optional.ofNullable(fieldCount);
             return this;
         }
 
         /**
-         * <p>The number of fields that were annotated with bounding boxes.</p>
-         * <p>The number of fields that were annotated with bounding boxes.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
+         * <p>The number of pages in the document.</p>
          */
-        @java.lang.Override
-        @JsonSetter("fieldsAnnotatedCount")
-        public FieldDetectionTimeMsStage fieldsAnnotatedCount(int fieldsAnnotatedCount) {
-            this.fieldsAnnotatedCount = fieldsAnnotatedCount;
+        @JsonSetter(value = "pageCount", nulls = Nulls.SKIP)
+        public Builder pageCount(Optional<Integer> pageCount) {
+            this.pageCount = pageCount;
+            return this;
+        }
+
+        public Builder pageCount(Integer pageCount) {
+            this.pageCount = Optional.ofNullable(pageCount);
             return this;
         }
 
         /**
-         * <p>The time taken to detect fields in the document, in milliseconds.</p>
-         * <p>The time taken to detect fields in the document, in milliseconds.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
+         * <p>The time taken to fill the fields in the document.</p>
          */
-        @java.lang.Override
-        @JsonSetter("fieldDetectionTimeMs")
-        public FieldAnnotationTimeMsStage fieldDetectionTimeMs(double fieldDetectionTimeMs) {
-            this.fieldDetectionTimeMs = fieldDetectionTimeMs;
-            return this;
-        }
-
-        /**
-         * <p>The time taken to annotate field positions in the document, in milliseconds.</p>
-         * <p>The time taken to annotate field positions in the document, in milliseconds.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("fieldAnnotationTimeMs")
-        public FieldFillingTimeMsStage fieldAnnotationTimeMs(double fieldAnnotationTimeMs) {
-            this.fieldAnnotationTimeMs = fieldAnnotationTimeMs;
-            return this;
-        }
-
-        /**
-         * <p>The time taken to fill the fields in the document, in milliseconds.</p>
-         * <p>The time taken to fill the fields in the document, in milliseconds.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("fieldFillingTimeMs")
-        public _FinalStage fieldFillingTimeMs(double fieldFillingTimeMs) {
+        @JsonSetter(value = "fieldFillingTimeMs", nulls = Nulls.SKIP)
+        public Builder fieldFillingTimeMs(Optional<Double> fieldFillingTimeMs) {
             this.fieldFillingTimeMs = fieldFillingTimeMs;
             return this;
         }
 
-        @java.lang.Override
+        public Builder fieldFillingTimeMs(Double fieldFillingTimeMs) {
+            this.fieldFillingTimeMs = Optional.ofNullable(fieldFillingTimeMs);
+            return this;
+        }
+
+        /**
+         * <p>The time taken to detect the fields in the document.</p>
+         */
+        @JsonSetter(value = "fieldDetectionTimeMs", nulls = Nulls.SKIP)
+        public Builder fieldDetectionTimeMs(Optional<Double> fieldDetectionTimeMs) {
+            this.fieldDetectionTimeMs = fieldDetectionTimeMs;
+            return this;
+        }
+
+        public Builder fieldDetectionTimeMs(Double fieldDetectionTimeMs) {
+            this.fieldDetectionTimeMs = Optional.ofNullable(fieldDetectionTimeMs);
+            return this;
+        }
+
+        /**
+         * <p>The time taken to annotate the fields in the document.</p>
+         */
+        @JsonSetter(value = "fieldAnnotationTimeMs", nulls = Nulls.SKIP)
+        public Builder fieldAnnotationTimeMs(Optional<Double> fieldAnnotationTimeMs) {
+            this.fieldAnnotationTimeMs = fieldAnnotationTimeMs;
+            return this;
+        }
+
+        public Builder fieldAnnotationTimeMs(Double fieldAnnotationTimeMs) {
+            this.fieldAnnotationTimeMs = Optional.ofNullable(fieldAnnotationTimeMs);
+            return this;
+        }
+
         public EditRunMetrics build() {
             return new EditRunMetrics(
                     processingTimeMs,
-                    pageCount,
                     fieldCount,
-                    fieldsDetectedCount,
-                    fieldsAnnotatedCount,
+                    pageCount,
+                    fieldFillingTimeMs,
                     fieldDetectionTimeMs,
                     fieldAnnotationTimeMs,
-                    fieldFillingTimeMs,
                     additionalProperties);
         }
     }

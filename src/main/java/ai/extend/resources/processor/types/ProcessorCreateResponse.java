@@ -4,7 +4,7 @@
 package ai.extend.resources.processor.types;
 
 import ai.extend.core.ObjectMappers;
-import ai.extend.types.LegacyProcessor;
+import ai.extend.types.Processor;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -22,12 +22,11 @@ import org.jetbrains.annotations.NotNull;
 public final class ProcessorCreateResponse {
     private final boolean success;
 
-    private final LegacyProcessor processor;
+    private final Processor processor;
 
     private final Map<String, Object> additionalProperties;
 
-    private ProcessorCreateResponse(
-            boolean success, LegacyProcessor processor, Map<String, Object> additionalProperties) {
+    private ProcessorCreateResponse(boolean success, Processor processor, Map<String, Object> additionalProperties) {
         this.success = success;
         this.processor = processor;
         this.additionalProperties = additionalProperties;
@@ -39,7 +38,7 @@ public final class ProcessorCreateResponse {
     }
 
     @JsonProperty("processor")
-    public LegacyProcessor getProcessor() {
+    public Processor getProcessor() {
         return processor;
     }
 
@@ -79,7 +78,7 @@ public final class ProcessorCreateResponse {
     }
 
     public interface ProcessorStage {
-        _FinalStage processor(@NotNull LegacyProcessor processor);
+        _FinalStage processor(@NotNull Processor processor);
     }
 
     public interface _FinalStage {
@@ -90,7 +89,7 @@ public final class ProcessorCreateResponse {
     public static final class Builder implements SuccessStage, ProcessorStage, _FinalStage {
         private boolean success;
 
-        private LegacyProcessor processor;
+        private Processor processor;
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -113,7 +112,7 @@ public final class ProcessorCreateResponse {
 
         @java.lang.Override
         @JsonSetter("processor")
-        public _FinalStage processor(@NotNull LegacyProcessor processor) {
+        public _FinalStage processor(@NotNull Processor processor) {
             this.processor = Objects.requireNonNull(processor, "processor must not be null");
             return this;
         }

@@ -13,6 +13,7 @@ import ai.extend.errors.BadRequestError;
 import ai.extend.errors.NotFoundError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.resources.batchprocessorrun.types.BatchProcessorRunGetResponse;
+import ai.extend.types.Error;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -34,30 +35,24 @@ public class AsyncRawBatchProcessorRunClient {
     }
 
     /**
-     * Retrieve details about a batch processor run, including evaluation runs.
-     * <p><strong>Deprecated:</strong> This endpoint is maintained for backwards compatibility only and will be replaced in a future API version. Use <a href="/2026-02-09/developers/api-reference/endpoints/evaluation/get-evaluation-set-run">Get Evaluation Set Run</a> for interacting with evaluation set runs.</p>
+     * Retrieve details about a batch processor run, including evaluation runs
      */
     public CompletableFuture<ExtendClientHttpResponse<BatchProcessorRunGetResponse>> get(String id) {
         return get(id, null);
     }
 
     /**
-     * Retrieve details about a batch processor run, including evaluation runs.
-     * <p><strong>Deprecated:</strong> This endpoint is maintained for backwards compatibility only and will be replaced in a future API version. Use <a href="/2026-02-09/developers/api-reference/endpoints/evaluation/get-evaluation-set-run">Get Evaluation Set Run</a> for interacting with evaluation set runs.</p>
+     * Retrieve details about a batch processor run, including evaluation runs
      */
     public CompletableFuture<ExtendClientHttpResponse<BatchProcessorRunGetResponse>> get(
             String id, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("batch_processor_runs")
-                .addPathSegment(id);
-        if (requestOptions != null) {
-            requestOptions.getQueryParameters().forEach((_key, _value) -> {
-                httpUrl.addQueryParameter(_key, _value);
-            });
-        }
+                .addPathSegment(id)
+                .build();
         Request okhttpRequest = new Request.Builder()
-                .url(httpUrl.build())
+                .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json")
@@ -71,14 +66,14 @@ public class AsyncRawBatchProcessorRunClient {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
-                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
                         future.complete(new ExtendClientHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
-                                        responseBodyString, BatchProcessorRunGetResponse.class),
+                                        responseBody.string(), BatchProcessorRunGetResponse.class),
                                 response));
                         return;
                     }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     try {
                         switch (response.code()) {
                             case 400:
@@ -88,7 +83,7 @@ public class AsyncRawBatchProcessorRunClient {
                                 return;
                             case 401:
                                 future.completeExceptionally(new UnauthorizedError(
-                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Error.class),
                                         response));
                                 return;
                             case 404:
@@ -100,9 +95,11 @@ public class AsyncRawBatchProcessorRunClient {
                     } catch (JsonProcessingException ignored) {
                         // unable to map error response, throwing generic error
                     }
-                    Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
                     future.completeExceptionally(new ExtendClientApiException(
-                            "Error with status code " + response.code(), response.code(), errorBody, response));
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
                     return;
                 } catch (IOException e) {
                     future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));

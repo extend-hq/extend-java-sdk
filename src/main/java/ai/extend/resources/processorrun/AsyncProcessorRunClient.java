@@ -41,13 +41,6 @@ public class AsyncProcessorRunClient {
     /**
      * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
      */
-    public CompletableFuture<ProcessorRunListResponse> list(RequestOptions requestOptions) {
-        return this.rawClient.list(requestOptions).thenApply(response -> response.body());
-    }
-
-    /**
-     * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
-     */
     public CompletableFuture<ProcessorRunListResponse> list(ProcessorRunListRequest request) {
         return this.rawClient.list(request).thenApply(response -> response.body());
     }

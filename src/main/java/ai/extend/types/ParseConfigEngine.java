@@ -3,82 +3,22 @@
  */
 package ai.extend.types;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public final class ParseConfigEngine {
-    public static final ParseConfigEngine PARSE_PERFORMANCE =
-            new ParseConfigEngine(Value.PARSE_PERFORMANCE, "parse_performance");
+public enum ParseConfigEngine {
+    PARSE_PERFORMANCE("parse_performance"),
 
-    public static final ParseConfigEngine PARSE_LIGHT = new ParseConfigEngine(Value.PARSE_LIGHT, "parse_light");
+    PARSE_LIGHT("parse_light");
 
-    private final Value value;
+    private final String value;
 
-    private final String string;
-
-    ParseConfigEngine(Value value, String string) {
+    ParseConfigEngine(String value) {
         this.value = value;
-        this.string = string;
     }
 
-    public Value getEnumValue() {
-        return value;
-    }
-
-    @java.lang.Override
     @JsonValue
+    @java.lang.Override
     public String toString() {
-        return this.string;
-    }
-
-    @java.lang.Override
-    public boolean equals(Object other) {
-        return (this == other)
-                || (other instanceof ParseConfigEngine && this.string.equals(((ParseConfigEngine) other).string));
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-        return this.string.hashCode();
-    }
-
-    public <T> T visit(Visitor<T> visitor) {
-        switch (value) {
-            case PARSE_PERFORMANCE:
-                return visitor.visitParsePerformance();
-            case PARSE_LIGHT:
-                return visitor.visitParseLight();
-            case UNKNOWN:
-            default:
-                return visitor.visitUnknown(string);
-        }
-    }
-
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static ParseConfigEngine valueOf(String value) {
-        switch (value) {
-            case "parse_performance":
-                return PARSE_PERFORMANCE;
-            case "parse_light":
-                return PARSE_LIGHT;
-            default:
-                return new ParseConfigEngine(Value.UNKNOWN, value);
-        }
-    }
-
-    public enum Value {
-        PARSE_PERFORMANCE,
-
-        PARSE_LIGHT,
-
-        UNKNOWN
-    }
-
-    public interface Visitor<T> {
-        T visitParsePerformance();
-
-        T visitParseLight();
-
-        T visitUnknown(String unknownType);
+        return this.value;
     }
 }

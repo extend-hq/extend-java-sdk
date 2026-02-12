@@ -100,7 +100,7 @@ public final class BatchProcessorRun {
 
     /**
      * @return The ID of the processor used for this run.
-     * <p>Example: <code>&quot;ex_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+     * <p>Example: <code>&quot;dp_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
      */
     @JsonProperty("processorId")
     public String getProcessorId() {
@@ -109,7 +109,7 @@ public final class BatchProcessorRun {
 
     /**
      * @return The ID of the specific processor version used.
-     * <p>Example: <code>&quot;exv_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+     * <p>Example: <code>&quot;dpv_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
      */
     @JsonProperty("processorVersionId")
     public String getProcessorVersionId() {
@@ -149,7 +149,7 @@ public final class BatchProcessorRun {
      * <ul>
      * <li><code>&quot;EVAL_SET&quot;</code> - The batch processor run was made from an evaluation set. The <code>sourceId</code> will be the ID of the evaluation set (e.g., <code>&quot;ev_1234&quot;</code>)</li>
      * <li><code>&quot;PLAYGROUND&quot;</code> - The batch processor run was made from the playground. The <code>sourceId</code> will not be set</li>
-     * <li><code>&quot;STUDIO&quot;</code> - The batch processor run was made for a processor in Studio. The <code>sourceId</code> will be the ID of the processor (e.g., <code>&quot;ex_1234&quot;</code>)</li>
+     * <li><code>&quot;STUDIO&quot;</code> - The batch processor run was made for a processor in Studio. The <code>sourceId</code> will be the ID of the processor (e.g., <code>&quot;dp_1234&quot;</code>)</li>
      * </ul>
      */
     @JsonProperty("source")
@@ -159,7 +159,7 @@ public final class BatchProcessorRun {
 
     /**
      * @return The ID of the source of the batch processor run. See the <code>source</code> field for more details.
-     * Example: <code>&quot;ev_1234&quot;</code> for EVAL_SET source, <code>&quot;ex_1234&quot;</code> for STUDIO source
+     * Example: <code>&quot;ev_1234&quot;</code> for EVAL_SET source, <code>&quot;dp_1234&quot;</code> for STUDIO source
      */
     @JsonProperty("sourceId")
     public Optional<String> getSourceId() {
@@ -274,7 +274,7 @@ public final class BatchProcessorRun {
     public interface ProcessorIdStage {
         /**
          * <p>The ID of the processor used for this run.</p>
-         * <p>Example: <code>&quot;ex_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         * <p>Example: <code>&quot;dp_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
          */
         ProcessorVersionIdStage processorId(@NotNull String processorId);
     }
@@ -282,7 +282,7 @@ public final class BatchProcessorRun {
     public interface ProcessorVersionIdStage {
         /**
          * <p>The ID of the specific processor version used.</p>
-         * <p>Example: <code>&quot;exv_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         * <p>Example: <code>&quot;dpv_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
          */
         ProcessorNameStage processorVersionId(@NotNull String processorVersionId);
     }
@@ -318,7 +318,7 @@ public final class BatchProcessorRun {
          * <ul>
          * <li><code>&quot;EVAL_SET&quot;</code> - The batch processor run was made from an evaluation set. The <code>sourceId</code> will be the ID of the evaluation set (e.g., <code>&quot;ev_1234&quot;</code>)</li>
          * <li><code>&quot;PLAYGROUND&quot;</code> - The batch processor run was made from the playground. The <code>sourceId</code> will not be set</li>
-         * <li><code>&quot;STUDIO&quot;</code> - The batch processor run was made for a processor in Studio. The <code>sourceId</code> will be the ID of the processor (e.g., <code>&quot;ex_1234&quot;</code>)</li>
+         * <li><code>&quot;STUDIO&quot;</code> - The batch processor run was made for a processor in Studio. The <code>sourceId</code> will be the ID of the processor (e.g., <code>&quot;dp_1234&quot;</code>)</li>
          * </ul>
          */
         RunCountStage source(@NotNull BatchProcessorRunSource source);
@@ -359,7 +359,7 @@ public final class BatchProcessorRun {
 
         /**
          * <p>The ID of the source of the batch processor run. See the <code>source</code> field for more details.
-         * Example: <code>&quot;ev_1234&quot;</code> for EVAL_SET source, <code>&quot;ex_1234&quot;</code> for STUDIO source</p>
+         * Example: <code>&quot;ev_1234&quot;</code> for EVAL_SET source, <code>&quot;dp_1234&quot;</code> for STUDIO source</p>
          */
         _FinalStage sourceId(Optional<String> sourceId);
 
@@ -458,9 +458,9 @@ public final class BatchProcessorRun {
 
         /**
          * <p>The ID of the processor used for this run.</p>
-         * <p>Example: <code>&quot;ex_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         * <p>Example: <code>&quot;dp_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
          * <p>The ID of the processor used for this run.</p>
-         * <p>Example: <code>&quot;ex_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         * <p>Example: <code>&quot;dp_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -472,9 +472,9 @@ public final class BatchProcessorRun {
 
         /**
          * <p>The ID of the specific processor version used.</p>
-         * <p>Example: <code>&quot;exv_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         * <p>Example: <code>&quot;dpv_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
          * <p>The ID of the specific processor version used.</p>
-         * <p>Example: <code>&quot;exv_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         * <p>Example: <code>&quot;dpv_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -534,13 +534,13 @@ public final class BatchProcessorRun {
          * <ul>
          * <li><code>&quot;EVAL_SET&quot;</code> - The batch processor run was made from an evaluation set. The <code>sourceId</code> will be the ID of the evaluation set (e.g., <code>&quot;ev_1234&quot;</code>)</li>
          * <li><code>&quot;PLAYGROUND&quot;</code> - The batch processor run was made from the playground. The <code>sourceId</code> will not be set</li>
-         * <li><code>&quot;STUDIO&quot;</code> - The batch processor run was made for a processor in Studio. The <code>sourceId</code> will be the ID of the processor (e.g., <code>&quot;ex_1234&quot;</code>)</li>
+         * <li><code>&quot;STUDIO&quot;</code> - The batch processor run was made for a processor in Studio. The <code>sourceId</code> will be the ID of the processor (e.g., <code>&quot;dp_1234&quot;</code>)</li>
          * </ul>
          * <p>The source of the batch processor run:</p>
          * <ul>
          * <li><code>&quot;EVAL_SET&quot;</code> - The batch processor run was made from an evaluation set. The <code>sourceId</code> will be the ID of the evaluation set (e.g., <code>&quot;ev_1234&quot;</code>)</li>
          * <li><code>&quot;PLAYGROUND&quot;</code> - The batch processor run was made from the playground. The <code>sourceId</code> will not be set</li>
-         * <li><code>&quot;STUDIO&quot;</code> - The batch processor run was made for a processor in Studio. The <code>sourceId</code> will be the ID of the processor (e.g., <code>&quot;ex_1234&quot;</code>)</li>
+         * <li><code>&quot;STUDIO&quot;</code> - The batch processor run was made for a processor in Studio. The <code>sourceId</code> will be the ID of the processor (e.g., <code>&quot;dp_1234&quot;</code>)</li>
          * </ul>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
@@ -605,7 +605,7 @@ public final class BatchProcessorRun {
 
         /**
          * <p>The ID of the source of the batch processor run. See the <code>source</code> field for more details.
-         * Example: <code>&quot;ev_1234&quot;</code> for EVAL_SET source, <code>&quot;ex_1234&quot;</code> for STUDIO source</p>
+         * Example: <code>&quot;ev_1234&quot;</code> for EVAL_SET source, <code>&quot;dp_1234&quot;</code> for STUDIO source</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -616,7 +616,7 @@ public final class BatchProcessorRun {
 
         /**
          * <p>The ID of the source of the batch processor run. See the <code>source</code> field for more details.
-         * Example: <code>&quot;ev_1234&quot;</code> for EVAL_SET source, <code>&quot;ex_1234&quot;</code> for STUDIO source</p>
+         * Example: <code>&quot;ev_1234&quot;</code> for EVAL_SET source, <code>&quot;dp_1234&quot;</code> for STUDIO source</p>
          */
         @java.lang.Override
         @JsonSetter(value = "sourceId", nulls = Nulls.SKIP)

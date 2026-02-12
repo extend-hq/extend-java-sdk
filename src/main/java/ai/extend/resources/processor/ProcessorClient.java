@@ -10,7 +10,7 @@ import ai.extend.resources.processor.requests.ProcessorListRequest;
 import ai.extend.resources.processor.requests.ProcessorUpdateRequest;
 import ai.extend.resources.processor.types.ProcessorCreateResponse;
 import ai.extend.resources.processor.types.ProcessorUpdateResponse;
-import ai.extend.types.LegacyListProcessorsResponse;
+import ai.extend.types.ListProcessorsResponse;
 
 public class ProcessorClient {
     protected final ClientOptions clientOptions;
@@ -32,28 +32,21 @@ public class ProcessorClient {
     /**
      * List all processors in your organization
      */
-    public LegacyListProcessorsResponse list() {
+    public ListProcessorsResponse list() {
         return this.rawClient.list().body();
     }
 
     /**
      * List all processors in your organization
      */
-    public LegacyListProcessorsResponse list(RequestOptions requestOptions) {
-        return this.rawClient.list(requestOptions).body();
-    }
-
-    /**
-     * List all processors in your organization
-     */
-    public LegacyListProcessorsResponse list(ProcessorListRequest request) {
+    public ListProcessorsResponse list(ProcessorListRequest request) {
         return this.rawClient.list(request).body();
     }
 
     /**
      * List all processors in your organization
      */
-    public LegacyListProcessorsResponse list(ProcessorListRequest request, RequestOptions requestOptions) {
+    public ListProcessorsResponse list(ProcessorListRequest request, RequestOptions requestOptions) {
         return this.rawClient.list(request, requestOptions).body();
     }
 
@@ -76,13 +69,6 @@ public class ProcessorClient {
      */
     public ProcessorUpdateResponse update(String id) {
         return this.rawClient.update(id).body();
-    }
-
-    /**
-     * Update an existing processor in Extend
-     */
-    public ProcessorUpdateResponse update(String id, RequestOptions requestOptions) {
-        return this.rawClient.update(id, requestOptions).body();
     }
 
     /**

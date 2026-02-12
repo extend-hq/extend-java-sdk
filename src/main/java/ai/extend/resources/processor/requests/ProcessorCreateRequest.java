@@ -5,7 +5,7 @@ package ai.extend.resources.processor.requests;
 
 import ai.extend.core.ObjectMappers;
 import ai.extend.resources.processor.types.ProcessorCreateRequestConfig;
-import ai.extend.types.LegacyProcessorType;
+import ai.extend.types.ProcessorType;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 public final class ProcessorCreateRequest {
     private final String name;
 
-    private final LegacyProcessorType type;
+    private final ProcessorType type;
 
     private final Optional<String> cloneProcessorId;
 
@@ -35,7 +35,7 @@ public final class ProcessorCreateRequest {
 
     private ProcessorCreateRequest(
             String name,
-            LegacyProcessorType type,
+            ProcessorType type,
             Optional<String> cloneProcessorId,
             Optional<ProcessorCreateRequestConfig> config,
             Map<String, Object> additionalProperties) {
@@ -55,13 +55,13 @@ public final class ProcessorCreateRequest {
     }
 
     @JsonProperty("type")
-    public LegacyProcessorType getType() {
+    public ProcessorType getType() {
         return type;
     }
 
     /**
      * @return The ID of an existing processor to clone. One of <code>cloneProcessorId</code> or <code>config</code> must be provided.
-     * <p>Example: <code>&quot;ex_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+     * <p>Example: <code>&quot;dp_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
      */
     @JsonProperty("cloneProcessorId")
     public Optional<String> getCloneProcessorId() {
@@ -118,7 +118,7 @@ public final class ProcessorCreateRequest {
     }
 
     public interface TypeStage {
-        _FinalStage type(@NotNull LegacyProcessorType type);
+        _FinalStage type(@NotNull ProcessorType type);
     }
 
     public interface _FinalStage {
@@ -126,7 +126,7 @@ public final class ProcessorCreateRequest {
 
         /**
          * <p>The ID of an existing processor to clone. One of <code>cloneProcessorId</code> or <code>config</code> must be provided.</p>
-         * <p>Example: <code>&quot;ex_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         * <p>Example: <code>&quot;dp_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
          */
         _FinalStage cloneProcessorId(Optional<String> cloneProcessorId);
 
@@ -144,7 +144,7 @@ public final class ProcessorCreateRequest {
     public static final class Builder implements NameStage, TypeStage, _FinalStage {
         private String name;
 
-        private LegacyProcessorType type;
+        private ProcessorType type;
 
         private Optional<ProcessorCreateRequestConfig> config = Optional.empty();
 
@@ -178,7 +178,7 @@ public final class ProcessorCreateRequest {
 
         @java.lang.Override
         @JsonSetter("type")
-        public _FinalStage type(@NotNull LegacyProcessorType type) {
+        public _FinalStage type(@NotNull ProcessorType type) {
             this.type = Objects.requireNonNull(type, "type must not be null");
             return this;
         }
@@ -205,7 +205,7 @@ public final class ProcessorCreateRequest {
 
         /**
          * <p>The ID of an existing processor to clone. One of <code>cloneProcessorId</code> or <code>config</code> must be provided.</p>
-         * <p>Example: <code>&quot;ex_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         * <p>Example: <code>&quot;dp_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -216,7 +216,7 @@ public final class ProcessorCreateRequest {
 
         /**
          * <p>The ID of an existing processor to clone. One of <code>cloneProcessorId</code> or <code>config</code> must be provided.</p>
-         * <p>Example: <code>&quot;ex_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         * <p>Example: <code>&quot;dp_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
          */
         @java.lang.Override
         @JsonSetter(value = "cloneProcessorId", nulls = Nulls.SKIP)

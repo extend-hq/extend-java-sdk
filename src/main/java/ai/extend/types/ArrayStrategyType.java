@@ -3,94 +3,24 @@
  */
 package ai.extend.types;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public final class ArrayStrategyType {
-    public static final ArrayStrategyType LARGE_ARRAY_OVERLAP_CONTEXT =
-            new ArrayStrategyType(Value.LARGE_ARRAY_OVERLAP_CONTEXT, "large_array_overlap_context");
+public enum ArrayStrategyType {
+    LARGE_ARRAY_HEURISTICS("large_array_heuristics"),
 
-    public static final ArrayStrategyType LARGE_ARRAY_HEURISTICS =
-            new ArrayStrategyType(Value.LARGE_ARRAY_HEURISTICS, "large_array_heuristics");
+    LARGE_ARRAY_MAX_CONTEXT("large_array_max_context"),
 
-    public static final ArrayStrategyType LARGE_ARRAY_MAX_CONTEXT =
-            new ArrayStrategyType(Value.LARGE_ARRAY_MAX_CONTEXT, "large_array_max_context");
+    LARGE_ARRAY_OVERLAP_CONTEXT("large_array_overlap_context");
 
-    private final Value value;
+    private final String value;
 
-    private final String string;
-
-    ArrayStrategyType(Value value, String string) {
+    ArrayStrategyType(String value) {
         this.value = value;
-        this.string = string;
     }
 
-    public Value getEnumValue() {
-        return value;
-    }
-
-    @java.lang.Override
     @JsonValue
+    @java.lang.Override
     public String toString() {
-        return this.string;
-    }
-
-    @java.lang.Override
-    public boolean equals(Object other) {
-        return (this == other)
-                || (other instanceof ArrayStrategyType && this.string.equals(((ArrayStrategyType) other).string));
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-        return this.string.hashCode();
-    }
-
-    public <T> T visit(Visitor<T> visitor) {
-        switch (value) {
-            case LARGE_ARRAY_OVERLAP_CONTEXT:
-                return visitor.visitLargeArrayOverlapContext();
-            case LARGE_ARRAY_HEURISTICS:
-                return visitor.visitLargeArrayHeuristics();
-            case LARGE_ARRAY_MAX_CONTEXT:
-                return visitor.visitLargeArrayMaxContext();
-            case UNKNOWN:
-            default:
-                return visitor.visitUnknown(string);
-        }
-    }
-
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static ArrayStrategyType valueOf(String value) {
-        switch (value) {
-            case "large_array_overlap_context":
-                return LARGE_ARRAY_OVERLAP_CONTEXT;
-            case "large_array_heuristics":
-                return LARGE_ARRAY_HEURISTICS;
-            case "large_array_max_context":
-                return LARGE_ARRAY_MAX_CONTEXT;
-            default:
-                return new ArrayStrategyType(Value.UNKNOWN, value);
-        }
-    }
-
-    public enum Value {
-        LARGE_ARRAY_HEURISTICS,
-
-        LARGE_ARRAY_MAX_CONTEXT,
-
-        LARGE_ARRAY_OVERLAP_CONTEXT,
-
-        UNKNOWN
-    }
-
-    public interface Visitor<T> {
-        T visitLargeArrayHeuristics();
-
-        T visitLargeArrayMaxContext();
-
-        T visitLargeArrayOverlapContext();
-
-        T visitUnknown(String unknownType);
+        return this.value;
     }
 }

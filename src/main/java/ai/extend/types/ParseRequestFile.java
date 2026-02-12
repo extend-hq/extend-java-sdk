@@ -4,39 +4,64 @@
 package ai.extend.types;
 
 import ai.extend.core.ObjectMappers;
-import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
-@JsonDeserialize(using = ParseRequestFile.Deserializer.class)
+@JsonInclude(JsonInclude.Include.NON_ABSENT)
+@JsonDeserialize(builder = ParseRequestFile.Builder.class)
 public final class ParseRequestFile {
-    private final Object value;
+    private final Optional<String> fileName;
 
-    private final int type;
+    private final Optional<String> fileUrl;
 
-    private ParseRequestFile(Object value, int type) {
-        this.value = value;
-        this.type = type;
+    private final Optional<String> fileId;
+
+    private final Map<String, Object> additionalProperties;
+
+    private ParseRequestFile(
+            Optional<String> fileName,
+            Optional<String> fileUrl,
+            Optional<String> fileId,
+            Map<String, Object> additionalProperties) {
+        this.fileName = fileName;
+        this.fileUrl = fileUrl;
+        this.fileId = fileId;
+        this.additionalProperties = additionalProperties;
     }
 
-    @JsonValue
-    public Object get() {
-        return this.value;
+    /**
+     * @return The name of the file. If not set, the file name is taken from the url.
+     */
+    @JsonProperty("fileName")
+    public Optional<String> getFileName() {
+        return fileName;
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T visit(Visitor<T> visitor) {
-        if (this.type == 0) {
-            return visitor.visit((FileFromUrl) this.value);
-        } else if (this.type == 1) {
-            return visitor.visit((FileFromId) this.value);
-        }
-        throw new IllegalStateException("Failed to visit value. This should never happen.");
+    /**
+     * @return A URL to download the file. For production use cases, we recommend using presigned URLs with a 5-15 minute expiration time. One of <code>fileUrl</code> or <code>fileId</code> must be provided.
+     */
+    @JsonProperty("fileUrl")
+    public Optional<String> getFileUrl() {
+        return fileUrl;
+    }
+
+    /**
+     * @return If you already have an Extend file id (for instance from running a workflow or a previous <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/file-endpoints/upload-file">file upload</a>) then you can use that file id when running the parse endpoint so that it leverage any cached data that might be available. The file id will start with &quot;file_&quot;. One of <code>fileUrl</code> or <code>fileId</code> must be provided.
+     * <p>Example: <code>&quot;file_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+     */
+    @JsonProperty("fileId")
+    public Optional<String> getFileId() {
+        return fileId;
     }
 
     @java.lang.Override
@@ -45,51 +70,94 @@ public final class ParseRequestFile {
         return other instanceof ParseRequestFile && equalTo((ParseRequestFile) other);
     }
 
+    @JsonAnyGetter
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
+    }
+
     private boolean equalTo(ParseRequestFile other) {
-        return value.equals(other.value);
+        return fileName.equals(other.fileName) && fileUrl.equals(other.fileUrl) && fileId.equals(other.fileId);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.value);
+        return Objects.hash(this.fileName, this.fileUrl, this.fileId);
     }
 
     @java.lang.Override
     public String toString() {
-        return this.value.toString();
+        return ObjectMappers.stringify(this);
     }
 
-    public static ParseRequestFile of(FileFromUrl value) {
-        return new ParseRequestFile(value, 0);
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public static ParseRequestFile of(FileFromId value) {
-        return new ParseRequestFile(value, 1);
-    }
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static final class Builder {
+        private Optional<String> fileName = Optional.empty();
 
-    public interface Visitor<T> {
-        T visit(FileFromUrl value);
+        private Optional<String> fileUrl = Optional.empty();
 
-        T visit(FileFromId value);
-    }
+        private Optional<String> fileId = Optional.empty();
 
-    static final class Deserializer extends StdDeserializer<ParseRequestFile> {
-        Deserializer() {
-            super(ParseRequestFile.class);
+        @JsonAnySetter
+        private Map<String, Object> additionalProperties = new HashMap<>();
+
+        private Builder() {}
+
+        public Builder from(ParseRequestFile other) {
+            fileName(other.getFileName());
+            fileUrl(other.getFileUrl());
+            fileId(other.getFileId());
+            return this;
         }
 
-        @java.lang.Override
-        public ParseRequestFile deserialize(JsonParser p, DeserializationContext context) throws IOException {
-            Object value = p.readValueAs(Object.class);
-            try {
-                return of(ObjectMappers.JSON_MAPPER.convertValue(value, FileFromUrl.class));
-            } catch (RuntimeException e) {
-            }
-            try {
-                return of(ObjectMappers.JSON_MAPPER.convertValue(value, FileFromId.class));
-            } catch (RuntimeException e) {
-            }
-            throw new JsonParseException(p, "Failed to deserialize");
+        /**
+         * <p>The name of the file. If not set, the file name is taken from the url.</p>
+         */
+        @JsonSetter(value = "fileName", nulls = Nulls.SKIP)
+        public Builder fileName(Optional<String> fileName) {
+            this.fileName = fileName;
+            return this;
+        }
+
+        public Builder fileName(String fileName) {
+            this.fileName = Optional.ofNullable(fileName);
+            return this;
+        }
+
+        /**
+         * <p>A URL to download the file. For production use cases, we recommend using presigned URLs with a 5-15 minute expiration time. One of <code>fileUrl</code> or <code>fileId</code> must be provided.</p>
+         */
+        @JsonSetter(value = "fileUrl", nulls = Nulls.SKIP)
+        public Builder fileUrl(Optional<String> fileUrl) {
+            this.fileUrl = fileUrl;
+            return this;
+        }
+
+        public Builder fileUrl(String fileUrl) {
+            this.fileUrl = Optional.ofNullable(fileUrl);
+            return this;
+        }
+
+        /**
+         * <p>If you already have an Extend file id (for instance from running a workflow or a previous <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/file-endpoints/upload-file">file upload</a>) then you can use that file id when running the parse endpoint so that it leverage any cached data that might be available. The file id will start with &quot;file_&quot;. One of <code>fileUrl</code> or <code>fileId</code> must be provided.</p>
+         * <p>Example: <code>&quot;file_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         */
+        @JsonSetter(value = "fileId", nulls = Nulls.SKIP)
+        public Builder fileId(Optional<String> fileId) {
+            this.fileId = fileId;
+            return this;
+        }
+
+        public Builder fileId(String fileId) {
+            this.fileId = Optional.ofNullable(fileId);
+            return this;
+        }
+
+        public ParseRequestFile build() {
+            return new ParseRequestFile(fileName, fileUrl, fileId, additionalProperties);
         }
     }
 }
