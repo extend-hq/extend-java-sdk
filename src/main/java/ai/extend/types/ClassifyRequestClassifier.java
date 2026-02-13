@@ -25,14 +25,14 @@ public final class ClassifyRequestClassifier {
 
     private final Optional<String> version;
 
-    private final Optional<ClassifyConfig> overrideConfig;
+    private final Optional<ClassifyOverrideConfig> overrideConfig;
 
     private final Map<String, Object> additionalProperties;
 
     private ClassifyRequestClassifier(
             String id,
             Optional<String> version,
-            Optional<ClassifyConfig> overrideConfig,
+            Optional<ClassifyOverrideConfig> overrideConfig,
             Map<String, Object> additionalProperties) {
         this.id = id;
         this.version = version;
@@ -54,10 +54,10 @@ public final class ClassifyRequestClassifier {
     }
 
     /**
-     * @return Optional configuration override. If provided, this configuration will override the classifier's saved configuration.
+     * @return Optional partial configuration override. Only the fields you provide will override the classifier's saved configuration. For example, you can pass only <code>classificationRules</code> without providing <code>classifications</code>.
      */
     @JsonProperty("overrideConfig")
-    public Optional<ClassifyConfig> getOverrideConfig() {
+    public Optional<ClassifyOverrideConfig> getOverrideConfig() {
         return overrideConfig;
     }
 
@@ -107,18 +107,18 @@ public final class ClassifyRequestClassifier {
         _FinalStage version(String version);
 
         /**
-         * <p>Optional configuration override. If provided, this configuration will override the classifier's saved configuration.</p>
+         * <p>Optional partial configuration override. Only the fields you provide will override the classifier's saved configuration. For example, you can pass only <code>classificationRules</code> without providing <code>classifications</code>.</p>
          */
-        _FinalStage overrideConfig(Optional<ClassifyConfig> overrideConfig);
+        _FinalStage overrideConfig(Optional<ClassifyOverrideConfig> overrideConfig);
 
-        _FinalStage overrideConfig(ClassifyConfig overrideConfig);
+        _FinalStage overrideConfig(ClassifyOverrideConfig overrideConfig);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements IdStage, _FinalStage {
         private String id;
 
-        private Optional<ClassifyConfig> overrideConfig = Optional.empty();
+        private Optional<ClassifyOverrideConfig> overrideConfig = Optional.empty();
 
         private Optional<String> version = Optional.empty();
 
@@ -148,21 +148,21 @@ public final class ClassifyRequestClassifier {
         }
 
         /**
-         * <p>Optional configuration override. If provided, this configuration will override the classifier's saved configuration.</p>
+         * <p>Optional partial configuration override. Only the fields you provide will override the classifier's saved configuration. For example, you can pass only <code>classificationRules</code> without providing <code>classifications</code>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage overrideConfig(ClassifyConfig overrideConfig) {
+        public _FinalStage overrideConfig(ClassifyOverrideConfig overrideConfig) {
             this.overrideConfig = Optional.ofNullable(overrideConfig);
             return this;
         }
 
         /**
-         * <p>Optional configuration override. If provided, this configuration will override the classifier's saved configuration.</p>
+         * <p>Optional partial configuration override. Only the fields you provide will override the classifier's saved configuration. For example, you can pass only <code>classificationRules</code> without providing <code>classifications</code>.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "overrideConfig", nulls = Nulls.SKIP)
-        public _FinalStage overrideConfig(Optional<ClassifyConfig> overrideConfig) {
+        public _FinalStage overrideConfig(Optional<ClassifyOverrideConfig> overrideConfig) {
             this.overrideConfig = overrideConfig;
             return this;
         }

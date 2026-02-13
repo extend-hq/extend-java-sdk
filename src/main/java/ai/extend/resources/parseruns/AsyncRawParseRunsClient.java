@@ -48,7 +48,7 @@ public class AsyncRawParseRunsClient {
     /**
      * Parse files to get cleaned, chunked target content (e.g. markdown).
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/parsing/parse">Parse File guide</a>.</p>
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Parse Run endpoint for results.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ParseRun>> create(ParseRunsCreateRequest request) {
         return create(request, null);
@@ -57,7 +57,7 @@ public class AsyncRawParseRunsClient {
     /**
      * Parse files to get cleaned, chunked target content (e.g. markdown).
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/parsing/parse">Parse File guide</a>.</p>
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Parse Run endpoint for results.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ParseRun>> create(
             ParseRunsCreateRequest request, RequestOptions requestOptions) {

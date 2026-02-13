@@ -6,18 +6,18 @@ package ai.extend.types;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public final class SplitConfigBaseProcessor {
-    public static final SplitConfigBaseProcessor SPLITTING_PERFORMANCE =
-            new SplitConfigBaseProcessor(Value.SPLITTING_PERFORMANCE, "splitting_performance");
+public final class SplitBaseProcessor {
+    public static final SplitBaseProcessor SPLITTING_PERFORMANCE =
+            new SplitBaseProcessor(Value.SPLITTING_PERFORMANCE, "splitting_performance");
 
-    public static final SplitConfigBaseProcessor SPLITTING_LIGHT =
-            new SplitConfigBaseProcessor(Value.SPLITTING_LIGHT, "splitting_light");
+    public static final SplitBaseProcessor SPLITTING_LIGHT =
+            new SplitBaseProcessor(Value.SPLITTING_LIGHT, "splitting_light");
 
     private final Value value;
 
     private final String string;
 
-    SplitConfigBaseProcessor(Value value, String string) {
+    SplitBaseProcessor(Value value, String string) {
         this.value = value;
         this.string = string;
     }
@@ -35,8 +35,7 @@ public final class SplitConfigBaseProcessor {
     @java.lang.Override
     public boolean equals(Object other) {
         return (this == other)
-                || (other instanceof SplitConfigBaseProcessor
-                        && this.string.equals(((SplitConfigBaseProcessor) other).string));
+                || (other instanceof SplitBaseProcessor && this.string.equals(((SplitBaseProcessor) other).string));
     }
 
     @java.lang.Override
@@ -57,14 +56,14 @@ public final class SplitConfigBaseProcessor {
     }
 
     @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static SplitConfigBaseProcessor valueOf(String value) {
+    public static SplitBaseProcessor valueOf(String value) {
         switch (value) {
             case "splitting_performance":
                 return SPLITTING_PERFORMANCE;
             case "splitting_light":
                 return SPLITTING_LIGHT;
             default:
-                return new SplitConfigBaseProcessor(Value.UNKNOWN, value);
+                return new SplitBaseProcessor(Value.UNKNOWN, value);
         }
     }
 

@@ -97,7 +97,7 @@ public final class ProcessorRunCreateRequest {
     }
 
     /**
-     * @return Whether to run the processor synchronously. When <code>true</code>, the request will wait for the processor run to complete and return the final results. When <code>false</code> (default), the request returns immediately with a <code>PROCESSING</code> status, and you can poll for completion or use webhooks. For production use cases, we recommending leaving sync off and building around an async integration for more resiliency, unless your use case is predictably fast (e.g. sub &lt; 30 seconds) run time or otherwise have integration constraints that require a synchronous API.
+     * @return Whether to run the processor synchronously. When <code>true</code>, the request will wait for the processor run to complete and return the final results. When <code>false</code> (default), the request returns immediately with a <code>PROCESSING</code> status, and you can poll for completion or use webhooks. For production use cases, we recommending leaving sync off and building around an async integration for more resiliency, unless your use case is predictably fast (e.g. sub &lt; 30 seconds) run time or otherwise have integration constraints that require a synchronous API. See <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">Async Processing</a> for more details.
      * <p><strong>Timeout</strong>: Synchronous requests have a 5-minute timeout. If the processor run takes longer, it will continue processing asynchronously and you can retrieve the results via the GET endpoint.</p>
      */
     @JsonProperty("sync")
@@ -210,7 +210,7 @@ public final class ProcessorRunCreateRequest {
         _FinalStage rawText(String rawText);
 
         /**
-         * <p>Whether to run the processor synchronously. When <code>true</code>, the request will wait for the processor run to complete and return the final results. When <code>false</code> (default), the request returns immediately with a <code>PROCESSING</code> status, and you can poll for completion or use webhooks. For production use cases, we recommending leaving sync off and building around an async integration for more resiliency, unless your use case is predictably fast (e.g. sub &lt; 30 seconds) run time or otherwise have integration constraints that require a synchronous API.</p>
+         * <p>Whether to run the processor synchronously. When <code>true</code>, the request will wait for the processor run to complete and return the final results. When <code>false</code> (default), the request returns immediately with a <code>PROCESSING</code> status, and you can poll for completion or use webhooks. For production use cases, we recommending leaving sync off and building around an async integration for more resiliency, unless your use case is predictably fast (e.g. sub &lt; 30 seconds) run time or otherwise have integration constraints that require a synchronous API. See <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">Async Processing</a> for more details.</p>
          * <p><strong>Timeout</strong>: Synchronous requests have a 5-minute timeout. If the processor run takes longer, it will continue processing asynchronously and you can retrieve the results via the GET endpoint.</p>
          */
         _FinalStage sync(Optional<Boolean> sync);
@@ -346,7 +346,7 @@ public final class ProcessorRunCreateRequest {
         }
 
         /**
-         * <p>Whether to run the processor synchronously. When <code>true</code>, the request will wait for the processor run to complete and return the final results. When <code>false</code> (default), the request returns immediately with a <code>PROCESSING</code> status, and you can poll for completion or use webhooks. For production use cases, we recommending leaving sync off and building around an async integration for more resiliency, unless your use case is predictably fast (e.g. sub &lt; 30 seconds) run time or otherwise have integration constraints that require a synchronous API.</p>
+         * <p>Whether to run the processor synchronously. When <code>true</code>, the request will wait for the processor run to complete and return the final results. When <code>false</code> (default), the request returns immediately with a <code>PROCESSING</code> status, and you can poll for completion or use webhooks. For production use cases, we recommending leaving sync off and building around an async integration for more resiliency, unless your use case is predictably fast (e.g. sub &lt; 30 seconds) run time or otherwise have integration constraints that require a synchronous API. See <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">Async Processing</a> for more details.</p>
          * <p><strong>Timeout</strong>: Synchronous requests have a 5-minute timeout. If the processor run takes longer, it will continue processing asynchronously and you can retrieve the results via the GET endpoint.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
@@ -357,7 +357,7 @@ public final class ProcessorRunCreateRequest {
         }
 
         /**
-         * <p>Whether to run the processor synchronously. When <code>true</code>, the request will wait for the processor run to complete and return the final results. When <code>false</code> (default), the request returns immediately with a <code>PROCESSING</code> status, and you can poll for completion or use webhooks. For production use cases, we recommending leaving sync off and building around an async integration for more resiliency, unless your use case is predictably fast (e.g. sub &lt; 30 seconds) run time or otherwise have integration constraints that require a synchronous API.</p>
+         * <p>Whether to run the processor synchronously. When <code>true</code>, the request will wait for the processor run to complete and return the final results. When <code>false</code> (default), the request returns immediately with a <code>PROCESSING</code> status, and you can poll for completion or use webhooks. For production use cases, we recommending leaving sync off and building around an async integration for more resiliency, unless your use case is predictably fast (e.g. sub &lt; 30 seconds) run time or otherwise have integration constraints that require a synchronous API. See <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">Async Processing</a> for more details.</p>
          * <p><strong>Timeout</strong>: Synchronous requests have a 5-minute timeout. If the processor run takes longer, it will continue processing asynchronously and you can retrieve the results via the GET endpoint.</p>
          */
         @java.lang.Override

@@ -62,7 +62,7 @@ public class ExtractRunsClient {
 
     /**
      * Extract structured data from a file using an existing extractor or an inline configuration.
-     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/extract/get-extract-run">Get Extract Run</a> endpoint for results.</p>
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Extract Run endpoint for results.</p>
      */
     public ExtractRun create(ExtractRunsCreateRequest request) {
         return this.rawClient.create(request).body();
@@ -70,7 +70,7 @@ public class ExtractRunsClient {
 
     /**
      * Extract structured data from a file using an existing extractor or an inline configuration.
-     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/extract/get-extract-run">Get Extract Run</a> endpoint for results.</p>
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Extract Run endpoint for results.</p>
      */
     public ExtractRun create(ExtractRunsCreateRequest request, RequestOptions requestOptions) {
         return this.rawClient.create(request, requestOptions).body();

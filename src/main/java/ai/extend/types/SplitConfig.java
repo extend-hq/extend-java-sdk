@@ -22,7 +22,7 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = SplitConfig.Builder.class)
 public final class SplitConfig {
-    private final Optional<SplitConfigBaseProcessor> baseProcessor;
+    private final Optional<SplitBaseProcessor> baseProcessor;
 
     private final Optional<String> baseVersion;
 
@@ -37,7 +37,7 @@ public final class SplitConfig {
     private final Map<String, Object> additionalProperties;
 
     private SplitConfig(
-            Optional<SplitConfigBaseProcessor> baseProcessor,
+            Optional<SplitBaseProcessor> baseProcessor,
             Optional<String> baseVersion,
             List<Classification> splitClassifications,
             Optional<String> splitRules,
@@ -53,11 +53,8 @@ public final class SplitConfig {
         this.additionalProperties = additionalProperties;
     }
 
-    /**
-     * @return The base processor to use. For splitters, this can be either <code>&quot;splitting_performance&quot;</code> or <code>&quot;splitting_light&quot;</code>. Defaults to <code>&quot;splitting_performance&quot;</code> if not provided. See <a href="https://docs.extend.ai/2026-02-09/changelog/splitting/splitting-performance">Splitting Changelog</a> for more details.
-     */
     @JsonProperty("baseProcessor")
-    public Optional<SplitConfigBaseProcessor> getBaseProcessor() {
+    public Optional<SplitBaseProcessor> getBaseProcessor() {
         return baseProcessor;
     }
 
@@ -140,7 +137,7 @@ public final class SplitConfig {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-        private Optional<SplitConfigBaseProcessor> baseProcessor = Optional.empty();
+        private Optional<SplitBaseProcessor> baseProcessor = Optional.empty();
 
         private Optional<String> baseVersion = Optional.empty();
 
@@ -167,16 +164,13 @@ public final class SplitConfig {
             return this;
         }
 
-        /**
-         * <p>The base processor to use. For splitters, this can be either <code>&quot;splitting_performance&quot;</code> or <code>&quot;splitting_light&quot;</code>. Defaults to <code>&quot;splitting_performance&quot;</code> if not provided. See <a href="https://docs.extend.ai/2026-02-09/changelog/splitting/splitting-performance">Splitting Changelog</a> for more details.</p>
-         */
         @JsonSetter(value = "baseProcessor", nulls = Nulls.SKIP)
-        public Builder baseProcessor(Optional<SplitConfigBaseProcessor> baseProcessor) {
+        public Builder baseProcessor(Optional<SplitBaseProcessor> baseProcessor) {
             this.baseProcessor = baseProcessor;
             return this;
         }
 
-        public Builder baseProcessor(SplitConfigBaseProcessor baseProcessor) {
+        public Builder baseProcessor(SplitBaseProcessor baseProcessor) {
             this.baseProcessor = Optional.ofNullable(baseProcessor);
             return this;
         }

@@ -64,7 +64,7 @@ public class AsyncClassifyRunsClient {
 
     /**
      * Classify a document using an existing classifier or an inline configuration.
-     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/get-classify-run">Get Classify Run</a> endpoint for results.</p>
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Classify Run endpoint for results.</p>
      */
     public CompletableFuture<ClassifyRun> create(ClassifyRunsCreateRequest request) {
         return this.rawClient.create(request).thenApply(response -> response.body());
@@ -72,7 +72,7 @@ public class AsyncClassifyRunsClient {
 
     /**
      * Classify a document using an existing classifier or an inline configuration.
-     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/get-classify-run">Get Classify Run</a> endpoint for results.</p>
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Classify Run endpoint for results.</p>
      */
     public CompletableFuture<ClassifyRun> create(ClassifyRunsCreateRequest request, RequestOptions requestOptions) {
         return this.rawClient.create(request, requestOptions).thenApply(response -> response.body());

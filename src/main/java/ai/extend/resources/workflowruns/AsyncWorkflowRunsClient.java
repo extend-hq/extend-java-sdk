@@ -63,6 +63,7 @@ public class AsyncWorkflowRunsClient {
 
     /**
      * Run a workflow with a file. A workflow is a sequence of steps that process files and data in a specific order to achieve a desired outcome.
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Workflow Run endpoint for results.</p>
      */
     public CompletableFuture<WorkflowRun> create(WorkflowRunsCreateRequest request) {
         return this.rawClient.create(request).thenApply(response -> response.body());
@@ -70,6 +71,7 @@ public class AsyncWorkflowRunsClient {
 
     /**
      * Run a workflow with a file. A workflow is a sequence of steps that process files and data in a specific order to achieve a desired outcome.
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Workflow Run endpoint for results.</p>
      */
     public CompletableFuture<WorkflowRun> create(WorkflowRunsCreateRequest request, RequestOptions requestOptions) {
         return this.rawClient.create(request, requestOptions).thenApply(response -> response.body());
