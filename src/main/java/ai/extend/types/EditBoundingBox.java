@@ -10,32 +10,26 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = EditBoundingBox.Builder.class)
 public final class EditBoundingBox {
-    private final Optional<Double> left;
+    private final double left;
 
-    private final Optional<Double> top;
+    private final double top;
 
-    private final Optional<Double> right;
+    private final double right;
 
-    private final Optional<Double> bottom;
+    private final double bottom;
 
     private final Map<String, Object> additionalProperties;
 
     private EditBoundingBox(
-            Optional<Double> left,
-            Optional<Double> top,
-            Optional<Double> right,
-            Optional<Double> bottom,
-            Map<String, Object> additionalProperties) {
+            double left, double top, double right, double bottom, Map<String, Object> additionalProperties) {
         this.left = left;
         this.top = top;
         this.right = right;
@@ -47,7 +41,7 @@ public final class EditBoundingBox {
      * @return The left coordinate of the bounding box (pixels)
      */
     @JsonProperty("left")
-    public Optional<Double> getLeft() {
+    public double getLeft() {
         return left;
     }
 
@@ -55,7 +49,7 @@ public final class EditBoundingBox {
      * @return The top coordinate of the bounding box (pixels)
      */
     @JsonProperty("top")
-    public Optional<Double> getTop() {
+    public double getTop() {
         return top;
     }
 
@@ -63,7 +57,7 @@ public final class EditBoundingBox {
      * @return The right coordinate of the bounding box (pixels)
      */
     @JsonProperty("right")
-    public Optional<Double> getRight() {
+    public double getRight() {
         return right;
     }
 
@@ -71,7 +65,7 @@ public final class EditBoundingBox {
      * @return The bottom coordinate of the bounding box (pixels)
      */
     @JsonProperty("bottom")
-    public Optional<Double> getBottom() {
+    public double getBottom() {
         return bottom;
     }
 
@@ -87,10 +81,7 @@ public final class EditBoundingBox {
     }
 
     private boolean equalTo(EditBoundingBox other) {
-        return left.equals(other.left)
-                && top.equals(other.top)
-                && right.equals(other.right)
-                && bottom.equals(other.bottom);
+        return left == other.left && top == other.top && right == other.right && bottom == other.bottom;
     }
 
     @java.lang.Override
@@ -103,25 +94,60 @@ public final class EditBoundingBox {
         return ObjectMappers.stringify(this);
     }
 
-    public static Builder builder() {
+    public static LeftStage builder() {
         return new Builder();
     }
 
+    public interface LeftStage {
+        /**
+         * <p>The left coordinate of the bounding box (pixels)</p>
+         */
+        TopStage left(double left);
+
+        Builder from(EditBoundingBox other);
+    }
+
+    public interface TopStage {
+        /**
+         * <p>The top coordinate of the bounding box (pixels)</p>
+         */
+        RightStage top(double top);
+    }
+
+    public interface RightStage {
+        /**
+         * <p>The right coordinate of the bounding box (pixels)</p>
+         */
+        BottomStage right(double right);
+    }
+
+    public interface BottomStage {
+        /**
+         * <p>The bottom coordinate of the bounding box (pixels)</p>
+         */
+        _FinalStage bottom(double bottom);
+    }
+
+    public interface _FinalStage {
+        EditBoundingBox build();
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder {
-        private Optional<Double> left = Optional.empty();
+    public static final class Builder implements LeftStage, TopStage, RightStage, BottomStage, _FinalStage {
+        private double left;
 
-        private Optional<Double> top = Optional.empty();
+        private double top;
 
-        private Optional<Double> right = Optional.empty();
+        private double right;
 
-        private Optional<Double> bottom = Optional.empty();
+        private double bottom;
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
+        @java.lang.Override
         public Builder from(EditBoundingBox other) {
             left(other.getLeft());
             top(other.getTop());
@@ -132,60 +158,53 @@ public final class EditBoundingBox {
 
         /**
          * <p>The left coordinate of the bounding box (pixels)</p>
+         * <p>The left coordinate of the bounding box (pixels)</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
          */
-        @JsonSetter(value = "left", nulls = Nulls.SKIP)
-        public Builder left(Optional<Double> left) {
+        @java.lang.Override
+        @JsonSetter("left")
+        public TopStage left(double left) {
             this.left = left;
-            return this;
-        }
-
-        public Builder left(Double left) {
-            this.left = Optional.ofNullable(left);
             return this;
         }
 
         /**
          * <p>The top coordinate of the bounding box (pixels)</p>
+         * <p>The top coordinate of the bounding box (pixels)</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
          */
-        @JsonSetter(value = "top", nulls = Nulls.SKIP)
-        public Builder top(Optional<Double> top) {
+        @java.lang.Override
+        @JsonSetter("top")
+        public RightStage top(double top) {
             this.top = top;
-            return this;
-        }
-
-        public Builder top(Double top) {
-            this.top = Optional.ofNullable(top);
             return this;
         }
 
         /**
          * <p>The right coordinate of the bounding box (pixels)</p>
+         * <p>The right coordinate of the bounding box (pixels)</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
          */
-        @JsonSetter(value = "right", nulls = Nulls.SKIP)
-        public Builder right(Optional<Double> right) {
+        @java.lang.Override
+        @JsonSetter("right")
+        public BottomStage right(double right) {
             this.right = right;
-            return this;
-        }
-
-        public Builder right(Double right) {
-            this.right = Optional.ofNullable(right);
             return this;
         }
 
         /**
          * <p>The bottom coordinate of the bounding box (pixels)</p>
+         * <p>The bottom coordinate of the bounding box (pixels)</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
          */
-        @JsonSetter(value = "bottom", nulls = Nulls.SKIP)
-        public Builder bottom(Optional<Double> bottom) {
+        @java.lang.Override
+        @JsonSetter("bottom")
+        public _FinalStage bottom(double bottom) {
             this.bottom = bottom;
             return this;
         }
 
-        public Builder bottom(Double bottom) {
-            this.bottom = Optional.ofNullable(bottom);
-            return this;
-        }
-
+        @java.lang.Override
         public EditBoundingBox build() {
             return new EditBoundingBox(left, top, right, bottom, additionalProperties);
         }

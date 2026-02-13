@@ -168,6 +168,782 @@ client.parseAsync(
 </dl>
 </details>
 
+## File
+<details><summary><code>client.file.list() -> FileListResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List files in your account. Files represent documents that have been uploaded to Extend. This endpoint returns a paginated response. You can use the `nextPageToken` to fetch subsequent results.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.file().list(
+    FileListRequest
+        .builder()
+        .nameContains("nameContains")
+        .sortDir(SortDirEnum.ASC)
+        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .maxPageSize(1)
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**nameContains:** `Optional<String>` 
+
+Filters files to only include those that contain the given string in the name.
+
+Example: `"invoice"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortDir:** `Optional<SortDirEnum>` — Sorts the files in ascending or descending order. Ascending order means the earliest file is returned first.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**nextPageToken:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.file.get(id) -> FileGetResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Fetch a file by its ID to obtain additional details and the raw file content.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.file().get(
+    "file_id_here",
+    FileGetRequest
+        .builder()
+        .rawText(true)
+        .markdown(true)
+        .html(true)
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+Extend's ID for the file. It will always start with `"file_"`. This ID is returned when creating a new File, or the value on the `fileId` field in a WorkflowRun.
+
+Example: `"file_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**rawText:** `Optional<Boolean>` — If set to true, the raw text content of the file will be included in the response. This is useful for indexing text-based files like PDFs, Word Documents, etc.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**markdown:** `Optional<Boolean>` 
+
+If set to true, the markdown content of the file will be included in the response. This is useful for indexing very clean content into RAG pipelines for files like PDFs, Word Documents, etc.
+
+Only available for files with a type of PDF, IMG, or .doc/.docx files that were auto-converted to PDFs.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**html:** `Optional<Boolean>` 
+
+If set to true, the html content of the file will be included in the response. This is useful for indexing html content into RAG pipelines.
+
+Only available for files with a type of DOCX.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.file.delete(id) -> FileDeleteResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete a file and all associated data from Extend. This operation is permanent and cannot be undone.
+
+This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.file().delete("file_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the file to delete.
+
+Example: `"file_xK9mLPqRtN3vS8wF5hB2cQ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.file.upload(request) -> FileUploadResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Upload and create a new file in Extend.
+
+This endpoint accepts file contents and registers them as a File in Extend, which can be used for [running workflows](https://docs.extend.ai/2025-04-21/developers/api-reference/workflow-endpoints/run-workflow), [creating evaluation set items](https://docs.extend.ai/2025-04-21/developers/api-reference/evaluation-set-endpoints/bulk-create-evaluation-set-items), [parsing](https://docs.extend.ai/2025-04-21/developers/api-reference/parse-endpoints/parse-file), etc.
+
+If an uploaded file is detected as a Word or PowerPoint document, it will be automatically converted to a PDF.
+
+Supported file types can be found [here](/product/general/supported-file-types).
+
+This endpoint requires multipart form encoding. Most HTTP clients will handle this encoding automatically (see the examples).
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.file().upload(
+    FileUploadRequest
+        .builder()
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## ParserRun
+<details><summary><code>client.parserRun.get(id) -> ParserRunGetResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve the status and results of a parser run.
+
+Use this endpoint to get results for a parser run that has already completed, or to check on the status of an asynchronous parser run initiated via the [Parse File Asynchronously](https://docs.extend.ai/2025-04-21/developers/api-reference/parse-endpoints/parse-file-async) endpoint.
+
+If parsing is still in progress, you'll receive a response with just the status. Once complete, you'll receive the full parsed content in the response.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.parserRun().get(
+    "parser_run_id_here",
+    ParserRunGetRequest
+        .builder()
+        .responseType(ParserRunGetRequestResponseType.JSON)
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The unique identifier for the parser run.
+
+Example: `"parser_run_xK9mLPqRtN3vS8wF5hB2cQ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**responseType:** `Optional<ParserRunGetRequestResponseType>` 
+
+Controls the format of the response chunks. Defaults to `json` if not specified.
+* `json` - Returns chunks with inline content
+* `url` - Returns chunks with presigned URLs to content instead of inline data
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.parserRun.delete(id) -> ParserRunDeleteResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete a parser run and all associated data from Extend. This operation is permanent and cannot be undone.
+
+This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.parserRun().delete("parser_run_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the parser run to delete.
+
+Example: `"parser_run_xK9mLPqRtN3vS8wF5hB2cQ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Edit
+<details><summary><code>client.edit.create(request) -> EditRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Edit and manipulate PDF documents by detecting and filling form fields.
+This is a synchronous endpoint that will wait for the edit operation to complete (up to 5 minutes) before returning results. For longer operations, use the [Edit File Async](/developers/api-reference/edit-endpoints/edit-file-async) endpoint.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.edit().create(
+    EditCreateRequest
+        .builder()
+        .file(
+            EditCreateRequestFile
+                .builder()
+                .build()
+        )
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**file:** `EditCreateRequestFile` — A file object containing either a URL or a fileId.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<EditCreateRequestConfig>` — Configuration for the edit operation. Field values should be specified using `extend_edit:value` on each field in the schema.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.edit.createAsync(request) -> EditRunStatus</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Edit and manipulate PDF documents **asynchronously** by filling forms, adding/modifying text fields, and applying structured changes.
+
+The Edit Async endpoint allows you to convert and edit documents asynchronously and get an edit run ID that can be used to check status and retrieve results with the [Get Edit Run](/developers/api-reference/edit-endpoints/get-edit-run) endpoint.
+
+This is useful for:
+* Large files that may take longer to process
+* Avoiding timeout issues with synchronous editing
+* Processing multiple files in parallel
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.edit().createAsync(
+    EditCreateAsyncRequest
+        .builder()
+        .file(
+            EditCreateAsyncRequestFile
+                .builder()
+                .build()
+        )
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**file:** `EditCreateAsyncRequestFile` — A file object containing either a URL or a fileId.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<EditCreateAsyncRequestConfig>` — Configuration for the edit operation. Field values should be specified using `extend_edit:value` on each field in the schema.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.edit.get(id) -> EditGetResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve the status and results of an edit run.
+
+Use this endpoint to get results for an edit run that has already completed, or to check on the status of an asynchronous edit run initiated via the [Edit File Asynchronously](/developers/api-reference/edit-endpoints/edit-file-async) endpoint.
+
+If editing is still in progress, you'll receive a response with just the status. Once complete, you'll receive the full edited file information in the response.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.edit().get("edit_run_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The unique identifier for the edit run.
+
+Example: `"edit_run_xK9mLPqRtN3vS8wF5hB2cQ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.edit.delete(id) -> EditDeleteResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
+
+This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.edit().delete("edit_run_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the edit run to delete.
+
+Example: `"edit_run_xK9mLPqRtN3vS8wF5hB2cQ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Workflow
+<details><summary><code>client.workflow.create(request) -> WorkflowCreateResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create a new workflow in Extend. Workflows are sequences of steps that process files and data in a specific order to achieve a desired outcome.
+
+This endpoint will create a new workflow in Extend, which can then be configured and deployed. Typically, workflows are created from our UI, however this endpoint can be used to create workflows programmatically. Configuration of the flow still needs to be done in the dashboard.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.workflow().create(
+    WorkflowCreateRequest
+        .builder()
+        .name("Invoice Processing")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `String` — The name of the workflow
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## WorkflowRun
 <details><summary><code>client.workflowRun.list() -> WorkflowRunListResponse</code></summary>
 <dl>
@@ -792,8 +1568,8 @@ Example: `"workflow_BMdfq_yWM3sT-ZzvCnA3f"`
 </dl>
 </details>
 
-## ProcessorRun
-<details><summary><code>client.processorRun.list() -> ProcessorRunListResponse</code></summary>
+## BatchProcessorRun
+<details><summary><code>client.batchProcessorRun.get(id) -> BatchProcessorRunGetResponse</code></summary>
 <dl>
 <dd>
 
@@ -805,7 +1581,7 @@ Example: `"workflow_BMdfq_yWM3sT-ZzvCnA3f"`
 <dl>
 <dd>
 
-List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
+Retrieve details about a batch processor run, including evaluation runs
 </dd>
 </dl>
 </dd>
@@ -820,321 +1596,7 @@ List runs of a Processor. A ProcessorRun represents a single execution of a proc
 <dd>
 
 ```java
-client.processorRun().list(
-    ProcessorRunListRequest
-        .builder()
-        .status(ProcessorStatus.PENDING)
-        .processorId("processorId")
-        .processorType(ProcessorType.EXTRACT)
-        .sourceId("sourceId")
-        .source(ProcessorRunListRequestSource.ADMIN)
-        .fileNameContains("fileNameContains")
-        .sortBy(SortByEnum.UPDATED_AT)
-        .sortDir(SortDirEnum.ASC)
-        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
-        .maxPageSize(1)
-        .build()
-);
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**status:** `Optional<ProcessorStatus>` 
-
-Filters processor runs by their status. If not provided, no filter is applied.
-
- The status of a processor run:
- * `"PENDING"` - The processor run has not started yet
- * `"PROCESSING"` - The processor run is in progress
- * `"PROCESSED"` - The processor run completed successfully
- * `"FAILED"` - The processor run encountered an error
- * `"CANCELLED"` - The processor run was cancelled
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**processorId:** `Optional<String>` 
-
-Filters processor runs by the processor ID. If not provided, runs for all processors are returned.
-
-Example: `"dp_BMdfq_yWM3sT-ZzvCnA3f"`
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**processorType:** `Optional<ProcessorType>` 
-
-Filters processor runs by the processor type. If not provided, runs for all processor types are returned.
-
-Example: `"EXTRACT"`
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sourceId:** `Optional<String>` 
-
-Filters processor runs by the source ID. The source ID corresponds to the entity that created the processor run.
-
-Example: `"workflow_run_123"`
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**source:** `Optional<ProcessorRunListRequestSource>` 
-
-Filters processor runs by the source that created them. If not provided, runs from all sources are returned.
-
-The source of the processor run:
-* `"ADMIN"` - Created by admin
-* `"BATCH_PROCESSOR_RUN"` - Created from a batch processor run
-* `"PLAYGROUND"` - Created from playground
-* `"WORKFLOW_CONFIGURATION"` - Created from workflow configuration
-* `"WORKFLOW_RUN"` - Created from a workflow run
-* `"STUDIO"` - Created from Studio
-* `"API"` - Created via API
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**fileNameContains:** `Optional<String>` 
-
-Filters processor runs by the name of the file. Only returns processor runs where the file name contains this string.
-
-Example: `"invoice"`
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sortBy:** `Optional<SortByEnum>` — Sorts the processor runs by the given field.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sortDir:** `Optional<SortDirEnum>` — Sorts the processor runs in ascending or descending order. Ascending order means the earliest processor run is returned first.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**nextPageToken:** `Optional<String>` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**maxPageSize:** `Optional<Integer>` 
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.processorRun.create(request) -> ProcessorRunCreateResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Run processors (extraction, classification, splitting, etc.) on a given document.
-
-**Synchronous vs Asynchronous Processing:**
-- **Asynchronous (default)**: Returns immediately with `PROCESSING` status. Use webhooks or polling to get results.
-- **Synchronous**: Set `sync: true` to wait for completion and get final results in the response (5-minute timeout).
-
-**For asynchronous processing:**
-- You can [configure webhooks](https://docs.extend.ai/2025-04-21/developers/webhooks/configuration) to receive notifications when a processor run is complete or failed.
-- Or you can [poll the get endpoint](https://docs.extend.ai/2025-04-21/developers/api-reference/processor-endpoints/get-processor-run) for updates on the status of the processor run.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.processorRun().create(
-    ProcessorRunCreateRequest
-        .builder()
-        .processorId("processor_id_here")
-        .build()
-);
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**processorId:** `String` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**version:** `Optional<String>` 
-
-An optional version of the processor to use. When not supplied, the most recent published version of the processor will be used. Special values include:
-- `"latest"` for the most recent published version. If there are no published versions, the draft version will be used.
-- `"draft"` for the draft version.
-- Specific version numbers corresponding to versions your team has published, e.g. `"1.0"`, `"2.2"`, etc.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**file:** `Optional<ProcessorRunFileInput>` — The file to be processed. One of `file` or `rawText` must be provided. Supported file types can be found [here](/product/general/supported-file-types).
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**rawText:** `Optional<String>` — A raw string to be processed. Can be used in place of file when passing raw text data streams. One of `file` or `rawText` must be provided.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sync:** `Optional<Boolean>` 
-
-Whether to run the processor synchronously. When `true`, the request will wait for the processor run to complete and return the final results. When `false` (default), the request returns immediately with a `PROCESSING` status, and you can poll for completion or use webhooks. For production use cases, we recommending leaving sync off and building around an async integration for more resiliency, unless your use case is predictably fast (e.g. sub < 30 seconds) run time or otherwise have integration constraints that require a synchronous API.
-
-**Timeout**: Synchronous requests have a 5-minute timeout. If the processor run takes longer, it will continue processing asynchronously and you can retrieve the results via the GET endpoint.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**priority:** `Optional<Integer>` — An optional value used to determine the relative order of ProcessorRuns when rate limiting is in effect. Lower values will be prioritized before higher values.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**metadata:** `Optional<Map<String, Object>>` 
-
-An optional object that can be passed in to identify the run of the document processor. It will be returned back to you in the response and webhooks.
-
-To categorize processor runs for billing and usage tracking, include `extend:usage_tags` with an array of string values (e.g., `{"extend:usage_tags": ["production", "team-eng", "customer-123"]}`). Tags must contain only alphanumeric characters, hyphens, and underscores; any special characters will be automatically removed.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**config:** `Optional<ProcessorRunCreateRequestConfig>` — The configuration for the processor run. If this is provided, this config will be used. If not provided, the config for the specific version you provide will be used. The type of configuration must match the processor type.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.processorRun.get(id) -> ProcessorRunGetResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Retrieve details about a specific processor run, including its status, outputs, and any edits made during review.
-
-A common use case for this endpoint is to poll for the status and final output of an async processor run when using the [Run Processor](https://docs.extend.ai/2025-04-21/developers/api-reference/processor-endpoints/run-processor) endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.processorRun().get("processor_run_id_here");
+client.batchProcessorRun().get("batch_processor_run_id_here");
 ```
 </dd>
 </dl>
@@ -1151,1334 +1613,10 @@ client.processorRun().get("processor_run_id_here");
 
 **id:** `String` 
 
-The unique identifier for this processor run.
+The unique identifier of the batch processor run to retrieve. The ID will always start with "bpr_".
 
-Example: `"dpr_Xj8mK2pL9nR4vT7qY5wZ"`
+Example: `"bpr_Xj8mK2pL9nR4vT7qY5wZ"`
     
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.processorRun.delete(id) -> ProcessorRunDeleteResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Delete a processor run and all associated data from Extend. This operation is permanent and cannot be undone.
-
-This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.processorRun().delete("processor_run_id_here");
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `String` 
-
-The ID of the processor run to delete.
-
-Example: `"dpr_Xj8mK2pL9nR4vT7qY5wZ"`
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.processorRun.cancel(id) -> ProcessorRunCancelResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Cancel a running processor run by its ID. This endpoint allows you to stop a processor run that is currently in progress.
-
-Note: Only processor runs with a status of `"PROCESSING"` can be cancelled. Processor runs that have already completed, failed, or been cancelled cannot be cancelled again.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.processorRun().cancel("processor_run_id_here");
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `String` 
-
-The unique identifier for the processor run to cancel.
-
-Example: `"dpr_Xj8mK2pL9nR4vT7qY5wZ"`
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## Processor
-<details><summary><code>client.processor.list() -> ListProcessorsResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-List all processors in your organization
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.processor().list(
-    ProcessorListRequest
-        .builder()
-        .type(ProcessorType.EXTRACT)
-        .nextPageToken("nextPageToken")
-        .maxPageSize(1)
-        .sortBy(ProcessorListRequestSortBy.CREATED_AT)
-        .sortDir(ProcessorListRequestSortDir.ASC)
-        .build()
-);
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**type:** `Optional<ProcessorType>` — Filter processors by type
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**nextPageToken:** `Optional<String>` — Token for retrieving the next page of results
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**maxPageSize:** `Optional<Integer>` — Maximum number of processors to return per page
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sortBy:** `Optional<ProcessorListRequestSortBy>` — Field to sort by
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sortDir:** `Optional<ProcessorListRequestSortDir>` — Sort direction
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.processor.create(request) -> ProcessorCreateResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Create a new processor in Extend, optionally cloning from an existing processor
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.processor().create(
-    ProcessorCreateRequest
-        .builder()
-        .name("My Processor Name")
-        .type(ProcessorType.EXTRACT)
-        .build()
-);
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**name:** `String` — The name of the new processor
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**type:** `ProcessorType` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cloneProcessorId:** `Optional<String>` 
-
-The ID of an existing processor to clone. One of `cloneProcessorId` or `config` must be provided.
-
-Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**config:** `Optional<ProcessorCreateRequestConfig>` — The configuration for the processor. The type of configuration must match the processor type. One of `cloneProcessorId` or `config` must be provided.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.processor.update(id, request) -> ProcessorUpdateResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Update an existing processor in Extend
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.processor().update(
-    "processor_id_here",
-    ProcessorUpdateRequest
-        .builder()
-        .build()
-);
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `String` 
-
-The ID of the processor to update.
-
-Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**name:** `Optional<String>` — The new name for the processor
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**config:** `Optional<ProcessorUpdateRequestConfig>` 
-
-The new configuration for the processor. The type of configuration must match the processor type:
-* For classification processors, use `ClassificationConfig`
-* For extraction processors, use `ExtractionConfig`
-* For splitter processors, use `SplitterConfig`
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## ProcessorVersion
-<details><summary><code>client.processorVersion.get(processorId, processorVersionId) -> ProcessorVersionGetResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Retrieve a specific version of a processor in Extend
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.processorVersion().get("processor_id_here", "processor_version_id_here");
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**processorId:** `String` 
-
-The ID of the processor.
-
-Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**processorVersionId:** `String` 
-
-The ID of the specific processor version to retrieve.
-
-Example: `"dpv_QYk6jgHA_8CsO8rVWhyNC"`
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.processorVersion.list(id) -> ProcessorVersionListResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-This endpoint allows you to fetch all versions of a given processor, including the current `draft` version.
-
-Versions are typically returned in descending order of creation (newest first), but this should be confirmed in the actual implementation.
-The `draft` version is the latest unpublished version of the processor, which can be published to create a new version. It might not have any changes from the last published version.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.processorVersion().list("processor_id_here");
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `String` 
-
-The ID of the processor to retrieve versions for.
-
-Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.processorVersion.create(id, request) -> ProcessorVersionCreateResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-This endpoint allows you to publish a new version of an existing processor. Publishing a new version creates a snapshot of the processor's current configuration and makes it available for use in workflows.
-
-Publishing a new version does not automatically update existing workflows using this processor. You may need to manually update workflows to use the new version if desired.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.processorVersion().create(
-    "processor_id_here",
-    ProcessorVersionCreateRequest
-        .builder()
-        .releaseType(ProcessorVersionCreateRequestReleaseType.MAJOR)
-        .build()
-);
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `String` 
-
-The ID of the processor to publish a new version for.
-
-Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**releaseType:** `ProcessorVersionCreateRequestReleaseType` — The type of release for this version. The two options are "major" and "minor", which will increment the version number accordingly.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**description:** `Optional<String>` — A description of the changes in this version. This helps track the evolution of the processor over time.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**config:** `Optional<ProcessorVersionCreateRequestConfig>` — The configuration for this version of the processor. The type of configuration must match the processor type.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## ParserRun
-<details><summary><code>client.parserRun.get(id) -> ParserRunGetResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Retrieve the status and results of a parser run.
-
-Use this endpoint to get results for a parser run that has already completed, or to check on the status of an asynchronous parser run initiated via the [Parse File Asynchronously](https://docs.extend.ai/2025-04-21/developers/api-reference/parse-endpoints/parse-file-async) endpoint.
-
-If parsing is still in progress, you'll receive a response with just the status. Once complete, you'll receive the full parsed content in the response.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.parserRun().get(
-    "parser_run_id_here",
-    ParserRunGetRequest
-        .builder()
-        .responseType(ParserRunGetRequestResponseType.JSON)
-        .build()
-);
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `String` 
-
-The unique identifier for the parser run.
-
-Example: `"parser_run_xK9mLPqRtN3vS8wF5hB2cQ"`
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**responseType:** `Optional<ParserRunGetRequestResponseType>` 
-
-Controls the format of the response chunks. Defaults to `json` if not specified.
-* `json` - Returns chunks with inline content
-* `url` - Returns chunks with presigned URLs to content instead of inline data
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.parserRun.delete(id) -> ParserRunDeleteResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Delete a parser run and all associated data from Extend. This operation is permanent and cannot be undone.
-
-This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.parserRun().delete("parser_run_id_here");
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `String` 
-
-The ID of the parser run to delete.
-
-Example: `"parser_run_xK9mLPqRtN3vS8wF5hB2cQ"`
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## Edit
-<details><summary><code>client.edit.create(request) -> EditRun</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Edit and manipulate PDF documents by detecting and filling form fields.
-This is a synchronous endpoint that will wait for the edit operation to complete (up to 5 minutes) before returning results. For longer operations, use the [Edit File Async](/developers/api-reference/edit-endpoints/edit-file-async) endpoint.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.edit().create(
-    EditCreateRequest
-        .builder()
-        .file(
-            EditCreateRequestFile
-                .builder()
-                .build()
-        )
-        .build()
-);
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**file:** `EditCreateRequestFile` — A file object containing either a URL or a fileId.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**config:** `Optional<EditCreateRequestConfig>` — Configuration for the edit operation. Field values should be specified using `extend_edit:value` on each field in the schema.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.edit.createAsync(request) -> EditRunStatus</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Edit and manipulate PDF documents **asynchronously** by filling forms, adding/modifying text fields, and applying structured changes.
-
-The Edit Async endpoint allows you to convert and edit documents asynchronously and get an edit run ID that can be used to check status and retrieve results with the [Get Edit Run](/developers/api-reference/edit-endpoints/get-edit-run) endpoint.
-
-This is useful for:
-* Large files that may take longer to process
-* Avoiding timeout issues with synchronous editing
-* Processing multiple files in parallel
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.edit().createAsync(
-    EditCreateAsyncRequest
-        .builder()
-        .file(
-            EditCreateAsyncRequestFile
-                .builder()
-                .build()
-        )
-        .build()
-);
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**file:** `EditCreateAsyncRequestFile` — A file object containing either a URL or a fileId.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**config:** `Optional<EditCreateAsyncRequestConfig>` — Configuration for the edit operation. Field values should be specified using `extend_edit:value` on each field in the schema.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.edit.get(id) -> EditGetResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Retrieve the status and results of an edit run.
-
-Use this endpoint to get results for an edit run that has already completed, or to check on the status of an asynchronous edit run initiated via the [Edit File Asynchronously](/developers/api-reference/edit-endpoints/edit-file-async) endpoint.
-
-If editing is still in progress, you'll receive a response with just the status. Once complete, you'll receive the full edited file information in the response.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.edit().get("edit_run_id_here");
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `String` 
-
-The unique identifier for the edit run.
-
-Example: `"edit_run_xK9mLPqRtN3vS8wF5hB2cQ"`
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.edit.delete(id) -> EditDeleteResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
-
-This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.edit().delete("edit_run_id_here");
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `String` 
-
-The ID of the edit run to delete.
-
-Example: `"edit_run_xK9mLPqRtN3vS8wF5hB2cQ"`
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## File
-<details><summary><code>client.file.list() -> FileListResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-List files in your account. Files represent documents that have been uploaded to Extend. This endpoint returns a paginated response. You can use the `nextPageToken` to fetch subsequent results.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.file().list(
-    FileListRequest
-        .builder()
-        .nameContains("nameContains")
-        .sortDir(SortDirEnum.ASC)
-        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
-        .maxPageSize(1)
-        .build()
-);
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**nameContains:** `Optional<String>` 
-
-Filters files to only include those that contain the given string in the name.
-
-Example: `"invoice"`
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**sortDir:** `Optional<SortDirEnum>` — Sorts the files in ascending or descending order. Ascending order means the earliest file is returned first.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**nextPageToken:** `Optional<String>` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**maxPageSize:** `Optional<Integer>` 
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.file.get(id) -> FileGetResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Fetch a file by its ID to obtain additional details and the raw file content.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.file().get(
-    "file_id_here",
-    FileGetRequest
-        .builder()
-        .rawText(true)
-        .markdown(true)
-        .html(true)
-        .build()
-);
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `String` 
-
-Extend's ID for the file. It will always start with `"file_"`. This ID is returned when creating a new File, or the value on the `fileId` field in a WorkflowRun.
-
-Example: `"file_Xj8mK2pL9nR4vT7qY5wZ"`
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**rawText:** `Optional<Boolean>` — If set to true, the raw text content of the file will be included in the response. This is useful for indexing text-based files like PDFs, Word Documents, etc.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**markdown:** `Optional<Boolean>` 
-
-If set to true, the markdown content of the file will be included in the response. This is useful for indexing very clean content into RAG pipelines for files like PDFs, Word Documents, etc.
-
-Only available for files with a type of PDF, IMG, or .doc/.docx files that were auto-converted to PDFs.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**html:** `Optional<Boolean>` 
-
-If set to true, the html content of the file will be included in the response. This is useful for indexing html content into RAG pipelines.
-
-Only available for files with a type of DOCX.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.file.delete(id) -> FileDeleteResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Delete a file and all associated data from Extend. This operation is permanent and cannot be undone.
-
-This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.file().delete("file_id_here");
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `String` 
-
-The ID of the file to delete.
-
-Example: `"file_xK9mLPqRtN3vS8wF5hB2cQ"`
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.file.upload(request) -> FileUploadResponse</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Upload and create a new file in Extend.
-
-This endpoint accepts file contents and registers them as a File in Extend, which can be used for [running workflows](https://docs.extend.ai/2025-04-21/developers/api-reference/workflow-endpoints/run-workflow), [creating evaluation set items](https://docs.extend.ai/2025-04-21/developers/api-reference/evaluation-set-endpoints/bulk-create-evaluation-set-items), [parsing](https://docs.extend.ai/2025-04-21/developers/api-reference/parse-endpoints/parse-file), etc.
-
-If an uploaded file is detected as a Word or PowerPoint document, it will be automatically converted to a PDF.
-
-Supported file types can be found [here](/product/general/supported-file-types).
-
-This endpoint requires multipart form encoding. Most HTTP clients will handle this encoding automatically (see the examples).
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```java
-client.file().upload(
-    FileUploadRequest
-        .builder()
-        .build()
-);
-```
 </dd>
 </dl>
 </dd>
@@ -3195,8 +2333,8 @@ Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
 </dl>
 </details>
 
-## WorkflowRunOutput
-<details><summary><code>client.workflowRunOutput.update(workflowRunId, outputId, request) -> WorkflowRunOutputUpdateResponse</code></summary>
+## ProcessorRun
+<details><summary><code>client.processorRun.list() -> ProcessorRunListResponse</code></summary>
 <dl>
 <dd>
 
@@ -3208,11 +2346,7 @@ Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
 <dl>
 <dd>
 
-Use this endpoint to submit corrected outputs for a WorkflowRun for future processor evaluation and tuning in Extend.
-
-If you are using our Human-in-the-loop workflow review, then we already will be collecting your operator submitted corrections. However, if you are receiving data via the API without human review, there could be incorrect outputs that you would like to correct for future usage in evaluation and tuning within the Extend platform. This endpoint allows you to submit corrected outputs for a WorkflowRun, by providing the correct output for a given output ID.
-
-The output ID, would be found in a given entry within the outputs arrays of a Workflow Run payload. The ID would look something like `dpr_gwkZZNRrPgkjcq0y-***`.
+List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
 </dd>
 </dl>
 </dd>
@@ -3227,25 +2361,19 @@ The output ID, would be found in a given entry within the outputs arrays of a Wo
 <dd>
 
 ```java
-client.workflowRunOutput().update(
-    "workflow_run_id_here",
-    "output_id_here",
-    WorkflowRunOutputUpdateRequest
+client.processorRun().list(
+    ProcessorRunListRequest
         .builder()
-        .reviewedOutput(
-            ProvidedProcessorOutput.ofProvidedExtractionOutput(
-                ProvidedExtractionOutput.ofProvidedJsonOutput(
-                    ProvidedJsonOutput
-                        .builder()
-                        .value(
-                            new HashMap<String, Object>() {{
-                                put("key", "value");
-                            }}
-                        )
-                        .build()
-                )
-            )
-        )
+        .status(ProcessorStatus.PENDING)
+        .processorId("processorId")
+        .processorType(ProcessorType.EXTRACT)
+        .sourceId("sourceId")
+        .source(ProcessorRunListRequestSource.ADMIN)
+        .fileNameContains("fileNameContains")
+        .sortBy(SortByEnum.UPDATED_AT)
+        .sortDir(SortDirEnum.ASC)
+        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .maxPageSize(1)
         .build()
 );
 ```
@@ -3262,7 +2390,16 @@ client.workflowRunOutput().update(
 <dl>
 <dd>
 
-**workflowRunId:** `String` 
+**status:** `Optional<ProcessorStatus>` 
+
+Filters processor runs by their status. If not provided, no filter is applied.
+
+ The status of a processor run:
+ * `"PENDING"` - The processor run has not started yet
+ * `"PROCESSING"` - The processor run is in progress
+ * `"PROCESSED"` - The processor run completed successfully
+ * `"FAILED"` - The processor run encountered an error
+ * `"CANCELLED"` - The processor run was cancelled
     
 </dd>
 </dl>
@@ -3270,7 +2407,11 @@ client.workflowRunOutput().update(
 <dl>
 <dd>
 
-**outputId:** `String` 
+**processorId:** `Optional<String>` 
+
+Filters processor runs by the processor ID. If not provided, runs for all processors are returned.
+
+Example: `"dp_BMdfq_yWM3sT-ZzvCnA3f"`
     
 </dd>
 </dl>
@@ -3278,13 +2419,86 @@ client.workflowRunOutput().update(
 <dl>
 <dd>
 
-**reviewedOutput:** `ProvidedProcessorOutput` 
+**processorType:** `Optional<ProcessorType>` 
 
-The corrected output of the processor when run against the file.
+Filters processor runs by the processor type. If not provided, runs for all processor types are returned.
 
-This should conform to the output type schema of the given processor.
+Example: `"EXTRACT"`
+    
+</dd>
+</dl>
 
-If this is an extraction result, you can include all fields, or just the ones that were corrected, our system will handle merges/dedupes. However, if you do include a field, we assume the value included in the final reviewed value.
+<dl>
+<dd>
+
+**sourceId:** `Optional<String>` 
+
+Filters processor runs by the source ID. The source ID corresponds to the entity that created the processor run.
+
+Example: `"workflow_run_123"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**source:** `Optional<ProcessorRunListRequestSource>` 
+
+Filters processor runs by the source that created them. If not provided, runs from all sources are returned.
+
+The source of the processor run:
+* `"ADMIN"` - Created by admin
+* `"BATCH_PROCESSOR_RUN"` - Created from a batch processor run
+* `"PLAYGROUND"` - Created from playground
+* `"WORKFLOW_CONFIGURATION"` - Created from workflow configuration
+* `"WORKFLOW_RUN"` - Created from a workflow run
+* `"STUDIO"` - Created from Studio
+* `"API"` - Created via API
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fileNameContains:** `Optional<String>` 
+
+Filters processor runs by the name of the file. Only returns processor runs where the file name contains this string.
+
+Example: `"invoice"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortBy:** `Optional<SortByEnum>` — Sorts the processor runs by the given field.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortDir:** `Optional<SortDirEnum>` — Sorts the processor runs in ascending or descending order. Ascending order means the earliest processor run is returned first.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**nextPageToken:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**maxPageSize:** `Optional<Integer>` 
     
 </dd>
 </dl>
@@ -3296,8 +2510,7 @@ If this is an extraction result, you can include all fields, or just the ones th
 </dl>
 </details>
 
-## BatchProcessorRun
-<details><summary><code>client.batchProcessorRun.get(id) -> BatchProcessorRunGetResponse</code></summary>
+<details><summary><code>client.processorRun.create(request) -> ProcessorRunCreateResponse</code></summary>
 <dl>
 <dd>
 
@@ -3309,7 +2522,15 @@ If this is an extraction result, you can include all fields, or just the ones th
 <dl>
 <dd>
 
-Retrieve details about a batch processor run, including evaluation runs
+Run processors (extraction, classification, splitting, etc.) on a given document.
+
+**Synchronous vs Asynchronous Processing:**
+- **Asynchronous (default)**: Returns immediately with `PROCESSING` status. Use webhooks or polling to get results.
+- **Synchronous**: Set `sync: true` to wait for completion and get final results in the response (5-minute timeout).
+
+**For asynchronous processing:**
+- You can [configure webhooks](https://docs.extend.ai/product/webhooks/configuration) to receive notifications when a processor run is complete or failed.
+- Or you can [poll the get endpoint](https://docs.extend.ai/2025-04-21/developers/api-reference/processor-endpoints/get-processor-run) for updates on the status of the processor run.
 </dd>
 </dl>
 </dd>
@@ -3324,7 +2545,137 @@ Retrieve details about a batch processor run, including evaluation runs
 <dd>
 
 ```java
-client.batchProcessorRun().get("batch_processor_run_id_here");
+client.processorRun().create(
+    ProcessorRunCreateRequest
+        .builder()
+        .processorId("processor_id_here")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**processorId:** `String` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**version:** `Optional<String>` 
+
+An optional version of the processor to use. When not supplied, the most recent published version of the processor will be used. Special values include:
+- `"latest"` for the most recent published version. If there are no published versions, the draft version will be used.
+- `"draft"` for the draft version.
+- Specific version numbers corresponding to versions your team has published, e.g. `"1.0"`, `"2.2"`, etc.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**file:** `Optional<ProcessorRunFileInput>` — The file to be processed. One of `file` or `rawText` must be provided. Supported file types can be found [here](/product/general/supported-file-types).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**rawText:** `Optional<String>` — A raw string to be processed. Can be used in place of file when passing raw text data streams. One of `file` or `rawText` must be provided.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sync:** `Optional<Boolean>` 
+
+Whether to run the processor synchronously. When `true`, the request will wait for the processor run to complete and return the final results. When `false` (default), the request returns immediately with a `PROCESSING` status, and you can poll for completion or use webhooks. For production use cases, we recommending leaving sync off and building around an async integration for more resiliency, unless your use case is predictably fast (e.g. sub < 30 seconds) run time or otherwise have integration constraints that require a synchronous API.
+
+**Timeout**: Synchronous requests have a 5-minute timeout. If the processor run takes longer, it will continue processing asynchronously and you can retrieve the results via the GET endpoint.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**priority:** `Optional<Integer>` — An optional value used to determine the relative order of ProcessorRuns when rate limiting is in effect. Lower values will be prioritized before higher values.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**metadata:** `Optional<Map<String, Object>>` 
+
+An optional object that can be passed in to identify the run of the document processor. It will be returned back to you in the response and webhooks.
+
+To categorize processor runs for billing and usage tracking, include `extend:usage_tags` with an array of string values (e.g., `{"extend:usage_tags": ["production", "team-eng", "customer-123"]}`). Tags must contain only alphanumeric characters, hyphens, and underscores; any special characters will be automatically removed.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<ProcessorRunCreateRequestConfig>` — The configuration for the processor run. If this is provided, this config will be used. If not provided, the config for the specific version you provide will be used. The type of configuration must match the processor type.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.processorRun.get(id) -> ProcessorRunGetResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve details about a specific processor run, including its status, outputs, and any edits made during review.
+
+A common use case for this endpoint is to poll for the status and final output of an async processor run when using the [Run Processor](https://docs.extend.ai/2025-04-21/developers/api-reference/processor-endpoints/run-processor) endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.processorRun().get("processor_run_id_here");
 ```
 </dd>
 </dl>
@@ -3341,9 +2692,9 @@ client.batchProcessorRun().get("batch_processor_run_id_here");
 
 **id:** `String` 
 
-The unique identifier of the batch processor run to retrieve. The ID will always start with "bpr_".
+The unique identifier for this processor run.
 
-Example: `"bpr_Xj8mK2pL9nR4vT7qY5wZ"`
+Example: `"dpr_Xj8mK2pL9nR4vT7qY5wZ"`
     
 </dd>
 </dl>
@@ -3355,8 +2706,7 @@ Example: `"bpr_Xj8mK2pL9nR4vT7qY5wZ"`
 </dl>
 </details>
 
-## Workflow
-<details><summary><code>client.workflow.create(request) -> WorkflowCreateResponse</code></summary>
+<details><summary><code>client.processorRun.delete(id) -> ProcessorRunDeleteResponse</code></summary>
 <dl>
 <dd>
 
@@ -3368,9 +2718,9 @@ Example: `"bpr_Xj8mK2pL9nR4vT7qY5wZ"`
 <dl>
 <dd>
 
-Create a new workflow in Extend. Workflows are sequences of steps that process files and data in a specific order to achieve a desired outcome.
+Delete a processor run and all associated data from Extend. This operation is permanent and cannot be undone.
 
-This endpoint will create a new workflow in Extend, which can then be configured and deployed. Typically, workflows are created from our UI, however this endpoint can be used to create workflows programmatically. Configuration of the flow still needs to be done in the dashboard.
+This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.
 </dd>
 </dl>
 </dd>
@@ -3385,10 +2735,133 @@ This endpoint will create a new workflow in Extend, which can then be configured
 <dd>
 
 ```java
-client.workflow().create(
-    WorkflowCreateRequest
+client.processorRun().delete("processor_run_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the processor run to delete.
+
+Example: `"dpr_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.processorRun.cancel(id) -> ProcessorRunCancelResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Cancel a running processor run by its ID. This endpoint allows you to stop a processor run that is currently in progress.
+
+Note: Only processor runs with a status of `"PROCESSING"` can be cancelled. Processor runs that have already completed, failed, or been cancelled cannot be cancelled again.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.processorRun().cancel("processor_run_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The unique identifier for the processor run to cancel.
+
+Example: `"dpr_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Processor
+<details><summary><code>client.processor.list() -> ListProcessorsResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all processors in your organization
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.processor().list(
+    ProcessorListRequest
         .builder()
-        .name("Invoice Processing")
+        .type(ProcessorType.EXTRACT)
+        .nextPageToken("nextPageToken")
+        .maxPageSize(1)
+        .sortBy(ProcessorListRequestSortBy.CREATED_AT)
+        .sortDir(ProcessorListRequestSortDir.ASC)
         .build()
 );
 ```
@@ -3405,7 +2878,433 @@ client.workflow().create(
 <dl>
 <dd>
 
-**name:** `String` — The name of the workflow
+**type:** `Optional<ProcessorType>` — Filter processors by type
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**nextPageToken:** `Optional<String>` — Token for retrieving the next page of results
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**maxPageSize:** `Optional<Integer>` — Maximum number of processors to return per page
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortBy:** `Optional<ProcessorListRequestSortBy>` — Field to sort by
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortDir:** `Optional<ProcessorListRequestSortDir>` — Sort direction
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.processor.create(request) -> ProcessorCreateResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create a new processor in Extend, optionally cloning from an existing processor
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.processor().create(
+    ProcessorCreateRequest
+        .builder()
+        .name("My Processor Name")
+        .type(ProcessorType.EXTRACT)
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `String` — The name of the new processor
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**type:** `ProcessorType` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**cloneProcessorId:** `Optional<String>` 
+
+The ID of an existing processor to clone. One of `cloneProcessorId` or `config` must be provided.
+
+Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<ProcessorCreateRequestConfig>` — The configuration for the processor. The type of configuration must match the processor type. One of `cloneProcessorId` or `config` must be provided.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.processor.update(id, request) -> ProcessorUpdateResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update an existing processor in Extend
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.processor().update(
+    "processor_id_here",
+    ProcessorUpdateRequest
+        .builder()
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the processor to update.
+
+Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `Optional<String>` — The new name for the processor
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<ProcessorUpdateRequestConfig>` 
+
+The new configuration for the processor. The type of configuration must match the processor type:
+* For classification processors, use `ClassificationConfig`
+* For extraction processors, use `ExtractionConfig`
+* For splitter processors, use `SplitterConfig`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## ProcessorVersion
+<details><summary><code>client.processorVersion.list(id) -> ProcessorVersionListResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+This endpoint allows you to fetch all versions of a given processor, including the current `draft` version.
+
+Versions are typically returned in descending order of creation (newest first), but this should be confirmed in the actual implementation.
+The `draft` version is the latest unpublished version of the processor, which can be published to create a new version. It might not have any changes from the last published version.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.processorVersion().list("processor_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the processor to retrieve versions for.
+
+Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.processorVersion.create(id, request) -> ProcessorVersionCreateResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+This endpoint allows you to publish a new version of an existing processor. Publishing a new version creates a snapshot of the processor's current configuration and makes it available for use in workflows.
+
+Publishing a new version does not automatically update existing workflows using this processor. You may need to manually update workflows to use the new version if desired.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.processorVersion().create(
+    "processor_id_here",
+    ProcessorVersionCreateRequest
+        .builder()
+        .releaseType(ProcessorVersionCreateRequestReleaseType.MAJOR)
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the processor to publish a new version for.
+
+Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**releaseType:** `ProcessorVersionCreateRequestReleaseType` — The type of release for this version. The two options are "major" and "minor", which will increment the version number accordingly.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**description:** `Optional<String>` — A description of the changes in this version. This helps track the evolution of the processor over time.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<ProcessorVersionCreateRequestConfig>` — The configuration for this version of the processor. The type of configuration must match the processor type.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.processorVersion.get(processorId, processorVersionId) -> ProcessorVersionGetResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve a specific version of a processor in Extend
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.processorVersion().get("processor_id_here", "processor_version_id_here");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**processorId:** `String` 
+
+The ID of the processor.
+
+Example: `"dp_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**processorVersionId:** `String` 
+
+The ID of the specific processor version to retrieve.
+
+Example: `"dpv_QYk6jgHA_8CsO8rVWhyNC"`
     
 </dd>
 </dl>

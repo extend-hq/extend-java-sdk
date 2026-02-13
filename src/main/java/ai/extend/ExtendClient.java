@@ -20,7 +20,6 @@ import ai.extend.resources.processorrun.ProcessorRunClient;
 import ai.extend.resources.processorversion.ProcessorVersionClient;
 import ai.extend.resources.workflow.WorkflowClient;
 import ai.extend.resources.workflowrun.WorkflowRunClient;
-import ai.extend.resources.workflowrunoutput.WorkflowRunOutputClient;
 import ai.extend.types.ParserRun;
 import ai.extend.types.ParserRunStatus;
 import java.util.function.Supplier;
@@ -30,9 +29,23 @@ public class ExtendClient {
 
     private final RawExtendClient rawClient;
 
+    protected final Supplier<FileClient> fileClient;
+
+    protected final Supplier<ParserRunClient> parserRunClient;
+
+    protected final Supplier<EditClient> editClient;
+
+    protected final Supplier<WorkflowClient> workflowClient;
+
     protected final Supplier<WorkflowRunClient> workflowRunClient;
 
     protected final Supplier<BatchWorkflowRunClient> batchWorkflowRunClient;
+
+    protected final Supplier<BatchProcessorRunClient> batchProcessorRunClient;
+
+    protected final Supplier<EvaluationSetClient> evaluationSetClient;
+
+    protected final Supplier<EvaluationSetItemClient> evaluationSetItemClient;
 
     protected final Supplier<ProcessorRunClient> processorRunClient;
 
@@ -40,38 +53,21 @@ public class ExtendClient {
 
     protected final Supplier<ProcessorVersionClient> processorVersionClient;
 
-    protected final Supplier<ParserRunClient> parserRunClient;
-
-    protected final Supplier<EditClient> editClient;
-
-    protected final Supplier<FileClient> fileClient;
-
-    protected final Supplier<EvaluationSetClient> evaluationSetClient;
-
-    protected final Supplier<EvaluationSetItemClient> evaluationSetItemClient;
-
-    protected final Supplier<WorkflowRunOutputClient> workflowRunOutputClient;
-
-    protected final Supplier<BatchProcessorRunClient> batchProcessorRunClient;
-
-    protected final Supplier<WorkflowClient> workflowClient;
-
     public ExtendClient(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         this.rawClient = new RawExtendClient(clientOptions);
+        this.fileClient = Suppliers.memoize(() -> new FileClient(clientOptions));
+        this.parserRunClient = Suppliers.memoize(() -> new ParserRunClient(clientOptions));
+        this.editClient = Suppliers.memoize(() -> new EditClient(clientOptions));
+        this.workflowClient = Suppliers.memoize(() -> new WorkflowClient(clientOptions));
         this.workflowRunClient = Suppliers.memoize(() -> new WorkflowRunClient(clientOptions));
         this.batchWorkflowRunClient = Suppliers.memoize(() -> new BatchWorkflowRunClient(clientOptions));
+        this.batchProcessorRunClient = Suppliers.memoize(() -> new BatchProcessorRunClient(clientOptions));
+        this.evaluationSetClient = Suppliers.memoize(() -> new EvaluationSetClient(clientOptions));
+        this.evaluationSetItemClient = Suppliers.memoize(() -> new EvaluationSetItemClient(clientOptions));
         this.processorRunClient = Suppliers.memoize(() -> new ProcessorRunClient(clientOptions));
         this.processorClient = Suppliers.memoize(() -> new ProcessorClient(clientOptions));
         this.processorVersionClient = Suppliers.memoize(() -> new ProcessorVersionClient(clientOptions));
-        this.parserRunClient = Suppliers.memoize(() -> new ParserRunClient(clientOptions));
-        this.editClient = Suppliers.memoize(() -> new EditClient(clientOptions));
-        this.fileClient = Suppliers.memoize(() -> new FileClient(clientOptions));
-        this.evaluationSetClient = Suppliers.memoize(() -> new EvaluationSetClient(clientOptions));
-        this.evaluationSetItemClient = Suppliers.memoize(() -> new EvaluationSetItemClient(clientOptions));
-        this.workflowRunOutputClient = Suppliers.memoize(() -> new WorkflowRunOutputClient(clientOptions));
-        this.batchProcessorRunClient = Suppliers.memoize(() -> new BatchProcessorRunClient(clientOptions));
-        this.workflowClient = Suppliers.memoize(() -> new WorkflowClient(clientOptions));
     }
 
     /**
@@ -129,12 +125,40 @@ public class ExtendClient {
         return this.rawClient.parseAsync(request, requestOptions).body();
     }
 
+    public FileClient file() {
+        return this.fileClient.get();
+    }
+
+    public ParserRunClient parserRun() {
+        return this.parserRunClient.get();
+    }
+
+    public EditClient edit() {
+        return this.editClient.get();
+    }
+
+    public WorkflowClient workflow() {
+        return this.workflowClient.get();
+    }
+
     public WorkflowRunClient workflowRun() {
         return this.workflowRunClient.get();
     }
 
     public BatchWorkflowRunClient batchWorkflowRun() {
         return this.batchWorkflowRunClient.get();
+    }
+
+    public BatchProcessorRunClient batchProcessorRun() {
+        return this.batchProcessorRunClient.get();
+    }
+
+    public EvaluationSetClient evaluationSet() {
+        return this.evaluationSetClient.get();
+    }
+
+    public EvaluationSetItemClient evaluationSetItem() {
+        return this.evaluationSetItemClient.get();
     }
 
     public ProcessorRunClient processorRun() {
@@ -147,38 +171,6 @@ public class ExtendClient {
 
     public ProcessorVersionClient processorVersion() {
         return this.processorVersionClient.get();
-    }
-
-    public ParserRunClient parserRun() {
-        return this.parserRunClient.get();
-    }
-
-    public EditClient edit() {
-        return this.editClient.get();
-    }
-
-    public FileClient file() {
-        return this.fileClient.get();
-    }
-
-    public EvaluationSetClient evaluationSet() {
-        return this.evaluationSetClient.get();
-    }
-
-    public EvaluationSetItemClient evaluationSetItem() {
-        return this.evaluationSetItemClient.get();
-    }
-
-    public WorkflowRunOutputClient workflowRunOutput() {
-        return this.workflowRunOutputClient.get();
-    }
-
-    public BatchProcessorRunClient batchProcessorRun() {
-        return this.batchProcessorRunClient.get();
-    }
-
-    public WorkflowClient workflow() {
-        return this.workflowClient.get();
     }
 
     public static ExtendClientBuilder builder() {

@@ -69,7 +69,7 @@ public final class BatchWorkflowRunCreateRequestInputsItem {
     }
 
     /**
-     * @return An optional object containing secrets to be used by processors within the workflow for this specific run. Secrets provided here override any globally configured secrets for the workflow.
+     * @return An optional object containing secrets to be used by processors within the workflow for this specific run.
      */
     @JsonProperty("secrets")
     public Optional<Map<String, Object>> getSecrets() {
@@ -175,7 +175,7 @@ public final class BatchWorkflowRunCreateRequestInputsItem {
         }
 
         /**
-         * <p>An optional object containing secrets to be used by processors within the workflow for this specific run. Secrets provided here override any globally configured secrets for the workflow.</p>
+         * <p>An optional object containing secrets to be used by processors within the workflow for this specific run.</p>
          */
         @JsonSetter(value = "secrets", nulls = Nulls.SKIP)
         public Builder secrets(Optional<Map<String, Object>> secrets) {

@@ -28,23 +28,6 @@ public class ProcessorVersionClient {
     }
 
     /**
-     * Retrieve a specific version of a processor in Extend
-     */
-    public ProcessorVersionGetResponse get(String processorId, String processorVersionId) {
-        return this.rawClient.get(processorId, processorVersionId).body();
-    }
-
-    /**
-     * Retrieve a specific version of a processor in Extend
-     */
-    public ProcessorVersionGetResponse get(
-            String processorId, String processorVersionId, RequestOptions requestOptions) {
-        return this.rawClient
-                .get(processorId, processorVersionId, requestOptions)
-                .body();
-    }
-
-    /**
      * This endpoint allows you to fetch all versions of a given processor, including the current <code>draft</code> version.
      * <p>Versions are typically returned in descending order of creation (newest first), but this should be confirmed in the actual implementation.
      * The <code>draft</code> version is the latest unpublished version of the processor, which can be published to create a new version. It might not have any changes from the last published version.</p>
@@ -77,5 +60,22 @@ public class ProcessorVersionClient {
     public ProcessorVersionCreateResponse create(
             String id, ProcessorVersionCreateRequest request, RequestOptions requestOptions) {
         return this.rawClient.create(id, request, requestOptions).body();
+    }
+
+    /**
+     * Retrieve a specific version of a processor in Extend
+     */
+    public ProcessorVersionGetResponse get(String processorId, String processorVersionId) {
+        return this.rawClient.get(processorId, processorVersionId).body();
+    }
+
+    /**
+     * Retrieve a specific version of a processor in Extend
+     */
+    public ProcessorVersionGetResponse get(
+            String processorId, String processorVersionId, RequestOptions requestOptions) {
+        return this.rawClient
+                .get(processorId, processorVersionId, requestOptions)
+                .body();
     }
 }

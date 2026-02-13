@@ -59,7 +59,7 @@ public final class ParseConfig {
      * <li>Prefer <code>markdown</code> for most documents, multi-column reading order, and retrieval use cases</li>
      * <li>Prefer <code>spatial</code> for messy/scanned/handwritten or skewed documents, when you need near 1:1 layout fidelity, or for BOL-like logistics docs</li>
      * </ul>
-     * <p>See &quot;Markdown vs Spatial&quot; in the Parse guide for details: /2025-04-21/developers/guides/parse#markdown-vs-spatial</p>
+     * <p>See “Markdown vs Spatial” in the Parse guide for details: /2025-04-21/developers/guides/parse#markdown-vs-spatial</p>
      */
     @JsonProperty("target")
     public Optional<ParseConfigTarget> getTarget() {
@@ -170,7 +170,7 @@ public final class ParseConfig {
          * <li>Prefer <code>markdown</code> for most documents, multi-column reading order, and retrieval use cases</li>
          * <li>Prefer <code>spatial</code> for messy/scanned/handwritten or skewed documents, when you need near 1:1 layout fidelity, or for BOL-like logistics docs</li>
          * </ul>
-         * <p>See &quot;Markdown vs Spatial&quot; in the Parse guide for details: /2025-04-21/developers/guides/parse#markdown-vs-spatial</p>
+         * <p>See “Markdown vs Spatial” in the Parse guide for details: /2025-04-21/developers/guides/parse#markdown-vs-spatial</p>
          */
         @JsonSetter(value = "target", nulls = Nulls.SKIP)
         public Builder target(Optional<ParseConfigTarget> target) {
