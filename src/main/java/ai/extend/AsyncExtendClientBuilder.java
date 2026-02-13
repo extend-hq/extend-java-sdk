@@ -226,6 +226,9 @@ public class AsyncExtendClientBuilder {
     protected void validateConfiguration() {}
 
     public AsyncExtendClient build() {
+        if (token == null) {
+            throw new RuntimeException("Please provide token");
+        }
         validateConfiguration();
         return new AsyncExtendClient(buildClientOptions());
     }

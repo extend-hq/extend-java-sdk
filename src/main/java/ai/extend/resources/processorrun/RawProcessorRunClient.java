@@ -152,7 +152,7 @@ public class RawProcessorRunClient {
      * </ul>
      * <p><strong>For asynchronous processing:</strong></p>
      * <ul>
-     * <li>You can <a href="https://docs.extend.ai/2025-04-21/developers/webhooks/configuration">configure webhooks</a> to receive notifications when a processor run is complete or failed.</li>
+     * <li>You can <a href="https://docs.extend.ai/product/webhooks/configuration">configure webhooks</a> to receive notifications when a processor run is complete or failed.</li>
      * <li>Or you can <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/processor-endpoints/get-processor-run">poll the get endpoint</a> for updates on the status of the processor run.</li>
      * </ul>
      */
@@ -169,7 +169,7 @@ public class RawProcessorRunClient {
      * </ul>
      * <p><strong>For asynchronous processing:</strong></p>
      * <ul>
-     * <li>You can <a href="https://docs.extend.ai/2025-04-21/developers/webhooks/configuration">configure webhooks</a> to receive notifications when a processor run is complete or failed.</li>
+     * <li>You can <a href="https://docs.extend.ai/product/webhooks/configuration">configure webhooks</a> to receive notifications when a processor run is complete or failed.</li>
      * <li>Or you can <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/processor-endpoints/get-processor-run">poll the get endpoint</a> for updates on the status of the processor run.</li>
      * </ul>
      */

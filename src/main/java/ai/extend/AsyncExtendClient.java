@@ -31,9 +31,25 @@ public class AsyncExtendClient {
 
     private final AsyncRawExtendClient rawClient;
 
+    protected final Supplier<AsyncFileClient> fileClient;
+
+    protected final Supplier<AsyncParserRunClient> parserRunClient;
+
+    protected final Supplier<AsyncEditClient> editClient;
+
+    protected final Supplier<AsyncWorkflowClient> workflowClient;
+
     protected final Supplier<AsyncWorkflowRunClient> workflowRunClient;
 
+    protected final Supplier<AsyncWorkflowRunOutputClient> workflowRunOutputClient;
+
     protected final Supplier<AsyncBatchWorkflowRunClient> batchWorkflowRunClient;
+
+    protected final Supplier<AsyncBatchProcessorRunClient> batchProcessorRunClient;
+
+    protected final Supplier<AsyncEvaluationSetClient> evaluationSetClient;
+
+    protected final Supplier<AsyncEvaluationSetItemClient> evaluationSetItemClient;
 
     protected final Supplier<AsyncProcessorRunClient> processorRunClient;
 
@@ -41,38 +57,22 @@ public class AsyncExtendClient {
 
     protected final Supplier<AsyncProcessorVersionClient> processorVersionClient;
 
-    protected final Supplier<AsyncParserRunClient> parserRunClient;
-
-    protected final Supplier<AsyncEditClient> editClient;
-
-    protected final Supplier<AsyncFileClient> fileClient;
-
-    protected final Supplier<AsyncEvaluationSetClient> evaluationSetClient;
-
-    protected final Supplier<AsyncEvaluationSetItemClient> evaluationSetItemClient;
-
-    protected final Supplier<AsyncWorkflowRunOutputClient> workflowRunOutputClient;
-
-    protected final Supplier<AsyncBatchProcessorRunClient> batchProcessorRunClient;
-
-    protected final Supplier<AsyncWorkflowClient> workflowClient;
-
     public AsyncExtendClient(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         this.rawClient = new AsyncRawExtendClient(clientOptions);
+        this.fileClient = Suppliers.memoize(() -> new AsyncFileClient(clientOptions));
+        this.parserRunClient = Suppliers.memoize(() -> new AsyncParserRunClient(clientOptions));
+        this.editClient = Suppliers.memoize(() -> new AsyncEditClient(clientOptions));
+        this.workflowClient = Suppliers.memoize(() -> new AsyncWorkflowClient(clientOptions));
         this.workflowRunClient = Suppliers.memoize(() -> new AsyncWorkflowRunClient(clientOptions));
+        this.workflowRunOutputClient = Suppliers.memoize(() -> new AsyncWorkflowRunOutputClient(clientOptions));
         this.batchWorkflowRunClient = Suppliers.memoize(() -> new AsyncBatchWorkflowRunClient(clientOptions));
+        this.batchProcessorRunClient = Suppliers.memoize(() -> new AsyncBatchProcessorRunClient(clientOptions));
+        this.evaluationSetClient = Suppliers.memoize(() -> new AsyncEvaluationSetClient(clientOptions));
+        this.evaluationSetItemClient = Suppliers.memoize(() -> new AsyncEvaluationSetItemClient(clientOptions));
         this.processorRunClient = Suppliers.memoize(() -> new AsyncProcessorRunClient(clientOptions));
         this.processorClient = Suppliers.memoize(() -> new AsyncProcessorClient(clientOptions));
         this.processorVersionClient = Suppliers.memoize(() -> new AsyncProcessorVersionClient(clientOptions));
-        this.parserRunClient = Suppliers.memoize(() -> new AsyncParserRunClient(clientOptions));
-        this.editClient = Suppliers.memoize(() -> new AsyncEditClient(clientOptions));
-        this.fileClient = Suppliers.memoize(() -> new AsyncFileClient(clientOptions));
-        this.evaluationSetClient = Suppliers.memoize(() -> new AsyncEvaluationSetClient(clientOptions));
-        this.evaluationSetItemClient = Suppliers.memoize(() -> new AsyncEvaluationSetItemClient(clientOptions));
-        this.workflowRunOutputClient = Suppliers.memoize(() -> new AsyncWorkflowRunOutputClient(clientOptions));
-        this.batchProcessorRunClient = Suppliers.memoize(() -> new AsyncBatchProcessorRunClient(clientOptions));
-        this.workflowClient = Suppliers.memoize(() -> new AsyncWorkflowClient(clientOptions));
     }
 
     /**
@@ -130,12 +130,44 @@ public class AsyncExtendClient {
         return this.rawClient.parseAsync(request, requestOptions).thenApply(response -> response.body());
     }
 
+    public AsyncFileClient file() {
+        return this.fileClient.get();
+    }
+
+    public AsyncParserRunClient parserRun() {
+        return this.parserRunClient.get();
+    }
+
+    public AsyncEditClient edit() {
+        return this.editClient.get();
+    }
+
+    public AsyncWorkflowClient workflow() {
+        return this.workflowClient.get();
+    }
+
     public AsyncWorkflowRunClient workflowRun() {
         return this.workflowRunClient.get();
     }
 
+    public AsyncWorkflowRunOutputClient workflowRunOutput() {
+        return this.workflowRunOutputClient.get();
+    }
+
     public AsyncBatchWorkflowRunClient batchWorkflowRun() {
         return this.batchWorkflowRunClient.get();
+    }
+
+    public AsyncBatchProcessorRunClient batchProcessorRun() {
+        return this.batchProcessorRunClient.get();
+    }
+
+    public AsyncEvaluationSetClient evaluationSet() {
+        return this.evaluationSetClient.get();
+    }
+
+    public AsyncEvaluationSetItemClient evaluationSetItem() {
+        return this.evaluationSetItemClient.get();
     }
 
     public AsyncProcessorRunClient processorRun() {
@@ -148,38 +180,6 @@ public class AsyncExtendClient {
 
     public AsyncProcessorVersionClient processorVersion() {
         return this.processorVersionClient.get();
-    }
-
-    public AsyncParserRunClient parserRun() {
-        return this.parserRunClient.get();
-    }
-
-    public AsyncEditClient edit() {
-        return this.editClient.get();
-    }
-
-    public AsyncFileClient file() {
-        return this.fileClient.get();
-    }
-
-    public AsyncEvaluationSetClient evaluationSet() {
-        return this.evaluationSetClient.get();
-    }
-
-    public AsyncEvaluationSetItemClient evaluationSetItem() {
-        return this.evaluationSetItemClient.get();
-    }
-
-    public AsyncWorkflowRunOutputClient workflowRunOutput() {
-        return this.workflowRunOutputClient.get();
-    }
-
-    public AsyncBatchProcessorRunClient batchProcessorRun() {
-        return this.batchProcessorRunClient.get();
-    }
-
-    public AsyncWorkflowClient workflow() {
-        return this.workflowClient.get();
     }
 
     public static AsyncExtendClientBuilder builder() {

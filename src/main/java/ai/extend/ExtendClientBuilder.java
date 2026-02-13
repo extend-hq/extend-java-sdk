@@ -226,6 +226,9 @@ public class ExtendClientBuilder {
     protected void validateConfiguration() {}
 
     public ExtendClient build() {
+        if (token == null) {
+            throw new RuntimeException("Please provide token");
+        }
         validateConfiguration();
         return new ExtendClient(buildClientOptions());
     }

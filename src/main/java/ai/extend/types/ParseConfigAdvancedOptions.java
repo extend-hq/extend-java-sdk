@@ -27,6 +27,10 @@ public final class ParseConfigAdvancedOptions {
 
     private final Optional<List<PageRangesItem>> pageRanges;
 
+    private final Optional<ParseConfigAdvancedOptionsExcelParsingMode> excelParsingMode;
+
+    private final Optional<Boolean> excelSkipHiddenContent;
+
     private final Optional<Double> verticalGroupingThreshold;
 
     private final Optional<ParseConfigAdvancedOptionsReturnOcr> returnOcr;
@@ -37,12 +41,16 @@ public final class ParseConfigAdvancedOptions {
             Optional<Boolean> pageRotationEnabled,
             Optional<Boolean> agenticOcrEnabled,
             Optional<List<PageRangesItem>> pageRanges,
+            Optional<ParseConfigAdvancedOptionsExcelParsingMode> excelParsingMode,
+            Optional<Boolean> excelSkipHiddenContent,
             Optional<Double> verticalGroupingThreshold,
             Optional<ParseConfigAdvancedOptionsReturnOcr> returnOcr,
             Map<String, Object> additionalProperties) {
         this.pageRotationEnabled = pageRotationEnabled;
         this.agenticOcrEnabled = agenticOcrEnabled;
         this.pageRanges = pageRanges;
+        this.excelParsingMode = excelParsingMode;
+        this.excelSkipHiddenContent = excelSkipHiddenContent;
         this.verticalGroupingThreshold = verticalGroupingThreshold;
         this.returnOcr = returnOcr;
         this.additionalProperties = additionalProperties;
@@ -67,6 +75,27 @@ public final class ParseConfigAdvancedOptions {
     @JsonProperty("pageRanges")
     public Optional<List<PageRangesItem>> getPageRanges() {
         return pageRanges;
+    }
+
+    /**
+     * @return Controls how Excel files are parsed.
+     * <ul>
+     * <li><code>basic</code>: Fast, deterministic parsing.</li>
+     * <li><code>advanced</code>: Enable layout block detection for complex spreadsheets.</li>
+     * </ul>
+     * <p>For <code>.xls</code> files, <code>basic</code> mode is always used.</p>
+     */
+    @JsonProperty("excelParsingMode")
+    public Optional<ParseConfigAdvancedOptionsExcelParsingMode> getExcelParsingMode() {
+        return excelParsingMode;
+    }
+
+    /**
+     * @return Whether to exclude hidden rows, columns, and sheets when parsing Excel files.
+     */
+    @JsonProperty("excelSkipHiddenContent")
+    public Optional<Boolean> getExcelSkipHiddenContent() {
+        return excelSkipHiddenContent;
     }
 
     /**
@@ -100,6 +129,8 @@ public final class ParseConfigAdvancedOptions {
         return pageRotationEnabled.equals(other.pageRotationEnabled)
                 && agenticOcrEnabled.equals(other.agenticOcrEnabled)
                 && pageRanges.equals(other.pageRanges)
+                && excelParsingMode.equals(other.excelParsingMode)
+                && excelSkipHiddenContent.equals(other.excelSkipHiddenContent)
                 && verticalGroupingThreshold.equals(other.verticalGroupingThreshold)
                 && returnOcr.equals(other.returnOcr);
     }
@@ -110,6 +141,8 @@ public final class ParseConfigAdvancedOptions {
                 this.pageRotationEnabled,
                 this.agenticOcrEnabled,
                 this.pageRanges,
+                this.excelParsingMode,
+                this.excelSkipHiddenContent,
                 this.verticalGroupingThreshold,
                 this.returnOcr);
     }
@@ -131,6 +164,10 @@ public final class ParseConfigAdvancedOptions {
 
         private Optional<List<PageRangesItem>> pageRanges = Optional.empty();
 
+        private Optional<ParseConfigAdvancedOptionsExcelParsingMode> excelParsingMode = Optional.empty();
+
+        private Optional<Boolean> excelSkipHiddenContent = Optional.empty();
+
         private Optional<Double> verticalGroupingThreshold = Optional.empty();
 
         private Optional<ParseConfigAdvancedOptionsReturnOcr> returnOcr = Optional.empty();
@@ -144,6 +181,8 @@ public final class ParseConfigAdvancedOptions {
             pageRotationEnabled(other.getPageRotationEnabled());
             agenticOcrEnabled(other.getAgenticOcrEnabled());
             pageRanges(other.getPageRanges());
+            excelParsingMode(other.getExcelParsingMode());
+            excelSkipHiddenContent(other.getExcelSkipHiddenContent());
             verticalGroupingThreshold(other.getVerticalGroupingThreshold());
             returnOcr(other.getReturnOcr());
             return this;
@@ -189,6 +228,39 @@ public final class ParseConfigAdvancedOptions {
         }
 
         /**
+         * <p>Controls how Excel files are parsed.</p>
+         * <ul>
+         * <li><code>basic</code>: Fast, deterministic parsing.</li>
+         * <li><code>advanced</code>: Enable layout block detection for complex spreadsheets.</li>
+         * </ul>
+         * <p>For <code>.xls</code> files, <code>basic</code> mode is always used.</p>
+         */
+        @JsonSetter(value = "excelParsingMode", nulls = Nulls.SKIP)
+        public Builder excelParsingMode(Optional<ParseConfigAdvancedOptionsExcelParsingMode> excelParsingMode) {
+            this.excelParsingMode = excelParsingMode;
+            return this;
+        }
+
+        public Builder excelParsingMode(ParseConfigAdvancedOptionsExcelParsingMode excelParsingMode) {
+            this.excelParsingMode = Optional.ofNullable(excelParsingMode);
+            return this;
+        }
+
+        /**
+         * <p>Whether to exclude hidden rows, columns, and sheets when parsing Excel files.</p>
+         */
+        @JsonSetter(value = "excelSkipHiddenContent", nulls = Nulls.SKIP)
+        public Builder excelSkipHiddenContent(Optional<Boolean> excelSkipHiddenContent) {
+            this.excelSkipHiddenContent = excelSkipHiddenContent;
+            return this;
+        }
+
+        public Builder excelSkipHiddenContent(Boolean excelSkipHiddenContent) {
+            this.excelSkipHiddenContent = Optional.ofNullable(excelSkipHiddenContent);
+            return this;
+        }
+
+        /**
          * <p>Multiplier for the Y-axis threshold used to determine if text blocks should be placed on the same line or not (0.1-5.0, default 1.0). Higher values group elements that are further apart vertically. Only applies when the spatial target is set.</p>
          */
         @JsonSetter(value = "verticalGroupingThreshold", nulls = Nulls.SKIP)
@@ -221,6 +293,8 @@ public final class ParseConfigAdvancedOptions {
                     pageRotationEnabled,
                     agenticOcrEnabled,
                     pageRanges,
+                    excelParsingMode,
+                    excelSkipHiddenContent,
                     verticalGroupingThreshold,
                     returnOcr,
                     additionalProperties);
