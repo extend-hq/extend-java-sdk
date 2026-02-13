@@ -26,6 +26,8 @@ public final class ParseConfig {
 
     private final Optional<ParseConfigEngine> engine;
 
+    private final Optional<String> engineVersion;
+
     private final Optional<ParseConfigBlockOptions> blockOptions;
 
     private final Optional<ParseConfigAdvancedOptions> advancedOptions;
@@ -36,12 +38,14 @@ public final class ParseConfig {
             Optional<ParseConfigTarget> target,
             Optional<ParseConfigChunkingStrategy> chunkingStrategy,
             Optional<ParseConfigEngine> engine,
+            Optional<String> engineVersion,
             Optional<ParseConfigBlockOptions> blockOptions,
             Optional<ParseConfigAdvancedOptions> advancedOptions,
             Map<String, Object> additionalProperties) {
         this.target = target;
         this.chunkingStrategy = chunkingStrategy;
         this.engine = engine;
+        this.engineVersion = engineVersion;
         this.blockOptions = blockOptions;
         this.advancedOptions = advancedOptions;
         this.additionalProperties = additionalProperties;
@@ -87,6 +91,14 @@ public final class ParseConfig {
     }
 
     /**
+     * @return Pin a specific parser engine version for reproducibility. When set to <code>latest</code>, the most recent stable version of the selected engine is used.
+     */
+    @JsonProperty("engineVersion")
+    public Optional<String> getEngineVersion() {
+        return engineVersion;
+    }
+
+    /**
      * @return Options for controlling how different block types are processed.
      */
     @JsonProperty("blockOptions")
@@ -114,13 +126,20 @@ public final class ParseConfig {
         return target.equals(other.target)
                 && chunkingStrategy.equals(other.chunkingStrategy)
                 && engine.equals(other.engine)
+                && engineVersion.equals(other.engineVersion)
                 && blockOptions.equals(other.blockOptions)
                 && advancedOptions.equals(other.advancedOptions);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.target, this.chunkingStrategy, this.engine, this.blockOptions, this.advancedOptions);
+        return Objects.hash(
+                this.target,
+                this.chunkingStrategy,
+                this.engine,
+                this.engineVersion,
+                this.blockOptions,
+                this.advancedOptions);
     }
 
     @java.lang.Override
@@ -140,6 +159,8 @@ public final class ParseConfig {
 
         private Optional<ParseConfigEngine> engine = Optional.empty();
 
+        private Optional<String> engineVersion = Optional.empty();
+
         private Optional<ParseConfigBlockOptions> blockOptions = Optional.empty();
 
         private Optional<ParseConfigAdvancedOptions> advancedOptions = Optional.empty();
@@ -153,6 +174,7 @@ public final class ParseConfig {
             target(other.getTarget());
             chunkingStrategy(other.getChunkingStrategy());
             engine(other.getEngine());
+            engineVersion(other.getEngineVersion());
             blockOptions(other.getBlockOptions());
             advancedOptions(other.getAdvancedOptions());
             return this;
@@ -216,6 +238,20 @@ public final class ParseConfig {
         }
 
         /**
+         * <p>Pin a specific parser engine version for reproducibility. When set to <code>latest</code>, the most recent stable version of the selected engine is used.</p>
+         */
+        @JsonSetter(value = "engineVersion", nulls = Nulls.SKIP)
+        public Builder engineVersion(Optional<String> engineVersion) {
+            this.engineVersion = engineVersion;
+            return this;
+        }
+
+        public Builder engineVersion(String engineVersion) {
+            this.engineVersion = Optional.ofNullable(engineVersion);
+            return this;
+        }
+
+        /**
          * <p>Options for controlling how different block types are processed.</p>
          */
         @JsonSetter(value = "blockOptions", nulls = Nulls.SKIP)
@@ -242,7 +278,13 @@ public final class ParseConfig {
 
         public ParseConfig build() {
             return new ParseConfig(
-                    target, chunkingStrategy, engine, blockOptions, advancedOptions, additionalProperties);
+                    target,
+                    chunkingStrategy,
+                    engine,
+                    engineVersion,
+                    blockOptions,
+                    advancedOptions,
+                    additionalProperties);
         }
     }
 }

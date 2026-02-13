@@ -15,5 +15,5 @@
       "testImplementation org.mockito:mockito-inline:4.11.0"
     ]
   },
-  "sdkVersion": "1.1.0"
+  "sdkVersion": "1.2.0"
 }
