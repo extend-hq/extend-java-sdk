@@ -6,18 +6,18 @@ package ai.extend.types;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public final class ExtractConfigJsonBaseProcessor {
-    public static final ExtractConfigJsonBaseProcessor EXTRACTION_PERFORMANCE =
-            new ExtractConfigJsonBaseProcessor(Value.EXTRACTION_PERFORMANCE, "extraction_performance");
+public final class ExtractBaseProcessor {
+    public static final ExtractBaseProcessor EXTRACTION_PERFORMANCE =
+            new ExtractBaseProcessor(Value.EXTRACTION_PERFORMANCE, "extraction_performance");
 
-    public static final ExtractConfigJsonBaseProcessor EXTRACTION_LIGHT =
-            new ExtractConfigJsonBaseProcessor(Value.EXTRACTION_LIGHT, "extraction_light");
+    public static final ExtractBaseProcessor EXTRACTION_LIGHT =
+            new ExtractBaseProcessor(Value.EXTRACTION_LIGHT, "extraction_light");
 
     private final Value value;
 
     private final String string;
 
-    ExtractConfigJsonBaseProcessor(Value value, String string) {
+    ExtractBaseProcessor(Value value, String string) {
         this.value = value;
         this.string = string;
     }
@@ -35,8 +35,7 @@ public final class ExtractConfigJsonBaseProcessor {
     @java.lang.Override
     public boolean equals(Object other) {
         return (this == other)
-                || (other instanceof ExtractConfigJsonBaseProcessor
-                        && this.string.equals(((ExtractConfigJsonBaseProcessor) other).string));
+                || (other instanceof ExtractBaseProcessor && this.string.equals(((ExtractBaseProcessor) other).string));
     }
 
     @java.lang.Override
@@ -57,14 +56,14 @@ public final class ExtractConfigJsonBaseProcessor {
     }
 
     @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static ExtractConfigJsonBaseProcessor valueOf(String value) {
+    public static ExtractBaseProcessor valueOf(String value) {
         switch (value) {
             case "extraction_performance":
                 return EXTRACTION_PERFORMANCE;
             case "extraction_light":
                 return EXTRACTION_LIGHT;
             default:
-                return new ExtractConfigJsonBaseProcessor(Value.UNKNOWN, value);
+                return new ExtractBaseProcessor(Value.UNKNOWN, value);
         }
     }
 

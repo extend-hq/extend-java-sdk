@@ -13,80 +13,76 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-@JsonDeserialize(builder = ExtractConfigJson.Builder.class)
-public final class ExtractConfigJson {
-    private final Optional<ExtractBaseProcessor> baseProcessor;
+@JsonDeserialize(builder = SplitOverrideConfig.Builder.class)
+public final class SplitOverrideConfig {
+    private final Optional<SplitBaseProcessor> baseProcessor;
 
     private final Optional<String> baseVersion;
 
-    private final Optional<String> extractionRules;
+    private final Optional<List<Classification>> splitClassifications;
 
-    private final Map<String, Object> schema;
+    private final Optional<String> splitRules;
 
-    private final Optional<ExtractAdvancedOptions> advancedOptions;
+    private final Optional<SplitAdvancedOptions> advancedOptions;
 
     private final Optional<ParseConfig> parseConfig;
 
     private final Map<String, Object> additionalProperties;
 
-    private ExtractConfigJson(
-            Optional<ExtractBaseProcessor> baseProcessor,
+    private SplitOverrideConfig(
+            Optional<SplitBaseProcessor> baseProcessor,
             Optional<String> baseVersion,
-            Optional<String> extractionRules,
-            Map<String, Object> schema,
-            Optional<ExtractAdvancedOptions> advancedOptions,
+            Optional<List<Classification>> splitClassifications,
+            Optional<String> splitRules,
+            Optional<SplitAdvancedOptions> advancedOptions,
             Optional<ParseConfig> parseConfig,
             Map<String, Object> additionalProperties) {
         this.baseProcessor = baseProcessor;
         this.baseVersion = baseVersion;
-        this.extractionRules = extractionRules;
-        this.schema = schema;
+        this.splitClassifications = splitClassifications;
+        this.splitRules = splitRules;
         this.advancedOptions = advancedOptions;
         this.parseConfig = parseConfig;
         this.additionalProperties = additionalProperties;
     }
 
     @JsonProperty("baseProcessor")
-    public Optional<ExtractBaseProcessor> getBaseProcessor() {
+    public Optional<SplitBaseProcessor> getBaseProcessor() {
         return baseProcessor;
     }
 
     /**
-     * @return The version of the <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/changelog/extraction/extraction-performance">Extraction Changelog</a> for more details.
+     * @return The version of the <code>&quot;splitting_performance&quot;</code> or <code>&quot;splitting_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/changelog/splitting/splitting-performance">Splitting Changelog</a> for more details.
      */
     @JsonProperty("baseVersion")
     public Optional<String> getBaseVersion() {
         return baseVersion;
     }
 
-    /**
-     * @return Custom rules to guide the extraction process in natural language.
-     */
-    @JsonProperty("extractionRules")
-    public Optional<String> getExtractionRules() {
-        return extractionRules;
+    @JsonProperty("splitClassifications")
+    public Optional<List<Classification>> getSplitClassifications() {
+        return splitClassifications;
     }
 
     /**
-     * @return JSON Schema definition of the data to extract.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/extraction/schema/json-schema">JSON Schema guide</a> for details and examples of schema configuration.</p>
+     * @return Custom rules to guide the document splitting process in natural language.
      */
-    @JsonProperty("schema")
-    public Map<String, Object> getSchema() {
-        return schema;
+    @JsonProperty("splitRules")
+    public Optional<String> getSplitRules() {
+        return splitRules;
     }
 
     /**
      * @return Advanced configuration options.
      */
     @JsonProperty("advancedOptions")
-    public Optional<ExtractAdvancedOptions> getAdvancedOptions() {
+    public Optional<SplitAdvancedOptions> getAdvancedOptions() {
         return advancedOptions;
     }
 
@@ -101,7 +97,7 @@ public final class ExtractConfigJson {
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        return other instanceof ExtractConfigJson && equalTo((ExtractConfigJson) other);
+        return other instanceof SplitOverrideConfig && equalTo((SplitOverrideConfig) other);
     }
 
     @JsonAnyGetter
@@ -109,11 +105,11 @@ public final class ExtractConfigJson {
         return this.additionalProperties;
     }
 
-    private boolean equalTo(ExtractConfigJson other) {
+    private boolean equalTo(SplitOverrideConfig other) {
         return baseProcessor.equals(other.baseProcessor)
                 && baseVersion.equals(other.baseVersion)
-                && extractionRules.equals(other.extractionRules)
-                && schema.equals(other.schema)
+                && splitClassifications.equals(other.splitClassifications)
+                && splitRules.equals(other.splitRules)
                 && advancedOptions.equals(other.advancedOptions)
                 && parseConfig.equals(other.parseConfig);
     }
@@ -123,8 +119,8 @@ public final class ExtractConfigJson {
         return Objects.hash(
                 this.baseProcessor,
                 this.baseVersion,
-                this.extractionRules,
-                this.schema,
+                this.splitClassifications,
+                this.splitRules,
                 this.advancedOptions,
                 this.parseConfig);
     }
@@ -140,15 +136,15 @@ public final class ExtractConfigJson {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-        private Optional<ExtractBaseProcessor> baseProcessor = Optional.empty();
+        private Optional<SplitBaseProcessor> baseProcessor = Optional.empty();
 
         private Optional<String> baseVersion = Optional.empty();
 
-        private Optional<String> extractionRules = Optional.empty();
+        private Optional<List<Classification>> splitClassifications = Optional.empty();
 
-        private Map<String, Object> schema = new LinkedHashMap<>();
+        private Optional<String> splitRules = Optional.empty();
 
-        private Optional<ExtractAdvancedOptions> advancedOptions = Optional.empty();
+        private Optional<SplitAdvancedOptions> advancedOptions = Optional.empty();
 
         private Optional<ParseConfig> parseConfig = Optional.empty();
 
@@ -157,29 +153,29 @@ public final class ExtractConfigJson {
 
         private Builder() {}
 
-        public Builder from(ExtractConfigJson other) {
+        public Builder from(SplitOverrideConfig other) {
             baseProcessor(other.getBaseProcessor());
             baseVersion(other.getBaseVersion());
-            extractionRules(other.getExtractionRules());
-            schema(other.getSchema());
+            splitClassifications(other.getSplitClassifications());
+            splitRules(other.getSplitRules());
             advancedOptions(other.getAdvancedOptions());
             parseConfig(other.getParseConfig());
             return this;
         }
 
         @JsonSetter(value = "baseProcessor", nulls = Nulls.SKIP)
-        public Builder baseProcessor(Optional<ExtractBaseProcessor> baseProcessor) {
+        public Builder baseProcessor(Optional<SplitBaseProcessor> baseProcessor) {
             this.baseProcessor = baseProcessor;
             return this;
         }
 
-        public Builder baseProcessor(ExtractBaseProcessor baseProcessor) {
+        public Builder baseProcessor(SplitBaseProcessor baseProcessor) {
             this.baseProcessor = Optional.ofNullable(baseProcessor);
             return this;
         }
 
         /**
-         * <p>The version of the <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/changelog/extraction/extraction-performance">Extraction Changelog</a> for more details.</p>
+         * <p>The version of the <code>&quot;splitting_performance&quot;</code> or <code>&quot;splitting_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/changelog/splitting/splitting-performance">Splitting Changelog</a> for more details.</p>
          */
         @JsonSetter(value = "baseVersion", nulls = Nulls.SKIP)
         public Builder baseVersion(Optional<String> baseVersion) {
@@ -192,42 +188,28 @@ public final class ExtractConfigJson {
             return this;
         }
 
-        /**
-         * <p>Custom rules to guide the extraction process in natural language.</p>
-         */
-        @JsonSetter(value = "extractionRules", nulls = Nulls.SKIP)
-        public Builder extractionRules(Optional<String> extractionRules) {
-            this.extractionRules = extractionRules;
+        @JsonSetter(value = "splitClassifications", nulls = Nulls.SKIP)
+        public Builder splitClassifications(Optional<List<Classification>> splitClassifications) {
+            this.splitClassifications = splitClassifications;
             return this;
         }
 
-        public Builder extractionRules(String extractionRules) {
-            this.extractionRules = Optional.ofNullable(extractionRules);
+        public Builder splitClassifications(List<Classification> splitClassifications) {
+            this.splitClassifications = Optional.ofNullable(splitClassifications);
             return this;
         }
 
         /**
-         * <p>JSON Schema definition of the data to extract.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/extraction/schema/json-schema">JSON Schema guide</a> for details and examples of schema configuration.</p>
+         * <p>Custom rules to guide the document splitting process in natural language.</p>
          */
-        @JsonSetter(value = "schema", nulls = Nulls.SKIP)
-        public Builder schema(Map<String, Object> schema) {
-            this.schema.clear();
-            if (schema != null) {
-                this.schema.putAll(schema);
-            }
+        @JsonSetter(value = "splitRules", nulls = Nulls.SKIP)
+        public Builder splitRules(Optional<String> splitRules) {
+            this.splitRules = splitRules;
             return this;
         }
 
-        public Builder putAllSchema(Map<String, Object> schema) {
-            if (schema != null) {
-                this.schema.putAll(schema);
-            }
-            return this;
-        }
-
-        public Builder schema(String key, Object value) {
-            this.schema.put(key, value);
+        public Builder splitRules(String splitRules) {
+            this.splitRules = Optional.ofNullable(splitRules);
             return this;
         }
 
@@ -235,12 +217,12 @@ public final class ExtractConfigJson {
          * <p>Advanced configuration options.</p>
          */
         @JsonSetter(value = "advancedOptions", nulls = Nulls.SKIP)
-        public Builder advancedOptions(Optional<ExtractAdvancedOptions> advancedOptions) {
+        public Builder advancedOptions(Optional<SplitAdvancedOptions> advancedOptions) {
             this.advancedOptions = advancedOptions;
             return this;
         }
 
-        public Builder advancedOptions(ExtractAdvancedOptions advancedOptions) {
+        public Builder advancedOptions(SplitAdvancedOptions advancedOptions) {
             this.advancedOptions = Optional.ofNullable(advancedOptions);
             return this;
         }
@@ -259,12 +241,12 @@ public final class ExtractConfigJson {
             return this;
         }
 
-        public ExtractConfigJson build() {
-            return new ExtractConfigJson(
+        public SplitOverrideConfig build() {
+            return new SplitOverrideConfig(
                     baseProcessor,
                     baseVersion,
-                    extractionRules,
-                    schema,
+                    splitClassifications,
+                    splitRules,
                     advancedOptions,
                     parseConfig,
                     additionalProperties);

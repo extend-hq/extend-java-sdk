@@ -63,7 +63,7 @@ public class AsyncSplitRunsClient {
 
     /**
      * Split a document into multiple parts using an existing splitter or an inline configuration.
-     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/split/get-split-run">Get Split Run</a> endpoint for results.</p>
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Split Run endpoint for results.</p>
      */
     public CompletableFuture<SplitRun> create(SplitRunsCreateRequest request) {
         return this.rawClient.create(request).thenApply(response -> response.body());
@@ -71,7 +71,7 @@ public class AsyncSplitRunsClient {
 
     /**
      * Split a document into multiple parts using an existing splitter or an inline configuration.
-     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/split/get-split-run">Get Split Run</a> endpoint for results.</p>
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Split Run endpoint for results.</p>
      */
     public CompletableFuture<SplitRun> create(SplitRunsCreateRequest request, RequestOptions requestOptions) {
         return this.rawClient.create(request, requestOptions).thenApply(response -> response.body());

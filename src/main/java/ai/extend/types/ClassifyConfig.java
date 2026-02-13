@@ -22,7 +22,7 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ClassifyConfig.Builder.class)
 public final class ClassifyConfig {
-    private final Optional<ClassifyConfigBaseProcessor> baseProcessor;
+    private final Optional<ClassifyBaseProcessor> baseProcessor;
 
     private final Optional<String> baseVersion;
 
@@ -37,7 +37,7 @@ public final class ClassifyConfig {
     private final Map<String, Object> additionalProperties;
 
     private ClassifyConfig(
-            Optional<ClassifyConfigBaseProcessor> baseProcessor,
+            Optional<ClassifyBaseProcessor> baseProcessor,
             Optional<String> baseVersion,
             List<Classification> classifications,
             Optional<String> classificationRules,
@@ -53,11 +53,8 @@ public final class ClassifyConfig {
         this.additionalProperties = additionalProperties;
     }
 
-    /**
-     * @return The base processor to use. For classifiers, this can be either <code>&quot;classification_performance&quot;</code> or <code>&quot;classification_light&quot;</code>. Defaults to <code>&quot;classification_performance&quot;</code> if not provided. See <a href="https://docs.extend.ai/2026-02-09/changelog/classification/classification-performance">Classification Changelog</a> for more details.
-     */
     @JsonProperty("baseProcessor")
-    public Optional<ClassifyConfigBaseProcessor> getBaseProcessor() {
+    public Optional<ClassifyBaseProcessor> getBaseProcessor() {
         return baseProcessor;
     }
 
@@ -140,7 +137,7 @@ public final class ClassifyConfig {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-        private Optional<ClassifyConfigBaseProcessor> baseProcessor = Optional.empty();
+        private Optional<ClassifyBaseProcessor> baseProcessor = Optional.empty();
 
         private Optional<String> baseVersion = Optional.empty();
 
@@ -167,16 +164,13 @@ public final class ClassifyConfig {
             return this;
         }
 
-        /**
-         * <p>The base processor to use. For classifiers, this can be either <code>&quot;classification_performance&quot;</code> or <code>&quot;classification_light&quot;</code>. Defaults to <code>&quot;classification_performance&quot;</code> if not provided. See <a href="https://docs.extend.ai/2026-02-09/changelog/classification/classification-performance">Classification Changelog</a> for more details.</p>
-         */
         @JsonSetter(value = "baseProcessor", nulls = Nulls.SKIP)
-        public Builder baseProcessor(Optional<ClassifyConfigBaseProcessor> baseProcessor) {
+        public Builder baseProcessor(Optional<ClassifyBaseProcessor> baseProcessor) {
             this.baseProcessor = baseProcessor;
             return this;
         }
 
-        public Builder baseProcessor(ClassifyConfigBaseProcessor baseProcessor) {
+        public Builder baseProcessor(ClassifyBaseProcessor baseProcessor) {
             this.baseProcessor = Optional.ofNullable(baseProcessor);
             return this;
         }
