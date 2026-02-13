@@ -41,8 +41,8 @@ public class RawEditRunsClient {
 
     /**
      * Edit and manipulate PDF documents by detecting and filling form fields.
-     * <p>The Edit Runs endpoint allows you to convert and edit documents and get an edit run ID that can be used to check status and retrieve results with the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/edit/get-edit-run">Get Edit Run</a> endpoint.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/editing/edit">Edit File guide</a>.</p>
+     * <p>The Edit Runs endpoint allows you to convert and edit documents and get an edit run ID that can be used to check status and retrieve results with the Get Edit Run endpoint.</p>
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Edit Run endpoint for results.</p>
      */
     public ExtendClientHttpResponse<EditRun> create(EditRunsCreateRequest request) {
         return create(request, null);
@@ -50,8 +50,8 @@ public class RawEditRunsClient {
 
     /**
      * Edit and manipulate PDF documents by detecting and filling form fields.
-     * <p>The Edit Runs endpoint allows you to convert and edit documents and get an edit run ID that can be used to check status and retrieve results with the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/edit/get-edit-run">Get Edit Run</a> endpoint.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/editing/edit">Edit File guide</a>.</p>
+     * <p>The Edit Runs endpoint allows you to convert and edit documents and get an edit run ID that can be used to check status and retrieve results with the Get Edit Run endpoint.</p>
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Edit Run endpoint for results.</p>
      */
     public ExtendClientHttpResponse<EditRun> create(EditRunsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())

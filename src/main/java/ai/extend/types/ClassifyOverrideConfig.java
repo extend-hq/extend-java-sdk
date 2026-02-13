@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,13 +19,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-@JsonDeserialize(builder = ClassifyConfig.Builder.class)
-public final class ClassifyConfig {
+@JsonDeserialize(builder = ClassifyOverrideConfig.Builder.class)
+public final class ClassifyOverrideConfig {
     private final Optional<ClassificationBaseProcessor> baseProcessor;
 
     private final Optional<String> baseVersion;
 
-    private final List<Classification> classifications;
+    private final Optional<List<Classification>> classifications;
 
     private final Optional<String> classificationRules;
 
@@ -36,10 +35,10 @@ public final class ClassifyConfig {
 
     private final Map<String, Object> additionalProperties;
 
-    private ClassifyConfig(
+    private ClassifyOverrideConfig(
             Optional<ClassificationBaseProcessor> baseProcessor,
             Optional<String> baseVersion,
-            List<Classification> classifications,
+            Optional<List<Classification>> classifications,
             Optional<String> classificationRules,
             Optional<ClassifyAdvancedOptions> advancedOptions,
             Optional<ParseConfig> parseConfig,
@@ -67,7 +66,7 @@ public final class ClassifyConfig {
     }
 
     @JsonProperty("classifications")
-    public List<Classification> getClassifications() {
+    public Optional<List<Classification>> getClassifications() {
         return classifications;
     }
 
@@ -98,7 +97,7 @@ public final class ClassifyConfig {
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        return other instanceof ClassifyConfig && equalTo((ClassifyConfig) other);
+        return other instanceof ClassifyOverrideConfig && equalTo((ClassifyOverrideConfig) other);
     }
 
     @JsonAnyGetter
@@ -106,7 +105,7 @@ public final class ClassifyConfig {
         return this.additionalProperties;
     }
 
-    private boolean equalTo(ClassifyConfig other) {
+    private boolean equalTo(ClassifyOverrideConfig other) {
         return baseProcessor.equals(other.baseProcessor)
                 && baseVersion.equals(other.baseVersion)
                 && classifications.equals(other.classifications)
@@ -141,7 +140,7 @@ public final class ClassifyConfig {
 
         private Optional<String> baseVersion = Optional.empty();
 
-        private List<Classification> classifications = new ArrayList<>();
+        private Optional<List<Classification>> classifications = Optional.empty();
 
         private Optional<String> classificationRules = Optional.empty();
 
@@ -154,7 +153,7 @@ public final class ClassifyConfig {
 
         private Builder() {}
 
-        public Builder from(ClassifyConfig other) {
+        public Builder from(ClassifyOverrideConfig other) {
             baseProcessor(other.getBaseProcessor());
             baseVersion(other.getBaseVersion());
             classifications(other.getClassifications());
@@ -190,23 +189,13 @@ public final class ClassifyConfig {
         }
 
         @JsonSetter(value = "classifications", nulls = Nulls.SKIP)
+        public Builder classifications(Optional<List<Classification>> classifications) {
+            this.classifications = classifications;
+            return this;
+        }
+
         public Builder classifications(List<Classification> classifications) {
-            this.classifications.clear();
-            if (classifications != null) {
-                this.classifications.addAll(classifications);
-            }
-            return this;
-        }
-
-        public Builder addClassifications(Classification classifications) {
-            this.classifications.add(classifications);
-            return this;
-        }
-
-        public Builder addAllClassifications(List<Classification> classifications) {
-            if (classifications != null) {
-                this.classifications.addAll(classifications);
-            }
+            this.classifications = Optional.ofNullable(classifications);
             return this;
         }
 
@@ -252,8 +241,8 @@ public final class ClassifyConfig {
             return this;
         }
 
-        public ClassifyConfig build() {
-            return new ClassifyConfig(
+        public ClassifyOverrideConfig build() {
+            return new ClassifyOverrideConfig(
                     baseProcessor,
                     baseVersion,
                     classifications,

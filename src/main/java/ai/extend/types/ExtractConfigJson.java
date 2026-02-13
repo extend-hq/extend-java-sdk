@@ -21,7 +21,7 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ExtractConfigJson.Builder.class)
 public final class ExtractConfigJson {
-    private final Optional<ExtractConfigJsonBaseProcessor> baseProcessor;
+    private final Optional<ExtractionBaseProcessor> baseProcessor;
 
     private final Optional<String> baseVersion;
 
@@ -36,7 +36,7 @@ public final class ExtractConfigJson {
     private final Map<String, Object> additionalProperties;
 
     private ExtractConfigJson(
-            Optional<ExtractConfigJsonBaseProcessor> baseProcessor,
+            Optional<ExtractionBaseProcessor> baseProcessor,
             Optional<String> baseVersion,
             Optional<String> extractionRules,
             Map<String, Object> schema,
@@ -52,11 +52,8 @@ public final class ExtractConfigJson {
         this.additionalProperties = additionalProperties;
     }
 
-    /**
-     * @return The base processor to use. For extractors, this can be either <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code>. Defaults to <code>&quot;extraction_performance&quot;</code> if not provided. See <a href="https://docs.extend.ai/2026-02-09/changelog/extraction/extraction-performance">Extraction Changelog</a> for more details.
-     */
     @JsonProperty("baseProcessor")
-    public Optional<ExtractConfigJsonBaseProcessor> getBaseProcessor() {
+    public Optional<ExtractionBaseProcessor> getBaseProcessor() {
         return baseProcessor;
     }
 
@@ -143,7 +140,7 @@ public final class ExtractConfigJson {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-        private Optional<ExtractConfigJsonBaseProcessor> baseProcessor = Optional.empty();
+        private Optional<ExtractionBaseProcessor> baseProcessor = Optional.empty();
 
         private Optional<String> baseVersion = Optional.empty();
 
@@ -170,16 +167,13 @@ public final class ExtractConfigJson {
             return this;
         }
 
-        /**
-         * <p>The base processor to use. For extractors, this can be either <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code>. Defaults to <code>&quot;extraction_performance&quot;</code> if not provided. See <a href="https://docs.extend.ai/2026-02-09/changelog/extraction/extraction-performance">Extraction Changelog</a> for more details.</p>
-         */
         @JsonSetter(value = "baseProcessor", nulls = Nulls.SKIP)
-        public Builder baseProcessor(Optional<ExtractConfigJsonBaseProcessor> baseProcessor) {
+        public Builder baseProcessor(Optional<ExtractionBaseProcessor> baseProcessor) {
             this.baseProcessor = baseProcessor;
             return this;
         }
 
-        public Builder baseProcessor(ExtractConfigJsonBaseProcessor baseProcessor) {
+        public Builder baseProcessor(ExtractionBaseProcessor baseProcessor) {
             this.baseProcessor = Optional.ofNullable(baseProcessor);
             return this;
         }

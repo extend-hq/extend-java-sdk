@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,70 +19,70 @@ import java.util.Objects;
 import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-@JsonDeserialize(builder = ClassifyConfig.Builder.class)
-public final class ClassifyConfig {
-    private final Optional<ClassificationBaseProcessor> baseProcessor;
+@JsonDeserialize(builder = SplitOverrideConfig.Builder.class)
+public final class SplitOverrideConfig {
+    private final Optional<SplittingBaseProcessor> baseProcessor;
 
     private final Optional<String> baseVersion;
 
-    private final List<Classification> classifications;
+    private final Optional<List<Classification>> splitClassifications;
 
-    private final Optional<String> classificationRules;
+    private final Optional<String> splitRules;
 
-    private final Optional<ClassifyAdvancedOptions> advancedOptions;
+    private final Optional<SplitAdvancedOptions> advancedOptions;
 
     private final Optional<ParseConfig> parseConfig;
 
     private final Map<String, Object> additionalProperties;
 
-    private ClassifyConfig(
-            Optional<ClassificationBaseProcessor> baseProcessor,
+    private SplitOverrideConfig(
+            Optional<SplittingBaseProcessor> baseProcessor,
             Optional<String> baseVersion,
-            List<Classification> classifications,
-            Optional<String> classificationRules,
-            Optional<ClassifyAdvancedOptions> advancedOptions,
+            Optional<List<Classification>> splitClassifications,
+            Optional<String> splitRules,
+            Optional<SplitAdvancedOptions> advancedOptions,
             Optional<ParseConfig> parseConfig,
             Map<String, Object> additionalProperties) {
         this.baseProcessor = baseProcessor;
         this.baseVersion = baseVersion;
-        this.classifications = classifications;
-        this.classificationRules = classificationRules;
+        this.splitClassifications = splitClassifications;
+        this.splitRules = splitRules;
         this.advancedOptions = advancedOptions;
         this.parseConfig = parseConfig;
         this.additionalProperties = additionalProperties;
     }
 
     @JsonProperty("baseProcessor")
-    public Optional<ClassificationBaseProcessor> getBaseProcessor() {
+    public Optional<SplittingBaseProcessor> getBaseProcessor() {
         return baseProcessor;
     }
 
     /**
-     * @return The version of the <code>&quot;classification_performance&quot;</code> or <code>&quot;classification_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/changelog/classification/classification-performance">Classification Changelog</a> for more details.
+     * @return The version of the <code>&quot;splitting_performance&quot;</code> or <code>&quot;splitting_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/changelog/splitting/splitting-performance">Splitting Changelog</a> for more details.
      */
     @JsonProperty("baseVersion")
     public Optional<String> getBaseVersion() {
         return baseVersion;
     }
 
-    @JsonProperty("classifications")
-    public List<Classification> getClassifications() {
-        return classifications;
+    @JsonProperty("splitClassifications")
+    public Optional<List<Classification>> getSplitClassifications() {
+        return splitClassifications;
     }
 
     /**
-     * @return Custom rules to guide the classification process in natural language.
+     * @return Custom rules to guide the document splitting process in natural language.
      */
-    @JsonProperty("classificationRules")
-    public Optional<String> getClassificationRules() {
-        return classificationRules;
+    @JsonProperty("splitRules")
+    public Optional<String> getSplitRules() {
+        return splitRules;
     }
 
     /**
      * @return Advanced configuration options.
      */
     @JsonProperty("advancedOptions")
-    public Optional<ClassifyAdvancedOptions> getAdvancedOptions() {
+    public Optional<SplitAdvancedOptions> getAdvancedOptions() {
         return advancedOptions;
     }
 
@@ -98,7 +97,7 @@ public final class ClassifyConfig {
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        return other instanceof ClassifyConfig && equalTo((ClassifyConfig) other);
+        return other instanceof SplitOverrideConfig && equalTo((SplitOverrideConfig) other);
     }
 
     @JsonAnyGetter
@@ -106,11 +105,11 @@ public final class ClassifyConfig {
         return this.additionalProperties;
     }
 
-    private boolean equalTo(ClassifyConfig other) {
+    private boolean equalTo(SplitOverrideConfig other) {
         return baseProcessor.equals(other.baseProcessor)
                 && baseVersion.equals(other.baseVersion)
-                && classifications.equals(other.classifications)
-                && classificationRules.equals(other.classificationRules)
+                && splitClassifications.equals(other.splitClassifications)
+                && splitRules.equals(other.splitRules)
                 && advancedOptions.equals(other.advancedOptions)
                 && parseConfig.equals(other.parseConfig);
     }
@@ -120,8 +119,8 @@ public final class ClassifyConfig {
         return Objects.hash(
                 this.baseProcessor,
                 this.baseVersion,
-                this.classifications,
-                this.classificationRules,
+                this.splitClassifications,
+                this.splitRules,
                 this.advancedOptions,
                 this.parseConfig);
     }
@@ -137,15 +136,15 @@ public final class ClassifyConfig {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-        private Optional<ClassificationBaseProcessor> baseProcessor = Optional.empty();
+        private Optional<SplittingBaseProcessor> baseProcessor = Optional.empty();
 
         private Optional<String> baseVersion = Optional.empty();
 
-        private List<Classification> classifications = new ArrayList<>();
+        private Optional<List<Classification>> splitClassifications = Optional.empty();
 
-        private Optional<String> classificationRules = Optional.empty();
+        private Optional<String> splitRules = Optional.empty();
 
-        private Optional<ClassifyAdvancedOptions> advancedOptions = Optional.empty();
+        private Optional<SplitAdvancedOptions> advancedOptions = Optional.empty();
 
         private Optional<ParseConfig> parseConfig = Optional.empty();
 
@@ -154,29 +153,29 @@ public final class ClassifyConfig {
 
         private Builder() {}
 
-        public Builder from(ClassifyConfig other) {
+        public Builder from(SplitOverrideConfig other) {
             baseProcessor(other.getBaseProcessor());
             baseVersion(other.getBaseVersion());
-            classifications(other.getClassifications());
-            classificationRules(other.getClassificationRules());
+            splitClassifications(other.getSplitClassifications());
+            splitRules(other.getSplitRules());
             advancedOptions(other.getAdvancedOptions());
             parseConfig(other.getParseConfig());
             return this;
         }
 
         @JsonSetter(value = "baseProcessor", nulls = Nulls.SKIP)
-        public Builder baseProcessor(Optional<ClassificationBaseProcessor> baseProcessor) {
+        public Builder baseProcessor(Optional<SplittingBaseProcessor> baseProcessor) {
             this.baseProcessor = baseProcessor;
             return this;
         }
 
-        public Builder baseProcessor(ClassificationBaseProcessor baseProcessor) {
+        public Builder baseProcessor(SplittingBaseProcessor baseProcessor) {
             this.baseProcessor = Optional.ofNullable(baseProcessor);
             return this;
         }
 
         /**
-         * <p>The version of the <code>&quot;classification_performance&quot;</code> or <code>&quot;classification_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/changelog/classification/classification-performance">Classification Changelog</a> for more details.</p>
+         * <p>The version of the <code>&quot;splitting_performance&quot;</code> or <code>&quot;splitting_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/changelog/splitting/splitting-performance">Splitting Changelog</a> for more details.</p>
          */
         @JsonSetter(value = "baseVersion", nulls = Nulls.SKIP)
         public Builder baseVersion(Optional<String> baseVersion) {
@@ -189,38 +188,28 @@ public final class ClassifyConfig {
             return this;
         }
 
-        @JsonSetter(value = "classifications", nulls = Nulls.SKIP)
-        public Builder classifications(List<Classification> classifications) {
-            this.classifications.clear();
-            if (classifications != null) {
-                this.classifications.addAll(classifications);
-            }
+        @JsonSetter(value = "splitClassifications", nulls = Nulls.SKIP)
+        public Builder splitClassifications(Optional<List<Classification>> splitClassifications) {
+            this.splitClassifications = splitClassifications;
             return this;
         }
 
-        public Builder addClassifications(Classification classifications) {
-            this.classifications.add(classifications);
-            return this;
-        }
-
-        public Builder addAllClassifications(List<Classification> classifications) {
-            if (classifications != null) {
-                this.classifications.addAll(classifications);
-            }
+        public Builder splitClassifications(List<Classification> splitClassifications) {
+            this.splitClassifications = Optional.ofNullable(splitClassifications);
             return this;
         }
 
         /**
-         * <p>Custom rules to guide the classification process in natural language.</p>
+         * <p>Custom rules to guide the document splitting process in natural language.</p>
          */
-        @JsonSetter(value = "classificationRules", nulls = Nulls.SKIP)
-        public Builder classificationRules(Optional<String> classificationRules) {
-            this.classificationRules = classificationRules;
+        @JsonSetter(value = "splitRules", nulls = Nulls.SKIP)
+        public Builder splitRules(Optional<String> splitRules) {
+            this.splitRules = splitRules;
             return this;
         }
 
-        public Builder classificationRules(String classificationRules) {
-            this.classificationRules = Optional.ofNullable(classificationRules);
+        public Builder splitRules(String splitRules) {
+            this.splitRules = Optional.ofNullable(splitRules);
             return this;
         }
 
@@ -228,12 +217,12 @@ public final class ClassifyConfig {
          * <p>Advanced configuration options.</p>
          */
         @JsonSetter(value = "advancedOptions", nulls = Nulls.SKIP)
-        public Builder advancedOptions(Optional<ClassifyAdvancedOptions> advancedOptions) {
+        public Builder advancedOptions(Optional<SplitAdvancedOptions> advancedOptions) {
             this.advancedOptions = advancedOptions;
             return this;
         }
 
-        public Builder advancedOptions(ClassifyAdvancedOptions advancedOptions) {
+        public Builder advancedOptions(SplitAdvancedOptions advancedOptions) {
             this.advancedOptions = Optional.ofNullable(advancedOptions);
             return this;
         }
@@ -252,12 +241,12 @@ public final class ClassifyConfig {
             return this;
         }
 
-        public ClassifyConfig build() {
-            return new ClassifyConfig(
+        public SplitOverrideConfig build() {
+            return new SplitOverrideConfig(
                     baseProcessor,
                     baseVersion,
-                    classifications,
-                    classificationRules,
+                    splitClassifications,
+                    splitRules,
                     advancedOptions,
                     parseConfig,
                     additionalProperties);
