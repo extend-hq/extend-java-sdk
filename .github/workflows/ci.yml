@@ -57,6 +57,17 @@ jobs:
 
       - name: Publish to maven
         run: |
+          set -euo pipefail
+
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+          echo "Publishing tag: $TAG_NAME"
+
+          # Validate tag matches expected patterns
+          if ! [[ "$TAG_NAME" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            echo "::error::Unexpected tag format '$TAG_NAME'. Expected semver (e.g. v1.0.4, 0.1.0)."
+            exit 1
+          fi
+
           ./gradlew sonatypeCentralUpload
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
