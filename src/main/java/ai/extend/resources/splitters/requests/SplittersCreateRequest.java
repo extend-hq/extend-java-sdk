@@ -4,7 +4,7 @@
 package ai.extend.resources.splitters.requests;
 
 import ai.extend.core.ObjectMappers;
-import ai.extend.types.SplitConfig;
+import ai.extend.types.SplitConfigBase;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -26,14 +26,14 @@ public final class SplittersCreateRequest {
 
     private final Optional<String> cloneSplitterId;
 
-    private final Optional<SplitConfig> config;
+    private final Optional<SplitConfigBase> config;
 
     private final Map<String, Object> additionalProperties;
 
     private SplittersCreateRequest(
             String name,
             Optional<String> cloneSplitterId,
-            Optional<SplitConfig> config,
+            Optional<SplitConfigBase> config,
             Map<String, Object> additionalProperties) {
         this.name = name;
         this.cloneSplitterId = cloneSplitterId;
@@ -62,7 +62,7 @@ public final class SplittersCreateRequest {
      * @return The configuration for the splitter. Cannot be provided together with <code>cloneSplitterId</code>.
      */
     @JsonProperty("config")
-    public Optional<SplitConfig> getConfig() {
+    public Optional<SplitConfigBase> getConfig() {
         return config;
     }
 
@@ -118,16 +118,16 @@ public final class SplittersCreateRequest {
         /**
          * <p>The configuration for the splitter. Cannot be provided together with <code>cloneSplitterId</code>.</p>
          */
-        _FinalStage config(Optional<SplitConfig> config);
+        _FinalStage config(Optional<SplitConfigBase> config);
 
-        _FinalStage config(SplitConfig config);
+        _FinalStage config(SplitConfigBase config);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements NameStage, _FinalStage {
         private String name;
 
-        private Optional<SplitConfig> config = Optional.empty();
+        private Optional<SplitConfigBase> config = Optional.empty();
 
         private Optional<String> cloneSplitterId = Optional.empty();
 
@@ -161,7 +161,7 @@ public final class SplittersCreateRequest {
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage config(SplitConfig config) {
+        public _FinalStage config(SplitConfigBase config) {
             this.config = Optional.ofNullable(config);
             return this;
         }
@@ -171,7 +171,7 @@ public final class SplittersCreateRequest {
          */
         @java.lang.Override
         @JsonSetter(value = "config", nulls = Nulls.SKIP)
-        public _FinalStage config(Optional<SplitConfig> config) {
+        public _FinalStage config(Optional<SplitConfigBase> config) {
             this.config = config;
             return this;
         }

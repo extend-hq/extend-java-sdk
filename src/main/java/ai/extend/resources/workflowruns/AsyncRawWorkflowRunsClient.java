@@ -201,14 +201,90 @@ public class AsyncRawWorkflowRunsClient {
     }
 
     /**
-     * Run a workflow with a file. A workflow is a sequence of steps that process files and data in a specific order to achieve a desired outcome.
+     * Run a workflow with a file. A workflow is a sequence of steps that process files and data in a specific order to achieve a desired outcome. See <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">Async Processing</a> for a full guide on polling helpers and webhooks.
+     * <h2>Polling with the SDK</h2>
+     * <p>The SDK provides a <code>createAndPoll</code> / <code>create_and_poll</code> method that handles polling automatically, returning when the run reaches a terminal state (<code>PROCESSED</code>, <code>FAILED</code>, <code>CANCELLED</code>, <code>NEEDS_REVIEW</code>, or <code>REJECTED</code>):</p>
+     * <p>&lt;Tabs&gt;
+     * &lt;Tab title=&quot;TypeScript&quot;&gt;
+     * ```typescript
+     * const result = await client.workflowRuns.createAndPoll({
+     *   workflow: { id: &quot;wf_abc123&quot; },
+     *   file: { url: &quot;https://...&quot; }
+     * });
+     * // Returns when the workflow run reaches a terminal state
+     * console.log(result.status);
+     * console.log(result.stepRuns);
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;Tab title=&quot;Python&quot;&gt;
+     * ```python
+     * result = client.workflow_runs.create_and_poll(
+     *     workflow={&quot;id&quot;: &quot;wf_abc123&quot;},
+     *     file={&quot;url&quot;: &quot;https://...&quot;}
+     * )
+     * # Returns when the workflow run reaches a terminal state
+     * print(result.status)
+     * print(result.step_runs)
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;Tab title=&quot;Java&quot;&gt;
+     * ```java
+     * var result = client.workflowRuns().createAndPoll(WorkflowRunCreateRequest.builder()
+     *     .workflow(WorkflowReference.builder().id(&quot;wf_abc123&quot;).build())
+     *     .file(FileInput.builder().url(&quot;https://...&quot;).build())
+     *     .build());
+     * // Returns when the workflow run reaches a terminal state
+     * System.out.println(result.getStatus());
+     * System.out.println(result.getStepRuns());
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;/Tabs&gt;</p>
+     * <p>&lt;Warning&gt;Workflow runs can take a long time. Complex workflows may run for hours. For long-running workflows, consider using <a href="/product/webhooks/configuration">webhooks</a> instead of polling.&lt;/Warning&gt;</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> create(WorkflowRunsCreateRequest request) {
         return create(request, null);
     }
 
     /**
-     * Run a workflow with a file. A workflow is a sequence of steps that process files and data in a specific order to achieve a desired outcome.
+     * Run a workflow with a file. A workflow is a sequence of steps that process files and data in a specific order to achieve a desired outcome. See <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">Async Processing</a> for a full guide on polling helpers and webhooks.
+     * <h2>Polling with the SDK</h2>
+     * <p>The SDK provides a <code>createAndPoll</code> / <code>create_and_poll</code> method that handles polling automatically, returning when the run reaches a terminal state (<code>PROCESSED</code>, <code>FAILED</code>, <code>CANCELLED</code>, <code>NEEDS_REVIEW</code>, or <code>REJECTED</code>):</p>
+     * <p>&lt;Tabs&gt;
+     * &lt;Tab title=&quot;TypeScript&quot;&gt;
+     * ```typescript
+     * const result = await client.workflowRuns.createAndPoll({
+     *   workflow: { id: &quot;wf_abc123&quot; },
+     *   file: { url: &quot;https://...&quot; }
+     * });
+     * // Returns when the workflow run reaches a terminal state
+     * console.log(result.status);
+     * console.log(result.stepRuns);
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;Tab title=&quot;Python&quot;&gt;
+     * ```python
+     * result = client.workflow_runs.create_and_poll(
+     *     workflow={&quot;id&quot;: &quot;wf_abc123&quot;},
+     *     file={&quot;url&quot;: &quot;https://...&quot;}
+     * )
+     * # Returns when the workflow run reaches a terminal state
+     * print(result.status)
+     * print(result.step_runs)
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;Tab title=&quot;Java&quot;&gt;
+     * ```java
+     * var result = client.workflowRuns().createAndPoll(WorkflowRunCreateRequest.builder()
+     *     .workflow(WorkflowReference.builder().id(&quot;wf_abc123&quot;).build())
+     *     .file(FileInput.builder().url(&quot;https://...&quot;).build())
+     *     .build());
+     * // Returns when the workflow run reaches a terminal state
+     * System.out.println(result.getStatus());
+     * System.out.println(result.getStepRuns());
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;/Tabs&gt;</p>
+     * <p>&lt;Warning&gt;Workflow runs can take a long time. Complex workflows may run for hours. For long-running workflows, consider using <a href="/product/webhooks/configuration">webhooks</a> instead of polling.&lt;/Warning&gt;</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> create(
             WorkflowRunsCreateRequest request, RequestOptions requestOptions) {

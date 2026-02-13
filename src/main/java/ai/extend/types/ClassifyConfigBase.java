@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,13 +19,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-@JsonDeserialize(builder = ClassifyConfig.Builder.class)
-public final class ClassifyConfig {
-    private final Optional<ClassifyConfigBaseProcessor> baseProcessor;
+@JsonDeserialize(builder = ClassifyConfigBase.Builder.class)
+public final class ClassifyConfigBase {
+    private final Optional<ClassifyConfigBaseBaseProcessor> baseProcessor;
 
     private final Optional<String> baseVersion;
 
-    private final List<Classification> classifications;
+    private final Optional<List<Classification>> classifications;
 
     private final Optional<String> classificationRules;
 
@@ -36,10 +35,10 @@ public final class ClassifyConfig {
 
     private final Map<String, Object> additionalProperties;
 
-    private ClassifyConfig(
-            Optional<ClassifyConfigBaseProcessor> baseProcessor,
+    private ClassifyConfigBase(
+            Optional<ClassifyConfigBaseBaseProcessor> baseProcessor,
             Optional<String> baseVersion,
-            List<Classification> classifications,
+            Optional<List<Classification>> classifications,
             Optional<String> classificationRules,
             Optional<ClassifyAdvancedOptions> advancedOptions,
             Optional<ParseConfig> parseConfig,
@@ -57,7 +56,7 @@ public final class ClassifyConfig {
      * @return The base processor to use. For classifiers, this can be either <code>&quot;classification_performance&quot;</code> or <code>&quot;classification_light&quot;</code>. Defaults to <code>&quot;classification_performance&quot;</code> if not provided. See <a href="https://docs.extend.ai/2026-02-09/changelog/classification/classification-performance">Classification Changelog</a> for more details.
      */
     @JsonProperty("baseProcessor")
-    public Optional<ClassifyConfigBaseProcessor> getBaseProcessor() {
+    public Optional<ClassifyConfigBaseBaseProcessor> getBaseProcessor() {
         return baseProcessor;
     }
 
@@ -70,7 +69,7 @@ public final class ClassifyConfig {
     }
 
     @JsonProperty("classifications")
-    public List<Classification> getClassifications() {
+    public Optional<List<Classification>> getClassifications() {
         return classifications;
     }
 
@@ -101,7 +100,7 @@ public final class ClassifyConfig {
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        return other instanceof ClassifyConfig && equalTo((ClassifyConfig) other);
+        return other instanceof ClassifyConfigBase && equalTo((ClassifyConfigBase) other);
     }
 
     @JsonAnyGetter
@@ -109,7 +108,7 @@ public final class ClassifyConfig {
         return this.additionalProperties;
     }
 
-    private boolean equalTo(ClassifyConfig other) {
+    private boolean equalTo(ClassifyConfigBase other) {
         return baseProcessor.equals(other.baseProcessor)
                 && baseVersion.equals(other.baseVersion)
                 && classifications.equals(other.classifications)
@@ -140,11 +139,11 @@ public final class ClassifyConfig {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-        private Optional<ClassifyConfigBaseProcessor> baseProcessor = Optional.empty();
+        private Optional<ClassifyConfigBaseBaseProcessor> baseProcessor = Optional.empty();
 
         private Optional<String> baseVersion = Optional.empty();
 
-        private List<Classification> classifications = new ArrayList<>();
+        private Optional<List<Classification>> classifications = Optional.empty();
 
         private Optional<String> classificationRules = Optional.empty();
 
@@ -157,7 +156,7 @@ public final class ClassifyConfig {
 
         private Builder() {}
 
-        public Builder from(ClassifyConfig other) {
+        public Builder from(ClassifyConfigBase other) {
             baseProcessor(other.getBaseProcessor());
             baseVersion(other.getBaseVersion());
             classifications(other.getClassifications());
@@ -171,12 +170,12 @@ public final class ClassifyConfig {
          * <p>The base processor to use. For classifiers, this can be either <code>&quot;classification_performance&quot;</code> or <code>&quot;classification_light&quot;</code>. Defaults to <code>&quot;classification_performance&quot;</code> if not provided. See <a href="https://docs.extend.ai/2026-02-09/changelog/classification/classification-performance">Classification Changelog</a> for more details.</p>
          */
         @JsonSetter(value = "baseProcessor", nulls = Nulls.SKIP)
-        public Builder baseProcessor(Optional<ClassifyConfigBaseProcessor> baseProcessor) {
+        public Builder baseProcessor(Optional<ClassifyConfigBaseBaseProcessor> baseProcessor) {
             this.baseProcessor = baseProcessor;
             return this;
         }
 
-        public Builder baseProcessor(ClassifyConfigBaseProcessor baseProcessor) {
+        public Builder baseProcessor(ClassifyConfigBaseBaseProcessor baseProcessor) {
             this.baseProcessor = Optional.ofNullable(baseProcessor);
             return this;
         }
@@ -196,23 +195,13 @@ public final class ClassifyConfig {
         }
 
         @JsonSetter(value = "classifications", nulls = Nulls.SKIP)
+        public Builder classifications(Optional<List<Classification>> classifications) {
+            this.classifications = classifications;
+            return this;
+        }
+
         public Builder classifications(List<Classification> classifications) {
-            this.classifications.clear();
-            if (classifications != null) {
-                this.classifications.addAll(classifications);
-            }
-            return this;
-        }
-
-        public Builder addClassifications(Classification classifications) {
-            this.classifications.add(classifications);
-            return this;
-        }
-
-        public Builder addAllClassifications(List<Classification> classifications) {
-            if (classifications != null) {
-                this.classifications.addAll(classifications);
-            }
+            this.classifications = Optional.ofNullable(classifications);
             return this;
         }
 
@@ -258,8 +247,8 @@ public final class ClassifyConfig {
             return this;
         }
 
-        public ClassifyConfig build() {
-            return new ClassifyConfig(
+        public ClassifyConfigBase build() {
+            return new ClassifyConfigBase(
                     baseProcessor,
                     baseVersion,
                     classifications,

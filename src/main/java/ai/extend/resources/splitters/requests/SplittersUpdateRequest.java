@@ -4,7 +4,7 @@
 package ai.extend.resources.splitters.requests;
 
 import ai.extend.core.ObjectMappers;
-import ai.extend.types.SplitConfig;
+import ai.extend.types.SplitConfigBase;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -23,12 +23,12 @@ import java.util.Optional;
 public final class SplittersUpdateRequest {
     private final Optional<String> name;
 
-    private final Optional<SplitConfig> config;
+    private final Optional<SplitConfigBase> config;
 
     private final Map<String, Object> additionalProperties;
 
     private SplittersUpdateRequest(
-            Optional<String> name, Optional<SplitConfig> config, Map<String, Object> additionalProperties) {
+            Optional<String> name, Optional<SplitConfigBase> config, Map<String, Object> additionalProperties) {
         this.name = name;
         this.config = config;
         this.additionalProperties = additionalProperties;
@@ -46,7 +46,7 @@ public final class SplittersUpdateRequest {
      * @return The new configuration for the splitter. This will update the draft version of the splitter.
      */
     @JsonProperty("config")
-    public Optional<SplitConfig> getConfig() {
+    public Optional<SplitConfigBase> getConfig() {
         return config;
     }
 
@@ -83,7 +83,7 @@ public final class SplittersUpdateRequest {
     public static final class Builder {
         private Optional<String> name = Optional.empty();
 
-        private Optional<SplitConfig> config = Optional.empty();
+        private Optional<SplitConfigBase> config = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -114,12 +114,12 @@ public final class SplittersUpdateRequest {
          * <p>The new configuration for the splitter. This will update the draft version of the splitter.</p>
          */
         @JsonSetter(value = "config", nulls = Nulls.SKIP)
-        public Builder config(Optional<SplitConfig> config) {
+        public Builder config(Optional<SplitConfigBase> config) {
             this.config = config;
             return this;
         }
 
-        public Builder config(SplitConfig config) {
+        public Builder config(SplitConfigBase config) {
             this.config = Optional.ofNullable(config);
             return this;
         }

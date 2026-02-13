@@ -64,7 +64,41 @@ public class AsyncClassifyRunsClient {
 
     /**
      * Classify a document using an existing classifier or an inline configuration.
-     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/get-classify-run">Get Classify Run</a> endpoint for results.</p>
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/get-classify-run">Get Classify Run</a> endpoint for results. See <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">Async Processing</a> for a full guide on polling helpers and webhooks.</p>
+     * <h2>Polling with the SDK</h2>
+     * <p>The SDK provides a <code>createAndPoll</code> / <code>create_and_poll</code> method that handles polling automatically, returning when the run reaches a terminal state (<code>PROCESSED</code>, <code>FAILED</code>, or <code>CANCELLED</code>):</p>
+     * <p>&lt;Tabs&gt;
+     * &lt;Tab title=&quot;TypeScript&quot;&gt;
+     * ```typescript
+     * const result = await client.classifyRuns.createAndPoll({
+     *   classifier: { id: &quot;cl_abc123&quot; },
+     *   file: { url: &quot;https://...&quot; }
+     * });
+     * // Returns when the run reaches a terminal state
+     * console.log(result.output);
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;Tab title=&quot;Python&quot;&gt;
+     * ```python
+     * result = client.classify_runs.create_and_poll(
+     *     classifier={&quot;id&quot;: &quot;cl_abc123&quot;},
+     *     file={&quot;url&quot;: &quot;https://...&quot;}
+     * )
+     * # Returns when the run reaches a terminal state
+     * print(result.output)
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;Tab title=&quot;Java&quot;&gt;
+     * ```java
+     * var result = client.classifyRuns().createAndPoll(ClassifyRunCreateRequest.builder()
+     *     .classifier(ClassifierInput.builder().id(&quot;cl_abc123&quot;).build())
+     *     .file(FileInput.builder().url(&quot;https://...&quot;).build())
+     *     .build());
+     * // Returns when the run reaches a terminal state
+     * System.out.println(result.getOutput());
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;/Tabs&gt;</p>
      */
     public CompletableFuture<ClassifyRun> create(ClassifyRunsCreateRequest request) {
         return this.rawClient.create(request).thenApply(response -> response.body());
@@ -72,7 +106,41 @@ public class AsyncClassifyRunsClient {
 
     /**
      * Classify a document using an existing classifier or an inline configuration.
-     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/get-classify-run">Get Classify Run</a> endpoint for results.</p>
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/get-classify-run">Get Classify Run</a> endpoint for results. See <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">Async Processing</a> for a full guide on polling helpers and webhooks.</p>
+     * <h2>Polling with the SDK</h2>
+     * <p>The SDK provides a <code>createAndPoll</code> / <code>create_and_poll</code> method that handles polling automatically, returning when the run reaches a terminal state (<code>PROCESSED</code>, <code>FAILED</code>, or <code>CANCELLED</code>):</p>
+     * <p>&lt;Tabs&gt;
+     * &lt;Tab title=&quot;TypeScript&quot;&gt;
+     * ```typescript
+     * const result = await client.classifyRuns.createAndPoll({
+     *   classifier: { id: &quot;cl_abc123&quot; },
+     *   file: { url: &quot;https://...&quot; }
+     * });
+     * // Returns when the run reaches a terminal state
+     * console.log(result.output);
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;Tab title=&quot;Python&quot;&gt;
+     * ```python
+     * result = client.classify_runs.create_and_poll(
+     *     classifier={&quot;id&quot;: &quot;cl_abc123&quot;},
+     *     file={&quot;url&quot;: &quot;https://...&quot;}
+     * )
+     * # Returns when the run reaches a terminal state
+     * print(result.output)
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;Tab title=&quot;Java&quot;&gt;
+     * ```java
+     * var result = client.classifyRuns().createAndPoll(ClassifyRunCreateRequest.builder()
+     *     .classifier(ClassifierInput.builder().id(&quot;cl_abc123&quot;).build())
+     *     .file(FileInput.builder().url(&quot;https://...&quot;).build())
+     *     .build());
+     * // Returns when the run reaches a terminal state
+     * System.out.println(result.getOutput());
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;/Tabs&gt;</p>
      */
     public CompletableFuture<ClassifyRun> create(ClassifyRunsCreateRequest request, RequestOptions requestOptions) {
         return this.rawClient.create(request, requestOptions).thenApply(response -> response.body());

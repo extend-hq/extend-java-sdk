@@ -31,7 +31,7 @@ public final class SplitterVersion {
 
     private final String version;
 
-    private final SplitConfig config;
+    private final SplitConfigBase config;
 
     private final String splitterId;
 
@@ -43,7 +43,7 @@ public final class SplitterVersion {
             String id,
             Optional<String> description,
             String version,
-            SplitConfig config,
+            SplitConfigBase config,
             String splitterId,
             OffsetDateTime createdAt,
             Map<String, Object> additionalProperties) {
@@ -98,7 +98,7 @@ public final class SplitterVersion {
      * @return The configuration settings for this version of the splitter.
      */
     @JsonProperty("config")
-    public SplitConfig getConfig() {
+    public SplitConfigBase getConfig() {
         return config;
     }
 
@@ -178,7 +178,7 @@ public final class SplitterVersion {
         /**
          * <p>The configuration settings for this version of the splitter.</p>
          */
-        SplitterIdStage config(@NotNull SplitConfig config);
+        SplitterIdStage config(@NotNull SplitConfigBase config);
     }
 
     public interface SplitterIdStage {
@@ -214,7 +214,7 @@ public final class SplitterVersion {
 
         private String version;
 
-        private SplitConfig config;
+        private SplitConfigBase config;
 
         private String splitterId;
 
@@ -273,7 +273,7 @@ public final class SplitterVersion {
          */
         @java.lang.Override
         @JsonSetter("config")
-        public SplitterIdStage config(@NotNull SplitConfig config) {
+        public SplitterIdStage config(@NotNull SplitConfigBase config) {
             this.config = Objects.requireNonNull(config, "config must not be null");
             return this;
         }

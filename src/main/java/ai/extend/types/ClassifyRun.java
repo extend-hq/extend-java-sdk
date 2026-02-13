@@ -49,7 +49,7 @@ public final class ClassifyRun {
 
     private final boolean edited;
 
-    private final ClassifyConfig config;
+    private final ClassifyConfigBase config;
 
     private final FileSummary file;
 
@@ -78,7 +78,7 @@ public final class ClassifyRun {
             Optional<Map<String, Object>> metadata,
             boolean reviewed,
             boolean edited,
-            ClassifyConfig config,
+            ClassifyConfigBase config,
             FileSummary file,
             Optional<String> parseRunId,
             String dashboardUrl,
@@ -259,7 +259,7 @@ public final class ClassifyRun {
      * @return The configuration used for this classify run.
      */
     @JsonProperty("config")
-    public ClassifyConfig getConfig() {
+    public ClassifyConfigBase getConfig() {
         return config;
     }
 
@@ -475,7 +475,7 @@ public final class ClassifyRun {
         /**
          * <p>The configuration used for this classify run.</p>
          */
-        FileStage config(@NotNull ClassifyConfig config);
+        FileStage config(@NotNull ClassifyConfigBase config);
     }
 
     public interface FileStage {
@@ -641,7 +641,7 @@ public final class ClassifyRun {
 
         private boolean edited;
 
-        private ClassifyConfig config;
+        private ClassifyConfigBase config;
 
         private FileSummary file;
 
@@ -752,7 +752,7 @@ public final class ClassifyRun {
          */
         @java.lang.Override
         @JsonSetter("config")
-        public FileStage config(@NotNull ClassifyConfig config) {
+        public FileStage config(@NotNull ClassifyConfigBase config) {
             this.config = Objects.requireNonNull(config, "config must not be null");
             return this;
         }

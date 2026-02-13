@@ -4,7 +4,7 @@
 package ai.extend.resources.extractorversions.requests;
 
 import ai.extend.core.ObjectMappers;
-import ai.extend.types.ExtractConfigJson;
+import ai.extend.types.ExtractConfigJsonBase;
 import ai.extend.types.ReleaseType;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -27,14 +27,14 @@ public final class ExtractorVersionsCreateRequest {
 
     private final Optional<String> description;
 
-    private final Optional<ExtractConfigJson> config;
+    private final Optional<ExtractConfigJsonBase> config;
 
     private final Map<String, Object> additionalProperties;
 
     private ExtractorVersionsCreateRequest(
             ReleaseType releaseType,
             Optional<String> description,
-            Optional<ExtractConfigJson> config,
+            Optional<ExtractConfigJsonBase> config,
             Map<String, Object> additionalProperties) {
         this.releaseType = releaseType;
         this.description = description;
@@ -56,7 +56,7 @@ public final class ExtractorVersionsCreateRequest {
      * @return The configuration for this version of the extractor.
      */
     @JsonProperty("config")
-    public Optional<ExtractConfigJson> getConfig() {
+    public Optional<ExtractConfigJsonBase> getConfig() {
         return config;
     }
 
@@ -107,16 +107,16 @@ public final class ExtractorVersionsCreateRequest {
         /**
          * <p>The configuration for this version of the extractor.</p>
          */
-        _FinalStage config(Optional<ExtractConfigJson> config);
+        _FinalStage config(Optional<ExtractConfigJsonBase> config);
 
-        _FinalStage config(ExtractConfigJson config);
+        _FinalStage config(ExtractConfigJsonBase config);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements ReleaseTypeStage, _FinalStage {
         private ReleaseType releaseType;
 
-        private Optional<ExtractConfigJson> config = Optional.empty();
+        private Optional<ExtractConfigJsonBase> config = Optional.empty();
 
         private Optional<String> description = Optional.empty();
 
@@ -145,7 +145,7 @@ public final class ExtractorVersionsCreateRequest {
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage config(ExtractConfigJson config) {
+        public _FinalStage config(ExtractConfigJsonBase config) {
             this.config = Optional.ofNullable(config);
             return this;
         }
@@ -155,7 +155,7 @@ public final class ExtractorVersionsCreateRequest {
          */
         @java.lang.Override
         @JsonSetter(value = "config", nulls = Nulls.SKIP)
-        public _FinalStage config(Optional<ExtractConfigJson> config) {
+        public _FinalStage config(Optional<ExtractConfigJsonBase> config) {
             this.config = config;
             return this;
         }

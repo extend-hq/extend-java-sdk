@@ -4,7 +4,7 @@
 package ai.extend.resources.extractors.requests;
 
 import ai.extend.core.ObjectMappers;
-import ai.extend.types.ExtractConfigJson;
+import ai.extend.types.ExtractConfigJsonBase;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -26,14 +26,14 @@ public final class ExtractorsCreateRequest {
 
     private final Optional<String> cloneExtractorId;
 
-    private final Optional<ExtractConfigJson> config;
+    private final Optional<ExtractConfigJsonBase> config;
 
     private final Map<String, Object> additionalProperties;
 
     private ExtractorsCreateRequest(
             String name,
             Optional<String> cloneExtractorId,
-            Optional<ExtractConfigJson> config,
+            Optional<ExtractConfigJsonBase> config,
             Map<String, Object> additionalProperties) {
         this.name = name;
         this.cloneExtractorId = cloneExtractorId;
@@ -62,7 +62,7 @@ public final class ExtractorsCreateRequest {
      * @return The configuration for the extractor. Cannot be provided together with <code>cloneExtractorId</code>.
      */
     @JsonProperty("config")
-    public Optional<ExtractConfigJson> getConfig() {
+    public Optional<ExtractConfigJsonBase> getConfig() {
         return config;
     }
 
@@ -120,16 +120,16 @@ public final class ExtractorsCreateRequest {
         /**
          * <p>The configuration for the extractor. Cannot be provided together with <code>cloneExtractorId</code>.</p>
          */
-        _FinalStage config(Optional<ExtractConfigJson> config);
+        _FinalStage config(Optional<ExtractConfigJsonBase> config);
 
-        _FinalStage config(ExtractConfigJson config);
+        _FinalStage config(ExtractConfigJsonBase config);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements NameStage, _FinalStage {
         private String name;
 
-        private Optional<ExtractConfigJson> config = Optional.empty();
+        private Optional<ExtractConfigJsonBase> config = Optional.empty();
 
         private Optional<String> cloneExtractorId = Optional.empty();
 
@@ -163,7 +163,7 @@ public final class ExtractorsCreateRequest {
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage config(ExtractConfigJson config) {
+        public _FinalStage config(ExtractConfigJsonBase config) {
             this.config = Optional.ofNullable(config);
             return this;
         }
@@ -173,7 +173,7 @@ public final class ExtractorsCreateRequest {
          */
         @java.lang.Override
         @JsonSetter(value = "config", nulls = Nulls.SKIP)
-        public _FinalStage config(Optional<ExtractConfigJson> config) {
+        public _FinalStage config(Optional<ExtractConfigJsonBase> config) {
             this.config = config;
             return this;
         }

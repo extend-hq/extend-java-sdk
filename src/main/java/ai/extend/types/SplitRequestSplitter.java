@@ -25,14 +25,14 @@ public final class SplitRequestSplitter {
 
     private final Optional<String> version;
 
-    private final Optional<SplitConfig> overrideConfig;
+    private final Optional<SplitConfigBase> overrideConfig;
 
     private final Map<String, Object> additionalProperties;
 
     private SplitRequestSplitter(
             String id,
             Optional<String> version,
-            Optional<SplitConfig> overrideConfig,
+            Optional<SplitConfigBase> overrideConfig,
             Map<String, Object> additionalProperties) {
         this.id = id;
         this.version = version;
@@ -54,10 +54,10 @@ public final class SplitRequestSplitter {
     }
 
     /**
-     * @return Optional configuration override. If provided, this configuration will override the splitter's saved configuration.
+     * @return Optional partial configuration override. Only the fields you provide will override the splitter's saved configuration. For example, you can pass only <code>splitRules</code> without providing <code>splitClassifications</code>.
      */
     @JsonProperty("overrideConfig")
-    public Optional<SplitConfig> getOverrideConfig() {
+    public Optional<SplitConfigBase> getOverrideConfig() {
         return overrideConfig;
     }
 
@@ -107,18 +107,18 @@ public final class SplitRequestSplitter {
         _FinalStage version(String version);
 
         /**
-         * <p>Optional configuration override. If provided, this configuration will override the splitter's saved configuration.</p>
+         * <p>Optional partial configuration override. Only the fields you provide will override the splitter's saved configuration. For example, you can pass only <code>splitRules</code> without providing <code>splitClassifications</code>.</p>
          */
-        _FinalStage overrideConfig(Optional<SplitConfig> overrideConfig);
+        _FinalStage overrideConfig(Optional<SplitConfigBase> overrideConfig);
 
-        _FinalStage overrideConfig(SplitConfig overrideConfig);
+        _FinalStage overrideConfig(SplitConfigBase overrideConfig);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements IdStage, _FinalStage {
         private String id;
 
-        private Optional<SplitConfig> overrideConfig = Optional.empty();
+        private Optional<SplitConfigBase> overrideConfig = Optional.empty();
 
         private Optional<String> version = Optional.empty();
 
@@ -148,21 +148,21 @@ public final class SplitRequestSplitter {
         }
 
         /**
-         * <p>Optional configuration override. If provided, this configuration will override the splitter's saved configuration.</p>
+         * <p>Optional partial configuration override. Only the fields you provide will override the splitter's saved configuration. For example, you can pass only <code>splitRules</code> without providing <code>splitClassifications</code>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage overrideConfig(SplitConfig overrideConfig) {
+        public _FinalStage overrideConfig(SplitConfigBase overrideConfig) {
             this.overrideConfig = Optional.ofNullable(overrideConfig);
             return this;
         }
 
         /**
-         * <p>Optional configuration override. If provided, this configuration will override the splitter's saved configuration.</p>
+         * <p>Optional partial configuration override. Only the fields you provide will override the splitter's saved configuration. For example, you can pass only <code>splitRules</code> without providing <code>splitClassifications</code>.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "overrideConfig", nulls = Nulls.SKIP)
-        public _FinalStage overrideConfig(Optional<SplitConfig> overrideConfig) {
+        public _FinalStage overrideConfig(Optional<SplitConfigBase> overrideConfig) {
             this.overrideConfig = overrideConfig;
             return this;
         }

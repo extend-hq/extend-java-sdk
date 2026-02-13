@@ -4,7 +4,7 @@
 package ai.extend.requests;
 
 import ai.extend.core.ObjectMappers;
-import ai.extend.types.SplitConfig;
+import ai.extend.types.SplitConfigBase;
 import ai.extend.types.SplitRequestFile;
 import ai.extend.types.SplitRequestSplitter;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 public final class SplitRequest {
     private final Optional<SplitRequestSplitter> splitter;
 
-    private final Optional<SplitConfig> config;
+    private final Optional<SplitConfigBase> config;
 
     private final SplitRequestFile file;
 
@@ -36,7 +36,7 @@ public final class SplitRequest {
 
     private SplitRequest(
             Optional<SplitRequestSplitter> splitter,
-            Optional<SplitConfig> config,
+            Optional<SplitConfigBase> config,
             SplitRequestFile file,
             Optional<Map<String, Object>> metadata,
             Map<String, Object> additionalProperties) {
@@ -59,7 +59,7 @@ public final class SplitRequest {
      * @return Inline splitter configuration. One of <code>splitter</code> or <code>config</code> must be provided.
      */
     @JsonProperty("config")
-    public Optional<SplitConfig> getConfig() {
+    public Optional<SplitConfigBase> getConfig() {
         return config;
     }
 
@@ -130,9 +130,9 @@ public final class SplitRequest {
         /**
          * <p>Inline splitter configuration. One of <code>splitter</code> or <code>config</code> must be provided.</p>
          */
-        _FinalStage config(Optional<SplitConfig> config);
+        _FinalStage config(Optional<SplitConfigBase> config);
 
-        _FinalStage config(SplitConfig config);
+        _FinalStage config(SplitConfigBase config);
 
         _FinalStage metadata(Optional<Map<String, Object>> metadata);
 
@@ -145,7 +145,7 @@ public final class SplitRequest {
 
         private Optional<Map<String, Object>> metadata = Optional.empty();
 
-        private Optional<SplitConfig> config = Optional.empty();
+        private Optional<SplitConfigBase> config = Optional.empty();
 
         private Optional<SplitRequestSplitter> splitter = Optional.empty();
 
@@ -193,7 +193,7 @@ public final class SplitRequest {
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage config(SplitConfig config) {
+        public _FinalStage config(SplitConfigBase config) {
             this.config = Optional.ofNullable(config);
             return this;
         }
@@ -203,7 +203,7 @@ public final class SplitRequest {
          */
         @java.lang.Override
         @JsonSetter(value = "config", nulls = Nulls.SKIP)
-        public _FinalStage config(Optional<SplitConfig> config) {
+        public _FinalStage config(Optional<SplitConfigBase> config) {
             this.config = config;
             return this;
         }

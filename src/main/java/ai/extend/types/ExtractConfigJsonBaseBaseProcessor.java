@@ -6,18 +6,18 @@ package ai.extend.types;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public final class ExtractConfigJsonBaseProcessor {
-    public static final ExtractConfigJsonBaseProcessor EXTRACTION_PERFORMANCE =
-            new ExtractConfigJsonBaseProcessor(Value.EXTRACTION_PERFORMANCE, "extraction_performance");
+public final class ExtractConfigJsonBaseBaseProcessor {
+    public static final ExtractConfigJsonBaseBaseProcessor EXTRACTION_PERFORMANCE =
+            new ExtractConfigJsonBaseBaseProcessor(Value.EXTRACTION_PERFORMANCE, "extraction_performance");
 
-    public static final ExtractConfigJsonBaseProcessor EXTRACTION_LIGHT =
-            new ExtractConfigJsonBaseProcessor(Value.EXTRACTION_LIGHT, "extraction_light");
+    public static final ExtractConfigJsonBaseBaseProcessor EXTRACTION_LIGHT =
+            new ExtractConfigJsonBaseBaseProcessor(Value.EXTRACTION_LIGHT, "extraction_light");
 
     private final Value value;
 
     private final String string;
 
-    ExtractConfigJsonBaseProcessor(Value value, String string) {
+    ExtractConfigJsonBaseBaseProcessor(Value value, String string) {
         this.value = value;
         this.string = string;
     }
@@ -35,8 +35,8 @@ public final class ExtractConfigJsonBaseProcessor {
     @java.lang.Override
     public boolean equals(Object other) {
         return (this == other)
-                || (other instanceof ExtractConfigJsonBaseProcessor
-                        && this.string.equals(((ExtractConfigJsonBaseProcessor) other).string));
+                || (other instanceof ExtractConfigJsonBaseBaseProcessor
+                        && this.string.equals(((ExtractConfigJsonBaseBaseProcessor) other).string));
     }
 
     @java.lang.Override
@@ -57,14 +57,14 @@ public final class ExtractConfigJsonBaseProcessor {
     }
 
     @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static ExtractConfigJsonBaseProcessor valueOf(String value) {
+    public static ExtractConfigJsonBaseBaseProcessor valueOf(String value) {
         switch (value) {
             case "extraction_performance":
                 return EXTRACTION_PERFORMANCE;
             case "extraction_light":
                 return EXTRACTION_LIGHT;
             default:
-                return new ExtractConfigJsonBaseProcessor(Value.UNKNOWN, value);
+                return new ExtractConfigJsonBaseBaseProcessor(Value.UNKNOWN, value);
         }
     }
 

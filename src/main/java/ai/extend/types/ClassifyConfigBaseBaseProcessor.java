@@ -6,18 +6,18 @@ package ai.extend.types;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public final class ClassifyConfigBaseProcessor {
-    public static final ClassifyConfigBaseProcessor CLASSIFICATION_PERFORMANCE =
-            new ClassifyConfigBaseProcessor(Value.CLASSIFICATION_PERFORMANCE, "classification_performance");
+public final class ClassifyConfigBaseBaseProcessor {
+    public static final ClassifyConfigBaseBaseProcessor CLASSIFICATION_PERFORMANCE =
+            new ClassifyConfigBaseBaseProcessor(Value.CLASSIFICATION_PERFORMANCE, "classification_performance");
 
-    public static final ClassifyConfigBaseProcessor CLASSIFICATION_LIGHT =
-            new ClassifyConfigBaseProcessor(Value.CLASSIFICATION_LIGHT, "classification_light");
+    public static final ClassifyConfigBaseBaseProcessor CLASSIFICATION_LIGHT =
+            new ClassifyConfigBaseBaseProcessor(Value.CLASSIFICATION_LIGHT, "classification_light");
 
     private final Value value;
 
     private final String string;
 
-    ClassifyConfigBaseProcessor(Value value, String string) {
+    ClassifyConfigBaseBaseProcessor(Value value, String string) {
         this.value = value;
         this.string = string;
     }
@@ -35,8 +35,8 @@ public final class ClassifyConfigBaseProcessor {
     @java.lang.Override
     public boolean equals(Object other) {
         return (this == other)
-                || (other instanceof ClassifyConfigBaseProcessor
-                        && this.string.equals(((ClassifyConfigBaseProcessor) other).string));
+                || (other instanceof ClassifyConfigBaseBaseProcessor
+                        && this.string.equals(((ClassifyConfigBaseBaseProcessor) other).string));
     }
 
     @java.lang.Override
@@ -57,14 +57,14 @@ public final class ClassifyConfigBaseProcessor {
     }
 
     @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static ClassifyConfigBaseProcessor valueOf(String value) {
+    public static ClassifyConfigBaseBaseProcessor valueOf(String value) {
         switch (value) {
             case "classification_performance":
                 return CLASSIFICATION_PERFORMANCE;
             case "classification_light":
                 return CLASSIFICATION_LIGHT;
             default:
-                return new ClassifyConfigBaseProcessor(Value.UNKNOWN, value);
+                return new ClassifyConfigBaseBaseProcessor(Value.UNKNOWN, value);
         }
     }
 

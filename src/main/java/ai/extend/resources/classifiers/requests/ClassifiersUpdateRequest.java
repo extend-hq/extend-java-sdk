@@ -4,7 +4,7 @@
 package ai.extend.resources.classifiers.requests;
 
 import ai.extend.core.ObjectMappers;
-import ai.extend.types.ClassifyConfig;
+import ai.extend.types.ClassifyConfigBase;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -23,12 +23,12 @@ import java.util.Optional;
 public final class ClassifiersUpdateRequest {
     private final Optional<String> name;
 
-    private final Optional<ClassifyConfig> config;
+    private final Optional<ClassifyConfigBase> config;
 
     private final Map<String, Object> additionalProperties;
 
     private ClassifiersUpdateRequest(
-            Optional<String> name, Optional<ClassifyConfig> config, Map<String, Object> additionalProperties) {
+            Optional<String> name, Optional<ClassifyConfigBase> config, Map<String, Object> additionalProperties) {
         this.name = name;
         this.config = config;
         this.additionalProperties = additionalProperties;
@@ -46,7 +46,7 @@ public final class ClassifiersUpdateRequest {
      * @return The new configuration for the classifier. This will update the draft version of the classifier.
      */
     @JsonProperty("config")
-    public Optional<ClassifyConfig> getConfig() {
+    public Optional<ClassifyConfigBase> getConfig() {
         return config;
     }
 
@@ -83,7 +83,7 @@ public final class ClassifiersUpdateRequest {
     public static final class Builder {
         private Optional<String> name = Optional.empty();
 
-        private Optional<ClassifyConfig> config = Optional.empty();
+        private Optional<ClassifyConfigBase> config = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -114,12 +114,12 @@ public final class ClassifiersUpdateRequest {
          * <p>The new configuration for the classifier. This will update the draft version of the classifier.</p>
          */
         @JsonSetter(value = "config", nulls = Nulls.SKIP)
-        public Builder config(Optional<ClassifyConfig> config) {
+        public Builder config(Optional<ClassifyConfigBase> config) {
             this.config = config;
             return this;
         }
 
-        public Builder config(ClassifyConfig config) {
+        public Builder config(ClassifyConfigBase config) {
             this.config = Optional.ofNullable(config);
             return this;
         }

@@ -6,7 +6,7 @@ package ai.extend.resources.extractruns.requests;
 import ai.extend.core.ObjectMappers;
 import ai.extend.resources.extractruns.types.ExtractRunsCreateRequestExtractor;
 import ai.extend.resources.extractruns.types.ExtractRunsCreateRequestFile;
-import ai.extend.types.ExtractConfigJson;
+import ai.extend.types.ExtractConfigJsonBase;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 public final class ExtractRunsCreateRequest {
     private final Optional<ExtractRunsCreateRequestExtractor> extractor;
 
-    private final Optional<ExtractConfigJson> config;
+    private final Optional<ExtractConfigJsonBase> config;
 
     private final ExtractRunsCreateRequestFile file;
 
@@ -38,7 +38,7 @@ public final class ExtractRunsCreateRequest {
 
     private ExtractRunsCreateRequest(
             Optional<ExtractRunsCreateRequestExtractor> extractor,
-            Optional<ExtractConfigJson> config,
+            Optional<ExtractConfigJsonBase> config,
             ExtractRunsCreateRequestFile file,
             Optional<Integer> priority,
             Optional<Map<String, Object>> metadata,
@@ -63,7 +63,7 @@ public final class ExtractRunsCreateRequest {
      * @return Inline extract configuration. One of <code>extractor</code> or <code>config</code> must be provided.
      */
     @JsonProperty("config")
-    public Optional<ExtractConfigJson> getConfig() {
+    public Optional<ExtractConfigJsonBase> getConfig() {
         return config;
     }
 
@@ -140,9 +140,9 @@ public final class ExtractRunsCreateRequest {
         /**
          * <p>Inline extract configuration. One of <code>extractor</code> or <code>config</code> must be provided.</p>
          */
-        _FinalStage config(Optional<ExtractConfigJson> config);
+        _FinalStage config(Optional<ExtractConfigJsonBase> config);
 
-        _FinalStage config(ExtractConfigJson config);
+        _FinalStage config(ExtractConfigJsonBase config);
 
         _FinalStage priority(Optional<Integer> priority);
 
@@ -161,7 +161,7 @@ public final class ExtractRunsCreateRequest {
 
         private Optional<Integer> priority = Optional.empty();
 
-        private Optional<ExtractConfigJson> config = Optional.empty();
+        private Optional<ExtractConfigJsonBase> config = Optional.empty();
 
         private Optional<ExtractRunsCreateRequestExtractor> extractor = Optional.empty();
 
@@ -223,7 +223,7 @@ public final class ExtractRunsCreateRequest {
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage config(ExtractConfigJson config) {
+        public _FinalStage config(ExtractConfigJsonBase config) {
             this.config = Optional.ofNullable(config);
             return this;
         }
@@ -233,7 +233,7 @@ public final class ExtractRunsCreateRequest {
          */
         @java.lang.Override
         @JsonSetter(value = "config", nulls = Nulls.SKIP)
-        public _FinalStage config(Optional<ExtractConfigJson> config) {
+        public _FinalStage config(Optional<ExtractConfigJsonBase> config) {
             this.config = config;
             return this;
         }

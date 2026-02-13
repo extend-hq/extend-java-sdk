@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,13 +19,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-@JsonDeserialize(builder = SplitConfig.Builder.class)
-public final class SplitConfig {
-    private final Optional<SplitConfigBaseProcessor> baseProcessor;
+@JsonDeserialize(builder = SplitConfigBase.Builder.class)
+public final class SplitConfigBase {
+    private final Optional<SplitConfigBaseBaseProcessor> baseProcessor;
 
     private final Optional<String> baseVersion;
 
-    private final List<Classification> splitClassifications;
+    private final Optional<List<Classification>> splitClassifications;
 
     private final Optional<String> splitRules;
 
@@ -36,10 +35,10 @@ public final class SplitConfig {
 
     private final Map<String, Object> additionalProperties;
 
-    private SplitConfig(
-            Optional<SplitConfigBaseProcessor> baseProcessor,
+    private SplitConfigBase(
+            Optional<SplitConfigBaseBaseProcessor> baseProcessor,
             Optional<String> baseVersion,
-            List<Classification> splitClassifications,
+            Optional<List<Classification>> splitClassifications,
             Optional<String> splitRules,
             Optional<SplitAdvancedOptions> advancedOptions,
             Optional<ParseConfig> parseConfig,
@@ -57,7 +56,7 @@ public final class SplitConfig {
      * @return The base processor to use. For splitters, this can be either <code>&quot;splitting_performance&quot;</code> or <code>&quot;splitting_light&quot;</code>. Defaults to <code>&quot;splitting_performance&quot;</code> if not provided. See <a href="https://docs.extend.ai/2026-02-09/changelog/splitting/splitting-performance">Splitting Changelog</a> for more details.
      */
     @JsonProperty("baseProcessor")
-    public Optional<SplitConfigBaseProcessor> getBaseProcessor() {
+    public Optional<SplitConfigBaseBaseProcessor> getBaseProcessor() {
         return baseProcessor;
     }
 
@@ -70,7 +69,7 @@ public final class SplitConfig {
     }
 
     @JsonProperty("splitClassifications")
-    public List<Classification> getSplitClassifications() {
+    public Optional<List<Classification>> getSplitClassifications() {
         return splitClassifications;
     }
 
@@ -101,7 +100,7 @@ public final class SplitConfig {
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        return other instanceof SplitConfig && equalTo((SplitConfig) other);
+        return other instanceof SplitConfigBase && equalTo((SplitConfigBase) other);
     }
 
     @JsonAnyGetter
@@ -109,7 +108,7 @@ public final class SplitConfig {
         return this.additionalProperties;
     }
 
-    private boolean equalTo(SplitConfig other) {
+    private boolean equalTo(SplitConfigBase other) {
         return baseProcessor.equals(other.baseProcessor)
                 && baseVersion.equals(other.baseVersion)
                 && splitClassifications.equals(other.splitClassifications)
@@ -140,11 +139,11 @@ public final class SplitConfig {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-        private Optional<SplitConfigBaseProcessor> baseProcessor = Optional.empty();
+        private Optional<SplitConfigBaseBaseProcessor> baseProcessor = Optional.empty();
 
         private Optional<String> baseVersion = Optional.empty();
 
-        private List<Classification> splitClassifications = new ArrayList<>();
+        private Optional<List<Classification>> splitClassifications = Optional.empty();
 
         private Optional<String> splitRules = Optional.empty();
 
@@ -157,7 +156,7 @@ public final class SplitConfig {
 
         private Builder() {}
 
-        public Builder from(SplitConfig other) {
+        public Builder from(SplitConfigBase other) {
             baseProcessor(other.getBaseProcessor());
             baseVersion(other.getBaseVersion());
             splitClassifications(other.getSplitClassifications());
@@ -171,12 +170,12 @@ public final class SplitConfig {
          * <p>The base processor to use. For splitters, this can be either <code>&quot;splitting_performance&quot;</code> or <code>&quot;splitting_light&quot;</code>. Defaults to <code>&quot;splitting_performance&quot;</code> if not provided. See <a href="https://docs.extend.ai/2026-02-09/changelog/splitting/splitting-performance">Splitting Changelog</a> for more details.</p>
          */
         @JsonSetter(value = "baseProcessor", nulls = Nulls.SKIP)
-        public Builder baseProcessor(Optional<SplitConfigBaseProcessor> baseProcessor) {
+        public Builder baseProcessor(Optional<SplitConfigBaseBaseProcessor> baseProcessor) {
             this.baseProcessor = baseProcessor;
             return this;
         }
 
-        public Builder baseProcessor(SplitConfigBaseProcessor baseProcessor) {
+        public Builder baseProcessor(SplitConfigBaseBaseProcessor baseProcessor) {
             this.baseProcessor = Optional.ofNullable(baseProcessor);
             return this;
         }
@@ -196,23 +195,13 @@ public final class SplitConfig {
         }
 
         @JsonSetter(value = "splitClassifications", nulls = Nulls.SKIP)
+        public Builder splitClassifications(Optional<List<Classification>> splitClassifications) {
+            this.splitClassifications = splitClassifications;
+            return this;
+        }
+
         public Builder splitClassifications(List<Classification> splitClassifications) {
-            this.splitClassifications.clear();
-            if (splitClassifications != null) {
-                this.splitClassifications.addAll(splitClassifications);
-            }
-            return this;
-        }
-
-        public Builder addSplitClassifications(Classification splitClassifications) {
-            this.splitClassifications.add(splitClassifications);
-            return this;
-        }
-
-        public Builder addAllSplitClassifications(List<Classification> splitClassifications) {
-            if (splitClassifications != null) {
-                this.splitClassifications.addAll(splitClassifications);
-            }
+            this.splitClassifications = Optional.ofNullable(splitClassifications);
             return this;
         }
 
@@ -258,8 +247,8 @@ public final class SplitConfig {
             return this;
         }
 
-        public SplitConfig build() {
-            return new SplitConfig(
+        public SplitConfigBase build() {
+            return new SplitConfigBase(
                     baseProcessor,
                     baseVersion,
                     splitClassifications,

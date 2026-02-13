@@ -5,7 +5,7 @@ package ai.extend.resources.splitterversions.requests;
 
 import ai.extend.core.ObjectMappers;
 import ai.extend.types.ReleaseType;
-import ai.extend.types.SplitConfig;
+import ai.extend.types.SplitConfigBase;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -27,14 +27,14 @@ public final class SplitterVersionsCreateRequest {
 
     private final Optional<String> description;
 
-    private final Optional<SplitConfig> config;
+    private final Optional<SplitConfigBase> config;
 
     private final Map<String, Object> additionalProperties;
 
     private SplitterVersionsCreateRequest(
             ReleaseType releaseType,
             Optional<String> description,
-            Optional<SplitConfig> config,
+            Optional<SplitConfigBase> config,
             Map<String, Object> additionalProperties) {
         this.releaseType = releaseType;
         this.description = description;
@@ -56,7 +56,7 @@ public final class SplitterVersionsCreateRequest {
      * @return The configuration for this version of the splitter.
      */
     @JsonProperty("config")
-    public Optional<SplitConfig> getConfig() {
+    public Optional<SplitConfigBase> getConfig() {
         return config;
     }
 
@@ -107,16 +107,16 @@ public final class SplitterVersionsCreateRequest {
         /**
          * <p>The configuration for this version of the splitter.</p>
          */
-        _FinalStage config(Optional<SplitConfig> config);
+        _FinalStage config(Optional<SplitConfigBase> config);
 
-        _FinalStage config(SplitConfig config);
+        _FinalStage config(SplitConfigBase config);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements ReleaseTypeStage, _FinalStage {
         private ReleaseType releaseType;
 
-        private Optional<SplitConfig> config = Optional.empty();
+        private Optional<SplitConfigBase> config = Optional.empty();
 
         private Optional<String> description = Optional.empty();
 
@@ -145,7 +145,7 @@ public final class SplitterVersionsCreateRequest {
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage config(SplitConfig config) {
+        public _FinalStage config(SplitConfigBase config) {
             this.config = Optional.ofNullable(config);
             return this;
         }
@@ -155,7 +155,7 @@ public final class SplitterVersionsCreateRequest {
          */
         @java.lang.Override
         @JsonSetter(value = "config", nulls = Nulls.SKIP)
-        public _FinalStage config(Optional<SplitConfig> config) {
+        public _FinalStage config(Optional<SplitConfigBase> config) {
             this.config = config;
             return this;
         }

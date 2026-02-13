@@ -4,7 +4,7 @@
 package ai.extend.resources.extractors.requests;
 
 import ai.extend.core.ObjectMappers;
-import ai.extend.types.ExtractConfigJson;
+import ai.extend.types.ExtractConfigJsonBase;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -23,12 +23,12 @@ import java.util.Optional;
 public final class ExtractorsUpdateRequest {
     private final Optional<String> name;
 
-    private final Optional<ExtractConfigJson> config;
+    private final Optional<ExtractConfigJsonBase> config;
 
     private final Map<String, Object> additionalProperties;
 
     private ExtractorsUpdateRequest(
-            Optional<String> name, Optional<ExtractConfigJson> config, Map<String, Object> additionalProperties) {
+            Optional<String> name, Optional<ExtractConfigJsonBase> config, Map<String, Object> additionalProperties) {
         this.name = name;
         this.config = config;
         this.additionalProperties = additionalProperties;
@@ -46,7 +46,7 @@ public final class ExtractorsUpdateRequest {
      * @return The new configuration for the extractor. This will update the draft version of the extractor.
      */
     @JsonProperty("config")
-    public Optional<ExtractConfigJson> getConfig() {
+    public Optional<ExtractConfigJsonBase> getConfig() {
         return config;
     }
 
@@ -83,7 +83,7 @@ public final class ExtractorsUpdateRequest {
     public static final class Builder {
         private Optional<String> name = Optional.empty();
 
-        private Optional<ExtractConfigJson> config = Optional.empty();
+        private Optional<ExtractConfigJsonBase> config = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -114,12 +114,12 @@ public final class ExtractorsUpdateRequest {
          * <p>The new configuration for the extractor. This will update the draft version of the extractor.</p>
          */
         @JsonSetter(value = "config", nulls = Nulls.SKIP)
-        public Builder config(Optional<ExtractConfigJson> config) {
+        public Builder config(Optional<ExtractConfigJsonBase> config) {
             this.config = config;
             return this;
         }
 
-        public Builder config(ExtractConfigJson config) {
+        public Builder config(ExtractConfigJsonBase config) {
             this.config = Optional.ofNullable(config);
             return this;
         }

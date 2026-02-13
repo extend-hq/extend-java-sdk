@@ -13,21 +13,20 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-@JsonDeserialize(builder = ExtractConfigJson.Builder.class)
-public final class ExtractConfigJson {
-    private final Optional<ExtractConfigJsonBaseProcessor> baseProcessor;
+@JsonDeserialize(builder = ExtractConfigJsonBase.Builder.class)
+public final class ExtractConfigJsonBase {
+    private final Optional<ExtractConfigJsonBaseBaseProcessor> baseProcessor;
 
     private final Optional<String> baseVersion;
 
     private final Optional<String> extractionRules;
 
-    private final Map<String, Object> schema;
+    private final Optional<Map<String, Object>> schema;
 
     private final Optional<ExtractAdvancedOptions> advancedOptions;
 
@@ -35,11 +34,11 @@ public final class ExtractConfigJson {
 
     private final Map<String, Object> additionalProperties;
 
-    private ExtractConfigJson(
-            Optional<ExtractConfigJsonBaseProcessor> baseProcessor,
+    private ExtractConfigJsonBase(
+            Optional<ExtractConfigJsonBaseBaseProcessor> baseProcessor,
             Optional<String> baseVersion,
             Optional<String> extractionRules,
-            Map<String, Object> schema,
+            Optional<Map<String, Object>> schema,
             Optional<ExtractAdvancedOptions> advancedOptions,
             Optional<ParseConfig> parseConfig,
             Map<String, Object> additionalProperties) {
@@ -56,7 +55,7 @@ public final class ExtractConfigJson {
      * @return The base processor to use. For extractors, this can be either <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code>. Defaults to <code>&quot;extraction_performance&quot;</code> if not provided. See <a href="https://docs.extend.ai/2026-02-09/changelog/extraction/extraction-performance">Extraction Changelog</a> for more details.
      */
     @JsonProperty("baseProcessor")
-    public Optional<ExtractConfigJsonBaseProcessor> getBaseProcessor() {
+    public Optional<ExtractConfigJsonBaseBaseProcessor> getBaseProcessor() {
         return baseProcessor;
     }
 
@@ -81,7 +80,7 @@ public final class ExtractConfigJson {
      * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/extraction/schema/json-schema">JSON Schema guide</a> for details and examples of schema configuration.</p>
      */
     @JsonProperty("schema")
-    public Map<String, Object> getSchema() {
+    public Optional<Map<String, Object>> getSchema() {
         return schema;
     }
 
@@ -104,7 +103,7 @@ public final class ExtractConfigJson {
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        return other instanceof ExtractConfigJson && equalTo((ExtractConfigJson) other);
+        return other instanceof ExtractConfigJsonBase && equalTo((ExtractConfigJsonBase) other);
     }
 
     @JsonAnyGetter
@@ -112,7 +111,7 @@ public final class ExtractConfigJson {
         return this.additionalProperties;
     }
 
-    private boolean equalTo(ExtractConfigJson other) {
+    private boolean equalTo(ExtractConfigJsonBase other) {
         return baseProcessor.equals(other.baseProcessor)
                 && baseVersion.equals(other.baseVersion)
                 && extractionRules.equals(other.extractionRules)
@@ -143,13 +142,13 @@ public final class ExtractConfigJson {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-        private Optional<ExtractConfigJsonBaseProcessor> baseProcessor = Optional.empty();
+        private Optional<ExtractConfigJsonBaseBaseProcessor> baseProcessor = Optional.empty();
 
         private Optional<String> baseVersion = Optional.empty();
 
         private Optional<String> extractionRules = Optional.empty();
 
-        private Map<String, Object> schema = new LinkedHashMap<>();
+        private Optional<Map<String, Object>> schema = Optional.empty();
 
         private Optional<ExtractAdvancedOptions> advancedOptions = Optional.empty();
 
@@ -160,7 +159,7 @@ public final class ExtractConfigJson {
 
         private Builder() {}
 
-        public Builder from(ExtractConfigJson other) {
+        public Builder from(ExtractConfigJsonBase other) {
             baseProcessor(other.getBaseProcessor());
             baseVersion(other.getBaseVersion());
             extractionRules(other.getExtractionRules());
@@ -174,12 +173,12 @@ public final class ExtractConfigJson {
          * <p>The base processor to use. For extractors, this can be either <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code>. Defaults to <code>&quot;extraction_performance&quot;</code> if not provided. See <a href="https://docs.extend.ai/2026-02-09/changelog/extraction/extraction-performance">Extraction Changelog</a> for more details.</p>
          */
         @JsonSetter(value = "baseProcessor", nulls = Nulls.SKIP)
-        public Builder baseProcessor(Optional<ExtractConfigJsonBaseProcessor> baseProcessor) {
+        public Builder baseProcessor(Optional<ExtractConfigJsonBaseBaseProcessor> baseProcessor) {
             this.baseProcessor = baseProcessor;
             return this;
         }
 
-        public Builder baseProcessor(ExtractConfigJsonBaseProcessor baseProcessor) {
+        public Builder baseProcessor(ExtractConfigJsonBaseBaseProcessor baseProcessor) {
             this.baseProcessor = Optional.ofNullable(baseProcessor);
             return this;
         }
@@ -217,23 +216,13 @@ public final class ExtractConfigJson {
          * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/extraction/schema/json-schema">JSON Schema guide</a> for details and examples of schema configuration.</p>
          */
         @JsonSetter(value = "schema", nulls = Nulls.SKIP)
+        public Builder schema(Optional<Map<String, Object>> schema) {
+            this.schema = schema;
+            return this;
+        }
+
         public Builder schema(Map<String, Object> schema) {
-            this.schema.clear();
-            if (schema != null) {
-                this.schema.putAll(schema);
-            }
-            return this;
-        }
-
-        public Builder putAllSchema(Map<String, Object> schema) {
-            if (schema != null) {
-                this.schema.putAll(schema);
-            }
-            return this;
-        }
-
-        public Builder schema(String key, Object value) {
-            this.schema.put(key, value);
+            this.schema = Optional.ofNullable(schema);
             return this;
         }
 
@@ -265,8 +254,8 @@ public final class ExtractConfigJson {
             return this;
         }
 
-        public ExtractConfigJson build() {
-            return new ExtractConfigJson(
+        public ExtractConfigJsonBase build() {
+            return new ExtractConfigJsonBase(
                     baseProcessor,
                     baseVersion,
                     extractionRules,

@@ -4,7 +4,7 @@
 package ai.extend.resources.classifierversions.requests;
 
 import ai.extend.core.ObjectMappers;
-import ai.extend.types.ClassifyConfig;
+import ai.extend.types.ClassifyConfigBase;
 import ai.extend.types.ReleaseType;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -27,14 +27,14 @@ public final class ClassifierVersionsCreateRequest {
 
     private final Optional<String> description;
 
-    private final Optional<ClassifyConfig> config;
+    private final Optional<ClassifyConfigBase> config;
 
     private final Map<String, Object> additionalProperties;
 
     private ClassifierVersionsCreateRequest(
             ReleaseType releaseType,
             Optional<String> description,
-            Optional<ClassifyConfig> config,
+            Optional<ClassifyConfigBase> config,
             Map<String, Object> additionalProperties) {
         this.releaseType = releaseType;
         this.description = description;
@@ -56,7 +56,7 @@ public final class ClassifierVersionsCreateRequest {
      * @return The configuration for this version of the classifier.
      */
     @JsonProperty("config")
-    public Optional<ClassifyConfig> getConfig() {
+    public Optional<ClassifyConfigBase> getConfig() {
         return config;
     }
 
@@ -107,16 +107,16 @@ public final class ClassifierVersionsCreateRequest {
         /**
          * <p>The configuration for this version of the classifier.</p>
          */
-        _FinalStage config(Optional<ClassifyConfig> config);
+        _FinalStage config(Optional<ClassifyConfigBase> config);
 
-        _FinalStage config(ClassifyConfig config);
+        _FinalStage config(ClassifyConfigBase config);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements ReleaseTypeStage, _FinalStage {
         private ReleaseType releaseType;
 
-        private Optional<ClassifyConfig> config = Optional.empty();
+        private Optional<ClassifyConfigBase> config = Optional.empty();
 
         private Optional<String> description = Optional.empty();
 
@@ -145,7 +145,7 @@ public final class ClassifierVersionsCreateRequest {
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage config(ClassifyConfig config) {
+        public _FinalStage config(ClassifyConfigBase config) {
             this.config = Optional.ofNullable(config);
             return this;
         }
@@ -155,7 +155,7 @@ public final class ClassifierVersionsCreateRequest {
          */
         @java.lang.Override
         @JsonSetter(value = "config", nulls = Nulls.SKIP)
-        public _FinalStage config(Optional<ClassifyConfig> config) {
+        public _FinalStage config(Optional<ClassifyConfigBase> config) {
             this.config = config;
             return this;
         }

@@ -4,7 +4,7 @@
 package ai.extend.resources.classifiers.requests;
 
 import ai.extend.core.ObjectMappers;
-import ai.extend.types.ClassifyConfig;
+import ai.extend.types.ClassifyConfigBase;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -26,14 +26,14 @@ public final class ClassifiersCreateRequest {
 
     private final Optional<String> cloneClassifierId;
 
-    private final Optional<ClassifyConfig> config;
+    private final Optional<ClassifyConfigBase> config;
 
     private final Map<String, Object> additionalProperties;
 
     private ClassifiersCreateRequest(
             String name,
             Optional<String> cloneClassifierId,
-            Optional<ClassifyConfig> config,
+            Optional<ClassifyConfigBase> config,
             Map<String, Object> additionalProperties) {
         this.name = name;
         this.cloneClassifierId = cloneClassifierId;
@@ -62,7 +62,7 @@ public final class ClassifiersCreateRequest {
      * @return The configuration for the classifier. Cannot be provided together with <code>cloneClassifierId</code>.
      */
     @JsonProperty("config")
-    public Optional<ClassifyConfig> getConfig() {
+    public Optional<ClassifyConfigBase> getConfig() {
         return config;
     }
 
@@ -120,16 +120,16 @@ public final class ClassifiersCreateRequest {
         /**
          * <p>The configuration for the classifier. Cannot be provided together with <code>cloneClassifierId</code>.</p>
          */
-        _FinalStage config(Optional<ClassifyConfig> config);
+        _FinalStage config(Optional<ClassifyConfigBase> config);
 
-        _FinalStage config(ClassifyConfig config);
+        _FinalStage config(ClassifyConfigBase config);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements NameStage, _FinalStage {
         private String name;
 
-        private Optional<ClassifyConfig> config = Optional.empty();
+        private Optional<ClassifyConfigBase> config = Optional.empty();
 
         private Optional<String> cloneClassifierId = Optional.empty();
 
@@ -163,7 +163,7 @@ public final class ClassifiersCreateRequest {
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage config(ClassifyConfig config) {
+        public _FinalStage config(ClassifyConfigBase config) {
             this.config = Optional.ofNullable(config);
             return this;
         }
@@ -173,7 +173,7 @@ public final class ClassifiersCreateRequest {
          */
         @java.lang.Override
         @JsonSetter(value = "config", nulls = Nulls.SKIP)
-        public _FinalStage config(Optional<ClassifyConfig> config) {
+        public _FinalStage config(Optional<ClassifyConfigBase> config) {
             this.config = config;
             return this;
         }

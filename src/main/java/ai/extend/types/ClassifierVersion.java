@@ -31,7 +31,7 @@ public final class ClassifierVersion {
 
     private final String version;
 
-    private final ClassifyConfig config;
+    private final ClassifyConfigBase config;
 
     private final String classifierId;
 
@@ -43,7 +43,7 @@ public final class ClassifierVersion {
             String id,
             Optional<String> description,
             String version,
-            ClassifyConfig config,
+            ClassifyConfigBase config,
             String classifierId,
             OffsetDateTime createdAt,
             Map<String, Object> additionalProperties) {
@@ -98,7 +98,7 @@ public final class ClassifierVersion {
      * @return The configuration settings for this version of the classifier.
      */
     @JsonProperty("config")
-    public ClassifyConfig getConfig() {
+    public ClassifyConfigBase getConfig() {
         return config;
     }
 
@@ -178,7 +178,7 @@ public final class ClassifierVersion {
         /**
          * <p>The configuration settings for this version of the classifier.</p>
          */
-        ClassifierIdStage config(@NotNull ClassifyConfig config);
+        ClassifierIdStage config(@NotNull ClassifyConfigBase config);
     }
 
     public interface ClassifierIdStage {
@@ -214,7 +214,7 @@ public final class ClassifierVersion {
 
         private String version;
 
-        private ClassifyConfig config;
+        private ClassifyConfigBase config;
 
         private String classifierId;
 
@@ -273,7 +273,7 @@ public final class ClassifierVersion {
          */
         @java.lang.Override
         @JsonSetter("config")
-        public ClassifierIdStage config(@NotNull ClassifyConfig config) {
+        public ClassifierIdStage config(@NotNull ClassifyConfigBase config) {
             this.config = Objects.requireNonNull(config, "config must not be null");
             return this;
         }

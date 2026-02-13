@@ -42,7 +42,41 @@ public class RawEditRunsClient {
     /**
      * Edit and manipulate PDF documents by detecting and filling form fields.
      * <p>The Edit Runs endpoint allows you to convert and edit documents and get an edit run ID that can be used to check status and retrieve results with the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/edit/get-edit-run">Get Edit Run</a> endpoint.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/editing/edit">Edit File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/editing/edit">Edit File guide</a>. See <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">Async Processing</a> for a full guide on polling helpers and webhooks.</p>
+     * <h2>Polling with the SDK</h2>
+     * <p>The SDK provides a <code>createAndPoll</code> / <code>create_and_poll</code> method that handles polling automatically, returning when the run reaches a terminal state (<code>PROCESSED</code> or <code>FAILED</code>):</p>
+     * <p>&lt;Tabs&gt;
+     * &lt;Tab title=&quot;TypeScript&quot;&gt;
+     * ```typescript
+     * const result = await client.editRuns.createAndPoll({
+     *   file: { url: &quot;https://...&quot; },
+     *   config: { /* edit config * / }
+     * });
+     * // Returns when the run reaches a terminal state
+     * console.log(result.output);
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;Tab title=&quot;Python&quot;&gt;
+     * ```python
+     * result = client.edit_runs.create_and_poll(
+     *     file={&quot;url&quot;: &quot;https://...&quot;},
+     *     config={ ... }  # edit config
+     * )
+     * # Returns when the run reaches a terminal state
+     * print(result.output)
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;Tab title=&quot;Java&quot;&gt;
+     * ```java
+     * var result = client.editRuns().createAndPoll(EditRunCreateRequest.builder()
+     *     .file(FileInput.builder().url(&quot;https://...&quot;).build())
+     *     .config(EditConfig.builder().build())
+     *     .build());
+     * // Returns when the run reaches a terminal state
+     * System.out.println(result.getOutput());
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;/Tabs&gt;</p>
      */
     public ExtendClientHttpResponse<EditRun> create(EditRunsCreateRequest request) {
         return create(request, null);
@@ -51,7 +85,41 @@ public class RawEditRunsClient {
     /**
      * Edit and manipulate PDF documents by detecting and filling form fields.
      * <p>The Edit Runs endpoint allows you to convert and edit documents and get an edit run ID that can be used to check status and retrieve results with the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/edit/get-edit-run">Get Edit Run</a> endpoint.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/editing/edit">Edit File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/editing/edit">Edit File guide</a>. See <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">Async Processing</a> for a full guide on polling helpers and webhooks.</p>
+     * <h2>Polling with the SDK</h2>
+     * <p>The SDK provides a <code>createAndPoll</code> / <code>create_and_poll</code> method that handles polling automatically, returning when the run reaches a terminal state (<code>PROCESSED</code> or <code>FAILED</code>):</p>
+     * <p>&lt;Tabs&gt;
+     * &lt;Tab title=&quot;TypeScript&quot;&gt;
+     * ```typescript
+     * const result = await client.editRuns.createAndPoll({
+     *   file: { url: &quot;https://...&quot; },
+     *   config: { /* edit config * / }
+     * });
+     * // Returns when the run reaches a terminal state
+     * console.log(result.output);
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;Tab title=&quot;Python&quot;&gt;
+     * ```python
+     * result = client.edit_runs.create_and_poll(
+     *     file={&quot;url&quot;: &quot;https://...&quot;},
+     *     config={ ... }  # edit config
+     * )
+     * # Returns when the run reaches a terminal state
+     * print(result.output)
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;Tab title=&quot;Java&quot;&gt;
+     * ```java
+     * var result = client.editRuns().createAndPoll(EditRunCreateRequest.builder()
+     *     .file(FileInput.builder().url(&quot;https://...&quot;).build())
+     *     .config(EditConfig.builder().build())
+     *     .build());
+     * // Returns when the run reaches a terminal state
+     * System.out.println(result.getOutput());
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;/Tabs&gt;</p>
      */
     public ExtendClientHttpResponse<EditRun> create(EditRunsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())

@@ -49,7 +49,7 @@ public final class SplitRun {
 
     private final boolean edited;
 
-    private final SplitConfig config;
+    private final SplitConfigBase config;
 
     private final FileSummary file;
 
@@ -78,7 +78,7 @@ public final class SplitRun {
             Optional<Map<String, Object>> metadata,
             boolean reviewed,
             boolean edited,
-            SplitConfig config,
+            SplitConfigBase config,
             FileSummary file,
             Optional<String> parseRunId,
             String dashboardUrl,
@@ -259,7 +259,7 @@ public final class SplitRun {
      * @return The configuration used for this split run.
      */
     @JsonProperty("config")
-    public SplitConfig getConfig() {
+    public SplitConfigBase getConfig() {
         return config;
     }
 
@@ -471,7 +471,7 @@ public final class SplitRun {
         /**
          * <p>The configuration used for this split run.</p>
          */
-        FileStage config(@NotNull SplitConfig config);
+        FileStage config(@NotNull SplitConfigBase config);
     }
 
     public interface FileStage {
@@ -633,7 +633,7 @@ public final class SplitRun {
 
         private boolean edited;
 
-        private SplitConfig config;
+        private SplitConfigBase config;
 
         private FileSummary file;
 
@@ -744,7 +744,7 @@ public final class SplitRun {
          */
         @java.lang.Override
         @JsonSetter("config")
-        public FileStage config(@NotNull SplitConfig config) {
+        public FileStage config(@NotNull SplitConfigBase config) {
             this.config = Objects.requireNonNull(config, "config must not be null");
             return this;
         }

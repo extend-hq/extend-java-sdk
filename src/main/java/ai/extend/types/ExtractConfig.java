@@ -32,7 +32,7 @@ public final class ExtractConfig {
     @SuppressWarnings("unchecked")
     public <T> T visit(Visitor<T> visitor) {
         if (this.type == 0) {
-            return visitor.visit((ExtractConfigJson) this.value);
+            return visitor.visit((ExtractConfigJsonBase) this.value);
         } else if (this.type == 1) {
             return visitor.visit((ExtractConfigLegacy) this.value);
         }
@@ -59,7 +59,7 @@ public final class ExtractConfig {
         return this.value.toString();
     }
 
-    public static ExtractConfig of(ExtractConfigJson value) {
+    public static ExtractConfig of(ExtractConfigJsonBase value) {
         return new ExtractConfig(value, 0);
     }
 
@@ -68,7 +68,7 @@ public final class ExtractConfig {
     }
 
     public interface Visitor<T> {
-        T visit(ExtractConfigJson value);
+        T visit(ExtractConfigJsonBase value);
 
         T visit(ExtractConfigLegacy value);
     }
@@ -82,7 +82,7 @@ public final class ExtractConfig {
         public ExtractConfig deserialize(JsonParser p, DeserializationContext context) throws IOException {
             Object value = p.readValueAs(Object.class);
             try {
-                return of(ObjectMappers.JSON_MAPPER.convertValue(value, ExtractConfigJson.class));
+                return of(ObjectMappers.JSON_MAPPER.convertValue(value, ExtractConfigJsonBase.class));
             } catch (RuntimeException e) {
             }
             try {

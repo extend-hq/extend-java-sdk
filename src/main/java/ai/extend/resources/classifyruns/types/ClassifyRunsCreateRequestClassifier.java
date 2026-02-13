@@ -4,7 +4,7 @@
 package ai.extend.resources.classifyruns.types;
 
 import ai.extend.core.ObjectMappers;
-import ai.extend.types.ClassifyConfig;
+import ai.extend.types.ClassifyConfigBase;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -26,14 +26,14 @@ public final class ClassifyRunsCreateRequestClassifier {
 
     private final Optional<String> version;
 
-    private final Optional<ClassifyConfig> overrideConfig;
+    private final Optional<ClassifyConfigBase> overrideConfig;
 
     private final Map<String, Object> additionalProperties;
 
     private ClassifyRunsCreateRequestClassifier(
             String id,
             Optional<String> version,
-            Optional<ClassifyConfig> overrideConfig,
+            Optional<ClassifyConfigBase> overrideConfig,
             Map<String, Object> additionalProperties) {
         this.id = id;
         this.version = version;
@@ -55,10 +55,10 @@ public final class ClassifyRunsCreateRequestClassifier {
     }
 
     /**
-     * @return Optional configuration override. If provided, this configuration will override the classifier's saved configuration.
+     * @return Optional partial configuration override. Only the fields you provide will override the classifier's saved configuration. For example, you can pass only <code>classificationRules</code> without providing <code>classifications</code>.
      */
     @JsonProperty("overrideConfig")
-    public Optional<ClassifyConfig> getOverrideConfig() {
+    public Optional<ClassifyConfigBase> getOverrideConfig() {
         return overrideConfig;
     }
 
@@ -109,18 +109,18 @@ public final class ClassifyRunsCreateRequestClassifier {
         _FinalStage version(String version);
 
         /**
-         * <p>Optional configuration override. If provided, this configuration will override the classifier's saved configuration.</p>
+         * <p>Optional partial configuration override. Only the fields you provide will override the classifier's saved configuration. For example, you can pass only <code>classificationRules</code> without providing <code>classifications</code>.</p>
          */
-        _FinalStage overrideConfig(Optional<ClassifyConfig> overrideConfig);
+        _FinalStage overrideConfig(Optional<ClassifyConfigBase> overrideConfig);
 
-        _FinalStage overrideConfig(ClassifyConfig overrideConfig);
+        _FinalStage overrideConfig(ClassifyConfigBase overrideConfig);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements IdStage, _FinalStage {
         private String id;
 
-        private Optional<ClassifyConfig> overrideConfig = Optional.empty();
+        private Optional<ClassifyConfigBase> overrideConfig = Optional.empty();
 
         private Optional<String> version = Optional.empty();
 
@@ -150,21 +150,21 @@ public final class ClassifyRunsCreateRequestClassifier {
         }
 
         /**
-         * <p>Optional configuration override. If provided, this configuration will override the classifier's saved configuration.</p>
+         * <p>Optional partial configuration override. Only the fields you provide will override the classifier's saved configuration. For example, you can pass only <code>classificationRules</code> without providing <code>classifications</code>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage overrideConfig(ClassifyConfig overrideConfig) {
+        public _FinalStage overrideConfig(ClassifyConfigBase overrideConfig) {
             this.overrideConfig = Optional.ofNullable(overrideConfig);
             return this;
         }
 
         /**
-         * <p>Optional configuration override. If provided, this configuration will override the classifier's saved configuration.</p>
+         * <p>Optional partial configuration override. Only the fields you provide will override the classifier's saved configuration. For example, you can pass only <code>classificationRules</code> without providing <code>classifications</code>.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "overrideConfig", nulls = Nulls.SKIP)
-        public _FinalStage overrideConfig(Optional<ClassifyConfig> overrideConfig) {
+        public _FinalStage overrideConfig(Optional<ClassifyConfigBase> overrideConfig) {
             this.overrideConfig = overrideConfig;
             return this;
         }

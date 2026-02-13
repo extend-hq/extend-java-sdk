@@ -6,7 +6,7 @@ package ai.extend.resources.classifyruns.requests;
 import ai.extend.core.ObjectMappers;
 import ai.extend.resources.classifyruns.types.ClassifyRunsCreateRequestClassifier;
 import ai.extend.resources.classifyruns.types.ClassifyRunsCreateRequestFile;
-import ai.extend.types.ClassifyConfig;
+import ai.extend.types.ClassifyConfigBase;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 public final class ClassifyRunsCreateRequest {
     private final Optional<ClassifyRunsCreateRequestClassifier> classifier;
 
-    private final Optional<ClassifyConfig> config;
+    private final Optional<ClassifyConfigBase> config;
 
     private final ClassifyRunsCreateRequestFile file;
 
@@ -38,7 +38,7 @@ public final class ClassifyRunsCreateRequest {
 
     private ClassifyRunsCreateRequest(
             Optional<ClassifyRunsCreateRequestClassifier> classifier,
-            Optional<ClassifyConfig> config,
+            Optional<ClassifyConfigBase> config,
             ClassifyRunsCreateRequestFile file,
             Optional<Integer> priority,
             Optional<Map<String, Object>> metadata,
@@ -63,7 +63,7 @@ public final class ClassifyRunsCreateRequest {
      * @return Inline classify configuration. One of <code>classifier</code> or <code>config</code> must be provided.
      */
     @JsonProperty("config")
-    public Optional<ClassifyConfig> getConfig() {
+    public Optional<ClassifyConfigBase> getConfig() {
         return config;
     }
 
@@ -140,9 +140,9 @@ public final class ClassifyRunsCreateRequest {
         /**
          * <p>Inline classify configuration. One of <code>classifier</code> or <code>config</code> must be provided.</p>
          */
-        _FinalStage config(Optional<ClassifyConfig> config);
+        _FinalStage config(Optional<ClassifyConfigBase> config);
 
-        _FinalStage config(ClassifyConfig config);
+        _FinalStage config(ClassifyConfigBase config);
 
         _FinalStage priority(Optional<Integer> priority);
 
@@ -161,7 +161,7 @@ public final class ClassifyRunsCreateRequest {
 
         private Optional<Integer> priority = Optional.empty();
 
-        private Optional<ClassifyConfig> config = Optional.empty();
+        private Optional<ClassifyConfigBase> config = Optional.empty();
 
         private Optional<ClassifyRunsCreateRequestClassifier> classifier = Optional.empty();
 
@@ -223,7 +223,7 @@ public final class ClassifyRunsCreateRequest {
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage config(ClassifyConfig config) {
+        public _FinalStage config(ClassifyConfigBase config) {
             this.config = Optional.ofNullable(config);
             return this;
         }
@@ -233,7 +233,7 @@ public final class ClassifyRunsCreateRequest {
          */
         @java.lang.Override
         @JsonSetter(value = "config", nulls = Nulls.SKIP)
-        public _FinalStage config(Optional<ClassifyConfig> config) {
+        public _FinalStage config(Optional<ClassifyConfigBase> config) {
             this.config = config;
             return this;
         }

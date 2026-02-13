@@ -48,7 +48,38 @@ public class AsyncRawParseRunsClient {
     /**
      * Parse files to get cleaned, chunked target content (e.g. markdown).
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/parsing/parse">Parse File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/parsing/parse">Parse File guide</a>. See <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">Async Processing</a> for a full guide on polling helpers and webhooks.</p>
+     * <h2>Polling with the SDK</h2>
+     * <p>The SDK provides a <code>createAndPoll</code> / <code>create_and_poll</code> method that handles polling automatically, returning when the run reaches a terminal state (<code>PROCESSED</code> or <code>FAILED</code>):</p>
+     * <p>&lt;Tabs&gt;
+     * &lt;Tab title=&quot;TypeScript&quot;&gt;
+     * ```typescript
+     * const result = await client.parseRuns.createAndPoll({
+     *   file: { url: &quot;https://...&quot; }
+     * });
+     * // Returns when the run reaches a terminal state
+     * console.log(result.output);
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;Tab title=&quot;Python&quot;&gt;
+     * ```python
+     * result = client.parse_runs.create_and_poll(
+     *     file={&quot;url&quot;: &quot;https://...&quot;}
+     * )
+     * # Returns when the run reaches a terminal state
+     * print(result.output)
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;Tab title=&quot;Java&quot;&gt;
+     * ```java
+     * var result = client.parseRuns().createAndPoll(ParseRunCreateRequest.builder()
+     *     .file(FileInput.builder().url(&quot;https://...&quot;).build())
+     *     .build());
+     * // Returns when the run reaches a terminal state
+     * System.out.println(result.getOutput());
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;/Tabs&gt;</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ParseRun>> create(ParseRunsCreateRequest request) {
         return create(request, null);
@@ -57,7 +88,38 @@ public class AsyncRawParseRunsClient {
     /**
      * Parse files to get cleaned, chunked target content (e.g. markdown).
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/parsing/parse">Parse File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/parsing/parse">Parse File guide</a>. See <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">Async Processing</a> for a full guide on polling helpers and webhooks.</p>
+     * <h2>Polling with the SDK</h2>
+     * <p>The SDK provides a <code>createAndPoll</code> / <code>create_and_poll</code> method that handles polling automatically, returning when the run reaches a terminal state (<code>PROCESSED</code> or <code>FAILED</code>):</p>
+     * <p>&lt;Tabs&gt;
+     * &lt;Tab title=&quot;TypeScript&quot;&gt;
+     * ```typescript
+     * const result = await client.parseRuns.createAndPoll({
+     *   file: { url: &quot;https://...&quot; }
+     * });
+     * // Returns when the run reaches a terminal state
+     * console.log(result.output);
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;Tab title=&quot;Python&quot;&gt;
+     * ```python
+     * result = client.parse_runs.create_and_poll(
+     *     file={&quot;url&quot;: &quot;https://...&quot;}
+     * )
+     * # Returns when the run reaches a terminal state
+     * print(result.output)
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;Tab title=&quot;Java&quot;&gt;
+     * ```java
+     * var result = client.parseRuns().createAndPoll(ParseRunCreateRequest.builder()
+     *     .file(FileInput.builder().url(&quot;https://...&quot;).build())
+     *     .build());
+     * // Returns when the run reaches a terminal state
+     * System.out.println(result.getOutput());
+     * ```
+     * &lt;/Tab&gt;
+     * &lt;/Tabs&gt;</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ParseRun>> create(
             ParseRunsCreateRequest request, RequestOptions requestOptions) {
