@@ -20,6 +20,7 @@ import ai.extend.resources.processorrun.ProcessorRunClient;
 import ai.extend.resources.processorversion.ProcessorVersionClient;
 import ai.extend.resources.workflow.WorkflowClient;
 import ai.extend.resources.workflowrun.WorkflowRunClient;
+import ai.extend.resources.workflowrunoutput.WorkflowRunOutputClient;
 import ai.extend.types.ParserRun;
 import ai.extend.types.ParserRunStatus;
 import java.util.function.Supplier;
@@ -38,6 +39,8 @@ public class ExtendClient {
     protected final Supplier<WorkflowClient> workflowClient;
 
     protected final Supplier<WorkflowRunClient> workflowRunClient;
+
+    protected final Supplier<WorkflowRunOutputClient> workflowRunOutputClient;
 
     protected final Supplier<BatchWorkflowRunClient> batchWorkflowRunClient;
 
@@ -61,6 +64,7 @@ public class ExtendClient {
         this.editClient = Suppliers.memoize(() -> new EditClient(clientOptions));
         this.workflowClient = Suppliers.memoize(() -> new WorkflowClient(clientOptions));
         this.workflowRunClient = Suppliers.memoize(() -> new WorkflowRunClient(clientOptions));
+        this.workflowRunOutputClient = Suppliers.memoize(() -> new WorkflowRunOutputClient(clientOptions));
         this.batchWorkflowRunClient = Suppliers.memoize(() -> new BatchWorkflowRunClient(clientOptions));
         this.batchProcessorRunClient = Suppliers.memoize(() -> new BatchProcessorRunClient(clientOptions));
         this.evaluationSetClient = Suppliers.memoize(() -> new EvaluationSetClient(clientOptions));
@@ -143,6 +147,10 @@ public class ExtendClient {
 
     public WorkflowRunClient workflowRun() {
         return this.workflowRunClient.get();
+    }
+
+    public WorkflowRunOutputClient workflowRunOutput() {
+        return this.workflowRunOutputClient.get();
     }
 
     public BatchWorkflowRunClient batchWorkflowRun() {

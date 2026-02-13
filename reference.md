@@ -1467,6 +1467,107 @@ Example: `"workflow_run_xKm9pNv3qWsY_jL2tR5Dh"`
 </dl>
 </details>
 
+## WorkflowRunOutput
+<details><summary><code>client.workflowRunOutput.update(workflowRunId, outputId, request) -> WorkflowRunOutputUpdateResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Use this endpoint to submit corrected outputs for a WorkflowRun for future processor evaluation and tuning in Extend.
+
+If you are using our Human-in-the-loop workflow review, then we already will be collecting your operator submitted corrections. However, if you are receiving data via the API without human review, there could be incorrect outputs that you would like to correct for future usage in evaluation and tuning within the Extend platform. This endpoint allows you to submit corrected outputs for a WorkflowRun, by providing the correct output for a given output ID.
+
+The output ID, would be found in a given entry within the outputs arrays of a Workflow Run payload. The ID would look something like `dpr_gwkZZNRrPgkjcq0y-***`.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.workflowRunOutput().update(
+    "workflow_run_id_here",
+    "output_id_here",
+    WorkflowRunOutputUpdateRequest
+        .builder()
+        .reviewedOutput(
+            ProvidedProcessorOutput.ofProvidedExtractionOutput(
+                ProvidedExtractionOutput.ofProvidedJsonOutput(
+                    ProvidedJsonOutput
+                        .builder()
+                        .value(
+                            new HashMap<String, Object>() {{
+                                put("key", "value");
+                            }}
+                        )
+                        .build()
+                )
+            )
+        )
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**workflowRunId:** `String` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**outputId:** `String` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**reviewedOutput:** `ProvidedProcessorOutput` 
+
+The corrected output of the processor when run against the file.
+
+This should conform to the output type schema of the given processor.
+
+If this is an extraction result, you can include all fields, or just the ones that were corrected, our system will handle merges/dedupes. However, if you do include a field, we assume the value included in the final reviewed value.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## BatchWorkflowRun
 <details><summary><code>client.batchWorkflowRun.create(request) -> BatchWorkflowRunCreateResponse</code></summary>
 <dl>

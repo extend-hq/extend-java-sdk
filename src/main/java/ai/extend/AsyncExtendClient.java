@@ -20,6 +20,7 @@ import ai.extend.resources.processorrun.AsyncProcessorRunClient;
 import ai.extend.resources.processorversion.AsyncProcessorVersionClient;
 import ai.extend.resources.workflow.AsyncWorkflowClient;
 import ai.extend.resources.workflowrun.AsyncWorkflowRunClient;
+import ai.extend.resources.workflowrunoutput.AsyncWorkflowRunOutputClient;
 import ai.extend.types.ParserRun;
 import ai.extend.types.ParserRunStatus;
 import java.util.concurrent.CompletableFuture;
@@ -39,6 +40,8 @@ public class AsyncExtendClient {
     protected final Supplier<AsyncWorkflowClient> workflowClient;
 
     protected final Supplier<AsyncWorkflowRunClient> workflowRunClient;
+
+    protected final Supplier<AsyncWorkflowRunOutputClient> workflowRunOutputClient;
 
     protected final Supplier<AsyncBatchWorkflowRunClient> batchWorkflowRunClient;
 
@@ -62,6 +65,7 @@ public class AsyncExtendClient {
         this.editClient = Suppliers.memoize(() -> new AsyncEditClient(clientOptions));
         this.workflowClient = Suppliers.memoize(() -> new AsyncWorkflowClient(clientOptions));
         this.workflowRunClient = Suppliers.memoize(() -> new AsyncWorkflowRunClient(clientOptions));
+        this.workflowRunOutputClient = Suppliers.memoize(() -> new AsyncWorkflowRunOutputClient(clientOptions));
         this.batchWorkflowRunClient = Suppliers.memoize(() -> new AsyncBatchWorkflowRunClient(clientOptions));
         this.batchProcessorRunClient = Suppliers.memoize(() -> new AsyncBatchProcessorRunClient(clientOptions));
         this.evaluationSetClient = Suppliers.memoize(() -> new AsyncEvaluationSetClient(clientOptions));
@@ -144,6 +148,10 @@ public class AsyncExtendClient {
 
     public AsyncWorkflowRunClient workflowRun() {
         return this.workflowRunClient.get();
+    }
+
+    public AsyncWorkflowRunOutputClient workflowRunOutput() {
+        return this.workflowRunOutputClient.get();
     }
 
     public AsyncBatchWorkflowRunClient batchWorkflowRun() {
