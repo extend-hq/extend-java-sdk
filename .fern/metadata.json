@@ -8,7 +8,12 @@
     "package-prefix": "ai.extend",
     "enable-inline-types": false,
     "inline-file-properties": false,
-    "inline-path-parameters": false
+    "inline-path-parameters": false,
+    "custom-dependencies": [
+      "testImplementation org.mockito:mockito-core:4.11.0",
+      "testImplementation org.mockito:mockito-junit-jupiter:4.11.0",
+      "testImplementation org.mockito:mockito-inline:4.11.0"
+    ]
   },
-  "sdkVersion": "1.0.2"
+  "sdkVersion": "1.1.0"
 }

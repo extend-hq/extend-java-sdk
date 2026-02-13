@@ -13,80 +13,76 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-@JsonDeserialize(builder = ExtractConfigJson.Builder.class)
-public final class ExtractConfigJson {
-    private final Optional<ExtractBaseProcessor> baseProcessor;
+@JsonDeserialize(builder = ClassifyOverrideConfig.Builder.class)
+public final class ClassifyOverrideConfig {
+    private final Optional<ClassifyBaseProcessor> baseProcessor;
 
     private final Optional<String> baseVersion;
 
-    private final Optional<String> extractionRules;
+    private final Optional<List<Classification>> classifications;
 
-    private final Map<String, Object> schema;
+    private final Optional<String> classificationRules;
 
-    private final Optional<ExtractAdvancedOptions> advancedOptions;
+    private final Optional<ClassifyAdvancedOptions> advancedOptions;
 
     private final Optional<ParseConfig> parseConfig;
 
     private final Map<String, Object> additionalProperties;
 
-    private ExtractConfigJson(
-            Optional<ExtractBaseProcessor> baseProcessor,
+    private ClassifyOverrideConfig(
+            Optional<ClassifyBaseProcessor> baseProcessor,
             Optional<String> baseVersion,
-            Optional<String> extractionRules,
-            Map<String, Object> schema,
-            Optional<ExtractAdvancedOptions> advancedOptions,
+            Optional<List<Classification>> classifications,
+            Optional<String> classificationRules,
+            Optional<ClassifyAdvancedOptions> advancedOptions,
             Optional<ParseConfig> parseConfig,
             Map<String, Object> additionalProperties) {
         this.baseProcessor = baseProcessor;
         this.baseVersion = baseVersion;
-        this.extractionRules = extractionRules;
-        this.schema = schema;
+        this.classifications = classifications;
+        this.classificationRules = classificationRules;
         this.advancedOptions = advancedOptions;
         this.parseConfig = parseConfig;
         this.additionalProperties = additionalProperties;
     }
 
     @JsonProperty("baseProcessor")
-    public Optional<ExtractBaseProcessor> getBaseProcessor() {
+    public Optional<ClassifyBaseProcessor> getBaseProcessor() {
         return baseProcessor;
     }
 
     /**
-     * @return The version of the <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/changelog/extraction/extraction-performance">Extraction Changelog</a> for more details.
+     * @return The version of the <code>&quot;classification_performance&quot;</code> or <code>&quot;classification_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/changelog/classification/classification-performance">Classification Changelog</a> for more details.
      */
     @JsonProperty("baseVersion")
     public Optional<String> getBaseVersion() {
         return baseVersion;
     }
 
-    /**
-     * @return Custom rules to guide the extraction process in natural language.
-     */
-    @JsonProperty("extractionRules")
-    public Optional<String> getExtractionRules() {
-        return extractionRules;
+    @JsonProperty("classifications")
+    public Optional<List<Classification>> getClassifications() {
+        return classifications;
     }
 
     /**
-     * @return JSON Schema definition of the data to extract.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/extraction/schema/json-schema">JSON Schema guide</a> for details and examples of schema configuration.</p>
+     * @return Custom rules to guide the classification process in natural language.
      */
-    @JsonProperty("schema")
-    public Map<String, Object> getSchema() {
-        return schema;
+    @JsonProperty("classificationRules")
+    public Optional<String> getClassificationRules() {
+        return classificationRules;
     }
 
     /**
      * @return Advanced configuration options.
      */
     @JsonProperty("advancedOptions")
-    public Optional<ExtractAdvancedOptions> getAdvancedOptions() {
+    public Optional<ClassifyAdvancedOptions> getAdvancedOptions() {
         return advancedOptions;
     }
 
@@ -101,7 +97,7 @@ public final class ExtractConfigJson {
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        return other instanceof ExtractConfigJson && equalTo((ExtractConfigJson) other);
+        return other instanceof ClassifyOverrideConfig && equalTo((ClassifyOverrideConfig) other);
     }
 
     @JsonAnyGetter
@@ -109,11 +105,11 @@ public final class ExtractConfigJson {
         return this.additionalProperties;
     }
 
-    private boolean equalTo(ExtractConfigJson other) {
+    private boolean equalTo(ClassifyOverrideConfig other) {
         return baseProcessor.equals(other.baseProcessor)
                 && baseVersion.equals(other.baseVersion)
-                && extractionRules.equals(other.extractionRules)
-                && schema.equals(other.schema)
+                && classifications.equals(other.classifications)
+                && classificationRules.equals(other.classificationRules)
                 && advancedOptions.equals(other.advancedOptions)
                 && parseConfig.equals(other.parseConfig);
     }
@@ -123,8 +119,8 @@ public final class ExtractConfigJson {
         return Objects.hash(
                 this.baseProcessor,
                 this.baseVersion,
-                this.extractionRules,
-                this.schema,
+                this.classifications,
+                this.classificationRules,
                 this.advancedOptions,
                 this.parseConfig);
     }
@@ -140,15 +136,15 @@ public final class ExtractConfigJson {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-        private Optional<ExtractBaseProcessor> baseProcessor = Optional.empty();
+        private Optional<ClassifyBaseProcessor> baseProcessor = Optional.empty();
 
         private Optional<String> baseVersion = Optional.empty();
 
-        private Optional<String> extractionRules = Optional.empty();
+        private Optional<List<Classification>> classifications = Optional.empty();
 
-        private Map<String, Object> schema = new LinkedHashMap<>();
+        private Optional<String> classificationRules = Optional.empty();
 
-        private Optional<ExtractAdvancedOptions> advancedOptions = Optional.empty();
+        private Optional<ClassifyAdvancedOptions> advancedOptions = Optional.empty();
 
         private Optional<ParseConfig> parseConfig = Optional.empty();
 
@@ -157,29 +153,29 @@ public final class ExtractConfigJson {
 
         private Builder() {}
 
-        public Builder from(ExtractConfigJson other) {
+        public Builder from(ClassifyOverrideConfig other) {
             baseProcessor(other.getBaseProcessor());
             baseVersion(other.getBaseVersion());
-            extractionRules(other.getExtractionRules());
-            schema(other.getSchema());
+            classifications(other.getClassifications());
+            classificationRules(other.getClassificationRules());
             advancedOptions(other.getAdvancedOptions());
             parseConfig(other.getParseConfig());
             return this;
         }
 
         @JsonSetter(value = "baseProcessor", nulls = Nulls.SKIP)
-        public Builder baseProcessor(Optional<ExtractBaseProcessor> baseProcessor) {
+        public Builder baseProcessor(Optional<ClassifyBaseProcessor> baseProcessor) {
             this.baseProcessor = baseProcessor;
             return this;
         }
 
-        public Builder baseProcessor(ExtractBaseProcessor baseProcessor) {
+        public Builder baseProcessor(ClassifyBaseProcessor baseProcessor) {
             this.baseProcessor = Optional.ofNullable(baseProcessor);
             return this;
         }
 
         /**
-         * <p>The version of the <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/changelog/extraction/extraction-performance">Extraction Changelog</a> for more details.</p>
+         * <p>The version of the <code>&quot;classification_performance&quot;</code> or <code>&quot;classification_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/changelog/classification/classification-performance">Classification Changelog</a> for more details.</p>
          */
         @JsonSetter(value = "baseVersion", nulls = Nulls.SKIP)
         public Builder baseVersion(Optional<String> baseVersion) {
@@ -192,42 +188,28 @@ public final class ExtractConfigJson {
             return this;
         }
 
-        /**
-         * <p>Custom rules to guide the extraction process in natural language.</p>
-         */
-        @JsonSetter(value = "extractionRules", nulls = Nulls.SKIP)
-        public Builder extractionRules(Optional<String> extractionRules) {
-            this.extractionRules = extractionRules;
+        @JsonSetter(value = "classifications", nulls = Nulls.SKIP)
+        public Builder classifications(Optional<List<Classification>> classifications) {
+            this.classifications = classifications;
             return this;
         }
 
-        public Builder extractionRules(String extractionRules) {
-            this.extractionRules = Optional.ofNullable(extractionRules);
+        public Builder classifications(List<Classification> classifications) {
+            this.classifications = Optional.ofNullable(classifications);
             return this;
         }
 
         /**
-         * <p>JSON Schema definition of the data to extract.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/extraction/schema/json-schema">JSON Schema guide</a> for details and examples of schema configuration.</p>
+         * <p>Custom rules to guide the classification process in natural language.</p>
          */
-        @JsonSetter(value = "schema", nulls = Nulls.SKIP)
-        public Builder schema(Map<String, Object> schema) {
-            this.schema.clear();
-            if (schema != null) {
-                this.schema.putAll(schema);
-            }
+        @JsonSetter(value = "classificationRules", nulls = Nulls.SKIP)
+        public Builder classificationRules(Optional<String> classificationRules) {
+            this.classificationRules = classificationRules;
             return this;
         }
 
-        public Builder putAllSchema(Map<String, Object> schema) {
-            if (schema != null) {
-                this.schema.putAll(schema);
-            }
-            return this;
-        }
-
-        public Builder schema(String key, Object value) {
-            this.schema.put(key, value);
+        public Builder classificationRules(String classificationRules) {
+            this.classificationRules = Optional.ofNullable(classificationRules);
             return this;
         }
 
@@ -235,12 +217,12 @@ public final class ExtractConfigJson {
          * <p>Advanced configuration options.</p>
          */
         @JsonSetter(value = "advancedOptions", nulls = Nulls.SKIP)
-        public Builder advancedOptions(Optional<ExtractAdvancedOptions> advancedOptions) {
+        public Builder advancedOptions(Optional<ClassifyAdvancedOptions> advancedOptions) {
             this.advancedOptions = advancedOptions;
             return this;
         }
 
-        public Builder advancedOptions(ExtractAdvancedOptions advancedOptions) {
+        public Builder advancedOptions(ClassifyAdvancedOptions advancedOptions) {
             this.advancedOptions = Optional.ofNullable(advancedOptions);
             return this;
         }
@@ -259,12 +241,12 @@ public final class ExtractConfigJson {
             return this;
         }
 
-        public ExtractConfigJson build() {
-            return new ExtractConfigJson(
+        public ClassifyOverrideConfig build() {
+            return new ClassifyOverrideConfig(
                     baseProcessor,
                     baseVersion,
-                    extractionRules,
-                    schema,
+                    classifications,
+                    classificationRules,
                     advancedOptions,
                     parseConfig,
                     additionalProperties);

@@ -4,7 +4,7 @@
 package ai.extend.resources.extractruns.types;
 
 import ai.extend.core.ObjectMappers;
-import ai.extend.types.ExtractConfigJson;
+import ai.extend.types.ExtractOverrideConfigJson;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -26,14 +26,14 @@ public final class ExtractRunsCreateRequestExtractor {
 
     private final Optional<String> version;
 
-    private final Optional<ExtractConfigJson> overrideConfig;
+    private final Optional<ExtractOverrideConfigJson> overrideConfig;
 
     private final Map<String, Object> additionalProperties;
 
     private ExtractRunsCreateRequestExtractor(
             String id,
             Optional<String> version,
-            Optional<ExtractConfigJson> overrideConfig,
+            Optional<ExtractOverrideConfigJson> overrideConfig,
             Map<String, Object> additionalProperties) {
         this.id = id;
         this.version = version;
@@ -55,10 +55,10 @@ public final class ExtractRunsCreateRequestExtractor {
     }
 
     /**
-     * @return Optional configuration override. If provided, this configuration will override the extractor's saved configuration.
+     * @return Optional partial configuration override. Only the fields you provide will override the extractor's saved configuration. For example, you can pass only <code>advancedOptions</code> or <code>extractionRules</code> without providing a <code>schema</code>.
      */
     @JsonProperty("overrideConfig")
-    public Optional<ExtractConfigJson> getOverrideConfig() {
+    public Optional<ExtractOverrideConfigJson> getOverrideConfig() {
         return overrideConfig;
     }
 
@@ -108,18 +108,18 @@ public final class ExtractRunsCreateRequestExtractor {
         _FinalStage version(String version);
 
         /**
-         * <p>Optional configuration override. If provided, this configuration will override the extractor's saved configuration.</p>
+         * <p>Optional partial configuration override. Only the fields you provide will override the extractor's saved configuration. For example, you can pass only <code>advancedOptions</code> or <code>extractionRules</code> without providing a <code>schema</code>.</p>
          */
-        _FinalStage overrideConfig(Optional<ExtractConfigJson> overrideConfig);
+        _FinalStage overrideConfig(Optional<ExtractOverrideConfigJson> overrideConfig);
 
-        _FinalStage overrideConfig(ExtractConfigJson overrideConfig);
+        _FinalStage overrideConfig(ExtractOverrideConfigJson overrideConfig);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements IdStage, _FinalStage {
         private String id;
 
-        private Optional<ExtractConfigJson> overrideConfig = Optional.empty();
+        private Optional<ExtractOverrideConfigJson> overrideConfig = Optional.empty();
 
         private Optional<String> version = Optional.empty();
 
@@ -149,21 +149,21 @@ public final class ExtractRunsCreateRequestExtractor {
         }
 
         /**
-         * <p>Optional configuration override. If provided, this configuration will override the extractor's saved configuration.</p>
+         * <p>Optional partial configuration override. Only the fields you provide will override the extractor's saved configuration. For example, you can pass only <code>advancedOptions</code> or <code>extractionRules</code> without providing a <code>schema</code>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage overrideConfig(ExtractConfigJson overrideConfig) {
+        public _FinalStage overrideConfig(ExtractOverrideConfigJson overrideConfig) {
             this.overrideConfig = Optional.ofNullable(overrideConfig);
             return this;
         }
 
         /**
-         * <p>Optional configuration override. If provided, this configuration will override the extractor's saved configuration.</p>
+         * <p>Optional partial configuration override. Only the fields you provide will override the extractor's saved configuration. For example, you can pass only <code>advancedOptions</code> or <code>extractionRules</code> without providing a <code>schema</code>.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "overrideConfig", nulls = Nulls.SKIP)
-        public _FinalStage overrideConfig(Optional<ExtractConfigJson> overrideConfig) {
+        public _FinalStage overrideConfig(Optional<ExtractOverrideConfigJson> overrideConfig) {
             this.overrideConfig = overrideConfig;
             return this;
         }
