@@ -57,7 +57,7 @@ public final class LegacyExtractionConfig {
     }
 
     /**
-     * @return The base processor to use. For extractors, this must be either <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code>. See <a href="/changelog/extraction/extraction-performance">Extraction Changelog</a> for more details.
+     * @return The base processor to use. For extractors, this must be either <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code>. See <a href="https://docs.extend.ai/2026-02-09/changelog/extraction/extraction-performance">Extraction Changelog</a> for more details.
      */
     @JsonProperty("baseProcessor")
     public Optional<LegacyExtractionConfigBaseProcessor> getBaseProcessor() {
@@ -65,7 +65,7 @@ public final class LegacyExtractionConfig {
     }
 
     /**
-     * @return The version of the <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code> processor to use. If this is provided, the <code>baseProcessor</code> must also be provided. See <a href="/changelog/extraction/extraction-performance">Extraction Changelog</a> for more details.
+     * @return The version of the <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code> processor to use. If this is provided, the <code>baseProcessor</code> must also be provided. See <a href="https://docs.extend.ai/2026-02-09/changelog/extraction/extraction-performance">Extraction Changelog</a> for more details.
      */
     @JsonProperty("baseVersion")
     public Optional<String> getBaseVersion() {
@@ -82,7 +82,7 @@ public final class LegacyExtractionConfig {
 
     /**
      * @return JSON Schema definition of the data to extract. Either <code>fields</code> or <code>schema</code> must be provided.
-     * <p>See the <a href="/product/extraction/schema/json-schema">JSON Schema guide</a> for details and examples of schema configuration.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/extraction/schema">JSON Schema guide</a> for details and examples of schema configuration.</p>
      */
     @JsonProperty("schema")
     public Optional<Map<String, Object>> getSchema() {
@@ -189,7 +189,7 @@ public final class LegacyExtractionConfig {
         }
 
         /**
-         * <p>The base processor to use. For extractors, this must be either <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code>. See <a href="/changelog/extraction/extraction-performance">Extraction Changelog</a> for more details.</p>
+         * <p>The base processor to use. For extractors, this must be either <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code>. See <a href="https://docs.extend.ai/2026-02-09/changelog/extraction/extraction-performance">Extraction Changelog</a> for more details.</p>
          */
         @JsonSetter(value = "baseProcessor", nulls = Nulls.SKIP)
         public Builder baseProcessor(Optional<LegacyExtractionConfigBaseProcessor> baseProcessor) {
@@ -203,7 +203,7 @@ public final class LegacyExtractionConfig {
         }
 
         /**
-         * <p>The version of the <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code> processor to use. If this is provided, the <code>baseProcessor</code> must also be provided. See <a href="/changelog/extraction/extraction-performance">Extraction Changelog</a> for more details.</p>
+         * <p>The version of the <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code> processor to use. If this is provided, the <code>baseProcessor</code> must also be provided. See <a href="https://docs.extend.ai/2026-02-09/changelog/extraction/extraction-performance">Extraction Changelog</a> for more details.</p>
          */
         @JsonSetter(value = "baseVersion", nulls = Nulls.SKIP)
         public Builder baseVersion(Optional<String> baseVersion) {
@@ -232,7 +232,7 @@ public final class LegacyExtractionConfig {
 
         /**
          * <p>JSON Schema definition of the data to extract. Either <code>fields</code> or <code>schema</code> must be provided.</p>
-         * <p>See the <a href="/product/extraction/schema/json-schema">JSON Schema guide</a> for details and examples of schema configuration.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/extraction/schema">JSON Schema guide</a> for details and examples of schema configuration.</p>
          */
         @JsonSetter(value = "schema", nulls = Nulls.SKIP)
         public Builder schema(Optional<Map<String, Object>> schema) {

@@ -84,7 +84,7 @@ public final class ExtractOutputMetadataValue {
      * </ul>
      * <p>These scores will be present when the <code>reviewAgent.enabled</code> flag is set to <code>true</code> in the processor config.
      * If the review agent is enabled but a score is not returned for a field, this value will be <code>null</code>.
-     * To learn more, view the <a href="https://docs.extend.ai/product/extraction/review-agent">Review Agent Documentation</a></p>
+     * To learn more, view the <a href="https://docs.extend.ai/2026-02-09/product/extraction/review-agent">Review Agent Documentation</a></p>
      */
     @JsonIgnore
     public Optional<Integer> getReviewAgentScore() {
@@ -243,7 +243,7 @@ public final class ExtractOutputMetadataValue {
          * </ul>
          * <p>These scores will be present when the <code>reviewAgent.enabled</code> flag is set to <code>true</code> in the processor config.
          * If the review agent is enabled but a score is not returned for a field, this value will be <code>null</code>.
-         * To learn more, view the <a href="https://docs.extend.ai/product/extraction/review-agent">Review Agent Documentation</a></p>
+         * To learn more, view the <a href="https://docs.extend.ai/2026-02-09/product/extraction/review-agent">Review Agent Documentation</a></p>
          */
         @JsonSetter(value = "reviewAgentScore", nulls = Nulls.SKIP)
         public Builder reviewAgentScore(Optional<Integer> reviewAgentScore) {

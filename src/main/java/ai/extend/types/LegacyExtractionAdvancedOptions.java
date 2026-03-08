@@ -145,7 +145,7 @@ public final class LegacyExtractionAdvancedOptions {
      * When enabled, each field in the output metadata will include a <code>reviewAgentScore</code> (1-5)
      * and may include additional <code>insights</code> of type <code>issue</code> or <code>review_summary</code> to help identify
      * fields that may need manual review.
-     * <p>To learn more, view the <a href="https://docs.extend.ai/product/extraction/review-agent">Review Agent Documentation</a></p>
+     * <p>To learn more, view the <a href="https://docs.extend.ai/2026-02-09/product/extraction/review-agent">Review Agent Documentation</a></p>
      */
     @JsonProperty("reviewAgent")
     public Optional<LegacyExtractionAdvancedOptionsReviewAgent> getReviewAgent() {
@@ -182,7 +182,7 @@ public final class LegacyExtractionAdvancedOptions {
     }
 
     /**
-     * @return DEPRECATED - See <a href="/product/page-ranges">Page Ranges</a>.
+     * @return DEPRECATED - See <a href="https://docs.extend.ai/2026-02-09/product/page-ranges">Page Ranges</a>.
      */
     @JsonProperty("fixedPageLimit")
     public Optional<Integer> getFixedPageLimit() {
@@ -409,7 +409,7 @@ public final class LegacyExtractionAdvancedOptions {
          * When enabled, each field in the output metadata will include a <code>reviewAgentScore</code> (1-5)
          * and may include additional <code>insights</code> of type <code>issue</code> or <code>review_summary</code> to help identify
          * fields that may need manual review.</p>
-         * <p>To learn more, view the <a href="https://docs.extend.ai/product/extraction/review-agent">Review Agent Documentation</a></p>
+         * <p>To learn more, view the <a href="https://docs.extend.ai/2026-02-09/product/extraction/review-agent">Review Agent Documentation</a></p>
          */
         @JsonSetter(value = "reviewAgent", nulls = Nulls.SKIP)
         public Builder reviewAgent(Optional<LegacyExtractionAdvancedOptionsReviewAgent> reviewAgent) {
@@ -478,7 +478,7 @@ public final class LegacyExtractionAdvancedOptions {
         }
 
         /**
-         * <p>DEPRECATED - See <a href="/product/page-ranges">Page Ranges</a>.</p>
+         * <p>DEPRECATED - See <a href="https://docs.extend.ai/2026-02-09/product/page-ranges">Page Ranges</a>.</p>
          */
         @JsonSetter(value = "fixedPageLimit", nulls = Nulls.SKIP)
         public Builder fixedPageLimit(Optional<Integer> fixedPageLimit) {

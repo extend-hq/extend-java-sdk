@@ -62,7 +62,7 @@ public final class WorkflowRunsCreateRequest {
     }
 
     /**
-     * @return The file to be processed. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/product/general/supported-file-types">here</a>. Files can be provided as a URL, an Extend file ID, or raw text. If you wish to process more at a time, consider using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/batch-run-workflow">Batch Run Workflow</a> endpoint.
+     * @return The file to be processed. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/product/general/supported-file-types">here</a>. Files can be provided as a URL, an Extend file ID, or raw text. If you wish to process more at a time, consider using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/batch-create-workflow-runs">Batch Run Workflow</a> endpoint.
      */
     @JsonProperty("file")
     public WorkflowRunsCreateRequestFile getFile() {
@@ -134,7 +134,7 @@ public final class WorkflowRunsCreateRequest {
 
     public interface FileStage {
         /**
-         * <p>The file to be processed. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/product/general/supported-file-types">here</a>. Files can be provided as a URL, an Extend file ID, or raw text. If you wish to process more at a time, consider using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/batch-run-workflow">Batch Run Workflow</a> endpoint.</p>
+         * <p>The file to be processed. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/product/general/supported-file-types">here</a>. Files can be provided as a URL, an Extend file ID, or raw text. If you wish to process more at a time, consider using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/batch-create-workflow-runs">Batch Run Workflow</a> endpoint.</p>
          */
         _FinalStage file(@NotNull WorkflowRunsCreateRequestFile file);
     }
@@ -200,8 +200,8 @@ public final class WorkflowRunsCreateRequest {
         }
 
         /**
-         * <p>The file to be processed. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/product/general/supported-file-types">here</a>. Files can be provided as a URL, an Extend file ID, or raw text. If you wish to process more at a time, consider using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/batch-run-workflow">Batch Run Workflow</a> endpoint.</p>
-         * <p>The file to be processed. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/product/general/supported-file-types">here</a>. Files can be provided as a URL, an Extend file ID, or raw text. If you wish to process more at a time, consider using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/batch-run-workflow">Batch Run Workflow</a> endpoint.</p>
+         * <p>The file to be processed. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/product/general/supported-file-types">here</a>. Files can be provided as a URL, an Extend file ID, or raw text. If you wish to process more at a time, consider using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/batch-create-workflow-runs">Batch Run Workflow</a> endpoint.</p>
+         * <p>The file to be processed. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/product/general/supported-file-types">here</a>. Files can be provided as a URL, an Extend file ID, or raw text. If you wish to process more at a time, consider using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/batch-create-workflow-runs">Batch Run Workflow</a> endpoint.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override

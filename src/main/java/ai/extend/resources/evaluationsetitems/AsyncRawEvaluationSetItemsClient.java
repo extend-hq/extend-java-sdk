@@ -195,7 +195,7 @@ public class AsyncRawEvaluationSetItemsClient {
     /**
      * Evaluation set items are the individual files and expected outputs that are used to evaluate the performance of a given extractor, classifier, or splitter in Extend. This endpoint will create new evaluation set items in Extend, which will be used during an evaluation run.
      * <p><strong>Limit:</strong> You can create up to 100 items at a time.</p>
-     * <p>Learn more about how to create evaluation set items in the <a href="https://docs.extend.ai/product/evaluation/overview">Evaluation Sets</a> product page.</p>
+     * <p>Learn more about how to create evaluation set items in the <a href="https://docs.extend.ai/2026-02-09/product/evaluation/overview">Evaluation Sets</a> product page.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItemsCreateResponse>> create(
             String evaluationSetId, EvaluationSetItemsCreateRequest request) {
@@ -205,7 +205,7 @@ public class AsyncRawEvaluationSetItemsClient {
     /**
      * Evaluation set items are the individual files and expected outputs that are used to evaluate the performance of a given extractor, classifier, or splitter in Extend. This endpoint will create new evaluation set items in Extend, which will be used during an evaluation run.
      * <p><strong>Limit:</strong> You can create up to 100 items at a time.</p>
-     * <p>Learn more about how to create evaluation set items in the <a href="https://docs.extend.ai/product/evaluation/overview">Evaluation Sets</a> product page.</p>
+     * <p>Learn more about how to create evaluation set items in the <a href="https://docs.extend.ai/2026-02-09/product/evaluation/overview">Evaluation Sets</a> product page.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItemsCreateResponse>> create(
             String evaluationSetId, EvaluationSetItemsCreateRequest request, RequestOptions requestOptions) {

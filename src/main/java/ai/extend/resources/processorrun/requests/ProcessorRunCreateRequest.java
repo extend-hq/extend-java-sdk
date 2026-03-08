@@ -81,7 +81,7 @@ public final class ProcessorRunCreateRequest {
     }
 
     /**
-     * @return The file to be processed. One of <code>file</code> or <code>rawText</code> must be provided. Supported file types can be found <a href="/product/general/supported-file-types">here</a>.
+     * @return The file to be processed. One of <code>file</code> or <code>rawText</code> must be provided. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/product/general/supported-file-types">here</a>.
      */
     @JsonProperty("file")
     public Optional<LegacyProcessorRunFileInput> getFile() {
@@ -196,7 +196,7 @@ public final class ProcessorRunCreateRequest {
         _FinalStage version(String version);
 
         /**
-         * <p>The file to be processed. One of <code>file</code> or <code>rawText</code> must be provided. Supported file types can be found <a href="/product/general/supported-file-types">here</a>.</p>
+         * <p>The file to be processed. One of <code>file</code> or <code>rawText</code> must be provided. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/product/general/supported-file-types">here</a>.</p>
          */
         _FinalStage file(Optional<LegacyProcessorRunFileInput> file);
 
@@ -388,7 +388,7 @@ public final class ProcessorRunCreateRequest {
         }
 
         /**
-         * <p>The file to be processed. One of <code>file</code> or <code>rawText</code> must be provided. Supported file types can be found <a href="/product/general/supported-file-types">here</a>.</p>
+         * <p>The file to be processed. One of <code>file</code> or <code>rawText</code> must be provided. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/product/general/supported-file-types">here</a>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -398,7 +398,7 @@ public final class ProcessorRunCreateRequest {
         }
 
         /**
-         * <p>The file to be processed. One of <code>file</code> or <code>rawText</code> must be provided. Supported file types can be found <a href="/product/general/supported-file-types">here</a>.</p>
+         * <p>The file to be processed. One of <code>file</code> or <code>rawText</code> must be provided. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/product/general/supported-file-types">here</a>.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "file", nulls = Nulls.SKIP)

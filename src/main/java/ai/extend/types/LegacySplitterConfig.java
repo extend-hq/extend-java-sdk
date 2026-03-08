@@ -54,7 +54,7 @@ public final class LegacySplitterConfig {
     }
 
     /**
-     * @return The base processor to use. For splitters, this can currently only be <code>&quot;splitting_performance&quot;</code> or <code>&quot;splitting_light&quot;</code>. See <a href="/changelog/splitting/splitting-performance">Splitting Changelog</a> for more details.
+     * @return The base processor to use. For splitters, this can currently only be <code>&quot;splitting_performance&quot;</code> or <code>&quot;splitting_light&quot;</code>. See <a href="https://docs.extend.ai/2026-02-09/changelog/splitting/splitting-performance">Splitting Changelog</a> for more details.
      */
     @JsonProperty("baseProcessor")
     public Optional<LegacySplitterConfigBaseProcessor> getBaseProcessor() {
@@ -62,7 +62,7 @@ public final class LegacySplitterConfig {
     }
 
     /**
-     * @return The version of the <code>&quot;splitting_performance&quot;</code> or <code>&quot;splitting_light&quot;</code> processor to use. If this is provided, the <code>baseProcessor</code> must also be provided. See <a href="/changelog/splitting/splitting-performance">Splitting Changelog</a> for more details.
+     * @return The version of the <code>&quot;splitting_performance&quot;</code> or <code>&quot;splitting_light&quot;</code> processor to use. If this is provided, the <code>baseProcessor</code> must also be provided. See <a href="https://docs.extend.ai/2026-02-09/changelog/splitting/splitting-performance">Splitting Changelog</a> for more details.
      */
     @JsonProperty("baseVersion")
     public Optional<String> getBaseVersion() {
@@ -171,7 +171,7 @@ public final class LegacySplitterConfig {
         }
 
         /**
-         * <p>The base processor to use. For splitters, this can currently only be <code>&quot;splitting_performance&quot;</code> or <code>&quot;splitting_light&quot;</code>. See <a href="/changelog/splitting/splitting-performance">Splitting Changelog</a> for more details.</p>
+         * <p>The base processor to use. For splitters, this can currently only be <code>&quot;splitting_performance&quot;</code> or <code>&quot;splitting_light&quot;</code>. See <a href="https://docs.extend.ai/2026-02-09/changelog/splitting/splitting-performance">Splitting Changelog</a> for more details.</p>
          */
         @JsonSetter(value = "baseProcessor", nulls = Nulls.SKIP)
         public Builder baseProcessor(Optional<LegacySplitterConfigBaseProcessor> baseProcessor) {
@@ -185,7 +185,7 @@ public final class LegacySplitterConfig {
         }
 
         /**
-         * <p>The version of the <code>&quot;splitting_performance&quot;</code> or <code>&quot;splitting_light&quot;</code> processor to use. If this is provided, the <code>baseProcessor</code> must also be provided. See <a href="/changelog/splitting/splitting-performance">Splitting Changelog</a> for more details.</p>
+         * <p>The version of the <code>&quot;splitting_performance&quot;</code> or <code>&quot;splitting_light&quot;</code> processor to use. If this is provided, the <code>baseProcessor</code> must also be provided. See <a href="https://docs.extend.ai/2026-02-09/changelog/splitting/splitting-performance">Splitting Changelog</a> for more details.</p>
          */
         @JsonSetter(value = "baseVersion", nulls = Nulls.SKIP)
         public Builder baseVersion(Optional<String> baseVersion) {
