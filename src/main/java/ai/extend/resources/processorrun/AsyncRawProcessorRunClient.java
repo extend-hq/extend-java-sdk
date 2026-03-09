@@ -182,8 +182,8 @@ public class AsyncRawProcessorRunClient {
      * </ul>
      * <p><strong>For asynchronous processing:</strong></p>
      * <ul>
-     * <li>You can <a href="https://docs.extend.ai/product/webhooks/configuration">configure webhooks</a> to receive notifications when a processor run is complete or failed.</li>
-     * <li>Or you can <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/processor-endpoints/get-processor-run">poll the get endpoint</a> for updates on the status of the processor run.</li>
+     * <li>You can <a href="https://docs.extend.ai/2026-02-09/product/webhooks/configuration">configure webhooks</a> to receive notifications when a processor run is complete or failed.</li>
+     * <li>Or you can <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/legacy/get-processor-run">poll the get endpoint</a> for updates on the status of the processor run.</li>
      * </ul>
      */
     public CompletableFuture<ExtendClientHttpResponse<ProcessorRunCreateResponse>> create(
@@ -200,8 +200,8 @@ public class AsyncRawProcessorRunClient {
      * </ul>
      * <p><strong>For asynchronous processing:</strong></p>
      * <ul>
-     * <li>You can <a href="https://docs.extend.ai/product/webhooks/configuration">configure webhooks</a> to receive notifications when a processor run is complete or failed.</li>
-     * <li>Or you can <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/processor-endpoints/get-processor-run">poll the get endpoint</a> for updates on the status of the processor run.</li>
+     * <li>You can <a href="https://docs.extend.ai/2026-02-09/product/webhooks/configuration">configure webhooks</a> to receive notifications when a processor run is complete or failed.</li>
+     * <li>Or you can <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/legacy/get-processor-run">poll the get endpoint</a> for updates on the status of the processor run.</li>
      * </ul>
      */
     public CompletableFuture<ExtendClientHttpResponse<ProcessorRunCreateResponse>> create(
@@ -290,7 +290,7 @@ public class AsyncRawProcessorRunClient {
 
     /**
      * Retrieve details about a specific processor run, including its status, outputs, and any edits made during review.
-     * <p>A common use case for this endpoint is to poll for the status and final output of an async processor run when using the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/processor-endpoints/run-processor">Run Processor</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     * <p>A common use case for this endpoint is to poll for the status and final output of an async processor run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/legacy/create-processor-run">Run Processor</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ProcessorRunGetResponse>> get(String id) {
         return get(id, null);
@@ -298,7 +298,7 @@ public class AsyncRawProcessorRunClient {
 
     /**
      * Retrieve details about a specific processor run, including its status, outputs, and any edits made during review.
-     * <p>A common use case for this endpoint is to poll for the status and final output of an async processor run when using the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/processor-endpoints/run-processor">Run Processor</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     * <p>A common use case for this endpoint is to poll for the status and final output of an async processor run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/legacy/create-processor-run">Run Processor</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ProcessorRunGetResponse>> get(
             String id, RequestOptions requestOptions) {

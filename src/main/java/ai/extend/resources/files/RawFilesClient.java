@@ -332,7 +332,7 @@ public class RawFilesClient {
 
     /**
      * Upload and create a new file in Extend.
-     * <p>This endpoint accepts file contents and registers them as a File in Extend, which can be used for <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/run-workflow">running workflows</a>, <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/bulk-create-evaluation-set-items">creating evaluation set items</a>, <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/parse/parse-file">parsing</a>, etc.</p>
+     * <p>This endpoint accepts file contents and registers them as a File in Extend, which can be used for <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/create-workflow-run">running workflows</a>, <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/create-evaluation-set-item">creating evaluation set items</a>, <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/parse/parse-file">parsing</a>, etc.</p>
      * <p>If an uploaded file is detected as a Word or PowerPoint document, it will be automatically converted to a PDF.</p>
      * <p>Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/product/general/supported-file-types">here</a>.</p>
      * <p>This endpoint requires multipart form encoding. Most HTTP clients will handle this encoding automatically (see the examples).</p>
@@ -343,7 +343,7 @@ public class RawFilesClient {
 
     /**
      * Upload and create a new file in Extend.
-     * <p>This endpoint accepts file contents and registers them as a File in Extend, which can be used for <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/run-workflow">running workflows</a>, <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/bulk-create-evaluation-set-items">creating evaluation set items</a>, <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/parse/parse-file">parsing</a>, etc.</p>
+     * <p>This endpoint accepts file contents and registers them as a File in Extend, which can be used for <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/create-workflow-run">running workflows</a>, <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/create-evaluation-set-item">creating evaluation set items</a>, <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/parse/parse-file">parsing</a>, etc.</p>
      * <p>If an uploaded file is detected as a Word or PowerPoint document, it will be automatically converted to a PDF.</p>
      * <p>Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/product/general/supported-file-types">here</a>.</p>
      * <p>This endpoint requires multipart form encoding. Most HTTP clients will handle this encoding automatically (see the examples).</p>

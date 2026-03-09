@@ -295,7 +295,7 @@ public class AsyncRawExtendClient {
      * Extract structured data from a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /extract_runs</code> with <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/extracting/extract">Extract File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/extraction/quick-start-5-minutes">Extract File guide</a>.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ExtractRun>> extract(ExtractRequest request) {
         return extract(request, null);
@@ -305,7 +305,7 @@ public class AsyncRawExtendClient {
      * Extract structured data from a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /extract_runs</code> with <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/extracting/extract">Extract File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/extraction/quick-start-5-minutes">Extract File guide</a>.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ExtractRun>> extract(
             ExtractRequest request, RequestOptions requestOptions) {
@@ -413,7 +413,7 @@ public class AsyncRawExtendClient {
      * Classify a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /classify_runs</code> with <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/classifying/classify">Classify File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/classification/configuring-a-classifier">Classify File guide</a>.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> classify(ClassifyRequest request) {
         return classify(request, null);
@@ -423,7 +423,7 @@ public class AsyncRawExtendClient {
      * Classify a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /classify_runs</code> with <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/classifying/classify">Classify File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/classification/configuring-a-classifier">Classify File guide</a>.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> classify(
             ClassifyRequest request, RequestOptions requestOptions) {
@@ -531,7 +531,7 @@ public class AsyncRawExtendClient {
      * Split a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /split_runs</code> with <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/splitting/split">Split File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/splitting/configuring-a-splitter">Split File guide</a>.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<SplitRun>> split(SplitRequest request) {
         return split(request, null);
@@ -541,7 +541,7 @@ public class AsyncRawExtendClient {
      * Split a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /split_runs</code> with <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/splitting/split">Split File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/splitting/configuring-a-splitter">Split File guide</a>.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<SplitRun>> split(
             SplitRequest request, RequestOptions requestOptions) {

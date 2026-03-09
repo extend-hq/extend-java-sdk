@@ -159,7 +159,11 @@ public final class ExtractRun {
     }
 
     /**
-     * @return The final output, either reviewed or initial.
+     * @return The final output, either reviewed or initial. This is a union of two possible shapes:
+     * <ul>
+     * <li><strong><a href="https://docs.extend.ai/2026-02-09/product/extraction/output-types">JSON Schema output</a>:</strong> The current output format, returned for runs created with a JSON Schema config.</li>
+     * <li><strong><a href="https://docs.extend.ai/2025-04-21/product/legacy/output-type-legacy">Legacy output</a>:</strong> A legacy output format from a previous API version. This shape is only returned for runs that were originally created with a legacy config.</li>
+     * </ul>
      * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
      */
     @JsonIgnore
@@ -272,7 +276,11 @@ public final class ExtractRun {
     }
 
     /**
-     * @return The configuration used for this extract run.
+     * @return The configuration used for this extract run. This is a union of two possible shapes:
+     * <ul>
+     * <li><strong><a href="https://docs.extend.ai/2026-02-09/product/extraction/schema">JSON Schema config</a>:</strong> The current config format. All runs created through this API version use this shape.</li>
+     * <li><strong><a href="https://docs.extend.ai/2025-04-21/product/legacy/legacy-schema">Legacy config</a>:</strong> A fields-array config from a previous API version. This shape is only returned when retrieving runs that were originally created with the legacy format. This API version does not support creating runs with legacy configs.</li>
+     * </ul>
      */
     @JsonProperty("config")
     public ExtractConfig getConfig() {
@@ -493,7 +501,11 @@ public final class ExtractRun {
 
     public interface ConfigStage {
         /**
-         * <p>The configuration used for this extract run.</p>
+         * <p>The configuration used for this extract run. This is a union of two possible shapes:</p>
+         * <ul>
+         * <li><strong><a href="https://docs.extend.ai/2026-02-09/product/extraction/schema">JSON Schema config</a>:</strong> The current config format. All runs created through this API version use this shape.</li>
+         * <li><strong><a href="https://docs.extend.ai/2025-04-21/product/legacy/legacy-schema">Legacy config</a>:</strong> A fields-array config from a previous API version. This shape is only returned when retrieving runs that were originally created with the legacy format. This API version does not support creating runs with legacy configs.</li>
+         * </ul>
          */
         FileStage config(@NotNull ExtractConfig config);
     }
@@ -544,7 +556,11 @@ public final class ExtractRun {
         _FinalStage extractorVersion(Nullable<ExtractorVersionSummary> extractorVersion);
 
         /**
-         * <p>The final output, either reviewed or initial.</p>
+         * <p>The final output, either reviewed or initial. This is a union of two possible shapes:</p>
+         * <ul>
+         * <li><strong><a href="https://docs.extend.ai/2026-02-09/product/extraction/output-types">JSON Schema output</a>:</strong> The current output format, returned for runs created with a JSON Schema config.</li>
+         * <li><strong><a href="https://docs.extend.ai/2025-04-21/product/legacy/output-type-legacy">Legacy output</a>:</strong> A legacy output format from a previous API version. This shape is only returned for runs that were originally created with a legacy config.</li>
+         * </ul>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
          */
         _FinalStage output(Optional<ExtractOutput> output);
@@ -775,8 +791,16 @@ public final class ExtractRun {
         }
 
         /**
-         * <p>The configuration used for this extract run.</p>
-         * <p>The configuration used for this extract run.</p>
+         * <p>The configuration used for this extract run. This is a union of two possible shapes:</p>
+         * <ul>
+         * <li><strong><a href="https://docs.extend.ai/2026-02-09/product/extraction/schema">JSON Schema config</a>:</strong> The current config format. All runs created through this API version use this shape.</li>
+         * <li><strong><a href="https://docs.extend.ai/2025-04-21/product/legacy/legacy-schema">Legacy config</a>:</strong> A fields-array config from a previous API version. This shape is only returned when retrieving runs that were originally created with the legacy format. This API version does not support creating runs with legacy configs.</li>
+         * </ul>
+         * <p>The configuration used for this extract run. This is a union of two possible shapes:</p>
+         * <ul>
+         * <li><strong><a href="https://docs.extend.ai/2026-02-09/product/extraction/schema">JSON Schema config</a>:</strong> The current config format. All runs created through this API version use this shape.</li>
+         * <li><strong><a href="https://docs.extend.ai/2025-04-21/product/legacy/legacy-schema">Legacy config</a>:</strong> A fields-array config from a previous API version. This shape is only returned when retrieving runs that were originally created with the legacy format. This API version does not support creating runs with legacy configs.</li>
+         * </ul>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -1176,7 +1200,11 @@ public final class ExtractRun {
         }
 
         /**
-         * <p>The final output, either reviewed or initial.</p>
+         * <p>The final output, either reviewed or initial. This is a union of two possible shapes:</p>
+         * <ul>
+         * <li><strong><a href="https://docs.extend.ai/2026-02-09/product/extraction/output-types">JSON Schema output</a>:</strong> The current output format, returned for runs created with a JSON Schema config.</li>
+         * <li><strong><a href="https://docs.extend.ai/2025-04-21/product/legacy/output-type-legacy">Legacy output</a>:</strong> A legacy output format from a previous API version. This shape is only returned for runs that were originally created with a legacy config.</li>
+         * </ul>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
@@ -1193,7 +1221,11 @@ public final class ExtractRun {
         }
 
         /**
-         * <p>The final output, either reviewed or initial.</p>
+         * <p>The final output, either reviewed or initial. This is a union of two possible shapes:</p>
+         * <ul>
+         * <li><strong><a href="https://docs.extend.ai/2026-02-09/product/extraction/output-types">JSON Schema output</a>:</strong> The current output format, returned for runs created with a JSON Schema config.</li>
+         * <li><strong><a href="https://docs.extend.ai/2025-04-21/product/legacy/output-type-legacy">Legacy output</a>:</strong> A legacy output format from a previous API version. This shape is only returned for runs that were originally created with a legacy config.</li>
+         * </ul>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
@@ -1204,7 +1236,11 @@ public final class ExtractRun {
         }
 
         /**
-         * <p>The final output, either reviewed or initial.</p>
+         * <p>The final output, either reviewed or initial. This is a union of two possible shapes:</p>
+         * <ul>
+         * <li><strong><a href="https://docs.extend.ai/2026-02-09/product/extraction/output-types">JSON Schema output</a>:</strong> The current output format, returned for runs created with a JSON Schema config.</li>
+         * <li><strong><a href="https://docs.extend.ai/2025-04-21/product/legacy/output-type-legacy">Legacy output</a>:</strong> A legacy output format from a previous API version. This shape is only returned for runs that were originally created with a legacy config.</li>
+         * </ul>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
          */
         @java.lang.Override

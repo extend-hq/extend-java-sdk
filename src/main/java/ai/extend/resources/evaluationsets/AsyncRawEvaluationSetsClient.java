@@ -188,7 +188,7 @@ public class AsyncRawEvaluationSetsClient {
 
     /**
      * Evaluation sets are collections of files and expected outputs that are used to evaluate the performance of a given extractor, classifier, or splitter. This endpoint will create a new evaluation set, which items can be added to using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/create-evaluation-set-item">Create Evaluation Set Item</a> endpoint.
-     * <p>Note: It is not necessary to create an evaluation set via API. You can also create an evaluation set via the Extend dashboard and take the ID from there. To learn more about how to create evaluation sets, see the <a href="https://docs.extend.ai/product/evaluation/overview">Evaluation Sets</a> product page.</p>
+     * <p>Note: It is not necessary to create an evaluation set via API. You can also create an evaluation set via the Extend dashboard and take the ID from there. To learn more about how to create evaluation sets, see the <a href="https://docs.extend.ai/2026-02-09/product/evaluation/overview">Evaluation Sets</a> product page.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> create(EvaluationSetsCreateRequest request) {
         return create(request, null);
@@ -196,7 +196,7 @@ public class AsyncRawEvaluationSetsClient {
 
     /**
      * Evaluation sets are collections of files and expected outputs that are used to evaluate the performance of a given extractor, classifier, or splitter. This endpoint will create a new evaluation set, which items can be added to using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/create-evaluation-set-item">Create Evaluation Set Item</a> endpoint.
-     * <p>Note: It is not necessary to create an evaluation set via API. You can also create an evaluation set via the Extend dashboard and take the ID from there. To learn more about how to create evaluation sets, see the <a href="https://docs.extend.ai/product/evaluation/overview">Evaluation Sets</a> product page.</p>
+     * <p>Note: It is not necessary to create an evaluation set via API. You can also create an evaluation set via the Extend dashboard and take the ID from there. To learn more about how to create evaluation sets, see the <a href="https://docs.extend.ai/2026-02-09/product/evaluation/overview">Evaluation Sets</a> product page.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> create(
             EvaluationSetsCreateRequest request, RequestOptions requestOptions) {

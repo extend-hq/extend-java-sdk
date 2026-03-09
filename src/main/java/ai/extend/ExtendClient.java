@@ -30,6 +30,8 @@ import ai.extend.resources.processorversion.ProcessorVersionClient;
 import ai.extend.resources.splitruns.SplitRunsClient;
 import ai.extend.resources.splitters.SplittersClient;
 import ai.extend.resources.splitterversions.SplitterVersionsClient;
+import ai.extend.resources.webhookendpoints.WebhookEndpointsClient;
+import ai.extend.resources.webhooksubscriptions.WebhookSubscriptionsClient;
 import ai.extend.resources.workflowruns.WorkflowRunsClient;
 import ai.extend.resources.workflows.WorkflowsClient;
 import ai.extend.types.ClassifyRun;
@@ -86,6 +88,10 @@ public class ExtendClient {
 
     protected final Supplier<EvaluationSetRunsClient> evaluationSetRunsClient;
 
+    protected final Supplier<WebhookEndpointsClient> webhookEndpointsClient;
+
+    protected final Supplier<WebhookSubscriptionsClient> webhookSubscriptionsClient;
+
     public ExtendClient(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         this.rawClient = new RawExtendClient(clientOptions);
@@ -110,6 +116,8 @@ public class ExtendClient {
         this.evaluationSetsClient = Suppliers.memoize(() -> new EvaluationSetsClient(clientOptions));
         this.evaluationSetItemsClient = Suppliers.memoize(() -> new EvaluationSetItemsClient(clientOptions));
         this.evaluationSetRunsClient = Suppliers.memoize(() -> new EvaluationSetRunsClient(clientOptions));
+        this.webhookEndpointsClient = Suppliers.memoize(() -> new WebhookEndpointsClient(clientOptions));
+        this.webhookSubscriptionsClient = Suppliers.memoize(() -> new WebhookSubscriptionsClient(clientOptions));
     }
 
     /**
@@ -163,7 +171,7 @@ public class ExtendClient {
      * Extract structured data from a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /extract_runs</code> with <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/extracting/extract">Extract File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/extraction/quick-start-5-minutes">Extract File guide</a>.</p>
      */
     public ExtractRun extract(ExtractRequest request) {
         return this.rawClient.extract(request).body();
@@ -173,7 +181,7 @@ public class ExtendClient {
      * Extract structured data from a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /extract_runs</code> with <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/extracting/extract">Extract File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/extraction/quick-start-5-minutes">Extract File guide</a>.</p>
      */
     public ExtractRun extract(ExtractRequest request, RequestOptions requestOptions) {
         return this.rawClient.extract(request, requestOptions).body();
@@ -183,7 +191,7 @@ public class ExtendClient {
      * Classify a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /classify_runs</code> with <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/classifying/classify">Classify File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/classification/configuring-a-classifier">Classify File guide</a>.</p>
      */
     public ClassifyRun classify(ClassifyRequest request) {
         return this.rawClient.classify(request).body();
@@ -193,7 +201,7 @@ public class ExtendClient {
      * Classify a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /classify_runs</code> with <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/classifying/classify">Classify File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/classification/configuring-a-classifier">Classify File guide</a>.</p>
      */
     public ClassifyRun classify(ClassifyRequest request, RequestOptions requestOptions) {
         return this.rawClient.classify(request, requestOptions).body();
@@ -203,7 +211,7 @@ public class ExtendClient {
      * Split a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /split_runs</code> with <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/splitting/split">Split File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/splitting/configuring-a-splitter">Split File guide</a>.</p>
      */
     public SplitRun split(SplitRequest request) {
         return this.rawClient.split(request).body();
@@ -213,7 +221,7 @@ public class ExtendClient {
      * Split a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /split_runs</code> with <a href="https://docs.extend.ai/2026-02-09/developers/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/splitting/split">Split File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/splitting/configuring-a-splitter">Split File guide</a>.</p>
      */
     public SplitRun split(SplitRequest request, RequestOptions requestOptions) {
         return this.rawClient.split(request, requestOptions).body();
@@ -301,6 +309,14 @@ public class ExtendClient {
 
     public EvaluationSetRunsClient evaluationSetRuns() {
         return this.evaluationSetRunsClient.get();
+    }
+
+    public WebhookEndpointsClient webhookEndpoints() {
+        return this.webhookEndpointsClient.get();
+    }
+
+    public WebhookSubscriptionsClient webhookSubscriptions() {
+        return this.webhookSubscriptionsClient.get();
     }
 
     public static ExtendClientBuilder builder() {

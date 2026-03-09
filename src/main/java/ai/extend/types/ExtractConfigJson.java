@@ -75,7 +75,7 @@ public final class ExtractConfigJson {
 
     /**
      * @return JSON Schema definition of the data to extract.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/extraction/schema/json-schema">JSON Schema guide</a> for details and examples of schema configuration.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/extraction/schema">JSON Schema guide</a> for details and examples of schema configuration.</p>
      */
     @JsonProperty("schema")
     public Map<String, Object> getSchema() {
@@ -208,7 +208,7 @@ public final class ExtractConfigJson {
 
         /**
          * <p>JSON Schema definition of the data to extract.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/extraction/schema/json-schema">JSON Schema guide</a> for details and examples of schema configuration.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/extraction/schema">JSON Schema guide</a> for details and examples of schema configuration.</p>
          */
         @JsonSetter(value = "schema", nulls = Nulls.SKIP)
         public Builder schema(Map<String, Object> schema) {

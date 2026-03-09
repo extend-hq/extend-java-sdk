@@ -95,7 +95,11 @@ public final class ExtractorVersion {
     }
 
     /**
-     * @return The configuration settings for this version of the extractor.
+     * @return The configuration settings for this version of the extractor. This is a union of two possible shapes:
+     * <ul>
+     * <li><strong><a href="https://docs.extend.ai/2026-02-09/product/extraction/schema">JSON Schema config</a>:</strong> The current config format. All extractors created through this API version use this shape.</li>
+     * <li><strong><a href="https://docs.extend.ai/2025-04-21/product/legacy/legacy-schema">Legacy config</a>:</strong> A fields-array config from a previous API version. This shape is only returned for extractors that were originally configured with the legacy format. This API version does not support creating extractors with legacy configs.</li>
+     * </ul>
      */
     @JsonProperty("config")
     public ExtractConfig getConfig() {
@@ -176,7 +180,11 @@ public final class ExtractorVersion {
 
     public interface ConfigStage {
         /**
-         * <p>The configuration settings for this version of the extractor.</p>
+         * <p>The configuration settings for this version of the extractor. This is a union of two possible shapes:</p>
+         * <ul>
+         * <li><strong><a href="https://docs.extend.ai/2026-02-09/product/extraction/schema">JSON Schema config</a>:</strong> The current config format. All extractors created through this API version use this shape.</li>
+         * <li><strong><a href="https://docs.extend.ai/2025-04-21/product/legacy/legacy-schema">Legacy config</a>:</strong> A fields-array config from a previous API version. This shape is only returned for extractors that were originally configured with the legacy format. This API version does not support creating extractors with legacy configs.</li>
+         * </ul>
          */
         ExtractorIdStage config(@NotNull ExtractConfig config);
     }
@@ -267,8 +275,16 @@ public final class ExtractorVersion {
         }
 
         /**
-         * <p>The configuration settings for this version of the extractor.</p>
-         * <p>The configuration settings for this version of the extractor.</p>
+         * <p>The configuration settings for this version of the extractor. This is a union of two possible shapes:</p>
+         * <ul>
+         * <li><strong><a href="https://docs.extend.ai/2026-02-09/product/extraction/schema">JSON Schema config</a>:</strong> The current config format. All extractors created through this API version use this shape.</li>
+         * <li><strong><a href="https://docs.extend.ai/2025-04-21/product/legacy/legacy-schema">Legacy config</a>:</strong> A fields-array config from a previous API version. This shape is only returned for extractors that were originally configured with the legacy format. This API version does not support creating extractors with legacy configs.</li>
+         * </ul>
+         * <p>The configuration settings for this version of the extractor. This is a union of two possible shapes:</p>
+         * <ul>
+         * <li><strong><a href="https://docs.extend.ai/2026-02-09/product/extraction/schema">JSON Schema config</a>:</strong> The current config format. All extractors created through this API version use this shape.</li>
+         * <li><strong><a href="https://docs.extend.ai/2025-04-21/product/legacy/legacy-schema">Legacy config</a>:</strong> A fields-array config from a previous API version. This shape is only returned for extractors that were originally configured with the legacy format. This API version does not support creating extractors with legacy configs.</li>
+         * </ul>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
