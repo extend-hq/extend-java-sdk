@@ -50,6 +50,7 @@ public final class SplitAdvancedOptions {
 
     /**
      * @return Custom rules for identifying split points.
+     * <p><strong>Deprecated:</strong> For <code>splitting_light</code> &gt;= 1.3.0 and <code>splitting_performance</code> &gt;= 1.5.0, use the <code>identifierKey</code> field on each classification in <code>splitClassifications</code> instead. This provides per-type identifier extraction rules rather than a single global rule. On those versions, this field is accepted but ignored if provided.</p>
      */
     @JsonProperty("splitIdentifierRules")
     public Optional<String> getSplitIdentifierRules() {
@@ -58,6 +59,7 @@ public final class SplitAdvancedOptions {
 
     /**
      * @return The method to use for splitting documents. <code>high_precision</code> is more accurate but slower, while <code>basic_precision</code> is faster but less precise.
+     * <p><strong>Deprecated:</strong> For <code>splitting_light</code> &gt;= 1.3.0 and <code>splitting_performance</code> &gt;= 1.5.0, this field has no impact and is ignored if provided. It is still accepted for compatibility with older integrations.</p>
      */
     @JsonProperty("splitMethod")
     public Optional<SplitAdvancedOptionsSplitMethod> getSplitMethod() {
@@ -151,6 +153,7 @@ public final class SplitAdvancedOptions {
 
         /**
          * <p>Custom rules for identifying split points.</p>
+         * <p><strong>Deprecated:</strong> For <code>splitting_light</code> &gt;= 1.3.0 and <code>splitting_performance</code> &gt;= 1.5.0, use the <code>identifierKey</code> field on each classification in <code>splitClassifications</code> instead. This provides per-type identifier extraction rules rather than a single global rule. On those versions, this field is accepted but ignored if provided.</p>
          */
         @JsonSetter(value = "splitIdentifierRules", nulls = Nulls.SKIP)
         public Builder splitIdentifierRules(Optional<String> splitIdentifierRules) {
@@ -165,6 +168,7 @@ public final class SplitAdvancedOptions {
 
         /**
          * <p>The method to use for splitting documents. <code>high_precision</code> is more accurate but slower, while <code>basic_precision</code> is faster but less precise.</p>
+         * <p><strong>Deprecated:</strong> For <code>splitting_light</code> &gt;= 1.3.0 and <code>splitting_performance</code> &gt;= 1.5.0, this field has no impact and is ignored if provided. It is still accepted for compatibility with older integrations.</p>
          */
         @JsonSetter(value = "splitMethod", nulls = Nulls.SKIP)
         public Builder splitMethod(Optional<SplitAdvancedOptionsSplitMethod> splitMethod) {

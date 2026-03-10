@@ -25,7 +25,7 @@ public final class SplitOverrideConfig {
 
     private final Optional<String> baseVersion;
 
-    private final Optional<List<Classification>> splitClassifications;
+    private final Optional<List<SplitClassification>> splitClassifications;
 
     private final Optional<String> splitRules;
 
@@ -38,7 +38,7 @@ public final class SplitOverrideConfig {
     private SplitOverrideConfig(
             Optional<SplitBaseProcessor> baseProcessor,
             Optional<String> baseVersion,
-            Optional<List<Classification>> splitClassifications,
+            Optional<List<SplitClassification>> splitClassifications,
             Optional<String> splitRules,
             Optional<SplitAdvancedOptions> advancedOptions,
             Optional<ParseConfig> parseConfig,
@@ -66,7 +66,7 @@ public final class SplitOverrideConfig {
     }
 
     @JsonProperty("splitClassifications")
-    public Optional<List<Classification>> getSplitClassifications() {
+    public Optional<List<SplitClassification>> getSplitClassifications() {
         return splitClassifications;
     }
 
@@ -140,7 +140,7 @@ public final class SplitOverrideConfig {
 
         private Optional<String> baseVersion = Optional.empty();
 
-        private Optional<List<Classification>> splitClassifications = Optional.empty();
+        private Optional<List<SplitClassification>> splitClassifications = Optional.empty();
 
         private Optional<String> splitRules = Optional.empty();
 
@@ -189,12 +189,12 @@ public final class SplitOverrideConfig {
         }
 
         @JsonSetter(value = "splitClassifications", nulls = Nulls.SKIP)
-        public Builder splitClassifications(Optional<List<Classification>> splitClassifications) {
+        public Builder splitClassifications(Optional<List<SplitClassification>> splitClassifications) {
             this.splitClassifications = splitClassifications;
             return this;
         }
 
-        public Builder splitClassifications(List<Classification> splitClassifications) {
+        public Builder splitClassifications(List<SplitClassification> splitClassifications) {
             this.splitClassifications = Optional.ofNullable(splitClassifications);
             return this;
         }

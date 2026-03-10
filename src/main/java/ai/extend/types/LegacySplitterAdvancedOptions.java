@@ -58,6 +58,7 @@ public final class LegacySplitterAdvancedOptions {
 
     /**
      * @return The method to use for splitting documents. <code>high_precision</code> is more accurate but slower, while <code>low_latency</code> is faster but less precise.
+     * <p><strong>Deprecated:</strong> For <code>splitting_light</code> &gt;= 1.3.0 and <code>splitting_performance</code> &gt;= 1.5.0, this field has no impact and is ignored if provided. It is still accepted for compatibility with older integrations.</p>
      */
     @JsonProperty("splitMethod")
     public Optional<LegacySplitterAdvancedOptionsSplitMethod> getSplitMethod() {
@@ -165,6 +166,7 @@ public final class LegacySplitterAdvancedOptions {
 
         /**
          * <p>The method to use for splitting documents. <code>high_precision</code> is more accurate but slower, while <code>low_latency</code> is faster but less precise.</p>
+         * <p><strong>Deprecated:</strong> For <code>splitting_light</code> &gt;= 1.3.0 and <code>splitting_performance</code> &gt;= 1.5.0, this field has no impact and is ignored if provided. It is still accepted for compatibility with older integrations.</p>
          */
         @JsonSetter(value = "splitMethod", nulls = Nulls.SKIP)
         public Builder splitMethod(Optional<LegacySplitterAdvancedOptionsSplitMethod> splitMethod) {
