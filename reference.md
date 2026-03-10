@@ -484,19 +484,21 @@ client.split(
                 .builder()
                 .splitClassifications(
                     Arrays.asList(
-                        Classification
+                        SplitClassification
                             .builder()
                             .id("invoice")
                             .type("invoice")
                             .description("An invoice or bill for goods or services")
+                            .identifierKey("invoice number from the document header")
                             .build(),
-                        Classification
+                        SplitClassification
                             .builder()
                             .id("receipt")
                             .type("receipt")
                             .description("A receipt confirming payment")
+                            .identifierKey("receipt number")
                             .build(),
-                        Classification
+                        SplitClassification
                             .builder()
                             .id("other")
                             .type("other")
@@ -3827,19 +3829,21 @@ client.splitters().create(
                 .builder()
                 .splitClassifications(
                     Arrays.asList(
-                        Classification
+                        SplitClassification
                             .builder()
                             .id("invoice")
                             .type("invoice")
                             .description("An invoice or bill for goods or services")
+                            .identifierKey("invoice number from the document header")
                             .build(),
-                        Classification
+                        SplitClassification
                             .builder()
                             .id("receipt")
                             .type("receipt")
                             .description("A receipt confirming payment")
+                            .identifierKey("receipt number")
                             .build(),
-                        Classification
+                        SplitClassification
                             .builder()
                             .id("other")
                             .type("other")

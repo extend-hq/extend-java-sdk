@@ -29,6 +29,8 @@ public final class EditJson {
 
     private final Optional<EditBoundingBox> extendEditBbox;
 
+    private final Optional<List<EditBoundingBox>> extendEditBboxes;
+
     private final Optional<Integer> extendEditPageIndex;
 
     private final Optional<EditTextOptions> extendEditTextEditOptions;
@@ -58,6 +60,7 @@ public final class EditJson {
             Optional<String> description,
             Optional<EditJsonExtendEditFieldType> extendEditFieldType,
             Optional<EditBoundingBox> extendEditBbox,
+            Optional<List<EditBoundingBox>> extendEditBboxes,
             Optional<Integer> extendEditPageIndex,
             Optional<EditTextOptions> extendEditTextEditOptions,
             Optional<Double> extendEditColumnWidth,
@@ -74,6 +77,7 @@ public final class EditJson {
         this.description = description;
         this.extendEditFieldType = extendEditFieldType;
         this.extendEditBbox = extendEditBbox;
+        this.extendEditBboxes = extendEditBboxes;
         this.extendEditPageIndex = extendEditPageIndex;
         this.extendEditTextEditOptions = extendEditTextEditOptions;
         this.extendEditColumnWidth = extendEditColumnWidth;
@@ -129,6 +133,14 @@ public final class EditJson {
     @JsonProperty("extend_edit:bbox")
     public Optional<EditBoundingBox> getExtendEditBbox() {
         return extendEditBbox;
+    }
+
+    /**
+     * @return Array of bounding boxes for radio enums. Enum at index i corresponds to bbox at index i.
+     */
+    @JsonProperty("extend_edit:bboxes")
+    public Optional<List<EditBoundingBox>> getExtendEditBboxes() {
+        return extendEditBboxes;
     }
 
     /**
@@ -232,6 +244,7 @@ public final class EditJson {
                 && description.equals(other.description)
                 && extendEditFieldType.equals(other.extendEditFieldType)
                 && extendEditBbox.equals(other.extendEditBbox)
+                && extendEditBboxes.equals(other.extendEditBboxes)
                 && extendEditPageIndex.equals(other.extendEditPageIndex)
                 && extendEditTextEditOptions.equals(other.extendEditTextEditOptions)
                 && extendEditColumnWidth.equals(other.extendEditColumnWidth)
@@ -252,6 +265,7 @@ public final class EditJson {
                 this.description,
                 this.extendEditFieldType,
                 this.extendEditBbox,
+                this.extendEditBboxes,
                 this.extendEditPageIndex,
                 this.extendEditTextEditOptions,
                 this.extendEditColumnWidth,
@@ -283,6 +297,8 @@ public final class EditJson {
         private Optional<EditJsonExtendEditFieldType> extendEditFieldType = Optional.empty();
 
         private Optional<EditBoundingBox> extendEditBbox = Optional.empty();
+
+        private Optional<List<EditBoundingBox>> extendEditBboxes = Optional.empty();
 
         private Optional<Integer> extendEditPageIndex = Optional.empty();
 
@@ -316,6 +332,7 @@ public final class EditJson {
             description(other.getDescription());
             extendEditFieldType(other.getExtendEditFieldType());
             extendEditBbox(other.getExtendEditBbox());
+            extendEditBboxes(other.getExtendEditBboxes());
             extendEditPageIndex(other.getExtendEditPageIndex());
             extendEditTextEditOptions(other.getExtendEditTextEditOptions());
             extendEditColumnWidth(other.getExtendEditColumnWidth());
@@ -394,6 +411,20 @@ public final class EditJson {
 
         public Builder extendEditBbox(EditBoundingBox extendEditBbox) {
             this.extendEditBbox = Optional.ofNullable(extendEditBbox);
+            return this;
+        }
+
+        /**
+         * <p>Array of bounding boxes for radio enums. Enum at index i corresponds to bbox at index i.</p>
+         */
+        @JsonSetter(value = "extend_edit:bboxes", nulls = Nulls.SKIP)
+        public Builder extendEditBboxes(Optional<List<EditBoundingBox>> extendEditBboxes) {
+            this.extendEditBboxes = extendEditBboxes;
+            return this;
+        }
+
+        public Builder extendEditBboxes(List<EditBoundingBox> extendEditBboxes) {
+            this.extendEditBboxes = Optional.ofNullable(extendEditBboxes);
             return this;
         }
 
@@ -554,6 +585,7 @@ public final class EditJson {
                     description,
                     extendEditFieldType,
                     extendEditBbox,
+                    extendEditBboxes,
                     extendEditPageIndex,
                     extendEditTextEditOptions,
                     extendEditColumnWidth,

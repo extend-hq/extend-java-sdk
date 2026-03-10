@@ -26,7 +26,7 @@ public final class SplitConfig {
 
     private final Optional<String> baseVersion;
 
-    private final List<Classification> splitClassifications;
+    private final List<SplitClassification> splitClassifications;
 
     private final Optional<String> splitRules;
 
@@ -39,7 +39,7 @@ public final class SplitConfig {
     private SplitConfig(
             Optional<SplitBaseProcessor> baseProcessor,
             Optional<String> baseVersion,
-            List<Classification> splitClassifications,
+            List<SplitClassification> splitClassifications,
             Optional<String> splitRules,
             Optional<SplitAdvancedOptions> advancedOptions,
             Optional<ParseConfig> parseConfig,
@@ -67,7 +67,7 @@ public final class SplitConfig {
     }
 
     @JsonProperty("splitClassifications")
-    public List<Classification> getSplitClassifications() {
+    public List<SplitClassification> getSplitClassifications() {
         return splitClassifications;
     }
 
@@ -141,7 +141,7 @@ public final class SplitConfig {
 
         private Optional<String> baseVersion = Optional.empty();
 
-        private List<Classification> splitClassifications = new ArrayList<>();
+        private List<SplitClassification> splitClassifications = new ArrayList<>();
 
         private Optional<String> splitRules = Optional.empty();
 
@@ -190,7 +190,7 @@ public final class SplitConfig {
         }
 
         @JsonSetter(value = "splitClassifications", nulls = Nulls.SKIP)
-        public Builder splitClassifications(List<Classification> splitClassifications) {
+        public Builder splitClassifications(List<SplitClassification> splitClassifications) {
             this.splitClassifications.clear();
             if (splitClassifications != null) {
                 this.splitClassifications.addAll(splitClassifications);
@@ -198,12 +198,12 @@ public final class SplitConfig {
             return this;
         }
 
-        public Builder addSplitClassifications(Classification splitClassifications) {
+        public Builder addSplitClassifications(SplitClassification splitClassifications) {
             this.splitClassifications.add(splitClassifications);
             return this;
         }
 
-        public Builder addAllSplitClassifications(List<Classification> splitClassifications) {
+        public Builder addAllSplitClassifications(List<SplitClassification> splitClassifications) {
             if (splitClassifications != null) {
                 this.splitClassifications.addAll(splitClassifications);
             }
