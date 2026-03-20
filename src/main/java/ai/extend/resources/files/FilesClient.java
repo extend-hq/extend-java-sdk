@@ -11,8 +11,6 @@ import ai.extend.resources.files.requests.FilesUploadRequest;
 import ai.extend.resources.files.types.FilesDeleteResponse;
 import ai.extend.resources.files.types.FilesListResponse;
 import ai.extend.types.File;
-import java.io.InputStream;
-import okhttp3.MediaType;
 
 public class FilesClient {
     protected final ClientOptions clientOptions;
@@ -123,23 +121,5 @@ public class FilesClient {
      */
     public File upload(java.io.File file, FilesUploadRequest request, RequestOptions requestOptions) {
         return this.rawClient.upload(file, request, requestOptions).body();
-    }
-
-    public File upload(InputStream stream, String filename) {
-        return this.rawClient.upload(stream, filename).body();
-    }
-
-    public File upload(InputStream stream, String filename, MediaType mediaType) {
-        return this.rawClient.upload(stream, filename, mediaType).body();
-    }
-
-    public File upload(InputStream stream, String filename, RequestOptions requestOptions) {
-        return this.rawClient.upload(stream, filename, requestOptions).body();
-    }
-
-    public File upload(InputStream stream, String filename, MediaType mediaType, RequestOptions requestOptions) {
-        return this.rawClient
-                .upload(stream, filename, mediaType, requestOptions)
-                .body();
     }
 }

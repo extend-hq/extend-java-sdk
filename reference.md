@@ -857,6 +857,21 @@ client.files().upload(
 </dd>
 </dl>
 
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**convertToPdf:** `Optional<Boolean>` — When true, converts the uploaded file to PDF. Supported file types include images (JPEG, PNG, TIFF, GIF, BMP, WebP, HEIC/HEIF), Word documents, PowerPoint, Excel, and HTML.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
 
 </dd>
 </dl>
