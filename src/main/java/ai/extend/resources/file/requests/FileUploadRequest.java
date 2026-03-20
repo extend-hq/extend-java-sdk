@@ -8,28 +8,53 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = FileUploadRequest.Builder.class)
 public final class FileUploadRequest {
+    private final Optional<Boolean> convertToPdf;
+
     private final Map<String, Object> additionalProperties;
 
-    private FileUploadRequest(Map<String, Object> additionalProperties) {
+    private FileUploadRequest(Optional<Boolean> convertToPdf, Map<String, Object> additionalProperties) {
+        this.convertToPdf = convertToPdf;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return When true, converts the uploaded file to PDF. Supported file types include images (JPEG, PNG, TIFF, GIF, BMP, WebP, HEIC/HEIF), Word documents, PowerPoint, Excel, and HTML.
+     */
+    @JsonProperty("convertToPdf")
+    public Optional<Boolean> getConvertToPdf() {
+        return convertToPdf;
     }
 
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        return other instanceof FileUploadRequest;
+        return other instanceof FileUploadRequest && equalTo((FileUploadRequest) other);
     }
 
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
+    }
+
+    private boolean equalTo(FileUploadRequest other) {
+        return convertToPdf.equals(other.convertToPdf);
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+        return Objects.hash(this.convertToPdf);
     }
 
     @java.lang.Override
@@ -43,17 +68,34 @@ public final class FileUploadRequest {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<Boolean> convertToPdf = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
         public Builder from(FileUploadRequest other) {
+            convertToPdf(other.getConvertToPdf());
+            return this;
+        }
+
+        /**
+         * <p>When true, converts the uploaded file to PDF. Supported file types include images (JPEG, PNG, TIFF, GIF, BMP, WebP, HEIC/HEIF), Word documents, PowerPoint, Excel, and HTML.</p>
+         */
+        @JsonSetter(value = "convertToPdf", nulls = Nulls.SKIP)
+        public Builder convertToPdf(Optional<Boolean> convertToPdf) {
+            this.convertToPdf = convertToPdf;
+            return this;
+        }
+
+        public Builder convertToPdf(Boolean convertToPdf) {
+            this.convertToPdf = Optional.ofNullable(convertToPdf);
             return this;
         }
 
         public FileUploadRequest build() {
-            return new FileUploadRequest(additionalProperties);
+            return new FileUploadRequest(convertToPdf, additionalProperties);
         }
     }
 }

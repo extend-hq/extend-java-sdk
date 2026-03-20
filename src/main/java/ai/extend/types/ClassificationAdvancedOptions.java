@@ -61,7 +61,7 @@ public final class ClassificationAdvancedOptions {
     }
 
     /**
-     * @return Limit processing to a specific number of pages from the beginning of the document. See <a href="/product/page-ranges">Page Ranges</a>.
+     * @return Limit processing to a specific number of pages from the beginning of the document. See <a href="https://docs.extend.ai/2025-04-21/product/page-ranges">Page Ranges</a>.
      */
     @JsonProperty("fixedPageLimit")
     public Optional<Integer> getFixedPageLimit() {
@@ -157,7 +157,7 @@ public final class ClassificationAdvancedOptions {
         }
 
         /**
-         * <p>Limit processing to a specific number of pages from the beginning of the document. See <a href="/product/page-ranges">Page Ranges</a>.</p>
+         * <p>Limit processing to a specific number of pages from the beginning of the document. See <a href="https://docs.extend.ai/2025-04-21/product/page-ranges">Page Ranges</a>.</p>
          */
         @JsonSetter(value = "fixedPageLimit", nulls = Nulls.SKIP)
         public Builder fixedPageLimit(Optional<Integer> fixedPageLimit) {

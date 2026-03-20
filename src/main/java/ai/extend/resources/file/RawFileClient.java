@@ -254,7 +254,7 @@ public class RawFileClient {
      * Upload and create a new file in Extend.
      * <p>This endpoint accepts file contents and registers them as a File in Extend, which can be used for <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/workflow-endpoints/run-workflow">running workflows</a>, <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/evaluation-set-endpoints/bulk-create-evaluation-set-items">creating evaluation set items</a>, <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/parse-endpoints/parse-file">parsing</a>, etc.</p>
      * <p>If an uploaded file is detected as a Word or PowerPoint document, it will be automatically converted to a PDF.</p>
-     * <p>Supported file types can be found <a href="/product/general/supported-file-types">here</a>.</p>
+     * <p>Supported file types can be found <a href="https://docs.extend.ai/2025-04-21/product/general/supported-file-types">here</a>.</p>
      * <p>This endpoint requires multipart form encoding. Most HTTP clients will handle this encoding automatically (see the examples).</p>
      */
     public ExtendClientHttpResponse<FileUploadResponse> upload(File file, FileUploadRequest request) {
@@ -265,15 +265,18 @@ public class RawFileClient {
      * Upload and create a new file in Extend.
      * <p>This endpoint accepts file contents and registers them as a File in Extend, which can be used for <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/workflow-endpoints/run-workflow">running workflows</a>, <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/evaluation-set-endpoints/bulk-create-evaluation-set-items">creating evaluation set items</a>, <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/parse-endpoints/parse-file">parsing</a>, etc.</p>
      * <p>If an uploaded file is detected as a Word or PowerPoint document, it will be automatically converted to a PDF.</p>
-     * <p>Supported file types can be found <a href="/product/general/supported-file-types">here</a>.</p>
+     * <p>Supported file types can be found <a href="https://docs.extend.ai/2025-04-21/product/general/supported-file-types">here</a>.</p>
      * <p>This endpoint requires multipart form encoding. Most HTTP clients will handle this encoding automatically (see the examples).</p>
      */
     public ExtendClientHttpResponse<FileUploadResponse> upload(
             File file, FileUploadRequest request, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
-                .addPathSegments("files/upload")
-                .build();
+                .addPathSegments("files/upload");
+        if (request.getConvertToPdf().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "convertToPdf", request.getConvertToPdf().get(), false);
+        }
         MultipartBody.Builder body = new MultipartBody.Builder().setType(MultipartBody.FORM);
         try {
             String fileMimeType = Files.probeContentType(file.toPath());
@@ -283,7 +286,7 @@ public class RawFileClient {
             throw new RuntimeException(e);
         }
         Request.Builder _requestBuilder = new Request.Builder()
-                .url(httpUrl)
+                .url(httpUrl.build())
                 .method("POST", body.build())
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json");
