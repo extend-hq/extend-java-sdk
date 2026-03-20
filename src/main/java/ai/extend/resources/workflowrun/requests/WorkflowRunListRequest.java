@@ -91,7 +91,7 @@ public final class WorkflowRunListRequest {
     }
 
     /**
-     * @return Filters workflow runs by the batch ID. This is useful for fetching all runs for a given batch created via the <a href="/developers/api-reference/workflow-endpoints/batch-run-workflow">Batch Run Workflow</a> endpoint.
+     * @return Filters workflow runs by the batch ID. This is useful for fetching all runs for a given batch created via the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/workflow-endpoints/batch-run-workflow">Batch Run Workflow</a> endpoint.
      * <p>Example: <code>&quot;batch_7Ws31-F5&quot;</code></p>
      */
     @JsonProperty("batchId")
@@ -254,7 +254,7 @@ public final class WorkflowRunListRequest {
         }
 
         /**
-         * <p>Filters workflow runs by the batch ID. This is useful for fetching all runs for a given batch created via the <a href="/developers/api-reference/workflow-endpoints/batch-run-workflow">Batch Run Workflow</a> endpoint.</p>
+         * <p>Filters workflow runs by the batch ID. This is useful for fetching all runs for a given batch created via the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/workflow-endpoints/batch-run-workflow">Batch Run Workflow</a> endpoint.</p>
          * <p>Example: <code>&quot;batch_7Ws31-F5&quot;</code></p>
          */
         @JsonSetter(value = "batchId", nulls = Nulls.SKIP)

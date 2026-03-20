@@ -182,7 +182,7 @@ public final class ExtractionAdvancedOptions {
     }
 
     /**
-     * @return DEPRECATED - See <a href="/product/page-ranges">Page Ranges</a>.
+     * @return DEPRECATED - See <a href="https://docs.extend.ai/2025-04-21/product/page-ranges">Page Ranges</a>.
      */
     @JsonProperty("fixedPageLimit")
     public Optional<Integer> getFixedPageLimit() {
@@ -477,7 +477,7 @@ public final class ExtractionAdvancedOptions {
         }
 
         /**
-         * <p>DEPRECATED - See <a href="/product/page-ranges">Page Ranges</a>.</p>
+         * <p>DEPRECATED - See <a href="https://docs.extend.ai/2025-04-21/product/page-ranges">Page Ranges</a>.</p>
          */
         @JsonSetter(value = "fixedPageLimit", nulls = Nulls.SKIP)
         public Builder fixedPageLimit(Optional<Integer> fixedPageLimit) {

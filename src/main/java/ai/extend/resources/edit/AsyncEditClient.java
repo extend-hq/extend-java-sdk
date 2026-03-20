@@ -32,7 +32,7 @@ public class AsyncEditClient {
 
     /**
      * Edit and manipulate PDF documents by detecting and filling form fields.
-     * This is a synchronous endpoint that will wait for the edit operation to complete (up to 5 minutes) before returning results. For longer operations, use the <a href="/developers/api-reference/edit-endpoints/edit-file-async">Edit File Async</a> endpoint.
+     * This is a synchronous endpoint that will wait for the edit operation to complete (up to 5 minutes) before returning results. For longer operations, use the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/edit-endpoints/edit-file-async">Edit File Async</a> endpoint.
      */
     public CompletableFuture<EditRun> create(EditCreateRequest request) {
         return this.rawClient.create(request).thenApply(response -> response.body());
@@ -40,7 +40,7 @@ public class AsyncEditClient {
 
     /**
      * Edit and manipulate PDF documents by detecting and filling form fields.
-     * This is a synchronous endpoint that will wait for the edit operation to complete (up to 5 minutes) before returning results. For longer operations, use the <a href="/developers/api-reference/edit-endpoints/edit-file-async">Edit File Async</a> endpoint.
+     * This is a synchronous endpoint that will wait for the edit operation to complete (up to 5 minutes) before returning results. For longer operations, use the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/edit-endpoints/edit-file-async">Edit File Async</a> endpoint.
      */
     public CompletableFuture<EditRun> create(EditCreateRequest request, RequestOptions requestOptions) {
         return this.rawClient.create(request, requestOptions).thenApply(response -> response.body());
@@ -48,7 +48,7 @@ public class AsyncEditClient {
 
     /**
      * Edit and manipulate PDF documents <strong>asynchronously</strong> by filling forms, adding/modifying text fields, and applying structured changes.
-     * <p>The Edit Async endpoint allows you to convert and edit documents asynchronously and get an edit run ID that can be used to check status and retrieve results with the <a href="/developers/api-reference/edit-endpoints/get-edit-run">Get Edit Run</a> endpoint.</p>
+     * <p>The Edit Async endpoint allows you to convert and edit documents asynchronously and get an edit run ID that can be used to check status and retrieve results with the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/edit-endpoints/get-edit-run">Get Edit Run</a> endpoint.</p>
      * <p>This is useful for:</p>
      * <ul>
      * <li>Large files that may take longer to process</li>
@@ -62,7 +62,7 @@ public class AsyncEditClient {
 
     /**
      * Edit and manipulate PDF documents <strong>asynchronously</strong> by filling forms, adding/modifying text fields, and applying structured changes.
-     * <p>The Edit Async endpoint allows you to convert and edit documents asynchronously and get an edit run ID that can be used to check status and retrieve results with the <a href="/developers/api-reference/edit-endpoints/get-edit-run">Get Edit Run</a> endpoint.</p>
+     * <p>The Edit Async endpoint allows you to convert and edit documents asynchronously and get an edit run ID that can be used to check status and retrieve results with the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/edit-endpoints/get-edit-run">Get Edit Run</a> endpoint.</p>
      * <p>This is useful for:</p>
      * <ul>
      * <li>Large files that may take longer to process</li>
@@ -76,7 +76,7 @@ public class AsyncEditClient {
 
     /**
      * Retrieve the status and results of an edit run.
-     * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an asynchronous edit run initiated via the <a href="/developers/api-reference/edit-endpoints/edit-file-async">Edit File Asynchronously</a> endpoint.</p>
+     * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an asynchronous edit run initiated via the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/edit-endpoints/edit-file-async">Edit File Asynchronously</a> endpoint.</p>
      * <p>If editing is still in progress, you'll receive a response with just the status. Once complete, you'll receive the full edited file information in the response.</p>
      */
     public CompletableFuture<EditGetResponse> get(String id) {
@@ -85,7 +85,7 @@ public class AsyncEditClient {
 
     /**
      * Retrieve the status and results of an edit run.
-     * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an asynchronous edit run initiated via the <a href="/developers/api-reference/edit-endpoints/edit-file-async">Edit File Asynchronously</a> endpoint.</p>
+     * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an asynchronous edit run initiated via the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/edit-endpoints/edit-file-async">Edit File Asynchronously</a> endpoint.</p>
      * <p>If editing is still in progress, you'll receive a response with just the status. Once complete, you'll receive the full edited file information in the response.</p>
      */
     public CompletableFuture<EditGetResponse> get(String id, RequestOptions requestOptions) {

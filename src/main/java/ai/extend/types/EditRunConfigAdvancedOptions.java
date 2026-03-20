@@ -24,14 +24,22 @@ public final class EditRunConfigAdvancedOptions {
 
     private final Optional<Boolean> tableParsingEnabled;
 
+    private final Optional<Boolean> radioEnumsEnabled;
+
+    private final Optional<Boolean> nativeFieldsOnly;
+
     private final Map<String, Object> additionalProperties;
 
     private EditRunConfigAdvancedOptions(
             Optional<Boolean> flattenPdf,
             Optional<Boolean> tableParsingEnabled,
+            Optional<Boolean> radioEnumsEnabled,
+            Optional<Boolean> nativeFieldsOnly,
             Map<String, Object> additionalProperties) {
         this.flattenPdf = flattenPdf;
         this.tableParsingEnabled = tableParsingEnabled;
+        this.radioEnumsEnabled = radioEnumsEnabled;
+        this.nativeFieldsOnly = nativeFieldsOnly;
         this.additionalProperties = additionalProperties;
     }
 
@@ -51,6 +59,22 @@ public final class EditRunConfigAdvancedOptions {
         return tableParsingEnabled;
     }
 
+    /**
+     * @return Whether to model radio fields as enums. This ensures only one radio widget is filled. Defaults to false.
+     */
+    @JsonProperty("radioEnumsEnabled")
+    public Optional<Boolean> getRadioEnumsEnabled() {
+        return radioEnumsEnabled;
+    }
+
+    /**
+     * @return If enabled, only native AcroForm from the PDF will be imported and used in the schema (skips object detection). Defaults to false.
+     */
+    @JsonProperty("nativeFieldsOnly")
+    public Optional<Boolean> getNativeFieldsOnly() {
+        return nativeFieldsOnly;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -63,12 +87,15 @@ public final class EditRunConfigAdvancedOptions {
     }
 
     private boolean equalTo(EditRunConfigAdvancedOptions other) {
-        return flattenPdf.equals(other.flattenPdf) && tableParsingEnabled.equals(other.tableParsingEnabled);
+        return flattenPdf.equals(other.flattenPdf)
+                && tableParsingEnabled.equals(other.tableParsingEnabled)
+                && radioEnumsEnabled.equals(other.radioEnumsEnabled)
+                && nativeFieldsOnly.equals(other.nativeFieldsOnly);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.flattenPdf, this.tableParsingEnabled);
+        return Objects.hash(this.flattenPdf, this.tableParsingEnabled, this.radioEnumsEnabled, this.nativeFieldsOnly);
     }
 
     @java.lang.Override
@@ -86,6 +113,10 @@ public final class EditRunConfigAdvancedOptions {
 
         private Optional<Boolean> tableParsingEnabled = Optional.empty();
 
+        private Optional<Boolean> radioEnumsEnabled = Optional.empty();
+
+        private Optional<Boolean> nativeFieldsOnly = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -94,6 +125,8 @@ public final class EditRunConfigAdvancedOptions {
         public Builder from(EditRunConfigAdvancedOptions other) {
             flattenPdf(other.getFlattenPdf());
             tableParsingEnabled(other.getTableParsingEnabled());
+            radioEnumsEnabled(other.getRadioEnumsEnabled());
+            nativeFieldsOnly(other.getNativeFieldsOnly());
             return this;
         }
 
@@ -125,8 +158,37 @@ public final class EditRunConfigAdvancedOptions {
             return this;
         }
 
+        /**
+         * <p>Whether to model radio fields as enums. This ensures only one radio widget is filled. Defaults to false.</p>
+         */
+        @JsonSetter(value = "radioEnumsEnabled", nulls = Nulls.SKIP)
+        public Builder radioEnumsEnabled(Optional<Boolean> radioEnumsEnabled) {
+            this.radioEnumsEnabled = radioEnumsEnabled;
+            return this;
+        }
+
+        public Builder radioEnumsEnabled(Boolean radioEnumsEnabled) {
+            this.radioEnumsEnabled = Optional.ofNullable(radioEnumsEnabled);
+            return this;
+        }
+
+        /**
+         * <p>If enabled, only native AcroForm from the PDF will be imported and used in the schema (skips object detection). Defaults to false.</p>
+         */
+        @JsonSetter(value = "nativeFieldsOnly", nulls = Nulls.SKIP)
+        public Builder nativeFieldsOnly(Optional<Boolean> nativeFieldsOnly) {
+            this.nativeFieldsOnly = nativeFieldsOnly;
+            return this;
+        }
+
+        public Builder nativeFieldsOnly(Boolean nativeFieldsOnly) {
+            this.nativeFieldsOnly = Optional.ofNullable(nativeFieldsOnly);
+            return this;
+        }
+
         public EditRunConfigAdvancedOptions build() {
-            return new EditRunConfigAdvancedOptions(flattenPdf, tableParsingEnabled, additionalProperties);
+            return new EditRunConfigAdvancedOptions(
+                    flattenPdf, tableParsingEnabled, radioEnumsEnabled, nativeFieldsOnly, additionalProperties);
         }
     }
 }

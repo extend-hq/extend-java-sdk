@@ -49,7 +49,7 @@ public class AsyncRawExtendClient {
     /**
      * Parse files to get cleaned, chunked target content (e.g. markdown).
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
-     * <p>For more details, see the <a href="/product/parsing/parse">Parse File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2025-04-21/product/parsing/parse">Parse File guide</a>.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ParserRun>> parse(ParseRequest request) {
         return parse(request, null);
@@ -58,7 +58,7 @@ public class AsyncRawExtendClient {
     /**
      * Parse files to get cleaned, chunked target content (e.g. markdown).
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
-     * <p>For more details, see the <a href="/product/parsing/parse">Parse File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2025-04-21/product/parsing/parse">Parse File guide</a>.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ParserRun>> parse(
             ParseRequest request, RequestOptions requestOptions) {
@@ -167,7 +167,7 @@ public class AsyncRawExtendClient {
      * <li>Large files that may take longer to process</li>
      * <li>Avoiding timeout issues with synchronous parsing.</li>
      * </ul>
-     * <p>For more details, see the <a href="/product/parsing/parse">Parse File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2025-04-21/product/parsing/parse">Parse File guide</a>.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ParserRunStatus>> parseAsync(ParseAsyncRequest request) {
         return parseAsync(request, null);
@@ -182,7 +182,7 @@ public class AsyncRawExtendClient {
      * <li>Large files that may take longer to process</li>
      * <li>Avoiding timeout issues with synchronous parsing.</li>
      * </ul>
-     * <p>For more details, see the <a href="/product/parsing/parse">Parse File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2025-04-21/product/parsing/parse">Parse File guide</a>.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ParserRunStatus>> parseAsync(
             ParseAsyncRequest request, RequestOptions requestOptions) {
