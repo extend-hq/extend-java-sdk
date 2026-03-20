@@ -81,6 +81,7 @@ public final class SplitAdvancedOptions {
 
     /**
      * @return When enabled, the splitter will allow for page overlap when splitting a document such that a page can occur in multiple adjacent splits when context from the previous split is on the page and context from the next split is on the page.
+     * <strong>Availability:</strong> Supported on <code>splitting_light</code> &gt;= 1.1.0 and <code>splitting_performance</code> &gt;= 1.2.0. If provided on older versions, this field is accepted but ignored.
      */
     @JsonProperty("pageOverlapEnabled")
     public Optional<Boolean> getPageOverlapEnabled() {
@@ -207,7 +208,8 @@ public final class SplitAdvancedOptions {
         }
 
         /**
-         * <p>When enabled, the splitter will allow for page overlap when splitting a document such that a page can occur in multiple adjacent splits when context from the previous split is on the page and context from the next split is on the page.</p>
+         * <p>When enabled, the splitter will allow for page overlap when splitting a document such that a page can occur in multiple adjacent splits when context from the previous split is on the page and context from the next split is on the page.
+         * <strong>Availability:</strong> Supported on <code>splitting_light</code> &gt;= 1.1.0 and <code>splitting_performance</code> &gt;= 1.2.0. If provided on older versions, this field is accepted but ignored.</p>
          */
         @JsonSetter(value = "pageOverlapEnabled", nulls = Nulls.SKIP)
         public Builder pageOverlapEnabled(Optional<Boolean> pageOverlapEnabled) {

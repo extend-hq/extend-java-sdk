@@ -29,9 +29,15 @@ public final class ParseConfigAdvancedOptions {
 
     private final Optional<Boolean> excelSkipHiddenContent;
 
+    private final Optional<Boolean> excelUseRawCellValues;
+
+    private final Optional<Boolean> excelSkipCalculation;
+
     private final Optional<Double> verticalGroupingThreshold;
 
     private final Optional<ParseConfigAdvancedOptionsReturnOcr> returnOcr;
+
+    private final Optional<Boolean> alwaysConvertToPdf;
 
     private final Map<String, Object> additionalProperties;
 
@@ -40,15 +46,21 @@ public final class ParseConfigAdvancedOptions {
             Optional<List<PageRangesItem>> pageRanges,
             Optional<ParseConfigAdvancedOptionsExcelParsingMode> excelParsingMode,
             Optional<Boolean> excelSkipHiddenContent,
+            Optional<Boolean> excelUseRawCellValues,
+            Optional<Boolean> excelSkipCalculation,
             Optional<Double> verticalGroupingThreshold,
             Optional<ParseConfigAdvancedOptionsReturnOcr> returnOcr,
+            Optional<Boolean> alwaysConvertToPdf,
             Map<String, Object> additionalProperties) {
         this.pageRotationEnabled = pageRotationEnabled;
         this.pageRanges = pageRanges;
         this.excelParsingMode = excelParsingMode;
         this.excelSkipHiddenContent = excelSkipHiddenContent;
+        this.excelUseRawCellValues = excelUseRawCellValues;
+        this.excelSkipCalculation = excelSkipCalculation;
         this.verticalGroupingThreshold = verticalGroupingThreshold;
         this.returnOcr = returnOcr;
+        this.alwaysConvertToPdf = alwaysConvertToPdf;
         this.additionalProperties = additionalProperties;
     }
 
@@ -87,6 +99,22 @@ public final class ParseConfigAdvancedOptions {
     }
 
     /**
+     * @return Whether to return raw calculated cell values instead of locale-formatted values when parsing Excel files. Useful when downstream processing needs the underlying numeric or unformatted data.
+     */
+    @JsonProperty("excelUseRawCellValues")
+    public Optional<Boolean> getExcelUseRawCellValues() {
+        return excelUseRawCellValues;
+    }
+
+    /**
+     * @return Whether to skip formula recalculation when opening Excel workbooks. Significantly improves parsing speed for formula-heavy spreadsheets. Disable if cell values depend on volatile functions like NOW() or TODAY().
+     */
+    @JsonProperty("excelSkipCalculation")
+    public Optional<Boolean> getExcelSkipCalculation() {
+        return excelSkipCalculation;
+    }
+
+    /**
      * @return Multiplier for the Y-axis threshold used to determine if text blocks should be placed on the same line or not (0.1-5.0, default 1.0). Higher values group elements that are further apart vertically. Only applies when the spatial target is set.
      */
     @JsonProperty("verticalGroupingThreshold")
@@ -100,6 +128,14 @@ public final class ParseConfigAdvancedOptions {
     @JsonProperty("returnOcr")
     public Optional<ParseConfigAdvancedOptionsReturnOcr> getReturnOcr() {
         return returnOcr;
+    }
+
+    /**
+     * @return Whether to convert supported file types (images, Word documents, PowerPoint, Excel, HTML) to PDF before parsing. This can improve parsing quality for some file types and ensures spatial output with bounding boxes.
+     */
+    @JsonProperty("alwaysConvertToPdf")
+    public Optional<Boolean> getAlwaysConvertToPdf() {
+        return alwaysConvertToPdf;
     }
 
     @java.lang.Override
@@ -118,8 +154,11 @@ public final class ParseConfigAdvancedOptions {
                 && pageRanges.equals(other.pageRanges)
                 && excelParsingMode.equals(other.excelParsingMode)
                 && excelSkipHiddenContent.equals(other.excelSkipHiddenContent)
+                && excelUseRawCellValues.equals(other.excelUseRawCellValues)
+                && excelSkipCalculation.equals(other.excelSkipCalculation)
                 && verticalGroupingThreshold.equals(other.verticalGroupingThreshold)
-                && returnOcr.equals(other.returnOcr);
+                && returnOcr.equals(other.returnOcr)
+                && alwaysConvertToPdf.equals(other.alwaysConvertToPdf);
     }
 
     @java.lang.Override
@@ -129,8 +168,11 @@ public final class ParseConfigAdvancedOptions {
                 this.pageRanges,
                 this.excelParsingMode,
                 this.excelSkipHiddenContent,
+                this.excelUseRawCellValues,
+                this.excelSkipCalculation,
                 this.verticalGroupingThreshold,
-                this.returnOcr);
+                this.returnOcr,
+                this.alwaysConvertToPdf);
     }
 
     @java.lang.Override
@@ -152,9 +194,15 @@ public final class ParseConfigAdvancedOptions {
 
         private Optional<Boolean> excelSkipHiddenContent = Optional.empty();
 
+        private Optional<Boolean> excelUseRawCellValues = Optional.empty();
+
+        private Optional<Boolean> excelSkipCalculation = Optional.empty();
+
         private Optional<Double> verticalGroupingThreshold = Optional.empty();
 
         private Optional<ParseConfigAdvancedOptionsReturnOcr> returnOcr = Optional.empty();
+
+        private Optional<Boolean> alwaysConvertToPdf = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -166,8 +214,11 @@ public final class ParseConfigAdvancedOptions {
             pageRanges(other.getPageRanges());
             excelParsingMode(other.getExcelParsingMode());
             excelSkipHiddenContent(other.getExcelSkipHiddenContent());
+            excelUseRawCellValues(other.getExcelUseRawCellValues());
+            excelSkipCalculation(other.getExcelSkipCalculation());
             verticalGroupingThreshold(other.getVerticalGroupingThreshold());
             returnOcr(other.getReturnOcr());
+            alwaysConvertToPdf(other.getAlwaysConvertToPdf());
             return this;
         }
 
@@ -230,6 +281,34 @@ public final class ParseConfigAdvancedOptions {
         }
 
         /**
+         * <p>Whether to return raw calculated cell values instead of locale-formatted values when parsing Excel files. Useful when downstream processing needs the underlying numeric or unformatted data.</p>
+         */
+        @JsonSetter(value = "excelUseRawCellValues", nulls = Nulls.SKIP)
+        public Builder excelUseRawCellValues(Optional<Boolean> excelUseRawCellValues) {
+            this.excelUseRawCellValues = excelUseRawCellValues;
+            return this;
+        }
+
+        public Builder excelUseRawCellValues(Boolean excelUseRawCellValues) {
+            this.excelUseRawCellValues = Optional.ofNullable(excelUseRawCellValues);
+            return this;
+        }
+
+        /**
+         * <p>Whether to skip formula recalculation when opening Excel workbooks. Significantly improves parsing speed for formula-heavy spreadsheets. Disable if cell values depend on volatile functions like NOW() or TODAY().</p>
+         */
+        @JsonSetter(value = "excelSkipCalculation", nulls = Nulls.SKIP)
+        public Builder excelSkipCalculation(Optional<Boolean> excelSkipCalculation) {
+            this.excelSkipCalculation = excelSkipCalculation;
+            return this;
+        }
+
+        public Builder excelSkipCalculation(Boolean excelSkipCalculation) {
+            this.excelSkipCalculation = Optional.ofNullable(excelSkipCalculation);
+            return this;
+        }
+
+        /**
          * <p>Multiplier for the Y-axis threshold used to determine if text blocks should be placed on the same line or not (0.1-5.0, default 1.0). Higher values group elements that are further apart vertically. Only applies when the spatial target is set.</p>
          */
         @JsonSetter(value = "verticalGroupingThreshold", nulls = Nulls.SKIP)
@@ -257,14 +336,31 @@ public final class ParseConfigAdvancedOptions {
             return this;
         }
 
+        /**
+         * <p>Whether to convert supported file types (images, Word documents, PowerPoint, Excel, HTML) to PDF before parsing. This can improve parsing quality for some file types and ensures spatial output with bounding boxes.</p>
+         */
+        @JsonSetter(value = "alwaysConvertToPdf", nulls = Nulls.SKIP)
+        public Builder alwaysConvertToPdf(Optional<Boolean> alwaysConvertToPdf) {
+            this.alwaysConvertToPdf = alwaysConvertToPdf;
+            return this;
+        }
+
+        public Builder alwaysConvertToPdf(Boolean alwaysConvertToPdf) {
+            this.alwaysConvertToPdf = Optional.ofNullable(alwaysConvertToPdf);
+            return this;
+        }
+
         public ParseConfigAdvancedOptions build() {
             return new ParseConfigAdvancedOptions(
                     pageRotationEnabled,
                     pageRanges,
                     excelParsingMode,
                     excelSkipHiddenContent,
+                    excelUseRawCellValues,
+                    excelSkipCalculation,
                     verticalGroupingThreshold,
                     returnOcr,
+                    alwaysConvertToPdf,
                     additionalProperties);
         }
     }
