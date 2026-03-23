@@ -25,11 +25,18 @@ public final class FileFromUrl {
 
     private final Optional<String> name;
 
+    private final Optional<FileFromUrlSettings> settings;
+
     private final Map<String, Object> additionalProperties;
 
-    private FileFromUrl(String url, Optional<String> name, Map<String, Object> additionalProperties) {
+    private FileFromUrl(
+            String url,
+            Optional<String> name,
+            Optional<FileFromUrlSettings> settings,
+            Map<String, Object> additionalProperties) {
         this.url = url;
         this.name = name;
+        this.settings = settings;
         this.additionalProperties = additionalProperties;
     }
 
@@ -50,6 +57,14 @@ public final class FileFromUrl {
         return name;
     }
 
+    /**
+     * @return Optional settings for the file, such as a password for password-protected PDFs.
+     */
+    @JsonProperty("settings")
+    public Optional<FileFromUrlSettings> getSettings() {
+        return settings;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -62,12 +77,12 @@ public final class FileFromUrl {
     }
 
     private boolean equalTo(FileFromUrl other) {
-        return url.equals(other.url) && name.equals(other.name);
+        return url.equals(other.url) && name.equals(other.name) && settings.equals(other.settings);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.url, this.name);
+        return Objects.hash(this.url, this.name, this.settings);
     }
 
     @java.lang.Override
@@ -98,11 +113,20 @@ public final class FileFromUrl {
         _FinalStage name(Optional<String> name);
 
         _FinalStage name(String name);
+
+        /**
+         * <p>Optional settings for the file, such as a password for password-protected PDFs.</p>
+         */
+        _FinalStage settings(Optional<FileFromUrlSettings> settings);
+
+        _FinalStage settings(FileFromUrlSettings settings);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements UrlStage, _FinalStage {
         private String url;
+
+        private Optional<FileFromUrlSettings> settings = Optional.empty();
 
         private Optional<String> name = Optional.empty();
 
@@ -115,6 +139,7 @@ public final class FileFromUrl {
         public Builder from(FileFromUrl other) {
             url(other.getUrl());
             name(other.getName());
+            settings(other.getSettings());
             return this;
         }
 
@@ -129,6 +154,26 @@ public final class FileFromUrl {
         @JsonSetter("url")
         public _FinalStage url(@NotNull String url) {
             this.url = Objects.requireNonNull(url, "url must not be null");
+            return this;
+        }
+
+        /**
+         * <p>Optional settings for the file, such as a password for password-protected PDFs.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage settings(FileFromUrlSettings settings) {
+            this.settings = Optional.ofNullable(settings);
+            return this;
+        }
+
+        /**
+         * <p>Optional settings for the file, such as a password for password-protected PDFs.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "settings", nulls = Nulls.SKIP)
+        public _FinalStage settings(Optional<FileFromUrlSettings> settings) {
+            this.settings = settings;
             return this;
         }
 
@@ -154,7 +199,7 @@ public final class FileFromUrl {
 
         @java.lang.Override
         public FileFromUrl build() {
-            return new FileFromUrl(url, name, additionalProperties);
+            return new FileFromUrl(url, name, settings, additionalProperties);
         }
     }
 }
