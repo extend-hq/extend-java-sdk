@@ -461,6 +461,12 @@ public class AsyncRawFilesClient {
             MediaType fileMimeTypeMediaType = fileMimeType != null ? MediaType.parse(fileMimeType) : null;
             multipartBodyBuilder.addFormDataPart(
                     "file", file.getName(), RequestBody.create(file, fileMimeTypeMediaType));
+            if (request.getPassword().isPresent()) {
+                multipartBodyBuilder.addFormDataPart(
+                        "password",
+                        ObjectMappers.JSON_MAPPER.writeValueAsString(
+                                request.getPassword().get()));
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
