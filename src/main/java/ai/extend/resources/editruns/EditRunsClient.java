@@ -6,6 +6,8 @@ package ai.extend.resources.editruns;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.editruns.requests.EditRunsCreateRequest;
+import ai.extend.resources.editruns.requests.EditRunsDeleteRequest;
+import ai.extend.resources.editruns.requests.EditRunsRetrieveRequest;
 import ai.extend.resources.editruns.types.EditRunsDeleteResponse;
 import ai.extend.types.EditRun;
 
@@ -61,6 +63,22 @@ public class EditRunsClient {
     }
 
     /**
+     * Retrieve the status and results of an edit run.
+     * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
+     */
+    public EditRun retrieve(String id, EditRunsRetrieveRequest request) {
+        return this.rawClient.retrieve(id, request).body();
+    }
+
+    /**
+     * Retrieve the status and results of an edit run.
+     * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
+     */
+    public EditRun retrieve(String id, EditRunsRetrieveRequest request, RequestOptions requestOptions) {
+        return this.rawClient.retrieve(id, request, requestOptions).body();
+    }
+
+    /**
      * Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.</p>
      */
@@ -74,5 +92,21 @@ public class EditRunsClient {
      */
     public EditRunsDeleteResponse delete(String id, RequestOptions requestOptions) {
         return this.rawClient.delete(id, requestOptions).body();
+    }
+
+    /**
+     * Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.</p>
+     */
+    public EditRunsDeleteResponse delete(String id, EditRunsDeleteRequest request) {
+        return this.rawClient.delete(id, request).body();
+    }
+
+    /**
+     * Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.</p>
+     */
+    public EditRunsDeleteResponse delete(String id, EditRunsDeleteRequest request, RequestOptions requestOptions) {
+        return this.rawClient.delete(id, request, requestOptions).body();
     }
 }

@@ -6,6 +6,8 @@ package ai.extend.resources.processorversion;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.processorversion.requests.ProcessorVersionCreateRequest;
+import ai.extend.resources.processorversion.requests.ProcessorVersionGetRequest;
+import ai.extend.resources.processorversion.requests.ProcessorVersionListRequest;
 import ai.extend.resources.processorversion.types.ProcessorVersionCreateResponse;
 import ai.extend.resources.processorversion.types.ProcessorVersionGetResponse;
 import ai.extend.resources.processorversion.types.ProcessorVersionListResponse;
@@ -46,6 +48,25 @@ public class ProcessorVersionClient {
     }
 
     /**
+     * This endpoint allows you to fetch all versions of a given processor, including the current <code>draft</code> version.
+     * <p>Versions are typically returned in descending order of creation (newest first), but this should be confirmed in the actual implementation.
+     * The <code>draft</code> version is the latest unpublished version of the processor, which can be published to create a new version. It might not have any changes from the last published version.</p>
+     */
+    public ProcessorVersionListResponse list(String id, ProcessorVersionListRequest request) {
+        return this.rawClient.list(id, request).body();
+    }
+
+    /**
+     * This endpoint allows you to fetch all versions of a given processor, including the current <code>draft</code> version.
+     * <p>Versions are typically returned in descending order of creation (newest first), but this should be confirmed in the actual implementation.
+     * The <code>draft</code> version is the latest unpublished version of the processor, which can be published to create a new version. It might not have any changes from the last published version.</p>
+     */
+    public ProcessorVersionListResponse list(
+            String id, ProcessorVersionListRequest request, RequestOptions requestOptions) {
+        return this.rawClient.list(id, request, requestOptions).body();
+    }
+
+    /**
      * This endpoint allows you to publish a new version of an existing processor. Publishing a new version creates a snapshot of the processor's current configuration and makes it available for use in workflows.
      * <p>Publishing a new version does not automatically update existing workflows using this processor. You may need to manually update workflows to use the new version if desired.</p>
      */
@@ -76,6 +97,27 @@ public class ProcessorVersionClient {
             String processorId, String processorVersionId, RequestOptions requestOptions) {
         return this.rawClient
                 .get(processorId, processorVersionId, requestOptions)
+                .body();
+    }
+
+    /**
+     * Retrieve a specific version of a processor in Extend
+     */
+    public ProcessorVersionGetResponse get(
+            String processorId, String processorVersionId, ProcessorVersionGetRequest request) {
+        return this.rawClient.get(processorId, processorVersionId, request).body();
+    }
+
+    /**
+     * Retrieve a specific version of a processor in Extend
+     */
+    public ProcessorVersionGetResponse get(
+            String processorId,
+            String processorVersionId,
+            ProcessorVersionGetRequest request,
+            RequestOptions requestOptions) {
+        return this.rawClient
+                .get(processorId, processorVersionId, request, requestOptions)
                 .body();
     }
 }

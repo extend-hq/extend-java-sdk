@@ -6,6 +6,7 @@ package ai.extend.resources.files.requests;
 import ai.extend.core.ObjectMappers;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,6 +21,8 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = FilesUploadRequest.Builder.class)
 public final class FilesUploadRequest {
+    private final Optional<String> extendWorkspaceId;
+
     private final Optional<Boolean> convertToPdf;
 
     private final Optional<String> password;
@@ -27,10 +30,22 @@ public final class FilesUploadRequest {
     private final Map<String, Object> additionalProperties;
 
     private FilesUploadRequest(
-            Optional<Boolean> convertToPdf, Optional<String> password, Map<String, Object> additionalProperties) {
+            Optional<String> extendWorkspaceId,
+            Optional<Boolean> convertToPdf,
+            Optional<String> password,
+            Map<String, Object> additionalProperties) {
+        this.extendWorkspaceId = extendWorkspaceId;
         this.convertToPdf = convertToPdf;
         this.password = password;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.
+     */
+    @JsonIgnore
+    public Optional<String> getExtendWorkspaceId() {
+        return extendWorkspaceId;
     }
 
     /**
@@ -61,12 +76,14 @@ public final class FilesUploadRequest {
     }
 
     private boolean equalTo(FilesUploadRequest other) {
-        return convertToPdf.equals(other.convertToPdf) && password.equals(other.password);
+        return extendWorkspaceId.equals(other.extendWorkspaceId)
+                && convertToPdf.equals(other.convertToPdf)
+                && password.equals(other.password);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.convertToPdf, this.password);
+        return Objects.hash(this.extendWorkspaceId, this.convertToPdf, this.password);
     }
 
     @java.lang.Override
@@ -80,6 +97,8 @@ public final class FilesUploadRequest {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<String> extendWorkspaceId = Optional.empty();
+
         private Optional<Boolean> convertToPdf = Optional.empty();
 
         private Optional<String> password = Optional.empty();
@@ -90,8 +109,22 @@ public final class FilesUploadRequest {
         private Builder() {}
 
         public Builder from(FilesUploadRequest other) {
+            extendWorkspaceId(other.getExtendWorkspaceId());
             convertToPdf(other.getConvertToPdf());
             password(other.getPassword());
+            return this;
+        }
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        public Builder extendWorkspaceId(Optional<String> extendWorkspaceId) {
+            this.extendWorkspaceId = extendWorkspaceId;
+            return this;
+        }
+
+        public Builder extendWorkspaceId(String extendWorkspaceId) {
+            this.extendWorkspaceId = Optional.ofNullable(extendWorkspaceId);
             return this;
         }
 
@@ -124,7 +157,7 @@ public final class FilesUploadRequest {
         }
 
         public FilesUploadRequest build() {
-            return new FilesUploadRequest(convertToPdf, password, additionalProperties);
+            return new FilesUploadRequest(extendWorkspaceId, convertToPdf, password, additionalProperties);
         }
     }
 }

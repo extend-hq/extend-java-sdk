@@ -6,6 +6,7 @@ package ai.extend.resources.files.requests;
 import ai.extend.core.ObjectMappers;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,6 +21,8 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = FilesRetrieveRequest.Builder.class)
 public final class FilesRetrieveRequest {
+    private final Optional<String> extendWorkspaceId;
+
     private final Optional<Boolean> rawText;
 
     private final Optional<Boolean> markdown;
@@ -29,14 +32,24 @@ public final class FilesRetrieveRequest {
     private final Map<String, Object> additionalProperties;
 
     private FilesRetrieveRequest(
+            Optional<String> extendWorkspaceId,
             Optional<Boolean> rawText,
             Optional<Boolean> markdown,
             Optional<Boolean> html,
             Map<String, Object> additionalProperties) {
+        this.extendWorkspaceId = extendWorkspaceId;
         this.rawText = rawText;
         this.markdown = markdown;
         this.html = html;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.
+     */
+    @JsonIgnore
+    public Optional<String> getExtendWorkspaceId() {
+        return extendWorkspaceId;
     }
 
     /**
@@ -80,12 +93,15 @@ public final class FilesRetrieveRequest {
     }
 
     private boolean equalTo(FilesRetrieveRequest other) {
-        return rawText.equals(other.rawText) && markdown.equals(other.markdown) && html.equals(other.html);
+        return extendWorkspaceId.equals(other.extendWorkspaceId)
+                && rawText.equals(other.rawText)
+                && markdown.equals(other.markdown)
+                && html.equals(other.html);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.rawText, this.markdown, this.html);
+        return Objects.hash(this.extendWorkspaceId, this.rawText, this.markdown, this.html);
     }
 
     @java.lang.Override
@@ -99,6 +115,8 @@ public final class FilesRetrieveRequest {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<String> extendWorkspaceId = Optional.empty();
+
         private Optional<Boolean> rawText = Optional.empty();
 
         private Optional<Boolean> markdown = Optional.empty();
@@ -111,9 +129,23 @@ public final class FilesRetrieveRequest {
         private Builder() {}
 
         public Builder from(FilesRetrieveRequest other) {
+            extendWorkspaceId(other.getExtendWorkspaceId());
             rawText(other.getRawText());
             markdown(other.getMarkdown());
             html(other.getHtml());
+            return this;
+        }
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        public Builder extendWorkspaceId(Optional<String> extendWorkspaceId) {
+            this.extendWorkspaceId = extendWorkspaceId;
+            return this;
+        }
+
+        public Builder extendWorkspaceId(String extendWorkspaceId) {
+            this.extendWorkspaceId = Optional.ofNullable(extendWorkspaceId);
             return this;
         }
 
@@ -165,7 +197,7 @@ public final class FilesRetrieveRequest {
         }
 
         public FilesRetrieveRequest build() {
-            return new FilesRetrieveRequest(rawText, markdown, html, additionalProperties);
+            return new FilesRetrieveRequest(extendWorkspaceId, rawText, markdown, html, additionalProperties);
         }
     }
 }

@@ -9,6 +9,7 @@ import ai.extend.types.WebhookEndpointEventType;
 import ai.extend.types.WebhookEndpointStatus;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,6 +25,8 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = WebhookEndpointsUpdateRequest.Builder.class)
 public final class WebhookEndpointsUpdateRequest {
+    private final Optional<String> extendWorkspaceId;
+
     private final Optional<String> url;
 
     private final Optional<String> name;
@@ -37,18 +40,28 @@ public final class WebhookEndpointsUpdateRequest {
     private final Map<String, Object> additionalProperties;
 
     private WebhookEndpointsUpdateRequest(
+            Optional<String> extendWorkspaceId,
             Optional<String> url,
             Optional<String> name,
             Optional<WebhookEndpointStatus> status,
             Optional<List<WebhookEndpointEventType>> enabledEvents,
             Optional<WebhookAdvancedOptions> advancedOptions,
             Map<String, Object> additionalProperties) {
+        this.extendWorkspaceId = extendWorkspaceId;
         this.url = url;
         this.name = name;
         this.status = status;
         this.enabledEvents = enabledEvents;
         this.advancedOptions = advancedOptions;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.
+     */
+    @JsonIgnore
+    public Optional<String> getExtendWorkspaceId() {
+        return extendWorkspaceId;
     }
 
     /**
@@ -97,7 +110,8 @@ public final class WebhookEndpointsUpdateRequest {
     }
 
     private boolean equalTo(WebhookEndpointsUpdateRequest other) {
-        return url.equals(other.url)
+        return extendWorkspaceId.equals(other.extendWorkspaceId)
+                && url.equals(other.url)
                 && name.equals(other.name)
                 && status.equals(other.status)
                 && enabledEvents.equals(other.enabledEvents)
@@ -106,7 +120,8 @@ public final class WebhookEndpointsUpdateRequest {
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.url, this.name, this.status, this.enabledEvents, this.advancedOptions);
+        return Objects.hash(
+                this.extendWorkspaceId, this.url, this.name, this.status, this.enabledEvents, this.advancedOptions);
     }
 
     @java.lang.Override
@@ -120,6 +135,8 @@ public final class WebhookEndpointsUpdateRequest {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<String> extendWorkspaceId = Optional.empty();
+
         private Optional<String> url = Optional.empty();
 
         private Optional<String> name = Optional.empty();
@@ -136,11 +153,25 @@ public final class WebhookEndpointsUpdateRequest {
         private Builder() {}
 
         public Builder from(WebhookEndpointsUpdateRequest other) {
+            extendWorkspaceId(other.getExtendWorkspaceId());
             url(other.getUrl());
             name(other.getName());
             status(other.getStatus());
             enabledEvents(other.getEnabledEvents());
             advancedOptions(other.getAdvancedOptions());
+            return this;
+        }
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        public Builder extendWorkspaceId(Optional<String> extendWorkspaceId) {
+            this.extendWorkspaceId = extendWorkspaceId;
+            return this;
+        }
+
+        public Builder extendWorkspaceId(String extendWorkspaceId) {
+            this.extendWorkspaceId = Optional.ofNullable(extendWorkspaceId);
             return this;
         }
 
@@ -210,7 +241,7 @@ public final class WebhookEndpointsUpdateRequest {
 
         public WebhookEndpointsUpdateRequest build() {
             return new WebhookEndpointsUpdateRequest(
-                    url, name, status, enabledEvents, advancedOptions, additionalProperties);
+                    extendWorkspaceId, url, name, status, enabledEvents, advancedOptions, additionalProperties);
         }
     }
 }

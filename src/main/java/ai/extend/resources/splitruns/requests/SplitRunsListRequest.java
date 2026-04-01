@@ -10,6 +10,7 @@ import ai.extend.types.SortBy;
 import ai.extend.types.SortDir;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,6 +25,8 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = SplitRunsListRequest.Builder.class)
 public final class SplitRunsListRequest {
+    private final Optional<String> extendWorkspaceId;
+
     private final Optional<ProcessorRunStatus> status;
 
     private final Optional<String> splitterId;
@@ -45,6 +48,7 @@ public final class SplitRunsListRequest {
     private final Map<String, Object> additionalProperties;
 
     private SplitRunsListRequest(
+            Optional<String> extendWorkspaceId,
             Optional<ProcessorRunStatus> status,
             Optional<String> splitterId,
             Optional<String> sourceId,
@@ -55,6 +59,7 @@ public final class SplitRunsListRequest {
             Optional<String> nextPageToken,
             Optional<Integer> maxPageSize,
             Map<String, Object> additionalProperties) {
+        this.extendWorkspaceId = extendWorkspaceId;
         this.status = status;
         this.splitterId = splitterId;
         this.sourceId = sourceId;
@@ -65,6 +70,14 @@ public final class SplitRunsListRequest {
         this.nextPageToken = nextPageToken;
         this.maxPageSize = maxPageSize;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.
+     */
+    @JsonIgnore
+    public Optional<String> getExtendWorkspaceId() {
+        return extendWorkspaceId;
     }
 
     @JsonProperty("status")
@@ -138,7 +151,8 @@ public final class SplitRunsListRequest {
     }
 
     private boolean equalTo(SplitRunsListRequest other) {
-        return status.equals(other.status)
+        return extendWorkspaceId.equals(other.extendWorkspaceId)
+                && status.equals(other.status)
                 && splitterId.equals(other.splitterId)
                 && sourceId.equals(other.sourceId)
                 && source.equals(other.source)
@@ -152,6 +166,7 @@ public final class SplitRunsListRequest {
     @java.lang.Override
     public int hashCode() {
         return Objects.hash(
+                this.extendWorkspaceId,
                 this.status,
                 this.splitterId,
                 this.sourceId,
@@ -174,6 +189,8 @@ public final class SplitRunsListRequest {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<String> extendWorkspaceId = Optional.empty();
+
         private Optional<ProcessorRunStatus> status = Optional.empty();
 
         private Optional<String> splitterId = Optional.empty();
@@ -198,6 +215,7 @@ public final class SplitRunsListRequest {
         private Builder() {}
 
         public Builder from(SplitRunsListRequest other) {
+            extendWorkspaceId(other.getExtendWorkspaceId());
             status(other.getStatus());
             splitterId(other.getSplitterId());
             sourceId(other.getSourceId());
@@ -207,6 +225,19 @@ public final class SplitRunsListRequest {
             sortDir(other.getSortDir());
             nextPageToken(other.getNextPageToken());
             maxPageSize(other.getMaxPageSize());
+            return this;
+        }
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        public Builder extendWorkspaceId(Optional<String> extendWorkspaceId) {
+            this.extendWorkspaceId = extendWorkspaceId;
+            return this;
+        }
+
+        public Builder extendWorkspaceId(String extendWorkspaceId) {
+            this.extendWorkspaceId = Optional.ofNullable(extendWorkspaceId);
             return this;
         }
 
@@ -325,6 +356,7 @@ public final class SplitRunsListRequest {
 
         public SplitRunsListRequest build() {
             return new SplitRunsListRequest(
+                    extendWorkspaceId,
                     status,
                     splitterId,
                     sourceId,

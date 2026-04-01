@@ -5,8 +5,11 @@ package ai.extend.resources.classifyruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
+import ai.extend.resources.classifyruns.requests.ClassifyRunsCancelRequest;
 import ai.extend.resources.classifyruns.requests.ClassifyRunsCreateRequest;
+import ai.extend.resources.classifyruns.requests.ClassifyRunsDeleteRequest;
 import ai.extend.resources.classifyruns.requests.ClassifyRunsListRequest;
+import ai.extend.resources.classifyruns.requests.ClassifyRunsRetrieveRequest;
 import ai.extend.resources.classifyruns.types.ClassifyRunsDeleteResponse;
 import ai.extend.resources.classifyruns.types.ClassifyRunsListResponse;
 import ai.extend.types.ClassifyRun;
@@ -93,6 +96,22 @@ public class ClassifyRunsClient {
     }
 
     /**
+     * Retrieve details about a specific classify run, including its status and outputs.
+     * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     */
+    public ClassifyRun retrieve(String id, ClassifyRunsRetrieveRequest request) {
+        return this.rawClient.retrieve(id, request).body();
+    }
+
+    /**
+     * Retrieve details about a specific classify run, including its status and outputs.
+     * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     */
+    public ClassifyRun retrieve(String id, ClassifyRunsRetrieveRequest request, RequestOptions requestOptions) {
+        return this.rawClient.retrieve(id, request, requestOptions).body();
+    }
+
+    /**
      * Delete a classify run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
@@ -109,6 +128,23 @@ public class ClassifyRunsClient {
     }
 
     /**
+     * Delete a classify run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public ClassifyRunsDeleteResponse delete(String id, ClassifyRunsDeleteRequest request) {
+        return this.rawClient.delete(id, request).body();
+    }
+
+    /**
+     * Delete a classify run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public ClassifyRunsDeleteResponse delete(
+            String id, ClassifyRunsDeleteRequest request, RequestOptions requestOptions) {
+        return this.rawClient.delete(id, request, requestOptions).body();
+    }
+
+    /**
      * Cancel an in-progress classify run.
      * <p>Note: Only classify runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Classifier runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
@@ -122,5 +158,21 @@ public class ClassifyRunsClient {
      */
     public ClassifyRun cancel(String id, RequestOptions requestOptions) {
         return this.rawClient.cancel(id, requestOptions).body();
+    }
+
+    /**
+     * Cancel an in-progress classify run.
+     * <p>Note: Only classify runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Classifier runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public ClassifyRun cancel(String id, ClassifyRunsCancelRequest request) {
+        return this.rawClient.cancel(id, request).body();
+    }
+
+    /**
+     * Cancel an in-progress classify run.
+     * <p>Note: Only classify runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Classifier runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public ClassifyRun cancel(String id, ClassifyRunsCancelRequest request, RequestOptions requestOptions) {
+        return this.rawClient.cancel(id, request, requestOptions).body();
     }
 }

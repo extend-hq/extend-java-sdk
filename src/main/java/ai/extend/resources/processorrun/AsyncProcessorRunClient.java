@@ -5,7 +5,10 @@ package ai.extend.resources.processorrun;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
+import ai.extend.resources.processorrun.requests.ProcessorRunCancelRequest;
 import ai.extend.resources.processorrun.requests.ProcessorRunCreateRequest;
+import ai.extend.resources.processorrun.requests.ProcessorRunDeleteRequest;
+import ai.extend.resources.processorrun.requests.ProcessorRunGetRequest;
 import ai.extend.resources.processorrun.requests.ProcessorRunListRequest;
 import ai.extend.resources.processorrun.types.ProcessorRunCancelResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunCreateResponse;
@@ -112,6 +115,23 @@ public class AsyncProcessorRunClient {
     }
 
     /**
+     * Retrieve details about a specific processor run, including its status, outputs, and any edits made during review.
+     * <p>A common use case for this endpoint is to poll for the status and final output of an async processor run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/legacy/create-processor-run">Run Processor</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     */
+    public CompletableFuture<ProcessorRunGetResponse> get(String id, ProcessorRunGetRequest request) {
+        return this.rawClient.get(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Retrieve details about a specific processor run, including its status, outputs, and any edits made during review.
+     * <p>A common use case for this endpoint is to poll for the status and final output of an async processor run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/legacy/create-processor-run">Run Processor</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     */
+    public CompletableFuture<ProcessorRunGetResponse> get(
+            String id, ProcessorRunGetRequest request, RequestOptions requestOptions) {
+        return this.rawClient.get(id, request, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
      * Delete a processor run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
@@ -128,6 +148,23 @@ public class AsyncProcessorRunClient {
     }
 
     /**
+     * Delete a processor run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public CompletableFuture<ProcessorRunDeleteResponse> delete(String id, ProcessorRunDeleteRequest request) {
+        return this.rawClient.delete(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Delete a processor run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public CompletableFuture<ProcessorRunDeleteResponse> delete(
+            String id, ProcessorRunDeleteRequest request, RequestOptions requestOptions) {
+        return this.rawClient.delete(id, request, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
      * Cancel a running processor run by its ID. This endpoint allows you to stop a processor run that is currently in progress.
      * <p>Note: Only processor runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Processor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
@@ -141,5 +178,22 @@ public class AsyncProcessorRunClient {
      */
     public CompletableFuture<ProcessorRunCancelResponse> cancel(String id, RequestOptions requestOptions) {
         return this.rawClient.cancel(id, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Cancel a running processor run by its ID. This endpoint allows you to stop a processor run that is currently in progress.
+     * <p>Note: Only processor runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Processor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public CompletableFuture<ProcessorRunCancelResponse> cancel(String id, ProcessorRunCancelRequest request) {
+        return this.rawClient.cancel(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Cancel a running processor run by its ID. This endpoint allows you to stop a processor run that is currently in progress.
+     * <p>Note: Only processor runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Processor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public CompletableFuture<ProcessorRunCancelResponse> cancel(
+            String id, ProcessorRunCancelRequest request, RequestOptions requestOptions) {
+        return this.rawClient.cancel(id, request, requestOptions).thenApply(response -> response.body());
     }
 }

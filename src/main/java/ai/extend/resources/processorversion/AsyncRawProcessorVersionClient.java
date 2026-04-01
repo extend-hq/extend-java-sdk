@@ -14,6 +14,8 @@ import ai.extend.errors.BadRequestError;
 import ai.extend.errors.NotFoundError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.resources.processorversion.requests.ProcessorVersionCreateRequest;
+import ai.extend.resources.processorversion.requests.ProcessorVersionGetRequest;
+import ai.extend.resources.processorversion.requests.ProcessorVersionListRequest;
 import ai.extend.resources.processorversion.types.ProcessorVersionCreateResponse;
 import ai.extend.resources.processorversion.types.ProcessorVersionGetResponse;
 import ai.extend.resources.processorversion.types.ProcessorVersionListResponse;
@@ -44,7 +46,7 @@ public class AsyncRawProcessorVersionClient {
      * The <code>draft</code> version is the latest unpublished version of the processor, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ProcessorVersionListResponse>> list(String id) {
-        return list(id, null);
+        return list(id, ProcessorVersionListRequest.builder().build());
     }
 
     /**
@@ -54,6 +56,26 @@ public class AsyncRawProcessorVersionClient {
      */
     public CompletableFuture<ExtendClientHttpResponse<ProcessorVersionListResponse>> list(
             String id, RequestOptions requestOptions) {
+        return list(id, ProcessorVersionListRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * This endpoint allows you to fetch all versions of a given processor, including the current <code>draft</code> version.
+     * <p>Versions are typically returned in descending order of creation (newest first), but this should be confirmed in the actual implementation.
+     * The <code>draft</code> version is the latest unpublished version of the processor, which can be published to create a new version. It might not have any changes from the last published version.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ProcessorVersionListResponse>> list(
+            String id, ProcessorVersionListRequest request) {
+        return list(id, request, null);
+    }
+
+    /**
+     * This endpoint allows you to fetch all versions of a given processor, including the current <code>draft</code> version.
+     * <p>Versions are typically returned in descending order of creation (newest first), but this should be confirmed in the actual implementation.
+     * The <code>draft</code> version is the latest unpublished version of the processor, which can be published to create a new version. It might not have any changes from the last published version.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ProcessorVersionListResponse>> list(
+            String id, ProcessorVersionListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("processors")
@@ -64,12 +86,16 @@ public class AsyncRawProcessorVersionClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -154,16 +180,20 @@ public class AsyncRawProcessorVersionClient {
         try {
             body = RequestBody.create(
                     ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new ExtendClientException("Failed to serialize request", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -219,7 +249,10 @@ public class AsyncRawProcessorVersionClient {
      */
     public CompletableFuture<ExtendClientHttpResponse<ProcessorVersionGetResponse>> get(
             String processorId, String processorVersionId) {
-        return get(processorId, processorVersionId, null);
+        return get(
+                processorId,
+                processorVersionId,
+                ProcessorVersionGetRequest.builder().build());
     }
 
     /**
@@ -227,6 +260,29 @@ public class AsyncRawProcessorVersionClient {
      */
     public CompletableFuture<ExtendClientHttpResponse<ProcessorVersionGetResponse>> get(
             String processorId, String processorVersionId, RequestOptions requestOptions) {
+        return get(
+                processorId,
+                processorVersionId,
+                ProcessorVersionGetRequest.builder().build(),
+                requestOptions);
+    }
+
+    /**
+     * Retrieve a specific version of a processor in Extend
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ProcessorVersionGetResponse>> get(
+            String processorId, String processorVersionId, ProcessorVersionGetRequest request) {
+        return get(processorId, processorVersionId, request, null);
+    }
+
+    /**
+     * Retrieve a specific version of a processor in Extend
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ProcessorVersionGetResponse>> get(
+            String processorId,
+            String processorVersionId,
+            ProcessorVersionGetRequest request,
+            RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("processors")
@@ -238,12 +294,16 @@ public class AsyncRawProcessorVersionClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

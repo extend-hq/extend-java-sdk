@@ -8,6 +8,7 @@ import ai.extend.types.ReleaseType;
 import ai.extend.types.SplitConfig;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,6 +24,8 @@ import org.jetbrains.annotations.NotNull;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = SplitterVersionsCreateRequest.Builder.class)
 public final class SplitterVersionsCreateRequest {
+    private final Optional<String> extendWorkspaceId;
+
     private final ReleaseType releaseType;
 
     private final Optional<String> description;
@@ -32,14 +35,24 @@ public final class SplitterVersionsCreateRequest {
     private final Map<String, Object> additionalProperties;
 
     private SplitterVersionsCreateRequest(
+            Optional<String> extendWorkspaceId,
             ReleaseType releaseType,
             Optional<String> description,
             Optional<SplitConfig> config,
             Map<String, Object> additionalProperties) {
+        this.extendWorkspaceId = extendWorkspaceId;
         this.releaseType = releaseType;
         this.description = description;
         this.config = config;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.
+     */
+    @JsonIgnore
+    public Optional<String> getExtendWorkspaceId() {
+        return extendWorkspaceId;
     }
 
     @JsonProperty("releaseType")
@@ -72,14 +85,15 @@ public final class SplitterVersionsCreateRequest {
     }
 
     private boolean equalTo(SplitterVersionsCreateRequest other) {
-        return releaseType.equals(other.releaseType)
+        return extendWorkspaceId.equals(other.extendWorkspaceId)
+                && releaseType.equals(other.releaseType)
                 && description.equals(other.description)
                 && config.equals(other.config);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.releaseType, this.description, this.config);
+        return Objects.hash(this.extendWorkspaceId, this.releaseType, this.description, this.config);
     }
 
     @java.lang.Override
@@ -99,6 +113,13 @@ public final class SplitterVersionsCreateRequest {
 
     public interface _FinalStage {
         SplitterVersionsCreateRequest build();
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        _FinalStage extendWorkspaceId(Optional<String> extendWorkspaceId);
+
+        _FinalStage extendWorkspaceId(String extendWorkspaceId);
 
         _FinalStage description(Optional<String> description);
 
@@ -120,6 +141,8 @@ public final class SplitterVersionsCreateRequest {
 
         private Optional<String> description = Optional.empty();
 
+        private Optional<String> extendWorkspaceId = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -127,6 +150,7 @@ public final class SplitterVersionsCreateRequest {
 
         @java.lang.Override
         public Builder from(SplitterVersionsCreateRequest other) {
+            extendWorkspaceId(other.getExtendWorkspaceId());
             releaseType(other.getReleaseType());
             description(other.getDescription());
             config(other.getConfig());
@@ -173,9 +197,29 @@ public final class SplitterVersionsCreateRequest {
             return this;
         }
 
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage extendWorkspaceId(String extendWorkspaceId) {
+            this.extendWorkspaceId = Optional.ofNullable(extendWorkspaceId);
+            return this;
+        }
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        @java.lang.Override
+        public _FinalStage extendWorkspaceId(Optional<String> extendWorkspaceId) {
+            this.extendWorkspaceId = extendWorkspaceId;
+            return this;
+        }
+
         @java.lang.Override
         public SplitterVersionsCreateRequest build() {
-            return new SplitterVersionsCreateRequest(releaseType, description, config, additionalProperties);
+            return new SplitterVersionsCreateRequest(
+                    extendWorkspaceId, releaseType, description, config, additionalProperties);
         }
     }
 }

@@ -15,7 +15,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,18 +33,29 @@ public final class WorkflowVersion {
 
     private final Optional<String> name;
 
+    private final List<WorkflowStepDefinition> steps;
+
+    private final OffsetDateTime createdAt;
+
     private final Map<String, Object> additionalProperties;
 
     private WorkflowVersion(
-            String id, String version, Optional<String> name, Map<String, Object> additionalProperties) {
+            String id,
+            String version,
+            Optional<String> name,
+            List<WorkflowStepDefinition> steps,
+            OffsetDateTime createdAt,
+            Map<String, Object> additionalProperties) {
         this.id = id;
         this.version = version;
         this.name = name;
+        this.steps = steps;
+        this.createdAt = createdAt;
         this.additionalProperties = additionalProperties;
     }
 
     /**
-     * @return The type of object. In this case, it will always be <code>&quot;workflow_version&quot;</code>.
+     * @return The type of object. Always <code>&quot;workflow_version&quot;</code>.
      */
     @JsonProperty("object")
     public String getObject() {
@@ -50,7 +64,6 @@ public final class WorkflowVersion {
 
     /**
      * @return The ID of the workflow version.
-     * <p>Example: <code>&quot;workflow_version_Zk9mNP12Qw4-yTv8BdR3H&quot;</code></p>
      */
     @JsonProperty("id")
     public String getId() {
@@ -58,8 +71,7 @@ public final class WorkflowVersion {
     }
 
     /**
-     * @return The version of the workflow version.
-     * <p>Example: <code>&quot;3&quot;</code></p>
+     * @return The version number as a string, or <code>&quot;draft&quot;</code> for the draft version.
      */
     @JsonProperty("version")
     public String getVersion() {
@@ -68,7 +80,6 @@ public final class WorkflowVersion {
 
     /**
      * @return The name of the workflow version.
-     * <p>Example: <code>&quot;Invoice Processing&quot;</code></p>
      */
     @JsonIgnore
     public Optional<String> getName() {
@@ -76,6 +87,19 @@ public final class WorkflowVersion {
             return Optional.empty();
         }
         return name;
+    }
+
+    /**
+     * @return The step definitions for this version.
+     */
+    @JsonProperty("steps")
+    public List<WorkflowStepDefinition> getSteps() {
+        return steps;
+    }
+
+    @JsonProperty("createdAt")
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
     }
 
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
@@ -96,12 +120,16 @@ public final class WorkflowVersion {
     }
 
     private boolean equalTo(WorkflowVersion other) {
-        return id.equals(other.id) && version.equals(other.version) && name.equals(other.name);
+        return id.equals(other.id)
+                && version.equals(other.version)
+                && name.equals(other.name)
+                && steps.equals(other.steps)
+                && createdAt.equals(other.createdAt);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.id, this.version, this.name);
+        return Objects.hash(this.id, this.version, this.name, this.steps, this.createdAt);
     }
 
     @java.lang.Override
@@ -116,7 +144,6 @@ public final class WorkflowVersion {
     public interface IdStage {
         /**
          * <p>The ID of the workflow version.</p>
-         * <p>Example: <code>&quot;workflow_version_Zk9mNP12Qw4-yTv8BdR3H&quot;</code></p>
          */
         VersionStage id(@NotNull String id);
 
@@ -125,10 +152,13 @@ public final class WorkflowVersion {
 
     public interface VersionStage {
         /**
-         * <p>The version of the workflow version.</p>
-         * <p>Example: <code>&quot;3&quot;</code></p>
+         * <p>The version number as a string, or <code>&quot;draft&quot;</code> for the draft version.</p>
          */
-        _FinalStage version(@NotNull String version);
+        CreatedAtStage version(@NotNull String version);
+    }
+
+    public interface CreatedAtStage {
+        _FinalStage createdAt(@NotNull OffsetDateTime createdAt);
     }
 
     public interface _FinalStage {
@@ -136,20 +166,32 @@ public final class WorkflowVersion {
 
         /**
          * <p>The name of the workflow version.</p>
-         * <p>Example: <code>&quot;Invoice Processing&quot;</code></p>
          */
         _FinalStage name(Optional<String> name);
 
         _FinalStage name(String name);
 
         _FinalStage name(Nullable<String> name);
+
+        /**
+         * <p>The step definitions for this version.</p>
+         */
+        _FinalStage steps(List<WorkflowStepDefinition> steps);
+
+        _FinalStage addSteps(WorkflowStepDefinition steps);
+
+        _FinalStage addAllSteps(List<WorkflowStepDefinition> steps);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements IdStage, VersionStage, _FinalStage {
+    public static final class Builder implements IdStage, VersionStage, CreatedAtStage, _FinalStage {
         private String id;
 
         private String version;
+
+        private OffsetDateTime createdAt;
+
+        private List<WorkflowStepDefinition> steps = new ArrayList<>();
 
         private Optional<String> name = Optional.empty();
 
@@ -163,14 +205,14 @@ public final class WorkflowVersion {
             id(other.getId());
             version(other.getVersion());
             name(other.getName());
+            steps(other.getSteps());
+            createdAt(other.getCreatedAt());
             return this;
         }
 
         /**
          * <p>The ID of the workflow version.</p>
-         * <p>Example: <code>&quot;workflow_version_Zk9mNP12Qw4-yTv8BdR3H&quot;</code></p>
          * <p>The ID of the workflow version.</p>
-         * <p>Example: <code>&quot;workflow_version_Zk9mNP12Qw4-yTv8BdR3H&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -181,22 +223,61 @@ public final class WorkflowVersion {
         }
 
         /**
-         * <p>The version of the workflow version.</p>
-         * <p>Example: <code>&quot;3&quot;</code></p>
-         * <p>The version of the workflow version.</p>
-         * <p>Example: <code>&quot;3&quot;</code></p>
+         * <p>The version number as a string, or <code>&quot;draft&quot;</code> for the draft version.</p>
+         * <p>The version number as a string, or <code>&quot;draft&quot;</code> for the draft version.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
         @JsonSetter("version")
-        public _FinalStage version(@NotNull String version) {
+        public CreatedAtStage version(@NotNull String version) {
             this.version = Objects.requireNonNull(version, "version must not be null");
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter("createdAt")
+        public _FinalStage createdAt(@NotNull OffsetDateTime createdAt) {
+            this.createdAt = Objects.requireNonNull(createdAt, "createdAt must not be null");
+            return this;
+        }
+
+        /**
+         * <p>The step definitions for this version.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage addAllSteps(List<WorkflowStepDefinition> steps) {
+            if (steps != null) {
+                this.steps.addAll(steps);
+            }
+            return this;
+        }
+
+        /**
+         * <p>The step definitions for this version.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage addSteps(WorkflowStepDefinition steps) {
+            this.steps.add(steps);
+            return this;
+        }
+
+        /**
+         * <p>The step definitions for this version.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "steps", nulls = Nulls.SKIP)
+        public _FinalStage steps(List<WorkflowStepDefinition> steps) {
+            this.steps.clear();
+            if (steps != null) {
+                this.steps.addAll(steps);
+            }
             return this;
         }
 
         /**
          * <p>The name of the workflow version.</p>
-         * <p>Example: <code>&quot;Invoice Processing&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -213,7 +294,6 @@ public final class WorkflowVersion {
 
         /**
          * <p>The name of the workflow version.</p>
-         * <p>Example: <code>&quot;Invoice Processing&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -224,7 +304,6 @@ public final class WorkflowVersion {
 
         /**
          * <p>The name of the workflow version.</p>
-         * <p>Example: <code>&quot;Invoice Processing&quot;</code></p>
          */
         @java.lang.Override
         @JsonSetter(value = "name", nulls = Nulls.SKIP)
@@ -235,7 +314,7 @@ public final class WorkflowVersion {
 
         @java.lang.Override
         public WorkflowVersion build() {
-            return new WorkflowVersion(id, version, name, additionalProperties);
+            return new WorkflowVersion(id, version, name, steps, createdAt, additionalProperties);
         }
     }
 }

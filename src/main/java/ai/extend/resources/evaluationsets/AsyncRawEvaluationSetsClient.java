@@ -21,6 +21,7 @@ import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
 import ai.extend.resources.evaluationsets.requests.EvaluationSetsCreateRequest;
 import ai.extend.resources.evaluationsets.requests.EvaluationSetsListRequest;
+import ai.extend.resources.evaluationsets.requests.EvaluationSetsRetrieveRequest;
 import ai.extend.resources.evaluationsets.types.EvaluationSetsListResponse;
 import ai.extend.types.ApiError;
 import ai.extend.types.EvaluationSet;
@@ -105,6 +106,10 @@ public class AsyncRawEvaluationSetsClient {
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
@@ -305,7 +310,7 @@ public class AsyncRawEvaluationSetsClient {
      * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
      */
     public CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> retrieve(String id) {
-        return retrieve(id, null);
+        return retrieve(id, EvaluationSetsRetrieveRequest.builder().build());
     }
 
     /**
@@ -313,6 +318,22 @@ public class AsyncRawEvaluationSetsClient {
      */
     public CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> retrieve(
             String id, RequestOptions requestOptions) {
+        return retrieve(id, EvaluationSetsRetrieveRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
+     */
+    public CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> retrieve(
+            String id, EvaluationSetsRetrieveRequest request) {
+        return retrieve(id, request, null);
+    }
+
+    /**
+     * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
+     */
+    public CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> retrieve(
+            String id, EvaluationSetsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("evaluation_sets")
@@ -322,12 +343,16 @@ public class AsyncRawEvaluationSetsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

@@ -5,6 +5,7 @@ package ai.extend.resources.files;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
+import ai.extend.resources.files.requests.FilesDeleteRequest;
 import ai.extend.resources.files.requests.FilesListRequest;
 import ai.extend.resources.files.requests.FilesRetrieveRequest;
 import ai.extend.resources.files.requests.FilesUploadRequest;
@@ -99,6 +100,22 @@ public class FilesClient {
      */
     public FilesDeleteResponse delete(String id, RequestOptions requestOptions) {
         return this.rawClient.delete(id, requestOptions).body();
+    }
+
+    /**
+     * Delete a file and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public FilesDeleteResponse delete(String id, FilesDeleteRequest request) {
+        return this.rawClient.delete(id, request).body();
+    }
+
+    /**
+     * Delete a file and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public FilesDeleteResponse delete(String id, FilesDeleteRequest request, RequestOptions requestOptions) {
+        return this.rawClient.delete(id, request, requestOptions).body();
     }
 
     /**

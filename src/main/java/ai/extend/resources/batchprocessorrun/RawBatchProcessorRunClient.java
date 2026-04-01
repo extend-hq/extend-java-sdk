@@ -12,6 +12,7 @@ import ai.extend.core.RequestOptions;
 import ai.extend.errors.BadRequestError;
 import ai.extend.errors.NotFoundError;
 import ai.extend.errors.UnauthorizedError;
+import ai.extend.resources.batchprocessorrun.requests.BatchProcessorRunGetRequest;
 import ai.extend.resources.batchprocessorrun.types.BatchProcessorRunGetResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
@@ -34,7 +35,7 @@ public class RawBatchProcessorRunClient {
      * <p><strong>Deprecated:</strong> This endpoint is maintained for backwards compatibility only and will be replaced in a future API version. Use <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/get-evaluation-set-run">Get Evaluation Set Run</a> for interacting with evaluation set runs.</p>
      */
     public ExtendClientHttpResponse<BatchProcessorRunGetResponse> get(String id) {
-        return get(id, null);
+        return get(id, BatchProcessorRunGetRequest.builder().build());
     }
 
     /**
@@ -42,6 +43,23 @@ public class RawBatchProcessorRunClient {
      * <p><strong>Deprecated:</strong> This endpoint is maintained for backwards compatibility only and will be replaced in a future API version. Use <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/get-evaluation-set-run">Get Evaluation Set Run</a> for interacting with evaluation set runs.</p>
      */
     public ExtendClientHttpResponse<BatchProcessorRunGetResponse> get(String id, RequestOptions requestOptions) {
+        return get(id, BatchProcessorRunGetRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Retrieve details about a batch processor run, including evaluation runs.
+     * <p><strong>Deprecated:</strong> This endpoint is maintained for backwards compatibility only and will be replaced in a future API version. Use <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/get-evaluation-set-run">Get Evaluation Set Run</a> for interacting with evaluation set runs.</p>
+     */
+    public ExtendClientHttpResponse<BatchProcessorRunGetResponse> get(String id, BatchProcessorRunGetRequest request) {
+        return get(id, request, null);
+    }
+
+    /**
+     * Retrieve details about a batch processor run, including evaluation runs.
+     * <p><strong>Deprecated:</strong> This endpoint is maintained for backwards compatibility only and will be replaced in a future API version. Use <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/get-evaluation-set-run">Get Evaluation Set Run</a> for interacting with evaluation set runs.</p>
+     */
+    public ExtendClientHttpResponse<BatchProcessorRunGetResponse> get(
+            String id, BatchProcessorRunGetRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("batch_processor_runs")
@@ -51,12 +69,16 @@ public class RawBatchProcessorRunClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

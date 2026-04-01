@@ -20,7 +20,9 @@ import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
 import ai.extend.resources.evaluationsetitems.requests.EvaluationSetItemsCreateRequest;
+import ai.extend.resources.evaluationsetitems.requests.EvaluationSetItemsDeleteRequest;
 import ai.extend.resources.evaluationsetitems.requests.EvaluationSetItemsListRequest;
+import ai.extend.resources.evaluationsetitems.requests.EvaluationSetItemsRetrieveRequest;
 import ai.extend.resources.evaluationsetitems.requests.EvaluationSetItemsUpdateRequest;
 import ai.extend.resources.evaluationsetitems.types.EvaluationSetItemsCreateResponse;
 import ai.extend.resources.evaluationsetitems.types.EvaluationSetItemsDeleteResponse;
@@ -107,6 +109,10 @@ public class RawEvaluationSetItemsClient {
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
@@ -189,16 +195,20 @@ public class RawEvaluationSetItemsClient {
         try {
             body = RequestBody.create(
                     ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new ExtendClientException("Failed to serialize request", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -253,7 +263,10 @@ public class RawEvaluationSetItemsClient {
      * Get details of an evaluation set item.
      */
     public ExtendClientHttpResponse<EvaluationSetItem> retrieve(String evaluationSetId, String itemId) {
-        return retrieve(evaluationSetId, itemId, null);
+        return retrieve(
+                evaluationSetId,
+                itemId,
+                EvaluationSetItemsRetrieveRequest.builder().build());
     }
 
     /**
@@ -261,6 +274,29 @@ public class RawEvaluationSetItemsClient {
      */
     public ExtendClientHttpResponse<EvaluationSetItem> retrieve(
             String evaluationSetId, String itemId, RequestOptions requestOptions) {
+        return retrieve(
+                evaluationSetId,
+                itemId,
+                EvaluationSetItemsRetrieveRequest.builder().build(),
+                requestOptions);
+    }
+
+    /**
+     * Get details of an evaluation set item.
+     */
+    public ExtendClientHttpResponse<EvaluationSetItem> retrieve(
+            String evaluationSetId, String itemId, EvaluationSetItemsRetrieveRequest request) {
+        return retrieve(evaluationSetId, itemId, request, null);
+    }
+
+    /**
+     * Get details of an evaluation set item.
+     */
+    public ExtendClientHttpResponse<EvaluationSetItem> retrieve(
+            String evaluationSetId,
+            String itemId,
+            EvaluationSetItemsRetrieveRequest request,
+            RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("evaluation_sets")
@@ -272,12 +308,16 @@ public class RawEvaluationSetItemsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -358,16 +398,20 @@ public class RawEvaluationSetItemsClient {
         try {
             body = RequestBody.create(
                     ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new ExtendClientException("Failed to serialize request", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -421,7 +465,10 @@ public class RawEvaluationSetItemsClient {
      * Delete an evaluation set item.
      */
     public ExtendClientHttpResponse<EvaluationSetItemsDeleteResponse> delete(String evaluationSetId, String itemId) {
-        return delete(evaluationSetId, itemId, null);
+        return delete(
+                evaluationSetId,
+                itemId,
+                EvaluationSetItemsDeleteRequest.builder().build());
     }
 
     /**
@@ -429,6 +476,29 @@ public class RawEvaluationSetItemsClient {
      */
     public ExtendClientHttpResponse<EvaluationSetItemsDeleteResponse> delete(
             String evaluationSetId, String itemId, RequestOptions requestOptions) {
+        return delete(
+                evaluationSetId,
+                itemId,
+                EvaluationSetItemsDeleteRequest.builder().build(),
+                requestOptions);
+    }
+
+    /**
+     * Delete an evaluation set item.
+     */
+    public ExtendClientHttpResponse<EvaluationSetItemsDeleteResponse> delete(
+            String evaluationSetId, String itemId, EvaluationSetItemsDeleteRequest request) {
+        return delete(evaluationSetId, itemId, request, null);
+    }
+
+    /**
+     * Delete an evaluation set item.
+     */
+    public ExtendClientHttpResponse<EvaluationSetItemsDeleteResponse> delete(
+            String evaluationSetId,
+            String itemId,
+            EvaluationSetItemsDeleteRequest request,
+            RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("evaluation_sets")
@@ -440,12 +510,16 @@ public class RawEvaluationSetItemsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("DELETE", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

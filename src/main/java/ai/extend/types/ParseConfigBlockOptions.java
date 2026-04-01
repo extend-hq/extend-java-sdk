@@ -26,16 +26,24 @@ public final class ParseConfigBlockOptions {
 
     private final Optional<ParseConfigBlockOptionsText> text;
 
+    private final Optional<ParseConfigBlockOptionsKeyValue> keyValue;
+
+    private final Optional<ParseConfigBlockOptionsBarcodes> barcodes;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseConfigBlockOptions(
             Optional<ParseConfigBlockOptionsFigures> figures,
             Optional<ParseConfigBlockOptionsTables> tables,
             Optional<ParseConfigBlockOptionsText> text,
+            Optional<ParseConfigBlockOptionsKeyValue> keyValue,
+            Optional<ParseConfigBlockOptionsBarcodes> barcodes,
             Map<String, Object> additionalProperties) {
         this.figures = figures;
         this.tables = tables;
         this.text = text;
+        this.keyValue = keyValue;
+        this.barcodes = barcodes;
         this.additionalProperties = additionalProperties;
     }
 
@@ -63,6 +71,22 @@ public final class ParseConfigBlockOptions {
         return text;
     }
 
+    /**
+     * @return Options for key-value pair blocks.
+     */
+    @JsonProperty("keyValue")
+    public Optional<ParseConfigBlockOptionsKeyValue> getKeyValue() {
+        return keyValue;
+    }
+
+    /**
+     * @return Options for barcode blocks.
+     */
+    @JsonProperty("barcodes")
+    public Optional<ParseConfigBlockOptionsBarcodes> getBarcodes() {
+        return barcodes;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -75,12 +99,16 @@ public final class ParseConfigBlockOptions {
     }
 
     private boolean equalTo(ParseConfigBlockOptions other) {
-        return figures.equals(other.figures) && tables.equals(other.tables) && text.equals(other.text);
+        return figures.equals(other.figures)
+                && tables.equals(other.tables)
+                && text.equals(other.text)
+                && keyValue.equals(other.keyValue)
+                && barcodes.equals(other.barcodes);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.figures, this.tables, this.text);
+        return Objects.hash(this.figures, this.tables, this.text, this.keyValue, this.barcodes);
     }
 
     @java.lang.Override
@@ -100,6 +128,10 @@ public final class ParseConfigBlockOptions {
 
         private Optional<ParseConfigBlockOptionsText> text = Optional.empty();
 
+        private Optional<ParseConfigBlockOptionsKeyValue> keyValue = Optional.empty();
+
+        private Optional<ParseConfigBlockOptionsBarcodes> barcodes = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -109,6 +141,8 @@ public final class ParseConfigBlockOptions {
             figures(other.getFigures());
             tables(other.getTables());
             text(other.getText());
+            keyValue(other.getKeyValue());
+            barcodes(other.getBarcodes());
             return this;
         }
 
@@ -154,8 +188,36 @@ public final class ParseConfigBlockOptions {
             return this;
         }
 
+        /**
+         * <p>Options for key-value pair blocks.</p>
+         */
+        @JsonSetter(value = "keyValue", nulls = Nulls.SKIP)
+        public Builder keyValue(Optional<ParseConfigBlockOptionsKeyValue> keyValue) {
+            this.keyValue = keyValue;
+            return this;
+        }
+
+        public Builder keyValue(ParseConfigBlockOptionsKeyValue keyValue) {
+            this.keyValue = Optional.ofNullable(keyValue);
+            return this;
+        }
+
+        /**
+         * <p>Options for barcode blocks.</p>
+         */
+        @JsonSetter(value = "barcodes", nulls = Nulls.SKIP)
+        public Builder barcodes(Optional<ParseConfigBlockOptionsBarcodes> barcodes) {
+            this.barcodes = barcodes;
+            return this;
+        }
+
+        public Builder barcodes(ParseConfigBlockOptionsBarcodes barcodes) {
+            this.barcodes = Optional.ofNullable(barcodes);
+            return this;
+        }
+
         public ParseConfigBlockOptions build() {
-            return new ParseConfigBlockOptions(figures, tables, text, additionalProperties);
+            return new ParseConfigBlockOptions(figures, tables, text, keyValue, barcodes, additionalProperties);
         }
     }
 }

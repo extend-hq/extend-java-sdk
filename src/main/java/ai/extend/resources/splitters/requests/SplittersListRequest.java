@@ -8,6 +8,7 @@ import ai.extend.types.SortBy;
 import ai.extend.types.SortDir;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,6 +23,8 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = SplittersListRequest.Builder.class)
 public final class SplittersListRequest {
+    private final Optional<String> extendWorkspaceId;
+
     private final Optional<String> nextPageToken;
 
     private final Optional<Integer> maxPageSize;
@@ -33,16 +36,26 @@ public final class SplittersListRequest {
     private final Map<String, Object> additionalProperties;
 
     private SplittersListRequest(
+            Optional<String> extendWorkspaceId,
             Optional<String> nextPageToken,
             Optional<Integer> maxPageSize,
             Optional<SortBy> sortBy,
             Optional<SortDir> sortDir,
             Map<String, Object> additionalProperties) {
+        this.extendWorkspaceId = extendWorkspaceId;
         this.nextPageToken = nextPageToken;
         this.maxPageSize = maxPageSize;
         this.sortBy = sortBy;
         this.sortDir = sortDir;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.
+     */
+    @JsonIgnore
+    public Optional<String> getExtendWorkspaceId() {
+        return extendWorkspaceId;
     }
 
     @JsonProperty("nextPageToken")
@@ -77,7 +90,8 @@ public final class SplittersListRequest {
     }
 
     private boolean equalTo(SplittersListRequest other) {
-        return nextPageToken.equals(other.nextPageToken)
+        return extendWorkspaceId.equals(other.extendWorkspaceId)
+                && nextPageToken.equals(other.nextPageToken)
                 && maxPageSize.equals(other.maxPageSize)
                 && sortBy.equals(other.sortBy)
                 && sortDir.equals(other.sortDir);
@@ -85,7 +99,7 @@ public final class SplittersListRequest {
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.nextPageToken, this.maxPageSize, this.sortBy, this.sortDir);
+        return Objects.hash(this.extendWorkspaceId, this.nextPageToken, this.maxPageSize, this.sortBy, this.sortDir);
     }
 
     @java.lang.Override
@@ -99,6 +113,8 @@ public final class SplittersListRequest {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<String> extendWorkspaceId = Optional.empty();
+
         private Optional<String> nextPageToken = Optional.empty();
 
         private Optional<Integer> maxPageSize = Optional.empty();
@@ -113,10 +129,24 @@ public final class SplittersListRequest {
         private Builder() {}
 
         public Builder from(SplittersListRequest other) {
+            extendWorkspaceId(other.getExtendWorkspaceId());
             nextPageToken(other.getNextPageToken());
             maxPageSize(other.getMaxPageSize());
             sortBy(other.getSortBy());
             sortDir(other.getSortDir());
+            return this;
+        }
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        public Builder extendWorkspaceId(Optional<String> extendWorkspaceId) {
+            this.extendWorkspaceId = extendWorkspaceId;
+            return this;
+        }
+
+        public Builder extendWorkspaceId(String extendWorkspaceId) {
+            this.extendWorkspaceId = Optional.ofNullable(extendWorkspaceId);
             return this;
         }
 
@@ -165,7 +195,8 @@ public final class SplittersListRequest {
         }
 
         public SplittersListRequest build() {
-            return new SplittersListRequest(nextPageToken, maxPageSize, sortBy, sortDir, additionalProperties);
+            return new SplittersListRequest(
+                    extendWorkspaceId, nextPageToken, maxPageSize, sortBy, sortDir, additionalProperties);
         }
     }
 }

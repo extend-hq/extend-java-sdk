@@ -6,7 +6,9 @@ package ai.extend.resources.evaluationsetitems;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.evaluationsetitems.requests.EvaluationSetItemsCreateRequest;
+import ai.extend.resources.evaluationsetitems.requests.EvaluationSetItemsDeleteRequest;
 import ai.extend.resources.evaluationsetitems.requests.EvaluationSetItemsListRequest;
+import ai.extend.resources.evaluationsetitems.requests.EvaluationSetItemsRetrieveRequest;
 import ai.extend.resources.evaluationsetitems.requests.EvaluationSetItemsUpdateRequest;
 import ai.extend.resources.evaluationsetitems.types.EvaluationSetItemsCreateResponse;
 import ai.extend.resources.evaluationsetitems.types.EvaluationSetItemsDeleteResponse;
@@ -102,6 +104,27 @@ public class AsyncEvaluationSetItemsClient {
     }
 
     /**
+     * Get details of an evaluation set item.
+     */
+    public CompletableFuture<EvaluationSetItem> retrieve(
+            String evaluationSetId, String itemId, EvaluationSetItemsRetrieveRequest request) {
+        return this.rawClient.retrieve(evaluationSetId, itemId, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Get details of an evaluation set item.
+     */
+    public CompletableFuture<EvaluationSetItem> retrieve(
+            String evaluationSetId,
+            String itemId,
+            EvaluationSetItemsRetrieveRequest request,
+            RequestOptions requestOptions) {
+        return this.rawClient
+                .retrieve(evaluationSetId, itemId, request, requestOptions)
+                .thenApply(response -> response.body());
+    }
+
+    /**
      * If you need to change the expected output for a given evaluation set item, you can use this endpoint to update the item. This can be useful if you need to correct an error in the expected output or if the output of the extractor, classifier, or splitter has changed.
      */
     public CompletableFuture<EvaluationSetItem> update(
@@ -135,5 +158,26 @@ public class AsyncEvaluationSetItemsClient {
     public CompletableFuture<EvaluationSetItemsDeleteResponse> delete(
             String evaluationSetId, String itemId, RequestOptions requestOptions) {
         return this.rawClient.delete(evaluationSetId, itemId, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Delete an evaluation set item.
+     */
+    public CompletableFuture<EvaluationSetItemsDeleteResponse> delete(
+            String evaluationSetId, String itemId, EvaluationSetItemsDeleteRequest request) {
+        return this.rawClient.delete(evaluationSetId, itemId, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Delete an evaluation set item.
+     */
+    public CompletableFuture<EvaluationSetItemsDeleteResponse> delete(
+            String evaluationSetId,
+            String itemId,
+            EvaluationSetItemsDeleteRequest request,
+            RequestOptions requestOptions) {
+        return this.rawClient
+                .delete(evaluationSetId, itemId, request, requestOptions)
+                .thenApply(response -> response.body());
     }
 }

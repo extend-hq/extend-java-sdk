@@ -21,6 +21,7 @@ import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
 import ai.extend.resources.classifierversions.requests.ClassifierVersionsCreateRequest;
 import ai.extend.resources.classifierversions.requests.ClassifierVersionsListRequest;
+import ai.extend.resources.classifierversions.requests.ClassifierVersionsRetrieveRequest;
 import ai.extend.resources.classifierversions.types.ClassifierVersionsListResponse;
 import ai.extend.types.ApiError;
 import ai.extend.types.ClassifierVersion;
@@ -104,6 +105,10 @@ public class AsyncRawClassifierVersionsClient {
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
@@ -214,16 +219,20 @@ public class AsyncRawClassifierVersionsClient {
         try {
             body = RequestBody.create(
                     ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new ExtendClientException("Failed to serialize request", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -308,7 +317,10 @@ public class AsyncRawClassifierVersionsClient {
      */
     public CompletableFuture<ExtendClientHttpResponse<ClassifierVersion>> retrieve(
             String classifierId, String versionId) {
-        return retrieve(classifierId, versionId, null);
+        return retrieve(
+                classifierId,
+                versionId,
+                ClassifierVersionsRetrieveRequest.builder().build());
     }
 
     /**
@@ -316,6 +328,29 @@ public class AsyncRawClassifierVersionsClient {
      */
     public CompletableFuture<ExtendClientHttpResponse<ClassifierVersion>> retrieve(
             String classifierId, String versionId, RequestOptions requestOptions) {
+        return retrieve(
+                classifierId,
+                versionId,
+                ClassifierVersionsRetrieveRequest.builder().build(),
+                requestOptions);
+    }
+
+    /**
+     * Retrieve a specific version of a classifier in Extend
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ClassifierVersion>> retrieve(
+            String classifierId, String versionId, ClassifierVersionsRetrieveRequest request) {
+        return retrieve(classifierId, versionId, request, null);
+    }
+
+    /**
+     * Retrieve a specific version of a classifier in Extend
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ClassifierVersion>> retrieve(
+            String classifierId,
+            String versionId,
+            ClassifierVersionsRetrieveRequest request,
+            RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("classifiers")
@@ -327,12 +362,16 @@ public class AsyncRawClassifierVersionsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

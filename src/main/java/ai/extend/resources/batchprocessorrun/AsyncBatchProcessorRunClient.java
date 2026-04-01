@@ -5,6 +5,7 @@ package ai.extend.resources.batchprocessorrun;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
+import ai.extend.resources.batchprocessorrun.requests.BatchProcessorRunGetRequest;
 import ai.extend.resources.batchprocessorrun.types.BatchProcessorRunGetResponse;
 import java.util.concurrent.CompletableFuture;
 
@@ -39,5 +40,22 @@ public class AsyncBatchProcessorRunClient {
      */
     public CompletableFuture<BatchProcessorRunGetResponse> get(String id, RequestOptions requestOptions) {
         return this.rawClient.get(id, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Retrieve details about a batch processor run, including evaluation runs.
+     * <p><strong>Deprecated:</strong> This endpoint is maintained for backwards compatibility only and will be replaced in a future API version. Use <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/get-evaluation-set-run">Get Evaluation Set Run</a> for interacting with evaluation set runs.</p>
+     */
+    public CompletableFuture<BatchProcessorRunGetResponse> get(String id, BatchProcessorRunGetRequest request) {
+        return this.rawClient.get(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Retrieve details about a batch processor run, including evaluation runs.
+     * <p><strong>Deprecated:</strong> This endpoint is maintained for backwards compatibility only and will be replaced in a future API version. Use <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/get-evaluation-set-run">Get Evaluation Set Run</a> for interacting with evaluation set runs.</p>
+     */
+    public CompletableFuture<BatchProcessorRunGetResponse> get(
+            String id, BatchProcessorRunGetRequest request, RequestOptions requestOptions) {
+        return this.rawClient.get(id, request, requestOptions).thenApply(response -> response.body());
     }
 }

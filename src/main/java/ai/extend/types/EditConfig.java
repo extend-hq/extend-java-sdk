@@ -24,6 +24,8 @@ public final class EditConfig {
 
     private final Optional<String> instructions;
 
+    private final Optional<String> schemaGenerationInstructions;
+
     private final Optional<EditConfigAdvancedOptions> advancedOptions;
 
     private final Map<String, Object> additionalProperties;
@@ -31,10 +33,12 @@ public final class EditConfig {
     private EditConfig(
             Optional<EditRootJson> schema,
             Optional<String> instructions,
+            Optional<String> schemaGenerationInstructions,
             Optional<EditConfigAdvancedOptions> advancedOptions,
             Map<String, Object> additionalProperties) {
         this.schema = schema;
         this.instructions = instructions;
+        this.schemaGenerationInstructions = schemaGenerationInstructions;
         this.advancedOptions = advancedOptions;
         this.additionalProperties = additionalProperties;
     }
@@ -50,6 +54,14 @@ public final class EditConfig {
     @JsonProperty("instructions")
     public Optional<String> getInstructions() {
         return instructions;
+    }
+
+    /**
+     * @return Additional instructions used when generating a schema from the document.
+     */
+    @JsonProperty("schemaGenerationInstructions")
+    public Optional<String> getSchemaGenerationInstructions() {
+        return schemaGenerationInstructions;
     }
 
     /**
@@ -74,12 +86,13 @@ public final class EditConfig {
     private boolean equalTo(EditConfig other) {
         return schema.equals(other.schema)
                 && instructions.equals(other.instructions)
+                && schemaGenerationInstructions.equals(other.schemaGenerationInstructions)
                 && advancedOptions.equals(other.advancedOptions);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.schema, this.instructions, this.advancedOptions);
+        return Objects.hash(this.schema, this.instructions, this.schemaGenerationInstructions, this.advancedOptions);
     }
 
     @java.lang.Override
@@ -97,6 +110,8 @@ public final class EditConfig {
 
         private Optional<String> instructions = Optional.empty();
 
+        private Optional<String> schemaGenerationInstructions = Optional.empty();
+
         private Optional<EditConfigAdvancedOptions> advancedOptions = Optional.empty();
 
         @JsonAnySetter
@@ -107,6 +122,7 @@ public final class EditConfig {
         public Builder from(EditConfig other) {
             schema(other.getSchema());
             instructions(other.getInstructions());
+            schemaGenerationInstructions(other.getSchemaGenerationInstructions());
             advancedOptions(other.getAdvancedOptions());
             return this;
         }
@@ -137,6 +153,20 @@ public final class EditConfig {
         }
 
         /**
+         * <p>Additional instructions used when generating a schema from the document.</p>
+         */
+        @JsonSetter(value = "schemaGenerationInstructions", nulls = Nulls.SKIP)
+        public Builder schemaGenerationInstructions(Optional<String> schemaGenerationInstructions) {
+            this.schemaGenerationInstructions = schemaGenerationInstructions;
+            return this;
+        }
+
+        public Builder schemaGenerationInstructions(String schemaGenerationInstructions) {
+            this.schemaGenerationInstructions = Optional.ofNullable(schemaGenerationInstructions);
+            return this;
+        }
+
+        /**
          * <p>Advanced options for the edit operation.</p>
          */
         @JsonSetter(value = "advancedOptions", nulls = Nulls.SKIP)
@@ -151,7 +181,8 @@ public final class EditConfig {
         }
 
         public EditConfig build() {
-            return new EditConfig(schema, instructions, advancedOptions, additionalProperties);
+            return new EditConfig(
+                    schema, instructions, schemaGenerationInstructions, advancedOptions, additionalProperties);
         }
     }
 }

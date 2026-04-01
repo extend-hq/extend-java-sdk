@@ -5,8 +5,11 @@ package ai.extend.resources.extractruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
+import ai.extend.resources.extractruns.requests.ExtractRunsCancelRequest;
 import ai.extend.resources.extractruns.requests.ExtractRunsCreateRequest;
+import ai.extend.resources.extractruns.requests.ExtractRunsDeleteRequest;
 import ai.extend.resources.extractruns.requests.ExtractRunsListRequest;
+import ai.extend.resources.extractruns.requests.ExtractRunsRetrieveRequest;
 import ai.extend.resources.extractruns.types.ExtractRunsDeleteResponse;
 import ai.extend.resources.extractruns.types.ExtractRunsListResponse;
 import ai.extend.types.ExtractRun;
@@ -95,6 +98,23 @@ public class AsyncExtractRunsClient {
     }
 
     /**
+     * Retrieve details about a specific extract run, including its status, outputs, and any edits made during review.
+     * <p>A common use case for this endpoint is to poll for the status and final output of an extract run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/extract/create-extract-run">Create Extract Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     */
+    public CompletableFuture<ExtractRun> retrieve(String id, ExtractRunsRetrieveRequest request) {
+        return this.rawClient.retrieve(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Retrieve details about a specific extract run, including its status, outputs, and any edits made during review.
+     * <p>A common use case for this endpoint is to poll for the status and final output of an extract run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/extract/create-extract-run">Create Extract Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     */
+    public CompletableFuture<ExtractRun> retrieve(
+            String id, ExtractRunsRetrieveRequest request, RequestOptions requestOptions) {
+        return this.rawClient.retrieve(id, request, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
      * Delete an extract run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
@@ -111,6 +131,23 @@ public class AsyncExtractRunsClient {
     }
 
     /**
+     * Delete an extract run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public CompletableFuture<ExtractRunsDeleteResponse> delete(String id, ExtractRunsDeleteRequest request) {
+        return this.rawClient.delete(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Delete an extract run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public CompletableFuture<ExtractRunsDeleteResponse> delete(
+            String id, ExtractRunsDeleteRequest request, RequestOptions requestOptions) {
+        return this.rawClient.delete(id, request, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
      * Cancel an in-progress extract run.
      * <p>Note: Only extract runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Extractor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
@@ -124,5 +161,22 @@ public class AsyncExtractRunsClient {
      */
     public CompletableFuture<ExtractRun> cancel(String id, RequestOptions requestOptions) {
         return this.rawClient.cancel(id, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Cancel an in-progress extract run.
+     * <p>Note: Only extract runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Extractor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public CompletableFuture<ExtractRun> cancel(String id, ExtractRunsCancelRequest request) {
+        return this.rawClient.cancel(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Cancel an in-progress extract run.
+     * <p>Note: Only extract runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Extractor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public CompletableFuture<ExtractRun> cancel(
+            String id, ExtractRunsCancelRequest request, RequestOptions requestOptions) {
+        return this.rawClient.cancel(id, request, requestOptions).thenApply(response -> response.body());
     }
 }

@@ -39,6 +39,8 @@ public final class EditJson {
 
     private final Optional<Object> extendEditValue;
 
+    private final Optional<EditJsonExtendEditImage> extendEditImage;
+
     private final Optional<List<Double>> extendEditRowHeights;
 
     private final Optional<EditObjectJson> items;
@@ -65,6 +67,7 @@ public final class EditJson {
             Optional<EditTextOptions> extendEditTextEditOptions,
             Optional<Double> extendEditColumnWidth,
             Optional<Object> extendEditValue,
+            Optional<EditJsonExtendEditImage> extendEditImage,
             Optional<List<Double>> extendEditRowHeights,
             Optional<EditObjectJson> items,
             Optional<Map<String, EditJson>> properties,
@@ -82,6 +85,7 @@ public final class EditJson {
         this.extendEditTextEditOptions = extendEditTextEditOptions;
         this.extendEditColumnWidth = extendEditColumnWidth;
         this.extendEditValue = extendEditValue;
+        this.extendEditImage = extendEditImage;
         this.extendEditRowHeights = extendEditRowHeights;
         this.items = items;
         this.properties = properties;
@@ -173,6 +177,14 @@ public final class EditJson {
     }
 
     /**
+     * @return Image fill for signature fields. Only PNG and JPEG image URLs are supported.
+     */
+    @JsonProperty("extend_edit:image")
+    public Optional<EditJsonExtendEditImage> getExtendEditImage() {
+        return extendEditImage;
+    }
+
+    /**
      * @return Array of row height percentages for array/table fields (e.g. [0.25, 0.50, 0.25])
      */
     @JsonProperty("extend_edit:row_heights")
@@ -249,6 +261,7 @@ public final class EditJson {
                 && extendEditTextEditOptions.equals(other.extendEditTextEditOptions)
                 && extendEditColumnWidth.equals(other.extendEditColumnWidth)
                 && extendEditValue.equals(other.extendEditValue)
+                && extendEditImage.equals(other.extendEditImage)
                 && extendEditRowHeights.equals(other.extendEditRowHeights)
                 && items.equals(other.items)
                 && properties.equals(other.properties)
@@ -270,6 +283,7 @@ public final class EditJson {
                 this.extendEditTextEditOptions,
                 this.extendEditColumnWidth,
                 this.extendEditValue,
+                this.extendEditImage,
                 this.extendEditRowHeights,
                 this.items,
                 this.properties,
@@ -308,6 +322,8 @@ public final class EditJson {
 
         private Optional<Object> extendEditValue = Optional.empty();
 
+        private Optional<EditJsonExtendEditImage> extendEditImage = Optional.empty();
+
         private Optional<List<Double>> extendEditRowHeights = Optional.empty();
 
         private Optional<EditObjectJson> items = Optional.empty();
@@ -337,6 +353,7 @@ public final class EditJson {
             extendEditTextEditOptions(other.getExtendEditTextEditOptions());
             extendEditColumnWidth(other.getExtendEditColumnWidth());
             extendEditValue(other.getExtendEditValue());
+            extendEditImage(other.getExtendEditImage());
             extendEditRowHeights(other.getExtendEditRowHeights());
             items(other.getItems());
             properties(other.getProperties());
@@ -482,6 +499,20 @@ public final class EditJson {
         }
 
         /**
+         * <p>Image fill for signature fields. Only PNG and JPEG image URLs are supported.</p>
+         */
+        @JsonSetter(value = "extend_edit:image", nulls = Nulls.SKIP)
+        public Builder extendEditImage(Optional<EditJsonExtendEditImage> extendEditImage) {
+            this.extendEditImage = extendEditImage;
+            return this;
+        }
+
+        public Builder extendEditImage(EditJsonExtendEditImage extendEditImage) {
+            this.extendEditImage = Optional.ofNullable(extendEditImage);
+            return this;
+        }
+
+        /**
          * <p>Array of row height percentages for array/table fields (e.g. [0.25, 0.50, 0.25])</p>
          */
         @JsonSetter(value = "extend_edit:row_heights", nulls = Nulls.SKIP)
@@ -590,6 +621,7 @@ public final class EditJson {
                     extendEditTextEditOptions,
                     extendEditColumnWidth,
                     extendEditValue,
+                    extendEditImage,
                     extendEditRowHeights,
                     items,
                     properties,

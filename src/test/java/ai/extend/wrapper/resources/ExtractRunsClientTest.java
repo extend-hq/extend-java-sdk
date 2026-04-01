@@ -6,9 +6,11 @@ package ai.extend.wrapper.resources;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.*;
 
 import ai.extend.core.ClientOptions;
+import ai.extend.core.RequestOptions;
 import ai.extend.types.ExtractRun;
 import ai.extend.types.ProcessorRunStatus;
 import ai.extend.wrapper.errors.PollingTimeoutError;
@@ -61,7 +63,7 @@ class ExtractRunsClientTest {
             doReturn(processingResponse)
                     .doReturn(processedResponse)
                     .when(wrapper)
-                    .retrieve(eq(runId), any());
+                    .retrieve(eq(runId), nullable(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -73,7 +75,7 @@ class ExtractRunsClientTest {
 
             assertEquals(ProcessorRunStatus.PROCESSED, result.getStatus());
             verify(wrapper, times(1)).create(any(), any());
-            verify(wrapper, times(2)).retrieve(eq(runId), any());
+            verify(wrapper, times(2)).retrieve(eq(runId), nullable(RequestOptions.class));
         }
 
         @Test
@@ -88,7 +90,7 @@ class ExtractRunsClientTest {
             ExtractRun processedResponse = mock(ExtractRun.class);
             when(processedResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
 
-            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), any());
+            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), nullable(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -99,7 +101,7 @@ class ExtractRunsClientTest {
             ExtractRun result = wrapper.createAndPoll(null, options);
 
             assertEquals(ProcessorRunStatus.PROCESSED, result.getStatus());
-            verify(wrapper, times(1)).retrieve(eq(runId), any());
+            verify(wrapper, times(1)).retrieve(eq(runId), nullable(RequestOptions.class));
         }
 
         @Test
@@ -114,7 +116,7 @@ class ExtractRunsClientTest {
             ExtractRun failedResponse = mock(ExtractRun.class);
             when(failedResponse.getStatus()).thenReturn(ProcessorRunStatus.FAILED);
 
-            doReturn(failedResponse).when(wrapper).retrieve(eq(runId), any());
+            doReturn(failedResponse).when(wrapper).retrieve(eq(runId), nullable(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -139,7 +141,7 @@ class ExtractRunsClientTest {
             ExtractRun cancelledResponse = mock(ExtractRun.class);
             when(cancelledResponse.getStatus()).thenReturn(ProcessorRunStatus.CANCELLED);
 
-            doReturn(cancelledResponse).when(wrapper).retrieve(eq(runId), any());
+            doReturn(cancelledResponse).when(wrapper).retrieve(eq(runId), nullable(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -164,7 +166,7 @@ class ExtractRunsClientTest {
             ExtractRun processingResponse = mock(ExtractRun.class);
             when(processingResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
 
-            doReturn(processingResponse).when(wrapper).retrieve(eq(runId), any());
+            doReturn(processingResponse).when(wrapper).retrieve(eq(runId), nullable(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(10)
@@ -199,7 +201,7 @@ class ExtractRunsClientTest {
                     .doReturn(processingResponse2)
                     .doReturn(processedResponse)
                     .when(wrapper)
-                    .retrieve(eq(runId), any());
+                    .retrieve(eq(runId), nullable(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -210,7 +212,7 @@ class ExtractRunsClientTest {
             ExtractRun result = wrapper.createAndPoll(null, options);
 
             assertEquals(ProcessorRunStatus.PROCESSED, result.getStatus());
-            verify(wrapper, times(3)).retrieve(eq(runId), any());
+            verify(wrapper, times(3)).retrieve(eq(runId), nullable(RequestOptions.class));
         }
 
         @Test
@@ -225,7 +227,7 @@ class ExtractRunsClientTest {
             ExtractRun processedResponse = mock(ExtractRun.class);
             when(processedResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
 
-            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), any());
+            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), nullable(RequestOptions.class));
 
             ExtractRun result = wrapper.createAndPoll(null);
 

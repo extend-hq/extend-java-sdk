@@ -5,6 +5,7 @@ package ai.extend.resources.evaluationsetruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
+import ai.extend.resources.evaluationsetruns.requests.EvaluationSetRunsRetrieveRequest;
 import ai.extend.types.EvaluationSetRun;
 
 public class EvaluationSetRunsClient {
@@ -36,5 +37,20 @@ public class EvaluationSetRunsClient {
      */
     public EvaluationSetRun retrieve(String id, RequestOptions requestOptions) {
         return this.rawClient.retrieve(id, requestOptions).body();
+    }
+
+    /**
+     * Get details of an evaluation set run.
+     */
+    public EvaluationSetRun retrieve(String id, EvaluationSetRunsRetrieveRequest request) {
+        return this.rawClient.retrieve(id, request).body();
+    }
+
+    /**
+     * Get details of an evaluation set run.
+     */
+    public EvaluationSetRun retrieve(
+            String id, EvaluationSetRunsRetrieveRequest request, RequestOptions requestOptions) {
+        return this.rawClient.retrieve(id, request, requestOptions).body();
     }
 }

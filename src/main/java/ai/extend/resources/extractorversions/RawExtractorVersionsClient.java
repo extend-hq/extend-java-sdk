@@ -21,6 +21,7 @@ import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
 import ai.extend.resources.extractorversions.requests.ExtractorVersionsCreateRequest;
 import ai.extend.resources.extractorversions.requests.ExtractorVersionsListRequest;
+import ai.extend.resources.extractorversions.requests.ExtractorVersionsRetrieveRequest;
 import ai.extend.resources.extractorversions.types.ExtractorVersionsListResponse;
 import ai.extend.types.ApiError;
 import ai.extend.types.ExtractorVersion;
@@ -100,6 +101,10 @@ public class RawExtractorVersionsClient {
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
@@ -180,16 +185,20 @@ public class RawExtractorVersionsClient {
         try {
             body = RequestBody.create(
                     ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new ExtendClientException("Failed to serialize request", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -243,7 +252,10 @@ public class RawExtractorVersionsClient {
      * Retrieve a specific version of an extractor in Extend
      */
     public ExtendClientHttpResponse<ExtractorVersion> retrieve(String extractorId, String versionId) {
-        return retrieve(extractorId, versionId, null);
+        return retrieve(
+                extractorId,
+                versionId,
+                ExtractorVersionsRetrieveRequest.builder().build());
     }
 
     /**
@@ -251,6 +263,29 @@ public class RawExtractorVersionsClient {
      */
     public ExtendClientHttpResponse<ExtractorVersion> retrieve(
             String extractorId, String versionId, RequestOptions requestOptions) {
+        return retrieve(
+                extractorId,
+                versionId,
+                ExtractorVersionsRetrieveRequest.builder().build(),
+                requestOptions);
+    }
+
+    /**
+     * Retrieve a specific version of an extractor in Extend
+     */
+    public ExtendClientHttpResponse<ExtractorVersion> retrieve(
+            String extractorId, String versionId, ExtractorVersionsRetrieveRequest request) {
+        return retrieve(extractorId, versionId, request, null);
+    }
+
+    /**
+     * Retrieve a specific version of an extractor in Extend
+     */
+    public ExtendClientHttpResponse<ExtractorVersion> retrieve(
+            String extractorId,
+            String versionId,
+            ExtractorVersionsRetrieveRequest request,
+            RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("extractors")
@@ -262,12 +297,16 @@ public class RawExtractorVersionsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
