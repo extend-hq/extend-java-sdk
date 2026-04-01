@@ -9,6 +9,7 @@ import ai.extend.core.ExtendClientException;
 import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
+import ai.extend.core.QueryStringMapper;
 import ai.extend.core.RequestOptions;
 import ai.extend.errors.BadRequestError;
 import ai.extend.errors.ForbiddenError;
@@ -19,6 +20,9 @@ import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
 import ai.extend.resources.workflows.requests.WorkflowsCreateRequest;
+import ai.extend.resources.workflows.requests.WorkflowsListRequest;
+import ai.extend.resources.workflows.requests.WorkflowsUpdateRequest;
+import ai.extend.resources.workflows.types.WorkflowsListResponse;
 import ai.extend.types.ApiError;
 import ai.extend.types.Workflow;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -39,21 +43,305 @@ public class RawWorkflowsClient {
     }
 
     /**
-     * Create a new workflow in Extend. Workflows are sequences of steps that process files and data in a specific order to achieve a desired outcome.
-     * <p>This endpoint will create a new workflow in Extend, which can then be configured and deployed. Typically, workflows are created from our UI, however this endpoint can be used to create workflows programmatically. Configuration of the flow still needs to be done in the dashboard.</p>
+     * List all workflows. Returns a paginated list of workflow summaries.
+     */
+    public ExtendClientHttpResponse<WorkflowsListResponse> list() {
+        return list(WorkflowsListRequest.builder().build());
+    }
+
+    /**
+     * List all workflows. Returns a paginated list of workflow summaries.
+     */
+    public ExtendClientHttpResponse<WorkflowsListResponse> list(RequestOptions requestOptions) {
+        return list(WorkflowsListRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * List all workflows. Returns a paginated list of workflow summaries.
+     */
+    public ExtendClientHttpResponse<WorkflowsListResponse> list(WorkflowsListRequest request) {
+        return list(request, null);
+    }
+
+    /**
+     * List all workflows. Returns a paginated list of workflow summaries.
+     */
+    public ExtendClientHttpResponse<WorkflowsListResponse> list(
+            WorkflowsListRequest request, RequestOptions requestOptions) {
+        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("workflows");
+        if (request.getNextPageToken().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "nextPageToken", request.getNextPageToken().get(), false);
+        }
+        if (request.getMaxPageSize().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "maxPageSize", request.getMaxPageSize().get(), false);
+        }
+        if (request.getSortBy().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "sortBy", request.getSortBy().get(), false);
+        }
+        if (request.getSortDir().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "sortDir", request.getSortDir().get(), false);
+        }
+        if (requestOptions != null) {
+            requestOptions.getQueryParameters().forEach((_key, _value) -> {
+                httpUrl.addQueryParameter(_key, _value);
+            });
+        }
+        Request.Builder _requestBuilder = new Request.Builder()
+                .url(httpUrl.build())
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Accept", "application/json");
+        Request okhttpRequest = _requestBuilder.build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            if (response.isSuccessful()) {
+                return new ExtendClientHttpResponse<>(
+                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WorkflowsListResponse.class), response);
+            }
+            try {
+                switch (response.code()) {
+                    case 400:
+                        throw new BadRequestError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 401:
+                        throw new UnauthorizedError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 402:
+                        throw new PaymentRequiredError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 403:
+                        throw new ForbiddenError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 404:
+                        throw new NotFoundError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 422:
+                        throw new UnprocessableEntityError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 429:
+                        throw new TooManyRequestsError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 500:
+                        throw new InternalServerError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                }
+            } catch (JsonProcessingException ignored) {
+                // unable to map error response, throwing generic error
+            }
+            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
+            throw new ExtendClientApiException(
+                    "Error with status code " + response.code(), response.code(), errorBody, response);
+        } catch (IOException e) {
+            throw new ExtendClientException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
+     * Create a new workflow. Optionally provide <code>steps</code> to define the workflow's step graph.
+     * <p>When <code>steps</code> is omitted, the workflow is created with default steps (<code>TRIGGER</code> → <code>PARSE</code>). When <code>steps</code> is provided, the step graph is validated and the draft version is populated with the given steps.</p>
+     * <p><strong>Note:</strong> The default steps may change in the future. If your integration depends on a specific step graph, provide <code>steps</code> explicitly.</p>
      */
     public ExtendClientHttpResponse<Workflow> create(WorkflowsCreateRequest request) {
         return create(request, null);
     }
 
     /**
-     * Create a new workflow in Extend. Workflows are sequences of steps that process files and data in a specific order to achieve a desired outcome.
-     * <p>This endpoint will create a new workflow in Extend, which can then be configured and deployed. Typically, workflows are created from our UI, however this endpoint can be used to create workflows programmatically. Configuration of the flow still needs to be done in the dashboard.</p>
+     * Create a new workflow. Optionally provide <code>steps</code> to define the workflow's step graph.
+     * <p>When <code>steps</code> is omitted, the workflow is created with default steps (<code>TRIGGER</code> → <code>PARSE</code>). When <code>steps</code> is provided, the step graph is validated and the draft version is populated with the given steps.</p>
+     * <p><strong>Note:</strong> The default steps may change in the future. If your integration depends on a specific step graph, provide <code>steps</code> explicitly.</p>
      */
     public ExtendClientHttpResponse<Workflow> create(WorkflowsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("workflows");
+        if (requestOptions != null) {
+            requestOptions.getQueryParameters().forEach((_key, _value) -> {
+                httpUrl.addQueryParameter(_key, _value);
+            });
+        }
+        RequestBody body;
+        try {
+            body = RequestBody.create(
+                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
+        } catch (JsonProcessingException e) {
+            throw new ExtendClientException("Failed to serialize request", e);
+        }
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl.build())
+                .method("POST", body)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            if (response.isSuccessful()) {
+                return new ExtendClientHttpResponse<>(
+                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Workflow.class), response);
+            }
+            try {
+                switch (response.code()) {
+                    case 400:
+                        throw new BadRequestError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 401:
+                        throw new UnauthorizedError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 402:
+                        throw new PaymentRequiredError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 403:
+                        throw new ForbiddenError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 404:
+                        throw new NotFoundError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 422:
+                        throw new UnprocessableEntityError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 429:
+                        throw new TooManyRequestsError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 500:
+                        throw new InternalServerError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                }
+            } catch (JsonProcessingException ignored) {
+                // unable to map error response, throwing generic error
+            }
+            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
+            throw new ExtendClientApiException(
+                    "Error with status code " + response.code(), response.code(), errorBody, response);
+        } catch (IOException e) {
+            throw new ExtendClientException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
+     * Get details of a workflow, including its draft version and steps.
+     */
+    public ExtendClientHttpResponse<Workflow> retrieve(String id) {
+        return retrieve(id, null);
+    }
+
+    /**
+     * Get details of a workflow, including its draft version and steps.
+     */
+    public ExtendClientHttpResponse<Workflow> retrieve(String id, RequestOptions requestOptions) {
+        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("workflows")
+                .addPathSegment(id);
+        if (requestOptions != null) {
+            requestOptions.getQueryParameters().forEach((_key, _value) -> {
+                httpUrl.addQueryParameter(_key, _value);
+            });
+        }
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl.build())
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            if (response.isSuccessful()) {
+                return new ExtendClientHttpResponse<>(
+                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Workflow.class), response);
+            }
+            try {
+                switch (response.code()) {
+                    case 400:
+                        throw new BadRequestError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 401:
+                        throw new UnauthorizedError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 402:
+                        throw new PaymentRequiredError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 403:
+                        throw new ForbiddenError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 404:
+                        throw new NotFoundError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 422:
+                        throw new UnprocessableEntityError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 429:
+                        throw new TooManyRequestsError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 500:
+                        throw new InternalServerError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                }
+            } catch (JsonProcessingException ignored) {
+                // unable to map error response, throwing generic error
+            }
+            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
+            throw new ExtendClientApiException(
+                    "Error with status code " + response.code(), response.code(), errorBody, response);
+        } catch (IOException e) {
+            throw new ExtendClientException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
+     * Update a workflow's draft. You can update the name, the steps, or both.
+     * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
+     */
+    public ExtendClientHttpResponse<Workflow> update(String id) {
+        return update(id, WorkflowsUpdateRequest.builder().build());
+    }
+
+    /**
+     * Update a workflow's draft. You can update the name, the steps, or both.
+     * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
+     */
+    public ExtendClientHttpResponse<Workflow> update(String id, RequestOptions requestOptions) {
+        return update(id, WorkflowsUpdateRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Update a workflow's draft. You can update the name, the steps, or both.
+     * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
+     */
+    public ExtendClientHttpResponse<Workflow> update(String id, WorkflowsUpdateRequest request) {
+        return update(id, request, null);
+    }
+
+    /**
+     * Update a workflow's draft. You can update the name, the steps, or both.
+     * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
+     */
+    public ExtendClientHttpResponse<Workflow> update(
+            String id, WorkflowsUpdateRequest request, RequestOptions requestOptions) {
+        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("workflows")
+                .addPathSegment(id);
         if (requestOptions != null) {
             requestOptions.getQueryParameters().forEach((_key, _value) -> {
                 httpUrl.addQueryParameter(_key, _value);

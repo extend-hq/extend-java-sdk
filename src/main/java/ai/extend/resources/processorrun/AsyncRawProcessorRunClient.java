@@ -16,7 +16,10 @@ import ai.extend.errors.InternalServerError;
 import ai.extend.errors.NotFoundError;
 import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
+import ai.extend.resources.processorrun.requests.ProcessorRunCancelRequest;
 import ai.extend.resources.processorrun.requests.ProcessorRunCreateRequest;
+import ai.extend.resources.processorrun.requests.ProcessorRunDeleteRequest;
+import ai.extend.resources.processorrun.requests.ProcessorRunGetRequest;
 import ai.extend.resources.processorrun.requests.ProcessorRunListRequest;
 import ai.extend.resources.processorrun.types.ProcessorRunCancelResponse;
 import ai.extend.resources.processorrun.types.ProcessorRunCreateResponse;
@@ -123,6 +126,10 @@ public class AsyncRawProcessorRunClient {
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
@@ -293,7 +300,7 @@ public class AsyncRawProcessorRunClient {
      * <p>A common use case for this endpoint is to poll for the status and final output of an async processor run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/legacy/create-processor-run">Run Processor</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ProcessorRunGetResponse>> get(String id) {
-        return get(id, null);
+        return get(id, ProcessorRunGetRequest.builder().build());
     }
 
     /**
@@ -302,6 +309,24 @@ public class AsyncRawProcessorRunClient {
      */
     public CompletableFuture<ExtendClientHttpResponse<ProcessorRunGetResponse>> get(
             String id, RequestOptions requestOptions) {
+        return get(id, ProcessorRunGetRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Retrieve details about a specific processor run, including its status, outputs, and any edits made during review.
+     * <p>A common use case for this endpoint is to poll for the status and final output of an async processor run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/legacy/create-processor-run">Run Processor</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunGetResponse>> get(
+            String id, ProcessorRunGetRequest request) {
+        return get(id, request, null);
+    }
+
+    /**
+     * Retrieve details about a specific processor run, including its status, outputs, and any edits made during review.
+     * <p>A common use case for this endpoint is to poll for the status and final output of an async processor run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/legacy/create-processor-run">Run Processor</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunGetResponse>> get(
+            String id, ProcessorRunGetRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("processor_runs")
@@ -311,12 +336,16 @@ public class AsyncRawProcessorRunClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -376,7 +405,7 @@ public class AsyncRawProcessorRunClient {
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ProcessorRunDeleteResponse>> delete(String id) {
-        return delete(id, null);
+        return delete(id, ProcessorRunDeleteRequest.builder().build());
     }
 
     /**
@@ -385,6 +414,24 @@ public class AsyncRawProcessorRunClient {
      */
     public CompletableFuture<ExtendClientHttpResponse<ProcessorRunDeleteResponse>> delete(
             String id, RequestOptions requestOptions) {
+        return delete(id, ProcessorRunDeleteRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Delete a processor run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunDeleteResponse>> delete(
+            String id, ProcessorRunDeleteRequest request) {
+        return delete(id, request, null);
+    }
+
+    /**
+     * Delete a processor run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunDeleteResponse>> delete(
+            String id, ProcessorRunDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("processor_runs")
@@ -394,12 +441,16 @@ public class AsyncRawProcessorRunClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("DELETE", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -455,7 +506,7 @@ public class AsyncRawProcessorRunClient {
      * <p>Note: Only processor runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Processor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ProcessorRunCancelResponse>> cancel(String id) {
-        return cancel(id, null);
+        return cancel(id, ProcessorRunCancelRequest.builder().build());
     }
 
     /**
@@ -464,6 +515,24 @@ public class AsyncRawProcessorRunClient {
      */
     public CompletableFuture<ExtendClientHttpResponse<ProcessorRunCancelResponse>> cancel(
             String id, RequestOptions requestOptions) {
+        return cancel(id, ProcessorRunCancelRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Cancel a running processor run by its ID. This endpoint allows you to stop a processor run that is currently in progress.
+     * <p>Note: Only processor runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Processor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunCancelResponse>> cancel(
+            String id, ProcessorRunCancelRequest request) {
+        return cancel(id, request, null);
+    }
+
+    /**
+     * Cancel a running processor run by its ID. This endpoint allows you to stop a processor run that is currently in progress.
+     * <p>Note: Only processor runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Processor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunCancelResponse>> cancel(
+            String id, ProcessorRunCancelRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("processor_runs")
@@ -474,12 +543,16 @@ public class AsyncRawProcessorRunClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("POST", RequestBody.create("", null))
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

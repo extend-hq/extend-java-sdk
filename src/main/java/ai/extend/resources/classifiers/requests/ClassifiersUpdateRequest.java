@@ -7,6 +7,7 @@ import ai.extend.core.ObjectMappers;
 import ai.extend.types.ClassifyConfig;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,6 +22,8 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ClassifiersUpdateRequest.Builder.class)
 public final class ClassifiersUpdateRequest {
+    private final Optional<String> extendWorkspaceId;
+
     private final Optional<String> name;
 
     private final Optional<ClassifyConfig> config;
@@ -28,10 +31,22 @@ public final class ClassifiersUpdateRequest {
     private final Map<String, Object> additionalProperties;
 
     private ClassifiersUpdateRequest(
-            Optional<String> name, Optional<ClassifyConfig> config, Map<String, Object> additionalProperties) {
+            Optional<String> extendWorkspaceId,
+            Optional<String> name,
+            Optional<ClassifyConfig> config,
+            Map<String, Object> additionalProperties) {
+        this.extendWorkspaceId = extendWorkspaceId;
         this.name = name;
         this.config = config;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.
+     */
+    @JsonIgnore
+    public Optional<String> getExtendWorkspaceId() {
+        return extendWorkspaceId;
     }
 
     /**
@@ -62,12 +77,14 @@ public final class ClassifiersUpdateRequest {
     }
 
     private boolean equalTo(ClassifiersUpdateRequest other) {
-        return name.equals(other.name) && config.equals(other.config);
+        return extendWorkspaceId.equals(other.extendWorkspaceId)
+                && name.equals(other.name)
+                && config.equals(other.config);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.name, this.config);
+        return Objects.hash(this.extendWorkspaceId, this.name, this.config);
     }
 
     @java.lang.Override
@@ -81,6 +98,8 @@ public final class ClassifiersUpdateRequest {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<String> extendWorkspaceId = Optional.empty();
+
         private Optional<String> name = Optional.empty();
 
         private Optional<ClassifyConfig> config = Optional.empty();
@@ -91,8 +110,22 @@ public final class ClassifiersUpdateRequest {
         private Builder() {}
 
         public Builder from(ClassifiersUpdateRequest other) {
+            extendWorkspaceId(other.getExtendWorkspaceId());
             name(other.getName());
             config(other.getConfig());
+            return this;
+        }
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        public Builder extendWorkspaceId(Optional<String> extendWorkspaceId) {
+            this.extendWorkspaceId = extendWorkspaceId;
+            return this;
+        }
+
+        public Builder extendWorkspaceId(String extendWorkspaceId) {
+            this.extendWorkspaceId = Optional.ofNullable(extendWorkspaceId);
             return this;
         }
 
@@ -125,7 +158,7 @@ public final class ClassifiersUpdateRequest {
         }
 
         public ClassifiersUpdateRequest build() {
-            return new ClassifiersUpdateRequest(name, config, additionalProperties);
+            return new ClassifiersUpdateRequest(extendWorkspaceId, name, config, additionalProperties);
         }
     }
 }

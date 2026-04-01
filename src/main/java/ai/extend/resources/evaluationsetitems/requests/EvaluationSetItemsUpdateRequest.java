@@ -7,6 +7,7 @@ import ai.extend.core.ObjectMappers;
 import ai.extend.types.ProvidedProcessorOutput;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,19 +16,33 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = EvaluationSetItemsUpdateRequest.Builder.class)
 public final class EvaluationSetItemsUpdateRequest {
+    private final Optional<String> extendWorkspaceId;
+
     private final ProvidedProcessorOutput expectedOutput;
 
     private final Map<String, Object> additionalProperties;
 
     private EvaluationSetItemsUpdateRequest(
-            ProvidedProcessorOutput expectedOutput, Map<String, Object> additionalProperties) {
+            Optional<String> extendWorkspaceId,
+            ProvidedProcessorOutput expectedOutput,
+            Map<String, Object> additionalProperties) {
+        this.extendWorkspaceId = extendWorkspaceId;
         this.expectedOutput = expectedOutput;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.
+     */
+    @JsonIgnore
+    public Optional<String> getExtendWorkspaceId() {
+        return extendWorkspaceId;
     }
 
     /**
@@ -50,12 +65,12 @@ public final class EvaluationSetItemsUpdateRequest {
     }
 
     private boolean equalTo(EvaluationSetItemsUpdateRequest other) {
-        return expectedOutput.equals(other.expectedOutput);
+        return extendWorkspaceId.equals(other.extendWorkspaceId) && expectedOutput.equals(other.expectedOutput);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.expectedOutput);
+        return Objects.hash(this.extendWorkspaceId, this.expectedOutput);
     }
 
     @java.lang.Override
@@ -78,11 +93,20 @@ public final class EvaluationSetItemsUpdateRequest {
 
     public interface _FinalStage {
         EvaluationSetItemsUpdateRequest build();
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        _FinalStage extendWorkspaceId(Optional<String> extendWorkspaceId);
+
+        _FinalStage extendWorkspaceId(String extendWorkspaceId);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements ExpectedOutputStage, _FinalStage {
         private ProvidedProcessorOutput expectedOutput;
+
+        private Optional<String> extendWorkspaceId = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -91,6 +115,7 @@ public final class EvaluationSetItemsUpdateRequest {
 
         @java.lang.Override
         public Builder from(EvaluationSetItemsUpdateRequest other) {
+            extendWorkspaceId(other.getExtendWorkspaceId());
             expectedOutput(other.getExpectedOutput());
             return this;
         }
@@ -107,9 +132,28 @@ public final class EvaluationSetItemsUpdateRequest {
             return this;
         }
 
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage extendWorkspaceId(String extendWorkspaceId) {
+            this.extendWorkspaceId = Optional.ofNullable(extendWorkspaceId);
+            return this;
+        }
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        @java.lang.Override
+        public _FinalStage extendWorkspaceId(Optional<String> extendWorkspaceId) {
+            this.extendWorkspaceId = extendWorkspaceId;
+            return this;
+        }
+
         @java.lang.Override
         public EvaluationSetItemsUpdateRequest build() {
-            return new EvaluationSetItemsUpdateRequest(expectedOutput, additionalProperties);
+            return new EvaluationSetItemsUpdateRequest(extendWorkspaceId, expectedOutput, additionalProperties);
         }
     }
 }

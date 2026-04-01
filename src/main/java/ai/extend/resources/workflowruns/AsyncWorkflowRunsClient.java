@@ -5,9 +5,12 @@ package ai.extend.resources.workflowruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
+import ai.extend.resources.workflowruns.requests.WorkflowRunsCancelRequest;
 import ai.extend.resources.workflowruns.requests.WorkflowRunsCreateBatchRequest;
 import ai.extend.resources.workflowruns.requests.WorkflowRunsCreateRequest;
+import ai.extend.resources.workflowruns.requests.WorkflowRunsDeleteRequest;
 import ai.extend.resources.workflowruns.requests.WorkflowRunsListRequest;
+import ai.extend.resources.workflowruns.requests.WorkflowRunsRetrieveRequest;
 import ai.extend.resources.workflowruns.requests.WorkflowRunsUpdateRequest;
 import ai.extend.resources.workflowruns.types.WorkflowRunsCreateBatchResponse;
 import ai.extend.resources.workflowruns.types.WorkflowRunsDeleteResponse;
@@ -92,6 +95,21 @@ public class AsyncWorkflowRunsClient {
     }
 
     /**
+     * Once a workflow has been run, you can check the status and output of a specific WorkflowRun.
+     */
+    public CompletableFuture<WorkflowRun> retrieve(String id, WorkflowRunsRetrieveRequest request) {
+        return this.rawClient.retrieve(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Once a workflow has been run, you can check the status and output of a specific WorkflowRun.
+     */
+    public CompletableFuture<WorkflowRun> retrieve(
+            String id, WorkflowRunsRetrieveRequest request, RequestOptions requestOptions) {
+        return this.rawClient.retrieve(id, request, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
      * You can update the name and metadata of an in progress WorkflowRun at any time using this endpoint.
      */
     public CompletableFuture<WorkflowRun> update(String id) {
@@ -137,6 +155,23 @@ public class AsyncWorkflowRunsClient {
     }
 
     /**
+     * Delete a workflow run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public CompletableFuture<WorkflowRunsDeleteResponse> delete(String id, WorkflowRunsDeleteRequest request) {
+        return this.rawClient.delete(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Delete a workflow run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public CompletableFuture<WorkflowRunsDeleteResponse> delete(
+            String id, WorkflowRunsDeleteRequest request, RequestOptions requestOptions) {
+        return this.rawClient.delete(id, request, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
      * Cancel a running workflow run by its ID. This endpoint allows you to stop a workflow run that is currently in progress.
      * <p>Note: Only workflow runs with a status of <code>PROCESSING</code> or <code>PENDING</code> can be cancelled. Workflow runs that are completed, failed, in review, rejected, or already cancelled cannot be cancelled.</p>
      */
@@ -150,6 +185,23 @@ public class AsyncWorkflowRunsClient {
      */
     public CompletableFuture<WorkflowRun> cancel(String id, RequestOptions requestOptions) {
         return this.rawClient.cancel(id, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Cancel a running workflow run by its ID. This endpoint allows you to stop a workflow run that is currently in progress.
+     * <p>Note: Only workflow runs with a status of <code>PROCESSING</code> or <code>PENDING</code> can be cancelled. Workflow runs that are completed, failed, in review, rejected, or already cancelled cannot be cancelled.</p>
+     */
+    public CompletableFuture<WorkflowRun> cancel(String id, WorkflowRunsCancelRequest request) {
+        return this.rawClient.cancel(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Cancel a running workflow run by its ID. This endpoint allows you to stop a workflow run that is currently in progress.
+     * <p>Note: Only workflow runs with a status of <code>PROCESSING</code> or <code>PENDING</code> can be cancelled. Workflow runs that are completed, failed, in review, rejected, or already cancelled cannot be cancelled.</p>
+     */
+    public CompletableFuture<WorkflowRun> cancel(
+            String id, WorkflowRunsCancelRequest request, RequestOptions requestOptions) {
+        return this.rawClient.cancel(id, request, requestOptions).thenApply(response -> response.body());
     }
 
     /**

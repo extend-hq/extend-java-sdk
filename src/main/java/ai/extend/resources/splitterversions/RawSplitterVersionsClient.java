@@ -21,6 +21,7 @@ import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
 import ai.extend.resources.splitterversions.requests.SplitterVersionsCreateRequest;
 import ai.extend.resources.splitterversions.requests.SplitterVersionsListRequest;
+import ai.extend.resources.splitterversions.requests.SplitterVersionsRetrieveRequest;
 import ai.extend.resources.splitterversions.types.SplitterVersionsListResponse;
 import ai.extend.types.ApiError;
 import ai.extend.types.SplitterVersion;
@@ -100,6 +101,10 @@ public class RawSplitterVersionsClient {
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
@@ -179,16 +184,20 @@ public class RawSplitterVersionsClient {
         try {
             body = RequestBody.create(
                     ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new ExtendClientException("Failed to serialize request", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -242,7 +251,8 @@ public class RawSplitterVersionsClient {
      * Retrieve a specific version of a splitter in Extend
      */
     public ExtendClientHttpResponse<SplitterVersion> retrieve(String splitterId, String versionId) {
-        return retrieve(splitterId, versionId, null);
+        return retrieve(
+                splitterId, versionId, SplitterVersionsRetrieveRequest.builder().build());
     }
 
     /**
@@ -250,6 +260,26 @@ public class RawSplitterVersionsClient {
      */
     public ExtendClientHttpResponse<SplitterVersion> retrieve(
             String splitterId, String versionId, RequestOptions requestOptions) {
+        return retrieve(
+                splitterId, versionId, SplitterVersionsRetrieveRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Retrieve a specific version of a splitter in Extend
+     */
+    public ExtendClientHttpResponse<SplitterVersion> retrieve(
+            String splitterId, String versionId, SplitterVersionsRetrieveRequest request) {
+        return retrieve(splitterId, versionId, request, null);
+    }
+
+    /**
+     * Retrieve a specific version of a splitter in Extend
+     */
+    public ExtendClientHttpResponse<SplitterVersion> retrieve(
+            String splitterId,
+            String versionId,
+            SplitterVersionsRetrieveRequest request,
+            RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("splitters")
@@ -261,12 +291,16 @@ public class RawSplitterVersionsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

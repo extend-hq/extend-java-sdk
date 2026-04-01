@@ -21,6 +21,7 @@ import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
 import ai.extend.resources.extractors.requests.ExtractorsCreateRequest;
 import ai.extend.resources.extractors.requests.ExtractorsListRequest;
+import ai.extend.resources.extractors.requests.ExtractorsRetrieveRequest;
 import ai.extend.resources.extractors.requests.ExtractorsUpdateRequest;
 import ai.extend.resources.extractors.types.ExtractorsListResponse;
 import ai.extend.types.ApiError;
@@ -105,6 +106,10 @@ public class AsyncRawExtractorsClient {
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
@@ -301,13 +306,29 @@ public class AsyncRawExtractorsClient {
      * Get details of an extractor.
      */
     public CompletableFuture<ExtendClientHttpResponse<Extractor>> retrieve(String id) {
-        return retrieve(id, null);
+        return retrieve(id, ExtractorsRetrieveRequest.builder().build());
     }
 
     /**
      * Get details of an extractor.
      */
     public CompletableFuture<ExtendClientHttpResponse<Extractor>> retrieve(String id, RequestOptions requestOptions) {
+        return retrieve(id, ExtractorsRetrieveRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Get details of an extractor.
+     */
+    public CompletableFuture<ExtendClientHttpResponse<Extractor>> retrieve(
+            String id, ExtractorsRetrieveRequest request) {
+        return retrieve(id, request, null);
+    }
+
+    /**
+     * Get details of an extractor.
+     */
+    public CompletableFuture<ExtendClientHttpResponse<Extractor>> retrieve(
+            String id, ExtractorsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("extractors")
@@ -317,12 +338,16 @@ public class AsyncRawExtractorsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -440,16 +465,20 @@ public class AsyncRawExtractorsClient {
         try {
             body = RequestBody.create(
                     ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new ExtendClientException("Failed to serialize request", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

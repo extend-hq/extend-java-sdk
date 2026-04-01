@@ -7,6 +7,7 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.splitterversions.requests.SplitterVersionsCreateRequest;
 import ai.extend.resources.splitterversions.requests.SplitterVersionsListRequest;
+import ai.extend.resources.splitterversions.requests.SplitterVersionsRetrieveRequest;
 import ai.extend.resources.splitterversions.types.SplitterVersionsListResponse;
 import ai.extend.types.SplitterVersion;
 import java.util.concurrent.CompletableFuture;
@@ -92,5 +93,26 @@ public class AsyncSplitterVersionsClient {
     public CompletableFuture<SplitterVersion> retrieve(
             String splitterId, String versionId, RequestOptions requestOptions) {
         return this.rawClient.retrieve(splitterId, versionId, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Retrieve a specific version of a splitter in Extend
+     */
+    public CompletableFuture<SplitterVersion> retrieve(
+            String splitterId, String versionId, SplitterVersionsRetrieveRequest request) {
+        return this.rawClient.retrieve(splitterId, versionId, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Retrieve a specific version of a splitter in Extend
+     */
+    public CompletableFuture<SplitterVersion> retrieve(
+            String splitterId,
+            String versionId,
+            SplitterVersionsRetrieveRequest request,
+            RequestOptions requestOptions) {
+        return this.rawClient
+                .retrieve(splitterId, versionId, request, requestOptions)
+                .thenApply(response -> response.body());
     }
 }

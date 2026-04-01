@@ -6,6 +6,7 @@ package ai.extend.resources.parseruns;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.parseruns.requests.ParseRunsCreateRequest;
+import ai.extend.resources.parseruns.requests.ParseRunsDeleteRequest;
 import ai.extend.resources.parseruns.requests.ParseRunsRetrieveRequest;
 import ai.extend.resources.parseruns.types.ParseRunsDeleteResponse;
 import ai.extend.types.ParseRun;
@@ -93,5 +94,22 @@ public class AsyncParseRunsClient {
      */
     public CompletableFuture<ParseRunsDeleteResponse> delete(String id, RequestOptions requestOptions) {
         return this.rawClient.delete(id, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Delete a parse run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public CompletableFuture<ParseRunsDeleteResponse> delete(String id, ParseRunsDeleteRequest request) {
+        return this.rawClient.delete(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Delete a parse run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public CompletableFuture<ParseRunsDeleteResponse> delete(
+            String id, ParseRunsDeleteRequest request, RequestOptions requestOptions) {
+        return this.rawClient.delete(id, request, requestOptions).thenApply(response -> response.body());
     }
 }

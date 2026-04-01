@@ -97,9 +97,14 @@ public final class Block {
      * <li><code>&quot;heading&quot;</code> - Section or document headings</li>
      * <li><code>&quot;section_heading&quot;</code> - Subsection headings</li>
      * <li><code>&quot;table&quot;</code> - Tabular data with rows and columns</li>
+     * <li><code>&quot;figure&quot;</code> - Images, charts, diagrams, or logos</li>
      * <li><code>&quot;table_head&quot;</code> - Table header cells</li>
      * <li><code>&quot;table_cell&quot;</code> - Table body cells</li>
-     * <li><code>&quot;figure&quot;</code> - Images, charts, diagrams, or logos</li>
+     * <li><code>&quot;key_value&quot;</code> - Key-value pairs (e.g., form regions, key-val groups, etc)</li>
+     * <li><code>&quot;page_number&quot;</code> - Page number indicators</li>
+     * <li><code>&quot;barcode&quot;</code> - Barcodes and QR codes</li>
+     * <li><code>&quot;header&quot;</code> - Page headers</li>
+     * <li><code>&quot;footer&quot;</code> - Page footers</li>
      * </ul>
      */
     @JsonProperty("type")
@@ -218,9 +223,14 @@ public final class Block {
          * <li><code>&quot;heading&quot;</code> - Section or document headings</li>
          * <li><code>&quot;section_heading&quot;</code> - Subsection headings</li>
          * <li><code>&quot;table&quot;</code> - Tabular data with rows and columns</li>
+         * <li><code>&quot;figure&quot;</code> - Images, charts, diagrams, or logos</li>
          * <li><code>&quot;table_head&quot;</code> - Table header cells</li>
          * <li><code>&quot;table_cell&quot;</code> - Table body cells</li>
-         * <li><code>&quot;figure&quot;</code> - Images, charts, diagrams, or logos</li>
+         * <li><code>&quot;key_value&quot;</code> - Key-value pairs (e.g., form regions, key-val groups, etc)</li>
+         * <li><code>&quot;page_number&quot;</code> - Page number indicators</li>
+         * <li><code>&quot;barcode&quot;</code> - Barcodes and QR codes</li>
+         * <li><code>&quot;header&quot;</code> - Page headers</li>
+         * <li><code>&quot;footer&quot;</code> - Page footers</li>
          * </ul>
          */
         ContentStage type(@NotNull BlockType type);
@@ -340,9 +350,14 @@ public final class Block {
          * <li><code>&quot;heading&quot;</code> - Section or document headings</li>
          * <li><code>&quot;section_heading&quot;</code> - Subsection headings</li>
          * <li><code>&quot;table&quot;</code> - Tabular data with rows and columns</li>
+         * <li><code>&quot;figure&quot;</code> - Images, charts, diagrams, or logos</li>
          * <li><code>&quot;table_head&quot;</code> - Table header cells</li>
          * <li><code>&quot;table_cell&quot;</code> - Table body cells</li>
-         * <li><code>&quot;figure&quot;</code> - Images, charts, diagrams, or logos</li>
+         * <li><code>&quot;key_value&quot;</code> - Key-value pairs (e.g., form regions, key-val groups, etc)</li>
+         * <li><code>&quot;page_number&quot;</code> - Page number indicators</li>
+         * <li><code>&quot;barcode&quot;</code> - Barcodes and QR codes</li>
+         * <li><code>&quot;header&quot;</code> - Page headers</li>
+         * <li><code>&quot;footer&quot;</code> - Page footers</li>
          * </ul>
          * <p>The type of block:</p>
          * <ul>
@@ -350,9 +365,14 @@ public final class Block {
          * <li><code>&quot;heading&quot;</code> - Section or document headings</li>
          * <li><code>&quot;section_heading&quot;</code> - Subsection headings</li>
          * <li><code>&quot;table&quot;</code> - Tabular data with rows and columns</li>
+         * <li><code>&quot;figure&quot;</code> - Images, charts, diagrams, or logos</li>
          * <li><code>&quot;table_head&quot;</code> - Table header cells</li>
          * <li><code>&quot;table_cell&quot;</code> - Table body cells</li>
-         * <li><code>&quot;figure&quot;</code> - Images, charts, diagrams, or logos</li>
+         * <li><code>&quot;key_value&quot;</code> - Key-value pairs (e.g., form regions, key-val groups, etc)</li>
+         * <li><code>&quot;page_number&quot;</code> - Page number indicators</li>
+         * <li><code>&quot;barcode&quot;</code> - Barcodes and QR codes</li>
+         * <li><code>&quot;header&quot;</code> - Page headers</li>
+         * <li><code>&quot;footer&quot;</code> - Page footers</li>
          * </ul>
          * @return Reference to {@code this} so that method calls can be chained together.
          */

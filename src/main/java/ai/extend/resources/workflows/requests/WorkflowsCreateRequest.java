@@ -4,16 +4,20 @@
 package ai.extend.resources.workflows.requests;
 
 import ai.extend.core.ObjectMappers;
+import ai.extend.types.WorkflowStepDefinition;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
@@ -21,19 +25,33 @@ import org.jetbrains.annotations.NotNull;
 public final class WorkflowsCreateRequest {
     private final String name;
 
+    private final Optional<List<WorkflowStepDefinition>> steps;
+
     private final Map<String, Object> additionalProperties;
 
-    private WorkflowsCreateRequest(String name, Map<String, Object> additionalProperties) {
+    private WorkflowsCreateRequest(
+            String name, Optional<List<WorkflowStepDefinition>> steps, Map<String, Object> additionalProperties) {
         this.name = name;
+        this.steps = steps;
         this.additionalProperties = additionalProperties;
     }
 
     /**
-     * @return The name of the workflow
+     * @return The name of the workflow.
      */
     @JsonProperty("name")
     public String getName() {
         return name;
+    }
+
+    /**
+     * @return The steps that define the workflow's processing graph. Each step has a <code>type</code>, a unique <code>name</code>, and optional <code>next</code> entries that define routing to downstream steps.
+     * <p>When omitted, the workflow is created with default steps (<code>TRIGGER</code> → <code>PARSE</code>). The default steps may change in the future.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
+     */
+    @JsonProperty("steps")
+    public Optional<List<WorkflowStepDefinition>> getSteps() {
+        return steps;
     }
 
     @java.lang.Override
@@ -48,12 +66,12 @@ public final class WorkflowsCreateRequest {
     }
 
     private boolean equalTo(WorkflowsCreateRequest other) {
-        return name.equals(other.name);
+        return name.equals(other.name) && steps.equals(other.steps);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.name);
+        return Objects.hash(this.name, this.steps);
     }
 
     @java.lang.Override
@@ -67,7 +85,7 @@ public final class WorkflowsCreateRequest {
 
     public interface NameStage {
         /**
-         * <p>The name of the workflow</p>
+         * <p>The name of the workflow.</p>
          */
         _FinalStage name(@NotNull String name);
 
@@ -76,11 +94,22 @@ public final class WorkflowsCreateRequest {
 
     public interface _FinalStage {
         WorkflowsCreateRequest build();
+
+        /**
+         * <p>The steps that define the workflow's processing graph. Each step has a <code>type</code>, a unique <code>name</code>, and optional <code>next</code> entries that define routing to downstream steps.</p>
+         * <p>When omitted, the workflow is created with default steps (<code>TRIGGER</code> → <code>PARSE</code>). The default steps may change in the future.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
+         */
+        _FinalStage steps(Optional<List<WorkflowStepDefinition>> steps);
+
+        _FinalStage steps(List<WorkflowStepDefinition> steps);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements NameStage, _FinalStage {
         private String name;
+
+        private Optional<List<WorkflowStepDefinition>> steps = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -90,12 +119,13 @@ public final class WorkflowsCreateRequest {
         @java.lang.Override
         public Builder from(WorkflowsCreateRequest other) {
             name(other.getName());
+            steps(other.getSteps());
             return this;
         }
 
         /**
-         * <p>The name of the workflow</p>
-         * <p>The name of the workflow</p>
+         * <p>The name of the workflow.</p>
+         * <p>The name of the workflow.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -105,9 +135,33 @@ public final class WorkflowsCreateRequest {
             return this;
         }
 
+        /**
+         * <p>The steps that define the workflow's processing graph. Each step has a <code>type</code>, a unique <code>name</code>, and optional <code>next</code> entries that define routing to downstream steps.</p>
+         * <p>When omitted, the workflow is created with default steps (<code>TRIGGER</code> → <code>PARSE</code>). The default steps may change in the future.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage steps(List<WorkflowStepDefinition> steps) {
+            this.steps = Optional.ofNullable(steps);
+            return this;
+        }
+
+        /**
+         * <p>The steps that define the workflow's processing graph. Each step has a <code>type</code>, a unique <code>name</code>, and optional <code>next</code> entries that define routing to downstream steps.</p>
+         * <p>When omitted, the workflow is created with default steps (<code>TRIGGER</code> → <code>PARSE</code>). The default steps may change in the future.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "steps", nulls = Nulls.SKIP)
+        public _FinalStage steps(Optional<List<WorkflowStepDefinition>> steps) {
+            this.steps = steps;
+            return this;
+        }
+
         @java.lang.Override
         public WorkflowsCreateRequest build() {
-            return new WorkflowsCreateRequest(name, additionalProperties);
+            return new WorkflowsCreateRequest(name, steps, additionalProperties);
         }
     }
 }

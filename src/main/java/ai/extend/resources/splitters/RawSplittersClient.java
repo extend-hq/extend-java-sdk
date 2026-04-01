@@ -21,6 +21,7 @@ import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
 import ai.extend.resources.splitters.requests.SplittersCreateRequest;
 import ai.extend.resources.splitters.requests.SplittersListRequest;
+import ai.extend.resources.splitters.requests.SplittersRetrieveRequest;
 import ai.extend.resources.splitters.requests.SplittersUpdateRequest;
 import ai.extend.resources.splitters.types.SplittersListResponse;
 import ai.extend.types.ApiError;
@@ -101,6 +102,10 @@ public class RawSplittersClient {
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
@@ -237,13 +242,28 @@ public class RawSplittersClient {
      * Get details of a splitter.
      */
     public ExtendClientHttpResponse<Splitter> retrieve(String id) {
-        return retrieve(id, null);
+        return retrieve(id, SplittersRetrieveRequest.builder().build());
     }
 
     /**
      * Get details of a splitter.
      */
     public ExtendClientHttpResponse<Splitter> retrieve(String id, RequestOptions requestOptions) {
+        return retrieve(id, SplittersRetrieveRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Get details of a splitter.
+     */
+    public ExtendClientHttpResponse<Splitter> retrieve(String id, SplittersRetrieveRequest request) {
+        return retrieve(id, request, null);
+    }
+
+    /**
+     * Get details of a splitter.
+     */
+    public ExtendClientHttpResponse<Splitter> retrieve(
+            String id, SplittersRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("splitters")
@@ -253,12 +273,16 @@ public class RawSplittersClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -347,16 +371,20 @@ public class RawSplittersClient {
         try {
             body = RequestBody.create(
                     ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new ExtendClientException("Failed to serialize request", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

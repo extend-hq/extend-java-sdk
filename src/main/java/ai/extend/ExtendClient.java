@@ -16,6 +16,7 @@ import ai.extend.resources.classifiers.ClassifiersClient;
 import ai.extend.resources.classifierversions.ClassifierVersionsClient;
 import ai.extend.resources.classifyruns.ClassifyRunsClient;
 import ai.extend.resources.editruns.EditRunsClient;
+import ai.extend.resources.editschemas.EditSchemasClient;
 import ai.extend.resources.evaluationsetitems.EvaluationSetItemsClient;
 import ai.extend.resources.evaluationsetruns.EvaluationSetRunsClient;
 import ai.extend.resources.evaluationsets.EvaluationSetsClient;
@@ -34,6 +35,7 @@ import ai.extend.resources.webhookendpoints.WebhookEndpointsClient;
 import ai.extend.resources.webhooksubscriptions.WebhookSubscriptionsClient;
 import ai.extend.resources.workflowruns.WorkflowRunsClient;
 import ai.extend.resources.workflows.WorkflowsClient;
+import ai.extend.resources.workflowversions.WorkflowVersionsClient;
 import ai.extend.types.ClassifyRun;
 import ai.extend.types.EditRun;
 import ai.extend.types.ExtractRun;
@@ -51,6 +53,8 @@ public class ExtendClient {
     protected final Supplier<ParseRunsClient> parseRunsClient;
 
     protected final Supplier<EditRunsClient> editRunsClient;
+
+    protected final Supplier<EditSchemasClient> editSchemasClient;
 
     protected final Supplier<ExtractRunsClient> extractRunsClient;
 
@@ -71,6 +75,8 @@ public class ExtendClient {
     protected final Supplier<SplitterVersionsClient> splitterVersionsClient;
 
     protected final Supplier<WorkflowsClient> workflowsClient;
+
+    protected final Supplier<WorkflowVersionsClient> workflowVersionsClient;
 
     protected final Supplier<WorkflowRunsClient> workflowRunsClient;
 
@@ -98,6 +104,7 @@ public class ExtendClient {
         this.filesClient = Suppliers.memoize(() -> new FilesClient(clientOptions));
         this.parseRunsClient = Suppliers.memoize(() -> new ParseRunsClient(clientOptions));
         this.editRunsClient = Suppliers.memoize(() -> new EditRunsClient(clientOptions));
+        this.editSchemasClient = Suppliers.memoize(() -> new EditSchemasClient(clientOptions));
         this.extractRunsClient = Suppliers.memoize(() -> new ExtractRunsClient(clientOptions));
         this.extractorsClient = Suppliers.memoize(() -> new ExtractorsClient(clientOptions));
         this.extractorVersionsClient = Suppliers.memoize(() -> new ExtractorVersionsClient(clientOptions));
@@ -108,6 +115,7 @@ public class ExtendClient {
         this.splittersClient = Suppliers.memoize(() -> new SplittersClient(clientOptions));
         this.splitterVersionsClient = Suppliers.memoize(() -> new SplitterVersionsClient(clientOptions));
         this.workflowsClient = Suppliers.memoize(() -> new WorkflowsClient(clientOptions));
+        this.workflowVersionsClient = Suppliers.memoize(() -> new WorkflowVersionsClient(clientOptions));
         this.workflowRunsClient = Suppliers.memoize(() -> new WorkflowRunsClient(clientOptions));
         this.processorRunClient = Suppliers.memoize(() -> new ProcessorRunClient(clientOptions));
         this.processorClient = Suppliers.memoize(() -> new ProcessorClient(clientOptions));
@@ -239,6 +247,10 @@ public class ExtendClient {
         return this.editRunsClient.get();
     }
 
+    public EditSchemasClient editSchemas() {
+        return this.editSchemasClient.get();
+    }
+
     public ExtractRunsClient extractRuns() {
         return this.extractRunsClient.get();
     }
@@ -277,6 +289,10 @@ public class ExtendClient {
 
     public WorkflowsClient workflows() {
         return this.workflowsClient.get();
+    }
+
+    public WorkflowVersionsClient workflowVersions() {
+        return this.workflowVersionsClient.get();
     }
 
     public WorkflowRunsClient workflowRuns() {

@@ -17,6 +17,7 @@ import ai.extend.errors.PaymentRequiredError;
 import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
+import ai.extend.resources.evaluationsetruns.requests.EvaluationSetRunsRetrieveRequest;
 import ai.extend.types.ApiError;
 import ai.extend.types.EvaluationSetRun;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -43,7 +44,7 @@ public class AsyncRawEvaluationSetRunsClient {
      * Get details of an evaluation set run.
      */
     public CompletableFuture<ExtendClientHttpResponse<EvaluationSetRun>> retrieve(String id) {
-        return retrieve(id, null);
+        return retrieve(id, EvaluationSetRunsRetrieveRequest.builder().build());
     }
 
     /**
@@ -51,6 +52,22 @@ public class AsyncRawEvaluationSetRunsClient {
      */
     public CompletableFuture<ExtendClientHttpResponse<EvaluationSetRun>> retrieve(
             String id, RequestOptions requestOptions) {
+        return retrieve(id, EvaluationSetRunsRetrieveRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Get details of an evaluation set run.
+     */
+    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetRun>> retrieve(
+            String id, EvaluationSetRunsRetrieveRequest request) {
+        return retrieve(id, request, null);
+    }
+
+    /**
+     * Get details of an evaluation set run.
+     */
+    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetRun>> retrieve(
+            String id, EvaluationSetRunsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("evaluation_set_runs")
@@ -60,12 +77,16 @@ public class AsyncRawEvaluationSetRunsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

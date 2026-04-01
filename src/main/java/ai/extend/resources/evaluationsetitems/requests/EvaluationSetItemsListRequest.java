@@ -8,6 +8,7 @@ import ai.extend.types.SortBy;
 import ai.extend.types.SortDir;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,6 +23,8 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = EvaluationSetItemsListRequest.Builder.class)
 public final class EvaluationSetItemsListRequest {
+    private final Optional<String> extendWorkspaceId;
+
     private final Optional<SortBy> sortBy;
 
     private final Optional<SortDir> sortDir;
@@ -33,16 +36,26 @@ public final class EvaluationSetItemsListRequest {
     private final Map<String, Object> additionalProperties;
 
     private EvaluationSetItemsListRequest(
+            Optional<String> extendWorkspaceId,
             Optional<SortBy> sortBy,
             Optional<SortDir> sortDir,
             Optional<String> nextPageToken,
             Optional<Integer> maxPageSize,
             Map<String, Object> additionalProperties) {
+        this.extendWorkspaceId = extendWorkspaceId;
         this.sortBy = sortBy;
         this.sortDir = sortDir;
         this.nextPageToken = nextPageToken;
         this.maxPageSize = maxPageSize;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.
+     */
+    @JsonIgnore
+    public Optional<String> getExtendWorkspaceId() {
+        return extendWorkspaceId;
     }
 
     @JsonProperty("sortBy")
@@ -77,7 +90,8 @@ public final class EvaluationSetItemsListRequest {
     }
 
     private boolean equalTo(EvaluationSetItemsListRequest other) {
-        return sortBy.equals(other.sortBy)
+        return extendWorkspaceId.equals(other.extendWorkspaceId)
+                && sortBy.equals(other.sortBy)
                 && sortDir.equals(other.sortDir)
                 && nextPageToken.equals(other.nextPageToken)
                 && maxPageSize.equals(other.maxPageSize);
@@ -85,7 +99,7 @@ public final class EvaluationSetItemsListRequest {
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.sortBy, this.sortDir, this.nextPageToken, this.maxPageSize);
+        return Objects.hash(this.extendWorkspaceId, this.sortBy, this.sortDir, this.nextPageToken, this.maxPageSize);
     }
 
     @java.lang.Override
@@ -99,6 +113,8 @@ public final class EvaluationSetItemsListRequest {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<String> extendWorkspaceId = Optional.empty();
+
         private Optional<SortBy> sortBy = Optional.empty();
 
         private Optional<SortDir> sortDir = Optional.empty();
@@ -113,10 +129,24 @@ public final class EvaluationSetItemsListRequest {
         private Builder() {}
 
         public Builder from(EvaluationSetItemsListRequest other) {
+            extendWorkspaceId(other.getExtendWorkspaceId());
             sortBy(other.getSortBy());
             sortDir(other.getSortDir());
             nextPageToken(other.getNextPageToken());
             maxPageSize(other.getMaxPageSize());
+            return this;
+        }
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        public Builder extendWorkspaceId(Optional<String> extendWorkspaceId) {
+            this.extendWorkspaceId = extendWorkspaceId;
+            return this;
+        }
+
+        public Builder extendWorkspaceId(String extendWorkspaceId) {
+            this.extendWorkspaceId = Optional.ofNullable(extendWorkspaceId);
             return this;
         }
 
@@ -165,7 +195,8 @@ public final class EvaluationSetItemsListRequest {
         }
 
         public EvaluationSetItemsListRequest build() {
-            return new EvaluationSetItemsListRequest(sortBy, sortDir, nextPageToken, maxPageSize, additionalProperties);
+            return new EvaluationSetItemsListRequest(
+                    extendWorkspaceId, sortBy, sortDir, nextPageToken, maxPageSize, additionalProperties);
         }
     }
 }

@@ -7,6 +7,7 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.extractors.requests.ExtractorsCreateRequest;
 import ai.extend.resources.extractors.requests.ExtractorsListRequest;
+import ai.extend.resources.extractors.requests.ExtractorsRetrieveRequest;
 import ai.extend.resources.extractors.requests.ExtractorsUpdateRequest;
 import ai.extend.resources.extractors.types.ExtractorsListResponse;
 import ai.extend.types.Extractor;
@@ -86,6 +87,20 @@ public class ExtractorsClient {
      */
     public Extractor retrieve(String id, RequestOptions requestOptions) {
         return this.rawClient.retrieve(id, requestOptions).body();
+    }
+
+    /**
+     * Get details of an extractor.
+     */
+    public Extractor retrieve(String id, ExtractorsRetrieveRequest request) {
+        return this.rawClient.retrieve(id, request).body();
+    }
+
+    /**
+     * Get details of an extractor.
+     */
+    public Extractor retrieve(String id, ExtractorsRetrieveRequest request, RequestOptions requestOptions) {
+        return this.rawClient.retrieve(id, request, requestOptions).body();
     }
 
     /**

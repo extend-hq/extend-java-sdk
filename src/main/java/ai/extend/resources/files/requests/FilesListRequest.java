@@ -7,6 +7,7 @@ import ai.extend.core.ObjectMappers;
 import ai.extend.types.SortDir;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,6 +22,8 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = FilesListRequest.Builder.class)
 public final class FilesListRequest {
+    private final Optional<String> extendWorkspaceId;
+
     private final Optional<String> nameContains;
 
     private final Optional<SortDir> sortDir;
@@ -32,16 +35,26 @@ public final class FilesListRequest {
     private final Map<String, Object> additionalProperties;
 
     private FilesListRequest(
+            Optional<String> extendWorkspaceId,
             Optional<String> nameContains,
             Optional<SortDir> sortDir,
             Optional<String> nextPageToken,
             Optional<Integer> maxPageSize,
             Map<String, Object> additionalProperties) {
+        this.extendWorkspaceId = extendWorkspaceId;
         this.nameContains = nameContains;
         this.sortDir = sortDir;
         this.nextPageToken = nextPageToken;
         this.maxPageSize = maxPageSize;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.
+     */
+    @JsonIgnore
+    public Optional<String> getExtendWorkspaceId() {
+        return extendWorkspaceId;
     }
 
     /**
@@ -80,7 +93,8 @@ public final class FilesListRequest {
     }
 
     private boolean equalTo(FilesListRequest other) {
-        return nameContains.equals(other.nameContains)
+        return extendWorkspaceId.equals(other.extendWorkspaceId)
+                && nameContains.equals(other.nameContains)
                 && sortDir.equals(other.sortDir)
                 && nextPageToken.equals(other.nextPageToken)
                 && maxPageSize.equals(other.maxPageSize);
@@ -88,7 +102,8 @@ public final class FilesListRequest {
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.nameContains, this.sortDir, this.nextPageToken, this.maxPageSize);
+        return Objects.hash(
+                this.extendWorkspaceId, this.nameContains, this.sortDir, this.nextPageToken, this.maxPageSize);
     }
 
     @java.lang.Override
@@ -102,6 +117,8 @@ public final class FilesListRequest {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<String> extendWorkspaceId = Optional.empty();
+
         private Optional<String> nameContains = Optional.empty();
 
         private Optional<SortDir> sortDir = Optional.empty();
@@ -116,10 +133,24 @@ public final class FilesListRequest {
         private Builder() {}
 
         public Builder from(FilesListRequest other) {
+            extendWorkspaceId(other.getExtendWorkspaceId());
             nameContains(other.getNameContains());
             sortDir(other.getSortDir());
             nextPageToken(other.getNextPageToken());
             maxPageSize(other.getMaxPageSize());
+            return this;
+        }
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        public Builder extendWorkspaceId(Optional<String> extendWorkspaceId) {
+            this.extendWorkspaceId = extendWorkspaceId;
+            return this;
+        }
+
+        public Builder extendWorkspaceId(String extendWorkspaceId) {
+            this.extendWorkspaceId = Optional.ofNullable(extendWorkspaceId);
             return this;
         }
 
@@ -172,7 +203,8 @@ public final class FilesListRequest {
         }
 
         public FilesListRequest build() {
-            return new FilesListRequest(nameContains, sortDir, nextPageToken, maxPageSize, additionalProperties);
+            return new FilesListRequest(
+                    extendWorkspaceId, nameContains, sortDir, nextPageToken, maxPageSize, additionalProperties);
         }
     }
 }

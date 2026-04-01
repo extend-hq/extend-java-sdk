@@ -6,6 +6,9 @@ package ai.extend.resources.workflows;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.workflows.requests.WorkflowsCreateRequest;
+import ai.extend.resources.workflows.requests.WorkflowsListRequest;
+import ai.extend.resources.workflows.requests.WorkflowsUpdateRequest;
+import ai.extend.resources.workflows.types.WorkflowsListResponse;
 import ai.extend.types.Workflow;
 
 public class WorkflowsClient {
@@ -26,18 +29,94 @@ public class WorkflowsClient {
     }
 
     /**
-     * Create a new workflow in Extend. Workflows are sequences of steps that process files and data in a specific order to achieve a desired outcome.
-     * <p>This endpoint will create a new workflow in Extend, which can then be configured and deployed. Typically, workflows are created from our UI, however this endpoint can be used to create workflows programmatically. Configuration of the flow still needs to be done in the dashboard.</p>
+     * List all workflows. Returns a paginated list of workflow summaries.
+     */
+    public WorkflowsListResponse list() {
+        return this.rawClient.list().body();
+    }
+
+    /**
+     * List all workflows. Returns a paginated list of workflow summaries.
+     */
+    public WorkflowsListResponse list(RequestOptions requestOptions) {
+        return this.rawClient.list(requestOptions).body();
+    }
+
+    /**
+     * List all workflows. Returns a paginated list of workflow summaries.
+     */
+    public WorkflowsListResponse list(WorkflowsListRequest request) {
+        return this.rawClient.list(request).body();
+    }
+
+    /**
+     * List all workflows. Returns a paginated list of workflow summaries.
+     */
+    public WorkflowsListResponse list(WorkflowsListRequest request, RequestOptions requestOptions) {
+        return this.rawClient.list(request, requestOptions).body();
+    }
+
+    /**
+     * Create a new workflow. Optionally provide <code>steps</code> to define the workflow's step graph.
+     * <p>When <code>steps</code> is omitted, the workflow is created with default steps (<code>TRIGGER</code> → <code>PARSE</code>). When <code>steps</code> is provided, the step graph is validated and the draft version is populated with the given steps.</p>
+     * <p><strong>Note:</strong> The default steps may change in the future. If your integration depends on a specific step graph, provide <code>steps</code> explicitly.</p>
      */
     public Workflow create(WorkflowsCreateRequest request) {
         return this.rawClient.create(request).body();
     }
 
     /**
-     * Create a new workflow in Extend. Workflows are sequences of steps that process files and data in a specific order to achieve a desired outcome.
-     * <p>This endpoint will create a new workflow in Extend, which can then be configured and deployed. Typically, workflows are created from our UI, however this endpoint can be used to create workflows programmatically. Configuration of the flow still needs to be done in the dashboard.</p>
+     * Create a new workflow. Optionally provide <code>steps</code> to define the workflow's step graph.
+     * <p>When <code>steps</code> is omitted, the workflow is created with default steps (<code>TRIGGER</code> → <code>PARSE</code>). When <code>steps</code> is provided, the step graph is validated and the draft version is populated with the given steps.</p>
+     * <p><strong>Note:</strong> The default steps may change in the future. If your integration depends on a specific step graph, provide <code>steps</code> explicitly.</p>
      */
     public Workflow create(WorkflowsCreateRequest request, RequestOptions requestOptions) {
         return this.rawClient.create(request, requestOptions).body();
+    }
+
+    /**
+     * Get details of a workflow, including its draft version and steps.
+     */
+    public Workflow retrieve(String id) {
+        return this.rawClient.retrieve(id).body();
+    }
+
+    /**
+     * Get details of a workflow, including its draft version and steps.
+     */
+    public Workflow retrieve(String id, RequestOptions requestOptions) {
+        return this.rawClient.retrieve(id, requestOptions).body();
+    }
+
+    /**
+     * Update a workflow's draft. You can update the name, the steps, or both.
+     * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
+     */
+    public Workflow update(String id) {
+        return this.rawClient.update(id).body();
+    }
+
+    /**
+     * Update a workflow's draft. You can update the name, the steps, or both.
+     * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
+     */
+    public Workflow update(String id, RequestOptions requestOptions) {
+        return this.rawClient.update(id, requestOptions).body();
+    }
+
+    /**
+     * Update a workflow's draft. You can update the name, the steps, or both.
+     * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
+     */
+    public Workflow update(String id, WorkflowsUpdateRequest request) {
+        return this.rawClient.update(id, request).body();
+    }
+
+    /**
+     * Update a workflow's draft. You can update the name, the steps, or both.
+     * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
+     */
+    public Workflow update(String id, WorkflowsUpdateRequest request, RequestOptions requestOptions) {
+        return this.rawClient.update(id, request, requestOptions).body();
     }
 }

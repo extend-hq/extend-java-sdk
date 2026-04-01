@@ -6,7 +6,9 @@ package ai.extend.resources.webhooksubscriptions;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.webhooksubscriptions.requests.WebhookSubscriptionsCreateRequest;
+import ai.extend.resources.webhooksubscriptions.requests.WebhookSubscriptionsDeleteRequest;
 import ai.extend.resources.webhooksubscriptions.requests.WebhookSubscriptionsListRequest;
+import ai.extend.resources.webhooksubscriptions.requests.WebhookSubscriptionsRetrieveRequest;
 import ai.extend.resources.webhooksubscriptions.requests.WebhookSubscriptionsUpdateRequest;
 import ai.extend.resources.webhooksubscriptions.types.WebhookSubscriptionsDeleteResponse;
 import ai.extend.resources.webhooksubscriptions.types.WebhookSubscriptionsListResponse;
@@ -93,6 +95,21 @@ public class AsyncWebhookSubscriptionsClient {
     }
 
     /**
+     * Retrieve a webhook subscription by ID.
+     */
+    public CompletableFuture<WebhookSubscription> retrieve(String id, WebhookSubscriptionsRetrieveRequest request) {
+        return this.rawClient.retrieve(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Retrieve a webhook subscription by ID.
+     */
+    public CompletableFuture<WebhookSubscription> retrieve(
+            String id, WebhookSubscriptionsRetrieveRequest request, RequestOptions requestOptions) {
+        return this.rawClient.retrieve(id, request, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
      * Update the enabled events on a webhook subscription.
      */
     public CompletableFuture<WebhookSubscription> update(String id, WebhookSubscriptionsUpdateRequest request) {
@@ -119,5 +136,21 @@ public class AsyncWebhookSubscriptionsClient {
      */
     public CompletableFuture<WebhookSubscriptionsDeleteResponse> delete(String id, RequestOptions requestOptions) {
         return this.rawClient.delete(id, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Delete a webhook subscription. This operation is permanent and cannot be undone.
+     */
+    public CompletableFuture<WebhookSubscriptionsDeleteResponse> delete(
+            String id, WebhookSubscriptionsDeleteRequest request) {
+        return this.rawClient.delete(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Delete a webhook subscription. This operation is permanent and cannot be undone.
+     */
+    public CompletableFuture<WebhookSubscriptionsDeleteResponse> delete(
+            String id, WebhookSubscriptionsDeleteRequest request, RequestOptions requestOptions) {
+        return this.rawClient.delete(id, request, requestOptions).thenApply(response -> response.body());
     }
 }

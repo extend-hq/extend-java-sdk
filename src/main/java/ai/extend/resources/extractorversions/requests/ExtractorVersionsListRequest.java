@@ -7,6 +7,7 @@ import ai.extend.core.ObjectMappers;
 import ai.extend.types.SortDir;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,6 +22,8 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ExtractorVersionsListRequest.Builder.class)
 public final class ExtractorVersionsListRequest {
+    private final Optional<String> extendWorkspaceId;
+
     private final Optional<SortDir> sortDir;
 
     private final Optional<String> nextPageToken;
@@ -30,14 +33,24 @@ public final class ExtractorVersionsListRequest {
     private final Map<String, Object> additionalProperties;
 
     private ExtractorVersionsListRequest(
+            Optional<String> extendWorkspaceId,
             Optional<SortDir> sortDir,
             Optional<String> nextPageToken,
             Optional<Integer> maxPageSize,
             Map<String, Object> additionalProperties) {
+        this.extendWorkspaceId = extendWorkspaceId;
         this.sortDir = sortDir;
         this.nextPageToken = nextPageToken;
         this.maxPageSize = maxPageSize;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.
+     */
+    @JsonIgnore
+    public Optional<String> getExtendWorkspaceId() {
+        return extendWorkspaceId;
     }
 
     @JsonProperty("sortDir")
@@ -67,14 +80,15 @@ public final class ExtractorVersionsListRequest {
     }
 
     private boolean equalTo(ExtractorVersionsListRequest other) {
-        return sortDir.equals(other.sortDir)
+        return extendWorkspaceId.equals(other.extendWorkspaceId)
+                && sortDir.equals(other.sortDir)
                 && nextPageToken.equals(other.nextPageToken)
                 && maxPageSize.equals(other.maxPageSize);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.sortDir, this.nextPageToken, this.maxPageSize);
+        return Objects.hash(this.extendWorkspaceId, this.sortDir, this.nextPageToken, this.maxPageSize);
     }
 
     @java.lang.Override
@@ -88,6 +102,8 @@ public final class ExtractorVersionsListRequest {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<String> extendWorkspaceId = Optional.empty();
+
         private Optional<SortDir> sortDir = Optional.empty();
 
         private Optional<String> nextPageToken = Optional.empty();
@@ -100,9 +116,23 @@ public final class ExtractorVersionsListRequest {
         private Builder() {}
 
         public Builder from(ExtractorVersionsListRequest other) {
+            extendWorkspaceId(other.getExtendWorkspaceId());
             sortDir(other.getSortDir());
             nextPageToken(other.getNextPageToken());
             maxPageSize(other.getMaxPageSize());
+            return this;
+        }
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        public Builder extendWorkspaceId(Optional<String> extendWorkspaceId) {
+            this.extendWorkspaceId = extendWorkspaceId;
+            return this;
+        }
+
+        public Builder extendWorkspaceId(String extendWorkspaceId) {
+            this.extendWorkspaceId = Optional.ofNullable(extendWorkspaceId);
             return this;
         }
 
@@ -140,7 +170,8 @@ public final class ExtractorVersionsListRequest {
         }
 
         public ExtractorVersionsListRequest build() {
-            return new ExtractorVersionsListRequest(sortDir, nextPageToken, maxPageSize, additionalProperties);
+            return new ExtractorVersionsListRequest(
+                    extendWorkspaceId, sortDir, nextPageToken, maxPageSize, additionalProperties);
         }
     }
 }

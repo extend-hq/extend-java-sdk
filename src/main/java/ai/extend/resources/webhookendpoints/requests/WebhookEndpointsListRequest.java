@@ -8,6 +8,7 @@ import ai.extend.types.SortDir;
 import ai.extend.types.WebhookEndpointStatus;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,6 +23,8 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = WebhookEndpointsListRequest.Builder.class)
 public final class WebhookEndpointsListRequest {
+    private final Optional<String> extendWorkspaceId;
+
     private final Optional<WebhookEndpointStatus> status;
 
     private final Optional<SortDir> sortDir;
@@ -33,16 +36,26 @@ public final class WebhookEndpointsListRequest {
     private final Map<String, Object> additionalProperties;
 
     private WebhookEndpointsListRequest(
+            Optional<String> extendWorkspaceId,
             Optional<WebhookEndpointStatus> status,
             Optional<SortDir> sortDir,
             Optional<String> nextPageToken,
             Optional<Integer> maxPageSize,
             Map<String, Object> additionalProperties) {
+        this.extendWorkspaceId = extendWorkspaceId;
         this.status = status;
         this.sortDir = sortDir;
         this.nextPageToken = nextPageToken;
         this.maxPageSize = maxPageSize;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.
+     */
+    @JsonIgnore
+    public Optional<String> getExtendWorkspaceId() {
+        return extendWorkspaceId;
     }
 
     /**
@@ -80,7 +93,8 @@ public final class WebhookEndpointsListRequest {
     }
 
     private boolean equalTo(WebhookEndpointsListRequest other) {
-        return status.equals(other.status)
+        return extendWorkspaceId.equals(other.extendWorkspaceId)
+                && status.equals(other.status)
                 && sortDir.equals(other.sortDir)
                 && nextPageToken.equals(other.nextPageToken)
                 && maxPageSize.equals(other.maxPageSize);
@@ -88,7 +102,7 @@ public final class WebhookEndpointsListRequest {
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.status, this.sortDir, this.nextPageToken, this.maxPageSize);
+        return Objects.hash(this.extendWorkspaceId, this.status, this.sortDir, this.nextPageToken, this.maxPageSize);
     }
 
     @java.lang.Override
@@ -102,6 +116,8 @@ public final class WebhookEndpointsListRequest {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<String> extendWorkspaceId = Optional.empty();
+
         private Optional<WebhookEndpointStatus> status = Optional.empty();
 
         private Optional<SortDir> sortDir = Optional.empty();
@@ -116,10 +132,24 @@ public final class WebhookEndpointsListRequest {
         private Builder() {}
 
         public Builder from(WebhookEndpointsListRequest other) {
+            extendWorkspaceId(other.getExtendWorkspaceId());
             status(other.getStatus());
             sortDir(other.getSortDir());
             nextPageToken(other.getNextPageToken());
             maxPageSize(other.getMaxPageSize());
+            return this;
+        }
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        public Builder extendWorkspaceId(Optional<String> extendWorkspaceId) {
+            this.extendWorkspaceId = extendWorkspaceId;
+            return this;
+        }
+
+        public Builder extendWorkspaceId(String extendWorkspaceId) {
+            this.extendWorkspaceId = Optional.ofNullable(extendWorkspaceId);
             return this;
         }
 
@@ -171,7 +201,8 @@ public final class WebhookEndpointsListRequest {
         }
 
         public WebhookEndpointsListRequest build() {
-            return new WebhookEndpointsListRequest(status, sortDir, nextPageToken, maxPageSize, additionalProperties);
+            return new WebhookEndpointsListRequest(
+                    extendWorkspaceId, status, sortDir, nextPageToken, maxPageSize, additionalProperties);
         }
     }
 }

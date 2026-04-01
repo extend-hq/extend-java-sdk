@@ -46,7 +46,8 @@ public final class ParseStepRunStep implements IWorkflowStepBase {
     }
 
     /**
-     * @return The ID of the workflow step.
+     * @return <strong>Deprecated:</strong> This ID is not consistent across workflow versions. This field will be removed in a future API version.
+     * <p>The ID of the workflow step.</p>
      * <p>Example: <code>&quot;step_xKm9pNv3qWsY_jL2tR5Dh&quot;</code></p>
      */
     @JsonProperty("id")
@@ -104,6 +105,7 @@ public final class ParseStepRunStep implements IWorkflowStepBase {
 
     public interface IdStage {
         /**
+         * <p><strong>Deprecated:</strong> This ID is not consistent across workflow versions. This field will be removed in a future API version.</p>
          * <p>The ID of the workflow step.</p>
          * <p>Example: <code>&quot;step_xKm9pNv3qWsY_jL2tR5Dh&quot;</code></p>
          */
@@ -153,8 +155,10 @@ public final class ParseStepRunStep implements IWorkflowStepBase {
         }
 
         /**
+         * <p><strong>Deprecated:</strong> This ID is not consistent across workflow versions. This field will be removed in a future API version.</p>
          * <p>The ID of the workflow step.</p>
          * <p>Example: <code>&quot;step_xKm9pNv3qWsY_jL2tR5Dh&quot;</code></p>
+         * <p><strong>Deprecated:</strong> This ID is not consistent across workflow versions. This field will be removed in a future API version.</p>
          * <p>The ID of the workflow step.</p>
          * <p>Example: <code>&quot;step_xKm9pNv3qWsY_jL2tR5Dh&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.

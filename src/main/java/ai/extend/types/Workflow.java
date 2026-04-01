@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -23,16 +24,31 @@ public final class Workflow {
 
     private final String name;
 
+    private final OffsetDateTime createdAt;
+
+    private final OffsetDateTime updatedAt;
+
+    private final WorkflowVersion draftVersion;
+
     private final Map<String, Object> additionalProperties;
 
-    private Workflow(String id, String name, Map<String, Object> additionalProperties) {
+    private Workflow(
+            String id,
+            String name,
+            OffsetDateTime createdAt,
+            OffsetDateTime updatedAt,
+            WorkflowVersion draftVersion,
+            Map<String, Object> additionalProperties) {
         this.id = id;
         this.name = name;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.draftVersion = draftVersion;
         this.additionalProperties = additionalProperties;
     }
 
     /**
-     * @return The type of object. In this case, it will always be <code>&quot;workflow&quot;</code>.
+     * @return The type of object. Always <code>&quot;workflow&quot;</code>.
      */
     @JsonProperty("object")
     public String getObject() {
@@ -41,7 +57,6 @@ public final class Workflow {
 
     /**
      * @return The ID of the workflow.
-     * <p>Example: <code>&quot;workflow_BMlfq_yWM3sT-ZzvCnA3f&quot;</code></p>
      */
     @JsonProperty("id")
     public String getId() {
@@ -50,11 +65,25 @@ public final class Workflow {
 
     /**
      * @return The name of the workflow.
-     * <p>Example: <code>&quot;Invoice Processing&quot;</code></p>
      */
     @JsonProperty("name")
     public String getName() {
         return name;
+    }
+
+    @JsonProperty("createdAt")
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    @JsonProperty("updatedAt")
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    @JsonProperty("draftVersion")
+    public WorkflowVersion getDraftVersion() {
+        return draftVersion;
     }
 
     @java.lang.Override
@@ -69,12 +98,16 @@ public final class Workflow {
     }
 
     private boolean equalTo(Workflow other) {
-        return id.equals(other.id) && name.equals(other.name);
+        return id.equals(other.id)
+                && name.equals(other.name)
+                && createdAt.equals(other.createdAt)
+                && updatedAt.equals(other.updatedAt)
+                && draftVersion.equals(other.draftVersion);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.id, this.name);
+        return Objects.hash(this.id, this.name, this.createdAt, this.updatedAt, this.draftVersion);
     }
 
     @java.lang.Override
@@ -89,7 +122,6 @@ public final class Workflow {
     public interface IdStage {
         /**
          * <p>The ID of the workflow.</p>
-         * <p>Example: <code>&quot;workflow_BMlfq_yWM3sT-ZzvCnA3f&quot;</code></p>
          */
         NameStage id(@NotNull String id);
 
@@ -99,9 +131,20 @@ public final class Workflow {
     public interface NameStage {
         /**
          * <p>The name of the workflow.</p>
-         * <p>Example: <code>&quot;Invoice Processing&quot;</code></p>
          */
-        _FinalStage name(@NotNull String name);
+        CreatedAtStage name(@NotNull String name);
+    }
+
+    public interface CreatedAtStage {
+        UpdatedAtStage createdAt(@NotNull OffsetDateTime createdAt);
+    }
+
+    public interface UpdatedAtStage {
+        DraftVersionStage updatedAt(@NotNull OffsetDateTime updatedAt);
+    }
+
+    public interface DraftVersionStage {
+        _FinalStage draftVersion(@NotNull WorkflowVersion draftVersion);
     }
 
     public interface _FinalStage {
@@ -109,10 +152,17 @@ public final class Workflow {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements IdStage, NameStage, _FinalStage {
+    public static final class Builder
+            implements IdStage, NameStage, CreatedAtStage, UpdatedAtStage, DraftVersionStage, _FinalStage {
         private String id;
 
         private String name;
+
+        private OffsetDateTime createdAt;
+
+        private OffsetDateTime updatedAt;
+
+        private WorkflowVersion draftVersion;
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -123,14 +173,15 @@ public final class Workflow {
         public Builder from(Workflow other) {
             id(other.getId());
             name(other.getName());
+            createdAt(other.getCreatedAt());
+            updatedAt(other.getUpdatedAt());
+            draftVersion(other.getDraftVersion());
             return this;
         }
 
         /**
          * <p>The ID of the workflow.</p>
-         * <p>Example: <code>&quot;workflow_BMlfq_yWM3sT-ZzvCnA3f&quot;</code></p>
          * <p>The ID of the workflow.</p>
-         * <p>Example: <code>&quot;workflow_BMlfq_yWM3sT-ZzvCnA3f&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -142,21 +193,40 @@ public final class Workflow {
 
         /**
          * <p>The name of the workflow.</p>
-         * <p>Example: <code>&quot;Invoice Processing&quot;</code></p>
          * <p>The name of the workflow.</p>
-         * <p>Example: <code>&quot;Invoice Processing&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
         @JsonSetter("name")
-        public _FinalStage name(@NotNull String name) {
+        public CreatedAtStage name(@NotNull String name) {
             this.name = Objects.requireNonNull(name, "name must not be null");
             return this;
         }
 
         @java.lang.Override
+        @JsonSetter("createdAt")
+        public UpdatedAtStage createdAt(@NotNull OffsetDateTime createdAt) {
+            this.createdAt = Objects.requireNonNull(createdAt, "createdAt must not be null");
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter("updatedAt")
+        public DraftVersionStage updatedAt(@NotNull OffsetDateTime updatedAt) {
+            this.updatedAt = Objects.requireNonNull(updatedAt, "updatedAt must not be null");
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter("draftVersion")
+        public _FinalStage draftVersion(@NotNull WorkflowVersion draftVersion) {
+            this.draftVersion = Objects.requireNonNull(draftVersion, "draftVersion must not be null");
+            return this;
+        }
+
+        @java.lang.Override
         public Workflow build() {
-            return new Workflow(id, name, additionalProperties);
+            return new Workflow(id, name, createdAt, updatedAt, draftVersion, additionalProperties);
         }
     }
 }

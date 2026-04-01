@@ -24,14 +24,18 @@ public final class ParseConfigBlockOptionsFigures {
 
     private final Optional<Boolean> figureImageClippingEnabled;
 
+    private final Optional<Boolean> advancedChartExtractionEnabled;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseConfigBlockOptionsFigures(
             Optional<Boolean> enabled,
             Optional<Boolean> figureImageClippingEnabled,
+            Optional<Boolean> advancedChartExtractionEnabled,
             Map<String, Object> additionalProperties) {
         this.enabled = enabled;
         this.figureImageClippingEnabled = figureImageClippingEnabled;
+        this.advancedChartExtractionEnabled = advancedChartExtractionEnabled;
         this.additionalProperties = additionalProperties;
     }
 
@@ -51,6 +55,14 @@ public final class ParseConfigBlockOptionsFigures {
         return figureImageClippingEnabled;
     }
 
+    /**
+     * @return Whether to enable advanced chart extraction using vision models for improved data extraction from charts.
+     */
+    @JsonProperty("advancedChartExtractionEnabled")
+    public Optional<Boolean> getAdvancedChartExtractionEnabled() {
+        return advancedChartExtractionEnabled;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -63,12 +75,14 @@ public final class ParseConfigBlockOptionsFigures {
     }
 
     private boolean equalTo(ParseConfigBlockOptionsFigures other) {
-        return enabled.equals(other.enabled) && figureImageClippingEnabled.equals(other.figureImageClippingEnabled);
+        return enabled.equals(other.enabled)
+                && figureImageClippingEnabled.equals(other.figureImageClippingEnabled)
+                && advancedChartExtractionEnabled.equals(other.advancedChartExtractionEnabled);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.enabled, this.figureImageClippingEnabled);
+        return Objects.hash(this.enabled, this.figureImageClippingEnabled, this.advancedChartExtractionEnabled);
     }
 
     @java.lang.Override
@@ -86,6 +100,8 @@ public final class ParseConfigBlockOptionsFigures {
 
         private Optional<Boolean> figureImageClippingEnabled = Optional.empty();
 
+        private Optional<Boolean> advancedChartExtractionEnabled = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -94,6 +110,7 @@ public final class ParseConfigBlockOptionsFigures {
         public Builder from(ParseConfigBlockOptionsFigures other) {
             enabled(other.getEnabled());
             figureImageClippingEnabled(other.getFigureImageClippingEnabled());
+            advancedChartExtractionEnabled(other.getAdvancedChartExtractionEnabled());
             return this;
         }
 
@@ -125,8 +142,23 @@ public final class ParseConfigBlockOptionsFigures {
             return this;
         }
 
+        /**
+         * <p>Whether to enable advanced chart extraction using vision models for improved data extraction from charts.</p>
+         */
+        @JsonSetter(value = "advancedChartExtractionEnabled", nulls = Nulls.SKIP)
+        public Builder advancedChartExtractionEnabled(Optional<Boolean> advancedChartExtractionEnabled) {
+            this.advancedChartExtractionEnabled = advancedChartExtractionEnabled;
+            return this;
+        }
+
+        public Builder advancedChartExtractionEnabled(Boolean advancedChartExtractionEnabled) {
+            this.advancedChartExtractionEnabled = Optional.ofNullable(advancedChartExtractionEnabled);
+            return this;
+        }
+
         public ParseConfigBlockOptionsFigures build() {
-            return new ParseConfigBlockOptionsFigures(enabled, figureImageClippingEnabled, additionalProperties);
+            return new ParseConfigBlockOptionsFigures(
+                    enabled, figureImageClippingEnabled, advancedChartExtractionEnabled, additionalProperties);
         }
     }
 }

@@ -5,8 +5,11 @@ package ai.extend.resources.splitruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
+import ai.extend.resources.splitruns.requests.SplitRunsCancelRequest;
 import ai.extend.resources.splitruns.requests.SplitRunsCreateRequest;
+import ai.extend.resources.splitruns.requests.SplitRunsDeleteRequest;
 import ai.extend.resources.splitruns.requests.SplitRunsListRequest;
+import ai.extend.resources.splitruns.requests.SplitRunsRetrieveRequest;
 import ai.extend.resources.splitruns.types.SplitRunsDeleteResponse;
 import ai.extend.resources.splitruns.types.SplitRunsListResponse;
 import ai.extend.types.SplitRun;
@@ -93,6 +96,22 @@ public class SplitRunsClient {
     }
 
     /**
+     * Retrieve details about a specific split run, including its status and outputs.
+     * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     */
+    public SplitRun retrieve(String id, SplitRunsRetrieveRequest request) {
+        return this.rawClient.retrieve(id, request).body();
+    }
+
+    /**
+     * Retrieve details about a specific split run, including its status and outputs.
+     * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     */
+    public SplitRun retrieve(String id, SplitRunsRetrieveRequest request, RequestOptions requestOptions) {
+        return this.rawClient.retrieve(id, request, requestOptions).body();
+    }
+
+    /**
      * Delete a split run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
@@ -109,6 +128,22 @@ public class SplitRunsClient {
     }
 
     /**
+     * Delete a split run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public SplitRunsDeleteResponse delete(String id, SplitRunsDeleteRequest request) {
+        return this.rawClient.delete(id, request).body();
+    }
+
+    /**
+     * Delete a split run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public SplitRunsDeleteResponse delete(String id, SplitRunsDeleteRequest request, RequestOptions requestOptions) {
+        return this.rawClient.delete(id, request, requestOptions).body();
+    }
+
+    /**
      * Cancel an in-progress split run.
      * <p>Note: Only split runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Splitter runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
@@ -122,5 +157,21 @@ public class SplitRunsClient {
      */
     public SplitRun cancel(String id, RequestOptions requestOptions) {
         return this.rawClient.cancel(id, requestOptions).body();
+    }
+
+    /**
+     * Cancel an in-progress split run.
+     * <p>Note: Only split runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Splitter runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public SplitRun cancel(String id, SplitRunsCancelRequest request) {
+        return this.rawClient.cancel(id, request).body();
+    }
+
+    /**
+     * Cancel an in-progress split run.
+     * <p>Note: Only split runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Splitter runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public SplitRun cancel(String id, SplitRunsCancelRequest request, RequestOptions requestOptions) {
+        return this.rawClient.cancel(id, request, requestOptions).body();
     }
 }

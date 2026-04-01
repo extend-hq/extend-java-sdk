@@ -7,6 +7,7 @@ import ai.extend.core.ObjectMappers;
 import ai.extend.resources.evaluationsetitems.types.EvaluationSetItemsCreateRequestItemsItem;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,18 +19,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = EvaluationSetItemsCreateRequest.Builder.class)
 public final class EvaluationSetItemsCreateRequest {
+    private final Optional<String> extendWorkspaceId;
+
     private final List<EvaluationSetItemsCreateRequestItemsItem> items;
 
     private final Map<String, Object> additionalProperties;
 
     private EvaluationSetItemsCreateRequest(
-            List<EvaluationSetItemsCreateRequestItemsItem> items, Map<String, Object> additionalProperties) {
+            Optional<String> extendWorkspaceId,
+            List<EvaluationSetItemsCreateRequestItemsItem> items,
+            Map<String, Object> additionalProperties) {
+        this.extendWorkspaceId = extendWorkspaceId;
         this.items = items;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.
+     */
+    @JsonIgnore
+    public Optional<String> getExtendWorkspaceId() {
+        return extendWorkspaceId;
     }
 
     /**
@@ -52,12 +67,12 @@ public final class EvaluationSetItemsCreateRequest {
     }
 
     private boolean equalTo(EvaluationSetItemsCreateRequest other) {
-        return items.equals(other.items);
+        return extendWorkspaceId.equals(other.extendWorkspaceId) && items.equals(other.items);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.items);
+        return Objects.hash(this.extendWorkspaceId, this.items);
     }
 
     @java.lang.Override
@@ -71,6 +86,8 @@ public final class EvaluationSetItemsCreateRequest {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<String> extendWorkspaceId = Optional.empty();
+
         private List<EvaluationSetItemsCreateRequestItemsItem> items = new ArrayList<>();
 
         @JsonAnySetter
@@ -79,7 +96,21 @@ public final class EvaluationSetItemsCreateRequest {
         private Builder() {}
 
         public Builder from(EvaluationSetItemsCreateRequest other) {
+            extendWorkspaceId(other.getExtendWorkspaceId());
             items(other.getItems());
+            return this;
+        }
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        public Builder extendWorkspaceId(Optional<String> extendWorkspaceId) {
+            this.extendWorkspaceId = extendWorkspaceId;
+            return this;
+        }
+
+        public Builder extendWorkspaceId(String extendWorkspaceId) {
+            this.extendWorkspaceId = Optional.ofNullable(extendWorkspaceId);
             return this;
         }
 
@@ -108,7 +139,7 @@ public final class EvaluationSetItemsCreateRequest {
         }
 
         public EvaluationSetItemsCreateRequest build() {
-            return new EvaluationSetItemsCreateRequest(items, additionalProperties);
+            return new EvaluationSetItemsCreateRequest(extendWorkspaceId, items, additionalProperties);
         }
     }
 }

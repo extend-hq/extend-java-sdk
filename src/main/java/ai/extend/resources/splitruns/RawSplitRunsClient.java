@@ -19,8 +19,11 @@ import ai.extend.errors.PaymentRequiredError;
 import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
+import ai.extend.resources.splitruns.requests.SplitRunsCancelRequest;
 import ai.extend.resources.splitruns.requests.SplitRunsCreateRequest;
+import ai.extend.resources.splitruns.requests.SplitRunsDeleteRequest;
 import ai.extend.resources.splitruns.requests.SplitRunsListRequest;
+import ai.extend.resources.splitruns.requests.SplitRunsRetrieveRequest;
 import ai.extend.resources.splitruns.types.SplitRunsDeleteResponse;
 import ai.extend.resources.splitruns.types.SplitRunsListResponse;
 import ai.extend.types.ApiError;
@@ -121,6 +124,10 @@ public class RawSplitRunsClient {
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
@@ -260,7 +267,7 @@ public class RawSplitRunsClient {
      * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
     public ExtendClientHttpResponse<SplitRun> retrieve(String id) {
-        return retrieve(id, null);
+        return retrieve(id, SplitRunsRetrieveRequest.builder().build());
     }
 
     /**
@@ -268,6 +275,23 @@ public class RawSplitRunsClient {
      * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
     public ExtendClientHttpResponse<SplitRun> retrieve(String id, RequestOptions requestOptions) {
+        return retrieve(id, SplitRunsRetrieveRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Retrieve details about a specific split run, including its status and outputs.
+     * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     */
+    public ExtendClientHttpResponse<SplitRun> retrieve(String id, SplitRunsRetrieveRequest request) {
+        return retrieve(id, request, null);
+    }
+
+    /**
+     * Retrieve details about a specific split run, including its status and outputs.
+     * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     */
+    public ExtendClientHttpResponse<SplitRun> retrieve(
+            String id, SplitRunsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("split_runs")
@@ -277,12 +301,16 @@ public class RawSplitRunsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -337,7 +365,7 @@ public class RawSplitRunsClient {
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
     public ExtendClientHttpResponse<SplitRunsDeleteResponse> delete(String id) {
-        return delete(id, null);
+        return delete(id, SplitRunsDeleteRequest.builder().build());
     }
 
     /**
@@ -345,6 +373,23 @@ public class RawSplitRunsClient {
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
     public ExtendClientHttpResponse<SplitRunsDeleteResponse> delete(String id, RequestOptions requestOptions) {
+        return delete(id, SplitRunsDeleteRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Delete a split run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public ExtendClientHttpResponse<SplitRunsDeleteResponse> delete(String id, SplitRunsDeleteRequest request) {
+        return delete(id, request, null);
+    }
+
+    /**
+     * Delete a split run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public ExtendClientHttpResponse<SplitRunsDeleteResponse> delete(
+            String id, SplitRunsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("split_runs")
@@ -354,12 +399,16 @@ public class RawSplitRunsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("DELETE", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -415,7 +464,7 @@ public class RawSplitRunsClient {
      * <p>Note: Only split runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Splitter runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
     public ExtendClientHttpResponse<SplitRun> cancel(String id) {
-        return cancel(id, null);
+        return cancel(id, SplitRunsCancelRequest.builder().build());
     }
 
     /**
@@ -423,6 +472,23 @@ public class RawSplitRunsClient {
      * <p>Note: Only split runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Splitter runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
     public ExtendClientHttpResponse<SplitRun> cancel(String id, RequestOptions requestOptions) {
+        return cancel(id, SplitRunsCancelRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Cancel an in-progress split run.
+     * <p>Note: Only split runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Splitter runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public ExtendClientHttpResponse<SplitRun> cancel(String id, SplitRunsCancelRequest request) {
+        return cancel(id, request, null);
+    }
+
+    /**
+     * Cancel an in-progress split run.
+     * <p>Note: Only split runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Splitter runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public ExtendClientHttpResponse<SplitRun> cancel(
+            String id, SplitRunsCancelRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("split_runs")
@@ -433,12 +499,16 @@ public class RawSplitRunsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("POST", RequestBody.create("", null))
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

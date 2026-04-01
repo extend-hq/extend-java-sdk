@@ -6,7 +6,9 @@ package ai.extend.resources.webhookendpoints;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.webhookendpoints.requests.WebhookEndpointsCreateRequest;
+import ai.extend.resources.webhookendpoints.requests.WebhookEndpointsDeleteRequest;
 import ai.extend.resources.webhookendpoints.requests.WebhookEndpointsListRequest;
+import ai.extend.resources.webhookendpoints.requests.WebhookEndpointsRetrieveRequest;
 import ai.extend.resources.webhookendpoints.requests.WebhookEndpointsUpdateRequest;
 import ai.extend.resources.webhookendpoints.types.WebhookEndpointsDeleteResponse;
 import ai.extend.resources.webhookendpoints.types.WebhookEndpointsListResponse;
@@ -91,6 +93,20 @@ public class WebhookEndpointsClient {
     }
 
     /**
+     * Retrieve a webhook endpoint by ID.
+     */
+    public WebhookEndpoint retrieve(String id, WebhookEndpointsRetrieveRequest request) {
+        return this.rawClient.retrieve(id, request).body();
+    }
+
+    /**
+     * Retrieve a webhook endpoint by ID.
+     */
+    public WebhookEndpoint retrieve(String id, WebhookEndpointsRetrieveRequest request, RequestOptions requestOptions) {
+        return this.rawClient.retrieve(id, request, requestOptions).body();
+    }
+
+    /**
      * Update a webhook endpoint. Only the fields you include in the request body will be updated; omitted fields remain unchanged.
      * <p>The <code>apiVersion</code> of a webhook endpoint cannot be changed after creation.</p>
      */
@@ -134,5 +150,20 @@ public class WebhookEndpointsClient {
      */
     public WebhookEndpointsDeleteResponse delete(String id, RequestOptions requestOptions) {
         return this.rawClient.delete(id, requestOptions).body();
+    }
+
+    /**
+     * Delete a webhook endpoint and all of its subscriptions. This operation is permanent and cannot be undone.
+     */
+    public WebhookEndpointsDeleteResponse delete(String id, WebhookEndpointsDeleteRequest request) {
+        return this.rawClient.delete(id, request).body();
+    }
+
+    /**
+     * Delete a webhook endpoint and all of its subscriptions. This operation is permanent and cannot be undone.
+     */
+    public WebhookEndpointsDeleteResponse delete(
+            String id, WebhookEndpointsDeleteRequest request, RequestOptions requestOptions) {
+        return this.rawClient.delete(id, request, requestOptions).body();
     }
 }
