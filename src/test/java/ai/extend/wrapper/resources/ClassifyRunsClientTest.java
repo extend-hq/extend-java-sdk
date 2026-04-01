@@ -6,6 +6,7 @@ package ai.extend.wrapper.resources;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.*;
 
 import ai.extend.core.ClientOptions;
@@ -62,7 +63,7 @@ class ClassifyRunsClientTest {
             doReturn(processingResponse)
                     .doReturn(processedResponse)
                     .when(wrapper)
-                    .retrieve(eq(runId), any(RequestOptions.class));
+                    .retrieve(eq(runId), nullable(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -74,7 +75,7 @@ class ClassifyRunsClientTest {
 
             assertEquals(ProcessorRunStatus.PROCESSED, result.getStatus());
             verify(wrapper, times(1)).create(any(), any());
-            verify(wrapper, times(2)).retrieve(eq(runId), any(RequestOptions.class));
+            verify(wrapper, times(2)).retrieve(eq(runId), nullable(RequestOptions.class));
         }
 
         @Test
@@ -89,7 +90,7 @@ class ClassifyRunsClientTest {
             ClassifyRun processedResponse = mock(ClassifyRun.class);
             when(processedResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
 
-            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), any(RequestOptions.class));
+            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), nullable(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -100,7 +101,7 @@ class ClassifyRunsClientTest {
             ClassifyRun result = wrapper.createAndPoll(null, options);
 
             assertEquals(ProcessorRunStatus.PROCESSED, result.getStatus());
-            verify(wrapper, times(1)).retrieve(eq(runId), any(RequestOptions.class));
+            verify(wrapper, times(1)).retrieve(eq(runId), nullable(RequestOptions.class));
         }
 
         @Test
@@ -115,7 +116,7 @@ class ClassifyRunsClientTest {
             ClassifyRun failedResponse = mock(ClassifyRun.class);
             when(failedResponse.getStatus()).thenReturn(ProcessorRunStatus.FAILED);
 
-            doReturn(failedResponse).when(wrapper).retrieve(eq(runId), any(RequestOptions.class));
+            doReturn(failedResponse).when(wrapper).retrieve(eq(runId), nullable(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -140,7 +141,7 @@ class ClassifyRunsClientTest {
             ClassifyRun cancelledResponse = mock(ClassifyRun.class);
             when(cancelledResponse.getStatus()).thenReturn(ProcessorRunStatus.CANCELLED);
 
-            doReturn(cancelledResponse).when(wrapper).retrieve(eq(runId), any(RequestOptions.class));
+            doReturn(cancelledResponse).when(wrapper).retrieve(eq(runId), nullable(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -165,7 +166,7 @@ class ClassifyRunsClientTest {
             ClassifyRun processingResponse = mock(ClassifyRun.class);
             when(processingResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSING);
 
-            doReturn(processingResponse).when(wrapper).retrieve(eq(runId), any(RequestOptions.class));
+            doReturn(processingResponse).when(wrapper).retrieve(eq(runId), nullable(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(10)
@@ -190,7 +191,7 @@ class ClassifyRunsClientTest {
             ClassifyRun processedResponse = mock(ClassifyRun.class);
             when(processedResponse.getStatus()).thenReturn(ProcessorRunStatus.PROCESSED);
 
-            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), any(RequestOptions.class));
+            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), nullable(RequestOptions.class));
 
             ClassifyRun result = wrapper.createAndPoll(null);
 
