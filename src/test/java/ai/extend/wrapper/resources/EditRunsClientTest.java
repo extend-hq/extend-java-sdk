@@ -6,9 +6,11 @@ package ai.extend.wrapper.resources;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.*;
 
 import ai.extend.core.ClientOptions;
+import ai.extend.core.RequestOptions;
 import ai.extend.types.EditRun;
 import ai.extend.types.EditRunStatus;
 import ai.extend.wrapper.errors.PollingTimeoutError;
@@ -61,7 +63,7 @@ class EditRunsClientTest {
             doReturn(processingResponse)
                     .doReturn(processedResponse)
                     .when(wrapper)
-                    .retrieve(eq(runId), any());
+                    .retrieve(eq(runId), nullable(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -73,7 +75,7 @@ class EditRunsClientTest {
 
             assertEquals(EditRunStatus.PROCESSED, result.getStatus());
             verify(wrapper, times(1)).create(any(), any());
-            verify(wrapper, times(2)).retrieve(eq(runId), any());
+            verify(wrapper, times(2)).retrieve(eq(runId), nullable(RequestOptions.class));
         }
 
         @Test
@@ -88,7 +90,7 @@ class EditRunsClientTest {
             EditRun processedResponse = mock(EditRun.class);
             when(processedResponse.getStatus()).thenReturn(EditRunStatus.PROCESSED);
 
-            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), any());
+            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), nullable(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -99,7 +101,7 @@ class EditRunsClientTest {
             EditRun result = wrapper.createAndPoll(null, options);
 
             assertEquals(EditRunStatus.PROCESSED, result.getStatus());
-            verify(wrapper, times(1)).retrieve(eq(runId), any());
+            verify(wrapper, times(1)).retrieve(eq(runId), nullable(RequestOptions.class));
         }
 
         @Test
@@ -114,7 +116,7 @@ class EditRunsClientTest {
             EditRun failedResponse = mock(EditRun.class);
             when(failedResponse.getStatus()).thenReturn(EditRunStatus.FAILED);
 
-            doReturn(failedResponse).when(wrapper).retrieve(eq(runId), any());
+            doReturn(failedResponse).when(wrapper).retrieve(eq(runId), nullable(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -139,7 +141,7 @@ class EditRunsClientTest {
             EditRun processingResponse = mock(EditRun.class);
             when(processingResponse.getStatus()).thenReturn(EditRunStatus.PROCESSING);
 
-            doReturn(processingResponse).when(wrapper).retrieve(eq(runId), any());
+            doReturn(processingResponse).when(wrapper).retrieve(eq(runId), nullable(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(10)
@@ -164,7 +166,7 @@ class EditRunsClientTest {
             EditRun processedResponse = mock(EditRun.class);
             when(processedResponse.getStatus()).thenReturn(EditRunStatus.PROCESSED);
 
-            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), any());
+            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), nullable(RequestOptions.class));
 
             EditRun result = wrapper.createAndPoll(null);
 
