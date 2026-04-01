@@ -11,6 +11,7 @@ import ai.extend.types.LegacySortByEnum;
 import ai.extend.types.LegacySortDirEnum;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,6 +26,8 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ProcessorRunListRequest.Builder.class)
 public final class ProcessorRunListRequest {
+    private final Optional<String> extendWorkspaceId;
+
     private final Optional<LegacyProcessorStatus> status;
 
     private final Optional<String> processorId;
@@ -48,6 +51,7 @@ public final class ProcessorRunListRequest {
     private final Map<String, Object> additionalProperties;
 
     private ProcessorRunListRequest(
+            Optional<String> extendWorkspaceId,
             Optional<LegacyProcessorStatus> status,
             Optional<String> processorId,
             Optional<LegacyProcessorType> processorType,
@@ -59,6 +63,7 @@ public final class ProcessorRunListRequest {
             Optional<String> nextPageToken,
             Optional<Integer> maxPageSize,
             Map<String, Object> additionalProperties) {
+        this.extendWorkspaceId = extendWorkspaceId;
         this.status = status;
         this.processorId = processorId;
         this.processorType = processorType;
@@ -70,6 +75,14 @@ public final class ProcessorRunListRequest {
         this.nextPageToken = nextPageToken;
         this.maxPageSize = maxPageSize;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.
+     */
+    @JsonIgnore
+    public Optional<String> getExtendWorkspaceId() {
+        return extendWorkspaceId;
     }
 
     /**
@@ -180,7 +193,8 @@ public final class ProcessorRunListRequest {
     }
 
     private boolean equalTo(ProcessorRunListRequest other) {
-        return status.equals(other.status)
+        return extendWorkspaceId.equals(other.extendWorkspaceId)
+                && status.equals(other.status)
                 && processorId.equals(other.processorId)
                 && processorType.equals(other.processorType)
                 && sourceId.equals(other.sourceId)
@@ -195,6 +209,7 @@ public final class ProcessorRunListRequest {
     @java.lang.Override
     public int hashCode() {
         return Objects.hash(
+                this.extendWorkspaceId,
                 this.status,
                 this.processorId,
                 this.processorType,
@@ -218,6 +233,8 @@ public final class ProcessorRunListRequest {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<String> extendWorkspaceId = Optional.empty();
+
         private Optional<LegacyProcessorStatus> status = Optional.empty();
 
         private Optional<String> processorId = Optional.empty();
@@ -244,6 +261,7 @@ public final class ProcessorRunListRequest {
         private Builder() {}
 
         public Builder from(ProcessorRunListRequest other) {
+            extendWorkspaceId(other.getExtendWorkspaceId());
             status(other.getStatus());
             processorId(other.getProcessorId());
             processorType(other.getProcessorType());
@@ -254,6 +272,19 @@ public final class ProcessorRunListRequest {
             sortDir(other.getSortDir());
             nextPageToken(other.getNextPageToken());
             maxPageSize(other.getMaxPageSize());
+            return this;
+        }
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        public Builder extendWorkspaceId(Optional<String> extendWorkspaceId) {
+            this.extendWorkspaceId = extendWorkspaceId;
+            return this;
+        }
+
+        public Builder extendWorkspaceId(String extendWorkspaceId) {
+            this.extendWorkspaceId = Optional.ofNullable(extendWorkspaceId);
             return this;
         }
 
@@ -415,6 +446,7 @@ public final class ProcessorRunListRequest {
 
         public ProcessorRunListRequest build() {
             return new ProcessorRunListRequest(
+                    extendWorkspaceId,
                     status,
                     processorId,
                     processorType,

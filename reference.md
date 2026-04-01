@@ -72,6 +72,14 @@ Controls the format of the response chunks. Defaults to `json` if not specified.
 <dl>
 <dd>
 
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **file:** `ParseRequestFile` — The file to be parsed. Files can be provided as a URL or an Extend file ID.
     
 </dd>
@@ -640,6 +648,14 @@ Example: `"invoice"`
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -743,6 +759,14 @@ Only available for files with a type of DOCX.
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -780,7 +804,12 @@ This endpoint can be used if you'd like to manage data retention on your own rat
 <dd>
 
 ```java
-client.files().delete("file_id_here");
+client.files().delete(
+    "file_id_here",
+    FilesDeleteRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -800,6 +829,14 @@ client.files().delete("file_id_here");
 The ID of the file to delete.
 
 Example: `"file_xK9mLPqRtN3vS8wF5hB2cQ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -866,6 +903,14 @@ client.files().upload(
 <dd>
 
 **convertToPdf:** `Optional<Boolean>` — When true, converts the uploaded file to PDF. Supported file types include images (JPEG, PNG, TIFF, GIF, BMP, WebP, HEIC/HEIF), Word documents, PowerPoint, Excel, and HTML.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -1034,6 +1079,14 @@ Controls how the output is delivered. Defaults to `inline`.
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -1071,7 +1124,12 @@ This endpoint can be used if you'd like to manage data retention on your own rat
 <dd>
 
 ```java
-client.parseRuns().delete("parse_run_id_here");
+client.parseRuns().delete(
+    "parse_run_id_here",
+    ParseRunsDeleteRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -1091,6 +1149,14 @@ client.parseRuns().delete("parse_run_id_here");
 The ID of the parse run to delete.
 
 Example: `"pr_xK9mLPqRtN3vS8wF5hB2cQ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -1222,7 +1288,12 @@ Use this endpoint to get results for an edit run that has already completed, or 
 <dd>
 
 ```java
-client.editRuns().retrieve("edit_run_id_here");
+client.editRuns().retrieve(
+    "edit_run_id_here",
+    EditRunsRetrieveRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -1242,6 +1313,14 @@ client.editRuns().retrieve("edit_run_id_here");
 The unique identifier for the edit run.
 
 Example: `"edr_xK9mLPqRtN3vS8wF5hB2cQ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -1282,7 +1361,12 @@ This endpoint can be used if you'd like to manage data retention on your own rat
 <dd>
 
 ```java
-client.editRuns().delete("edit_run_id_here");
+client.editRuns().delete(
+    "edit_run_id_here",
+    EditRunsDeleteRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -1302,6 +1386,107 @@ client.editRuns().delete("edit_run_id_here");
 The ID of the edit run to delete.
 
 Example: `"edr_xK9mLPqRtN3vS8wF5hB2cQ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## EditSchemas
+<details><summary><code>client.editSchemas.generate(request) -> EditSchemaGenerationResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Detect fields in a PDF form and synchronously return an edit schema payload.
+
+Use this endpoint when you want Extend to bootstrap an `EditRootJSON` schema from an existing form, optionally mapping an existing schema onto the detected fields.
+
+This endpoint returns the generated schema directly. There are no schema generation run resources to poll or delete.
+
+For more details, see the [Generate Edit Schema guide](https://docs.extend.ai/2026-02-09/product/editing/generate-edit-schema) and the [Edit File guide](https://docs.extend.ai/2026-02-09/product/editing/edit).
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.editSchemas().generate(
+    EditSchemasGenerateRequest
+        .builder()
+        .file(
+            EditSchemasGenerateRequestFile.of(
+                FileFromUrl
+                    .builder()
+                    .url("https://example.com/form.pdf")
+                    .build()
+            )
+        )
+        .config(
+            EditSchemaGenerationConfig
+                .builder()
+                .instructions("Detect the form fields and use human-readable field names.")
+                .advancedOptions(
+                    EditSchemaGenerationConfigAdvancedOptions
+                        .builder()
+                        .radioEnumsEnabled(true)
+                        .build()
+                )
+                .build()
+        )
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**file:** `EditSchemasGenerateRequestFile` — The file to analyze. Files can be provided as a URL or an Extend file ID.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<EditSchemaGenerationConfig>` 
     
 </dd>
 </dl>
@@ -1436,6 +1621,14 @@ Example: `"invoice"`
 <dd>
 
 **maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -1582,7 +1775,12 @@ A common use case for this endpoint is to poll for the status and final output o
 <dd>
 
 ```java
-client.extractRuns().retrieve("extract_run_id_here");
+client.extractRuns().retrieve(
+    "extract_run_id_here",
+    ExtractRunsRetrieveRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -1602,6 +1800,14 @@ client.extractRuns().retrieve("extract_run_id_here");
 The unique identifier for this extract run.
 
 Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -1642,7 +1848,12 @@ This endpoint can be used if you'd like to manage data retention on your own rat
 <dd>
 
 ```java
-client.extractRuns().delete("id");
+client.extractRuns().delete(
+    "id",
+    ExtractRunsDeleteRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -1658,6 +1869,14 @@ client.extractRuns().delete("id");
 <dd>
 
 **id:** `String` — The ID of the extract run.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -1698,7 +1917,12 @@ Note: Only extract runs with a status of `"PROCESSING"` can be cancelled. Extrac
 <dd>
 
 ```java
-client.extractRuns().cancel("extract_run_id_here");
+client.extractRuns().cancel(
+    "extract_run_id_here",
+    ExtractRunsCancelRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -1718,6 +1942,14 @@ client.extractRuns().cancel("extract_run_id_here");
 The ID of the extract run to cancel.
 
 Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -1804,6 +2036,14 @@ client.extractors().list(
 <dd>
 
 **sortDir:** `Optional<SortDir>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -1945,7 +2185,12 @@ Get details of an extractor.
 <dd>
 
 ```java
-client.extractors().retrieve("extractor_id_here");
+client.extractors().retrieve(
+    "extractor_id_here",
+    ExtractorsRetrieveRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -1965,6 +2210,14 @@ client.extractors().retrieve("extractor_id_here");
 The ID of the extractor to get.
 
 Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -2029,6 +2282,14 @@ client.extractors().update(
 The ID of the extractor to update.
 
 Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -2139,6 +2400,14 @@ Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -2210,6 +2479,14 @@ Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
 <dl>
 <dd>
 
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **releaseType:** `ReleaseType` 
     
 </dd>
@@ -2265,7 +2542,13 @@ Retrieve a specific version of an extractor in Extend
 <dd>
 
 ```java
-client.extractorVersions().retrieve("extractor_id_here", "extractor_version_id_here");
+client.extractorVersions().retrieve(
+    "extractor_id_here",
+    "extractor_version_id_here",
+    ExtractorVersionsRetrieveRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -2297,6 +2580,14 @@ Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
 The ID of the specific extractor version.
 
 Example: `"extv_QYk6jgHA_8CsO8rVWhyNC"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -2431,6 +2722,14 @@ Example: `"invoice"`
 <dd>
 
 **maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -2577,7 +2876,12 @@ A common use case for this endpoint is to poll for the status and final output o
 <dd>
 
 ```java
-client.classifyRuns().retrieve("classify_run_id_here");
+client.classifyRuns().retrieve(
+    "classify_run_id_here",
+    ClassifyRunsRetrieveRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -2597,6 +2901,14 @@ client.classifyRuns().retrieve("classify_run_id_here");
 The unique identifier for this classify run.
 
 Example: `"cl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -2637,7 +2949,12 @@ This endpoint can be used if you'd like to manage data retention on your own rat
 <dd>
 
 ```java
-client.classifyRuns().delete("id");
+client.classifyRuns().delete(
+    "id",
+    ClassifyRunsDeleteRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -2653,6 +2970,14 @@ client.classifyRuns().delete("id");
 <dd>
 
 **id:** `String` — The ID of the classify run.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -2693,7 +3018,12 @@ Note: Only classify runs with a status of `"PROCESSING"` can be cancelled. Class
 <dd>
 
 ```java
-client.classifyRuns().cancel("classify_run_id_here");
+client.classifyRuns().cancel(
+    "classify_run_id_here",
+    ClassifyRunsCancelRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -2713,6 +3043,14 @@ client.classifyRuns().cancel("classify_run_id_here");
 The ID of the classify run to cancel.
 
 Example: `"cl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -2799,6 +3137,14 @@ client.classifiers().list(
 <dd>
 
 **sortDir:** `Optional<SortDir>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -2943,7 +3289,12 @@ Get details of a classifier.
 <dd>
 
 ```java
-client.classifiers().retrieve("classifier_id_here");
+client.classifiers().retrieve(
+    "classifier_id_here",
+    ClassifiersRetrieveRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -2963,6 +3314,14 @@ client.classifiers().retrieve("classifier_id_here");
 The ID of the classifier to get.
 
 Example: `"cl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -3027,6 +3386,14 @@ client.classifiers().update(
 The ID of the classifier to update.
 
 Example: `"cl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -3137,6 +3504,14 @@ Example: `"cl_Xj8mK2pL9nR4vT7qY5wZ"`
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -3208,6 +3583,14 @@ Example: `"cl_Xj8mK2pL9nR4vT7qY5wZ"`
 <dl>
 <dd>
 
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **releaseType:** `ReleaseType` 
     
 </dd>
@@ -3263,7 +3646,13 @@ Retrieve a specific version of a classifier in Extend
 <dd>
 
 ```java
-client.classifierVersions().retrieve("classifier_id_here", "classifier_version_id_here");
+client.classifierVersions().retrieve(
+    "classifier_id_here",
+    "classifier_version_id_here",
+    ClassifierVersionsRetrieveRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -3295,6 +3684,14 @@ Example: `"cl_Xj8mK2pL9nR4vT7qY5wZ"`
 The ID of the specific classifier version.
 
 Example: `"clsv_QYk6jgHA_8CsO8rVWhyNC"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -3429,6 +3826,14 @@ Example: `"invoice"`
 <dd>
 
 **maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -3575,7 +3980,12 @@ A common use case for this endpoint is to poll for the status and final output o
 <dd>
 
 ```java
-client.splitRuns().retrieve("split_run_id_here");
+client.splitRuns().retrieve(
+    "split_run_id_here",
+    SplitRunsRetrieveRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -3595,6 +4005,14 @@ client.splitRuns().retrieve("split_run_id_here");
 The unique identifier for this split run.
 
 Example: `"spl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -3635,7 +4053,12 @@ This endpoint can be used if you'd like to manage data retention on your own rat
 <dd>
 
 ```java
-client.splitRuns().delete("id");
+client.splitRuns().delete(
+    "id",
+    SplitRunsDeleteRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -3651,6 +4074,14 @@ client.splitRuns().delete("id");
 <dd>
 
 **id:** `String` — The ID of the split run.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -3691,7 +4122,12 @@ Note: Only split runs with a status of `"PROCESSING"` can be cancelled. Splitter
 <dd>
 
 ```java
-client.splitRuns().cancel("split_run_id_here");
+client.splitRuns().cancel(
+    "split_run_id_here",
+    SplitRunsCancelRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -3711,6 +4147,14 @@ client.splitRuns().cancel("split_run_id_here");
 The ID of the split run to cancel.
 
 Example: `"spl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -3797,6 +4241,14 @@ client.splitters().list(
 <dd>
 
 **sortDir:** `Optional<SortDir>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -3943,7 +4395,12 @@ Get details of a splitter.
 <dd>
 
 ```java
-client.splitters().retrieve("splitter_id_here");
+client.splitters().retrieve(
+    "splitter_id_here",
+    SplittersRetrieveRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -3963,6 +4420,14 @@ client.splitters().retrieve("splitter_id_here");
 The ID of the splitter to get.
 
 Example: `"spl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -4027,6 +4492,14 @@ client.splitters().update(
 The ID of the splitter to update.
 
 Example: `"spl_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -4137,6 +4610,14 @@ Example: `"spl_Xj8mK2pL9nR4vT7qY5wZ"`
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -4208,6 +4689,14 @@ Example: `"spl_Xj8mK2pL9nR4vT7qY5wZ"`
 <dl>
 <dd>
 
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **releaseType:** `ReleaseType` 
     
 </dd>
@@ -4263,7 +4752,13 @@ Retrieve a specific version of a splitter in Extend
 <dd>
 
 ```java
-client.splitterVersions().retrieve("splitter_id_here", "splitter_version_id_here");
+client.splitterVersions().retrieve(
+    "splitter_id_here",
+    "splitter_version_id_here",
+    SplitterVersionsRetrieveRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -4298,6 +4793,14 @@ Example: `"splv_QYk6jgHA_8CsO8rVWhyNC"`
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -4307,6 +4810,89 @@ Example: `"splv_QYk6jgHA_8CsO8rVWhyNC"`
 </details>
 
 ## Workflows
+<details><summary><code>client.workflows.list() -> WorkflowsListResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all workflows. Returns a paginated list of workflow summaries.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.workflows().list(
+    WorkflowsListRequest
+        .builder()
+        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**nextPageToken:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortBy:** `Optional<SortBy>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortDir:** `Optional<SortDir>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.workflows.create(request) -> Workflow</code></summary>
 <dl>
 <dd>
@@ -4319,9 +4905,11 @@ Example: `"splv_QYk6jgHA_8CsO8rVWhyNC"`
 <dl>
 <dd>
 
-Create a new workflow in Extend. Workflows are sequences of steps that process files and data in a specific order to achieve a desired outcome.
+Create a new workflow. Optionally provide `steps` to define the workflow's step graph.
 
-This endpoint will create a new workflow in Extend, which can then be configured and deployed. Typically, workflows are created from our UI, however this endpoint can be used to create workflows programmatically. Configuration of the flow still needs to be done in the dashboard.
+When `steps` is omitted, the workflow is created with default steps (`TRIGGER` → `PARSE`). When `steps` is provided, the step graph is validated and the draft version is populated with the given steps.
+
+**Note:** The default steps may change in the future. If your integration depends on a specific step graph, provide `steps` explicitly.
 </dd>
 </dl>
 </dd>
@@ -4356,7 +4944,391 @@ client.workflows().create(
 <dl>
 <dd>
 
-**name:** `String` — The name of the workflow
+**name:** `String` — The name of the workflow.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**steps:** `Optional<List<WorkflowStepDefinition>>` 
+
+The steps that define the workflow's processing graph. Each step has a `type`, a unique `name`, and optional `next` entries that define routing to downstream steps.
+
+When omitted, the workflow is created with default steps (`TRIGGER` → `PARSE`). The default steps may change in the future.
+
+See the [Configuring Workflows via API guide](https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api) for step definitions, branching patterns, and examples.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.workflows.retrieve(id) -> Workflow</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get details of a workflow, including its draft version and steps.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.workflows().retrieve("workflow_abc123");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` — The ID of the workflow.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.workflows.update(id, request) -> Workflow</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update a workflow's draft. You can update the name, the steps, or both.
+
+When `steps` is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.workflows().update(
+    "workflow_abc123",
+    WorkflowsUpdateRequest
+        .builder()
+        .name("Updated Invoice Processing")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` — The ID of the workflow to update.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `Optional<String>` — The new name for the workflow.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**steps:** `Optional<List<WorkflowStepDefinition>>` 
+
+The new step definitions for the draft version. Replaces all existing draft steps.
+
+See the [Configuring Workflows via API guide](https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api) for step definitions, branching patterns, and examples.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.workflows.listVersions(id) -> WorkflowsListVersionsResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all versions of a workflow, including the draft version. Returns a paginated list of version summaries.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.workflows().listVersions(
+    "workflow_abc123",
+    WorkflowsListVersionsRequest
+        .builder()
+        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` — The ID of the workflow.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**nextPageToken:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sortDir:** `Optional<SortDir>` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.workflows.deploy(id, request) -> WorkflowVersion</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Deploy a new version of a workflow. The deployed version becomes available for running workflow runs.
+
+When `steps` is omitted, the current draft is deployed as-is. When `steps` is provided, the given steps are deployed directly without modifying the draft.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.workflows().deploy(
+    "workflow_abc123",
+    WorkflowsDeployRequest
+        .builder()
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` — The ID of the workflow to deploy.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**name:** `Optional<String>` — An optional name for this deployed version.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**steps:** `Optional<List<WorkflowStepDefinition>>` 
+
+Optional step definitions. When provided, these steps are deployed directly without modifying the draft. When omitted, the current draft is deployed.
+
+All configurable steps (`EXTRACT`, `CLASSIFY`, `SPLIT`, `CONDITIONAL_EXTRACT`, `RULE_VALIDATION`, `EXTERNAL_DATA_VALIDATION`) must include `config` when deploying. Unconfigured steps are rejected with a 400.
+
+See the [Configuring Workflows via API guide](https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api) for step definitions, branching patterns, and examples.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.workflows.retrieveVersion(id, versionId) -> WorkflowVersion</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get a specific version of a workflow, including its step definitions.
+
+The `versionId` parameter accepts:
+- `"draft"` — returns the current draft version
+- A version number (e.g. `"1"`, `"2"`) — returns that deployed version
+- An internal version ID (e.g. `"workflow_version_abc123"`) — returns that specific version
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.workflows().retrieveVersion("workflow_abc123", "draft");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` — The ID of the workflow.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**versionId:** `String` — The version to retrieve. Use `"draft"` for the draft, a number like `"1"` for a deployed version, or the internal version ID.
     
 </dd>
 </dl>
@@ -4485,6 +5457,14 @@ Example: `"invoice"`
 <dd>
 
 **maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -4637,7 +5617,12 @@ Once a workflow has been run, you can check the status and output of a specific 
 <dd>
 
 ```java
-client.workflowRuns().retrieve("workflow_run_id_here");
+client.workflowRuns().retrieve(
+    "workflow_run_id_here",
+    WorkflowRunsRetrieveRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -4657,6 +5642,14 @@ client.workflowRuns().retrieve("workflow_run_id_here");
 The ID of the workflow run.
 
 Example: `"workflow_run_xKm9pNv3qWsY_jL2tR5Dh"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -4734,6 +5727,14 @@ Example: `"workflow_run_xKm9pNv3qWsY_jL2tR5Dh"`
 <dl>
 <dd>
 
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **name:** `Optional<String>` — An optional name that can be assigned to a specific WorkflowRun
     
 </dd>
@@ -4789,7 +5790,12 @@ This endpoint can be used if you'd like to manage data retention on your own rat
 <dd>
 
 ```java
-client.workflowRuns().delete("workflow_run_id_here");
+client.workflowRuns().delete(
+    "workflow_run_id_here",
+    WorkflowRunsDeleteRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -4809,6 +5815,14 @@ client.workflowRuns().delete("workflow_run_id_here");
 The ID of the workflow run.
 
 Example: `"workflow_run_xKm9pNv3qWsY_jL2tR5Dh"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -4849,7 +5863,12 @@ Note: Only workflow runs with a status of `PROCESSING` or `PENDING` can be cance
 <dd>
 
 ```java
-client.workflowRuns().cancel("workflow_run_id_here");
+client.workflowRuns().cancel(
+    "workflow_run_id_here",
+    WorkflowRunsCancelRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -4869,6 +5888,14 @@ client.workflowRuns().cancel("workflow_run_id_here");
 The ID of the workflow run.
 
 Example: `"workflow_run_xKm9pNv3qWsY_jL2tR5Dh"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -5160,6 +6187,14 @@ Example: `"invoice"`
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -5333,7 +6368,12 @@ A common use case for this endpoint is to poll for the status and final output o
 <dd>
 
 ```java
-client.processorRun().get("processor_run_id_here");
+client.processorRun().get(
+    "processor_run_id_here",
+    ProcessorRunGetRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -5353,6 +6393,14 @@ client.processorRun().get("processor_run_id_here");
 The unique identifier for this processor run.
 
 Example: `"exr_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -5393,7 +6441,12 @@ This endpoint can be used if you'd like to manage data retention on your own rat
 <dd>
 
 ```java
-client.processorRun().delete("processor_run_id_here");
+client.processorRun().delete(
+    "processor_run_id_here",
+    ProcessorRunDeleteRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -5413,6 +6466,14 @@ client.processorRun().delete("processor_run_id_here");
 The ID of the processor run to delete.
 
 Example: `"exr_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -5453,7 +6514,12 @@ Note: Only processor runs with a status of `"PROCESSING"` can be cancelled. Proc
 <dd>
 
 ```java
-client.processorRun().cancel("processor_run_id_here");
+client.processorRun().cancel(
+    "processor_run_id_here",
+    ProcessorRunCancelRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -5473,6 +6539,14 @@ client.processorRun().cancel("processor_run_id_here");
 The unique identifier for the processor run to cancel.
 
 Example: `"exr_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -5564,6 +6638,14 @@ client.processor().list(
 <dd>
 
 **sortDir:** `Optional<ProcessorListRequestSortDir>` — Sort direction
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -5722,6 +6804,14 @@ Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
 <dl>
 <dd>
 
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **name:** `Optional<String>` — The new name for the processor
     
 </dd>
@@ -5778,7 +6868,12 @@ The `draft` version is the latest unpublished version of the processor, which ca
 <dd>
 
 ```java
-client.processorVersion().list("processor_id_here");
+client.processorVersion().list(
+    "processor_id_here",
+    ProcessorVersionListRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -5798,6 +6893,14 @@ client.processorVersion().list("processor_id_here");
 The ID of the processor to retrieve versions for.
 
 Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -5871,6 +6974,14 @@ Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
 <dl>
 <dd>
 
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **releaseType:** `ProcessorVersionCreateRequestReleaseType` — The type of release for this version. The two options are "major" and "minor", which will increment the version number accordingly.
     
 </dd>
@@ -5926,7 +7037,13 @@ Retrieve a specific version of a processor in Extend
 <dd>
 
 ```java
-client.processorVersion().get("processor_id_here", "processor_version_id_here");
+client.processorVersion().get(
+    "processor_id_here",
+    "processor_version_id_here",
+    ProcessorVersionGetRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -5958,6 +7075,14 @@ Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
 The ID of the specific processor version to retrieve.
 
 Example: `"exv_QYk6jgHA_8CsO8rVWhyNC"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -5999,7 +7124,12 @@ Retrieve details about a batch processor run, including evaluation runs.
 <dd>
 
 ```java
-client.batchProcessorRun().get("bpr_id_here");
+client.batchProcessorRun().get(
+    "bpr_id_here",
+    BatchProcessorRunGetRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -6019,6 +7149,14 @@ client.batchProcessorRun().get("bpr_id_here");
 The unique identifier of the batch processor run to retrieve.
 
 Example: `"bpr_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -6116,6 +7254,14 @@ Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
 <dd>
 
 **maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -6245,7 +7391,12 @@ Retrieve a specific evaluation set by ID. This returns an evaluation set object,
 <dd>
 
 ```java
-client.evaluationSets().retrieve("evaluation_set_id_here");
+client.evaluationSets().retrieve(
+    "evaluation_set_id_here",
+    EvaluationSetsRetrieveRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -6265,6 +7416,14 @@ client.evaluationSets().retrieve("evaluation_set_id_here");
 The ID of the evaluation set.
 
 Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -6367,6 +7526,14 @@ Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -6460,6 +7627,14 @@ Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
 <dl>
 <dd>
 
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **items:** `List<EvaluationSetItemsCreateRequestItemsItem>` — An array of objects representing the evaluation set items to create.
     
 </dd>
@@ -6499,7 +7674,13 @@ Get details of an evaluation set item.
 <dd>
 
 ```java
-client.evaluationSetItems().retrieve("evaluation_set_id_here", "evaluation_set_item_id_here");
+client.evaluationSetItems().retrieve(
+    "evaluation_set_id_here",
+    "evaluation_set_item_id_here",
+    EvaluationSetItemsRetrieveRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -6531,6 +7712,14 @@ Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
 The ID of the evaluation set item.
 
 Example: `"evi_kR9mNP12Qw4yTv8BdR3H"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -6628,6 +7817,14 @@ Example: `"evi_kR9mNP12Qw4yTv8BdR3H"`
 <dl>
 <dd>
 
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **expectedOutput:** `ProvidedProcessorOutput` — The expected output of the extractor, classifier, or splitter when run against the file. This must conform to the output schema of the entity associated with the evaluation set.
     
 </dd>
@@ -6667,7 +7864,13 @@ Delete an evaluation set item.
 <dd>
 
 ```java
-client.evaluationSetItems().delete("evaluation_set_id_here", "evaluation_set_item_id_here");
+client.evaluationSetItems().delete(
+    "evaluation_set_id_here",
+    "evaluation_set_item_id_here",
+    EvaluationSetItemsDeleteRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -6699,6 +7902,14 @@ Example: `"ev_2LcgeY_mp2T5yPaEuq5Lw"`
 The ID of the evaluation set item.
 
 Example: `"evi_kR9mNP12Qw4yTv8BdR3H"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -6738,7 +7949,12 @@ Get details of an evaluation set run.
 <dd>
 
 ```java
-client.evaluationSetRuns().retrieve("evaluation_set_run_id_here");
+client.evaluationSetRuns().retrieve(
+    "evaluation_set_run_id_here",
+    EvaluationSetRunsRetrieveRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -6758,6 +7974,14 @@ client.evaluationSetRuns().retrieve("evaluation_set_run_id_here");
 The ID of the evaluation set run.
 
 Example: `"evr_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -6842,6 +8066,14 @@ client.webhookEndpoints().list(
 <dd>
 
 **maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -6988,7 +8220,12 @@ Retrieve a webhook endpoint by ID.
 <dd>
 
 ```java
-client.webhookEndpoints().retrieve("webhook_endpoint_id_here");
+client.webhookEndpoints().retrieve(
+    "webhook_endpoint_id_here",
+    WebhookEndpointsRetrieveRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -7008,6 +8245,14 @@ client.webhookEndpoints().retrieve("webhook_endpoint_id_here");
 The ID of the webhook endpoint.
 
 Example: `"wh_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -7073,6 +8318,14 @@ client.webhookEndpoints().update(
 The ID of the webhook endpoint to update.
 
 Example: `"wh_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -7151,7 +8404,12 @@ Delete a webhook endpoint and all of its subscriptions. This operation is perman
 <dd>
 
 ```java
-client.webhookEndpoints().delete("webhook_endpoint_id_here");
+client.webhookEndpoints().delete(
+    "webhook_endpoint_id_here",
+    WebhookEndpointsDeleteRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -7171,6 +8429,14 @@ client.webhookEndpoints().delete("webhook_endpoint_id_here");
 The ID of the webhook endpoint to delete.
 
 Example: `"wh_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -7263,6 +8529,14 @@ client.webhookSubscriptions().list(
 <dd>
 
 **maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -7393,7 +8667,12 @@ Retrieve a webhook subscription by ID.
 <dd>
 
 ```java
-client.webhookSubscriptions().retrieve("webhook_subscription_id_here");
+client.webhookSubscriptions().retrieve(
+    "webhook_subscription_id_here",
+    WebhookSubscriptionsRetrieveRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -7413,6 +8692,14 @@ client.webhookSubscriptions().retrieve("webhook_subscription_id_here");
 The ID of the webhook subscription.
 
 Example: `"whes_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>
@@ -7486,6 +8773,14 @@ Example: `"whes_Xj8mK2pL9nR4vT7qY5wZ"`
 <dl>
 <dd>
 
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **enabledEvents:** `List<WebhookSubscriptionEventType>` — The event types to subscribe to. Must be valid for the subscription's resource type.
     
 </dd>
@@ -7525,7 +8820,12 @@ Delete a webhook subscription. This operation is permanent and cannot be undone.
 <dd>
 
 ```java
-client.webhookSubscriptions().delete("webhook_subscription_id_here");
+client.webhookSubscriptions().delete(
+    "webhook_subscription_id_here",
+    WebhookSubscriptionsDeleteRequest
+        .builder()
+        .build()
+);
 ```
 </dd>
 </dl>
@@ -7545,6 +8845,14 @@ client.webhookSubscriptions().delete("webhook_subscription_id_here");
 The ID of the webhook subscription to delete.
 
 Example: `"whes_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
     
 </dd>
 </dl>

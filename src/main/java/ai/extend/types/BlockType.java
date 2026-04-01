@@ -9,13 +9,23 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public final class BlockType {
     public static final BlockType TABLE_HEAD = new BlockType(Value.TABLE_HEAD, "table_head");
 
+    public static final BlockType KEY_VALUE = new BlockType(Value.KEY_VALUE, "key_value");
+
+    public static final BlockType PAGE_NUMBER = new BlockType(Value.PAGE_NUMBER, "page_number");
+
     public static final BlockType TEXT = new BlockType(Value.TEXT, "text");
 
     public static final BlockType HEADING = new BlockType(Value.HEADING, "heading");
 
     public static final BlockType SECTION_HEADING = new BlockType(Value.SECTION_HEADING, "section_heading");
 
+    public static final BlockType HEADER = new BlockType(Value.HEADER, "header");
+
+    public static final BlockType BARCODE = new BlockType(Value.BARCODE, "barcode");
+
     public static final BlockType TABLE = new BlockType(Value.TABLE, "table");
+
+    public static final BlockType FOOTER = new BlockType(Value.FOOTER, "footer");
 
     public static final BlockType TABLE_CELL = new BlockType(Value.TABLE_CELL, "table_cell");
 
@@ -54,14 +64,24 @@ public final class BlockType {
         switch (value) {
             case TABLE_HEAD:
                 return visitor.visitTableHead();
+            case KEY_VALUE:
+                return visitor.visitKeyValue();
+            case PAGE_NUMBER:
+                return visitor.visitPageNumber();
             case TEXT:
                 return visitor.visitText();
             case HEADING:
                 return visitor.visitHeading();
             case SECTION_HEADING:
                 return visitor.visitSectionHeading();
+            case HEADER:
+                return visitor.visitHeader();
+            case BARCODE:
+                return visitor.visitBarcode();
             case TABLE:
                 return visitor.visitTable();
+            case FOOTER:
+                return visitor.visitFooter();
             case TABLE_CELL:
                 return visitor.visitTableCell();
             case FIGURE:
@@ -77,14 +97,24 @@ public final class BlockType {
         switch (value) {
             case "table_head":
                 return TABLE_HEAD;
+            case "key_value":
+                return KEY_VALUE;
+            case "page_number":
+                return PAGE_NUMBER;
             case "text":
                 return TEXT;
             case "heading":
                 return HEADING;
             case "section_heading":
                 return SECTION_HEADING;
+            case "header":
+                return HEADER;
+            case "barcode":
+                return BARCODE;
             case "table":
                 return TABLE;
+            case "footer":
+                return FOOTER;
             case "table_cell":
                 return TABLE_CELL;
             case "figure":
@@ -109,6 +139,16 @@ public final class BlockType {
 
         TABLE_CELL,
 
+        KEY_VALUE,
+
+        PAGE_NUMBER,
+
+        BARCODE,
+
+        HEADER,
+
+        FOOTER,
+
         UNKNOWN
     }
 
@@ -126,6 +166,16 @@ public final class BlockType {
         T visitTableHead();
 
         T visitTableCell();
+
+        T visitKeyValue();
+
+        T visitPageNumber();
+
+        T visitBarcode();
+
+        T visitHeader();
+
+        T visitFooter();
 
         T visitUnknown(String unknownType);
     }

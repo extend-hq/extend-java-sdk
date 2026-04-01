@@ -21,6 +21,7 @@ import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
 import ai.extend.resources.classifiers.requests.ClassifiersCreateRequest;
 import ai.extend.resources.classifiers.requests.ClassifiersListRequest;
+import ai.extend.resources.classifiers.requests.ClassifiersRetrieveRequest;
 import ai.extend.resources.classifiers.requests.ClassifiersUpdateRequest;
 import ai.extend.resources.classifiers.types.ClassifiersListResponse;
 import ai.extend.types.ApiError;
@@ -101,6 +102,10 @@ public class RawClassifiersClient {
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
@@ -239,13 +244,28 @@ public class RawClassifiersClient {
      * Get details of a classifier.
      */
     public ExtendClientHttpResponse<Classifier> retrieve(String id) {
-        return retrieve(id, null);
+        return retrieve(id, ClassifiersRetrieveRequest.builder().build());
     }
 
     /**
      * Get details of a classifier.
      */
     public ExtendClientHttpResponse<Classifier> retrieve(String id, RequestOptions requestOptions) {
+        return retrieve(id, ClassifiersRetrieveRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Get details of a classifier.
+     */
+    public ExtendClientHttpResponse<Classifier> retrieve(String id, ClassifiersRetrieveRequest request) {
+        return retrieve(id, request, null);
+    }
+
+    /**
+     * Get details of a classifier.
+     */
+    public ExtendClientHttpResponse<Classifier> retrieve(
+            String id, ClassifiersRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("classifiers")
@@ -255,12 +275,16 @@ public class RawClassifiersClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -349,16 +373,20 @@ public class RawClassifiersClient {
         try {
             body = RequestBody.create(
                     ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new ExtendClientException("Failed to serialize request", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

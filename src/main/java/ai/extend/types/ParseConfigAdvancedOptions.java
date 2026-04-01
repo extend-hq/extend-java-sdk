@@ -39,6 +39,10 @@ public final class ParseConfigAdvancedOptions {
 
     private final Optional<Boolean> alwaysConvertToPdf;
 
+    private final Optional<ParseConfigAdvancedOptionsEnrichmentFormat> enrichmentFormat;
+
+    private final Optional<ParseConfigAdvancedOptionsImageConversionQuality> imageConversionQuality;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseConfigAdvancedOptions(
@@ -51,6 +55,8 @@ public final class ParseConfigAdvancedOptions {
             Optional<Double> verticalGroupingThreshold,
             Optional<ParseConfigAdvancedOptionsReturnOcr> returnOcr,
             Optional<Boolean> alwaysConvertToPdf,
+            Optional<ParseConfigAdvancedOptionsEnrichmentFormat> enrichmentFormat,
+            Optional<ParseConfigAdvancedOptionsImageConversionQuality> imageConversionQuality,
             Map<String, Object> additionalProperties) {
         this.pageRotationEnabled = pageRotationEnabled;
         this.pageRanges = pageRanges;
@@ -61,6 +67,8 @@ public final class ParseConfigAdvancedOptions {
         this.verticalGroupingThreshold = verticalGroupingThreshold;
         this.returnOcr = returnOcr;
         this.alwaysConvertToPdf = alwaysConvertToPdf;
+        this.enrichmentFormat = enrichmentFormat;
+        this.imageConversionQuality = imageConversionQuality;
         this.additionalProperties = additionalProperties;
     }
 
@@ -138,6 +146,31 @@ public final class ParseConfigAdvancedOptions {
         return alwaysConvertToPdf;
     }
 
+    /**
+     * @return The format used for enrichment annotations in the output.
+     * <ul>
+     * <li><code>xml</code>: Use XML-style tags for enrichment annotations, e.g. &lt;page_number&gt;1&lt;/page_number&gt; or &lt;barcode&gt;1234567890&lt;/barcode&gt;</li>
+     * <li><code>bracket</code>: Use bracket-style notation for enrichment annotations, e.g. [page_number: 1] or [barcode: 1234567890]</li>
+     * </ul>
+     */
+    @JsonProperty("enrichmentFormat")
+    public Optional<ParseConfigAdvancedOptionsEnrichmentFormat> getEnrichmentFormat() {
+        return enrichmentFormat;
+    }
+
+    /**
+     * @return Controls the quality level when converting images or documents to PDF for parsing.
+     * <ul>
+     * <li><code>high</code>: Maximum quality, can add some latency for large/dense documents</li>
+     * <li><code>medium</code>: Balanced quality and speed</li>
+     * <li><code>low</code>: Lower quality, smaller file sizes, faster processing</li>
+     * </ul>
+     */
+    @JsonProperty("imageConversionQuality")
+    public Optional<ParseConfigAdvancedOptionsImageConversionQuality> getImageConversionQuality() {
+        return imageConversionQuality;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -158,7 +191,9 @@ public final class ParseConfigAdvancedOptions {
                 && excelSkipCalculation.equals(other.excelSkipCalculation)
                 && verticalGroupingThreshold.equals(other.verticalGroupingThreshold)
                 && returnOcr.equals(other.returnOcr)
-                && alwaysConvertToPdf.equals(other.alwaysConvertToPdf);
+                && alwaysConvertToPdf.equals(other.alwaysConvertToPdf)
+                && enrichmentFormat.equals(other.enrichmentFormat)
+                && imageConversionQuality.equals(other.imageConversionQuality);
     }
 
     @java.lang.Override
@@ -172,7 +207,9 @@ public final class ParseConfigAdvancedOptions {
                 this.excelSkipCalculation,
                 this.verticalGroupingThreshold,
                 this.returnOcr,
-                this.alwaysConvertToPdf);
+                this.alwaysConvertToPdf,
+                this.enrichmentFormat,
+                this.imageConversionQuality);
     }
 
     @java.lang.Override
@@ -204,6 +241,10 @@ public final class ParseConfigAdvancedOptions {
 
         private Optional<Boolean> alwaysConvertToPdf = Optional.empty();
 
+        private Optional<ParseConfigAdvancedOptionsEnrichmentFormat> enrichmentFormat = Optional.empty();
+
+        private Optional<ParseConfigAdvancedOptionsImageConversionQuality> imageConversionQuality = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -219,6 +260,8 @@ public final class ParseConfigAdvancedOptions {
             verticalGroupingThreshold(other.getVerticalGroupingThreshold());
             returnOcr(other.getReturnOcr());
             alwaysConvertToPdf(other.getAlwaysConvertToPdf());
+            enrichmentFormat(other.getEnrichmentFormat());
+            imageConversionQuality(other.getImageConversionQuality());
             return this;
         }
 
@@ -350,6 +393,44 @@ public final class ParseConfigAdvancedOptions {
             return this;
         }
 
+        /**
+         * <p>The format used for enrichment annotations in the output.</p>
+         * <ul>
+         * <li><code>xml</code>: Use XML-style tags for enrichment annotations, e.g. &lt;page_number&gt;1&lt;/page_number&gt; or &lt;barcode&gt;1234567890&lt;/barcode&gt;</li>
+         * <li><code>bracket</code>: Use bracket-style notation for enrichment annotations, e.g. [page_number: 1] or [barcode: 1234567890]</li>
+         * </ul>
+         */
+        @JsonSetter(value = "enrichmentFormat", nulls = Nulls.SKIP)
+        public Builder enrichmentFormat(Optional<ParseConfigAdvancedOptionsEnrichmentFormat> enrichmentFormat) {
+            this.enrichmentFormat = enrichmentFormat;
+            return this;
+        }
+
+        public Builder enrichmentFormat(ParseConfigAdvancedOptionsEnrichmentFormat enrichmentFormat) {
+            this.enrichmentFormat = Optional.ofNullable(enrichmentFormat);
+            return this;
+        }
+
+        /**
+         * <p>Controls the quality level when converting images or documents to PDF for parsing.</p>
+         * <ul>
+         * <li><code>high</code>: Maximum quality, can add some latency for large/dense documents</li>
+         * <li><code>medium</code>: Balanced quality and speed</li>
+         * <li><code>low</code>: Lower quality, smaller file sizes, faster processing</li>
+         * </ul>
+         */
+        @JsonSetter(value = "imageConversionQuality", nulls = Nulls.SKIP)
+        public Builder imageConversionQuality(
+                Optional<ParseConfigAdvancedOptionsImageConversionQuality> imageConversionQuality) {
+            this.imageConversionQuality = imageConversionQuality;
+            return this;
+        }
+
+        public Builder imageConversionQuality(ParseConfigAdvancedOptionsImageConversionQuality imageConversionQuality) {
+            this.imageConversionQuality = Optional.ofNullable(imageConversionQuality);
+            return this;
+        }
+
         public ParseConfigAdvancedOptions build() {
             return new ParseConfigAdvancedOptions(
                     pageRotationEnabled,
@@ -361,6 +442,8 @@ public final class ParseConfigAdvancedOptions {
                     verticalGroupingThreshold,
                     returnOcr,
                     alwaysConvertToPdf,
+                    enrichmentFormat,
+                    imageConversionQuality,
                     additionalProperties);
         }
     }

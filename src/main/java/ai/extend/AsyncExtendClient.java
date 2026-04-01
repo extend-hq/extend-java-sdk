@@ -16,6 +16,7 @@ import ai.extend.resources.classifiers.AsyncClassifiersClient;
 import ai.extend.resources.classifierversions.AsyncClassifierVersionsClient;
 import ai.extend.resources.classifyruns.AsyncClassifyRunsClient;
 import ai.extend.resources.editruns.AsyncEditRunsClient;
+import ai.extend.resources.editschemas.AsyncEditSchemasClient;
 import ai.extend.resources.evaluationsetitems.AsyncEvaluationSetItemsClient;
 import ai.extend.resources.evaluationsetruns.AsyncEvaluationSetRunsClient;
 import ai.extend.resources.evaluationsets.AsyncEvaluationSetsClient;
@@ -52,6 +53,8 @@ public class AsyncExtendClient {
     protected final Supplier<AsyncParseRunsClient> parseRunsClient;
 
     protected final Supplier<AsyncEditRunsClient> editRunsClient;
+
+    protected final Supplier<AsyncEditSchemasClient> editSchemasClient;
 
     protected final Supplier<AsyncExtractRunsClient> extractRunsClient;
 
@@ -99,6 +102,7 @@ public class AsyncExtendClient {
         this.filesClient = Suppliers.memoize(() -> new AsyncFilesClient(clientOptions));
         this.parseRunsClient = Suppliers.memoize(() -> new AsyncParseRunsClient(clientOptions));
         this.editRunsClient = Suppliers.memoize(() -> new AsyncEditRunsClient(clientOptions));
+        this.editSchemasClient = Suppliers.memoize(() -> new AsyncEditSchemasClient(clientOptions));
         this.extractRunsClient = Suppliers.memoize(() -> new AsyncExtractRunsClient(clientOptions));
         this.extractorsClient = Suppliers.memoize(() -> new AsyncExtractorsClient(clientOptions));
         this.extractorVersionsClient = Suppliers.memoize(() -> new AsyncExtractorVersionsClient(clientOptions));
@@ -238,6 +242,10 @@ public class AsyncExtendClient {
 
     public AsyncEditRunsClient editRuns() {
         return this.editRunsClient.get();
+    }
+
+    public AsyncEditSchemasClient editSchemas() {
+        return this.editSchemasClient.get();
     }
 
     public AsyncExtractRunsClient extractRuns() {

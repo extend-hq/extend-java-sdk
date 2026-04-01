@@ -22,10 +22,16 @@ import java.util.Optional;
 public final class BlockMetadata {
     private final Optional<BlockMetadataPage> page;
 
+    private final Optional<BlockMetadataTextDirection> textDirection;
+
     private final Map<String, Object> additionalProperties;
 
-    private BlockMetadata(Optional<BlockMetadataPage> page, Map<String, Object> additionalProperties) {
+    private BlockMetadata(
+            Optional<BlockMetadataPage> page,
+            Optional<BlockMetadataTextDirection> textDirection,
+            Map<String, Object> additionalProperties) {
         this.page = page;
+        this.textDirection = textDirection;
         this.additionalProperties = additionalProperties;
     }
 
@@ -35,6 +41,14 @@ public final class BlockMetadata {
     @JsonProperty("page")
     public Optional<BlockMetadataPage> getPage() {
         return page;
+    }
+
+    /**
+     * @return Text direction for this block's content (&quot;ltr&quot; for left-to-right, &quot;rtl&quot; for right-to-left).
+     */
+    @JsonProperty("textDirection")
+    public Optional<BlockMetadataTextDirection> getTextDirection() {
+        return textDirection;
     }
 
     @java.lang.Override
@@ -49,12 +63,12 @@ public final class BlockMetadata {
     }
 
     private boolean equalTo(BlockMetadata other) {
-        return page.equals(other.page);
+        return page.equals(other.page) && textDirection.equals(other.textDirection);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.page);
+        return Objects.hash(this.page, this.textDirection);
     }
 
     @java.lang.Override
@@ -70,6 +84,8 @@ public final class BlockMetadata {
     public static final class Builder {
         private Optional<BlockMetadataPage> page = Optional.empty();
 
+        private Optional<BlockMetadataTextDirection> textDirection = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -77,6 +93,7 @@ public final class BlockMetadata {
 
         public Builder from(BlockMetadata other) {
             page(other.getPage());
+            textDirection(other.getTextDirection());
             return this;
         }
 
@@ -94,8 +111,22 @@ public final class BlockMetadata {
             return this;
         }
 
+        /**
+         * <p>Text direction for this block's content (&quot;ltr&quot; for left-to-right, &quot;rtl&quot; for right-to-left).</p>
+         */
+        @JsonSetter(value = "textDirection", nulls = Nulls.SKIP)
+        public Builder textDirection(Optional<BlockMetadataTextDirection> textDirection) {
+            this.textDirection = textDirection;
+            return this;
+        }
+
+        public Builder textDirection(BlockMetadataTextDirection textDirection) {
+            this.textDirection = Optional.ofNullable(textDirection);
+            return this;
+        }
+
         public BlockMetadata build() {
-            return new BlockMetadata(page, additionalProperties);
+            return new BlockMetadata(page, textDirection, additionalProperties);
         }
     }
 }

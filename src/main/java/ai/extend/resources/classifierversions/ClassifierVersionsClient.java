@@ -7,6 +7,7 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.classifierversions.requests.ClassifierVersionsCreateRequest;
 import ai.extend.resources.classifierversions.requests.ClassifierVersionsListRequest;
+import ai.extend.resources.classifierversions.requests.ClassifierVersionsRetrieveRequest;
 import ai.extend.resources.classifierversions.types.ClassifierVersionsListResponse;
 import ai.extend.types.ClassifierVersion;
 
@@ -89,5 +90,26 @@ public class ClassifierVersionsClient {
      */
     public ClassifierVersion retrieve(String classifierId, String versionId, RequestOptions requestOptions) {
         return this.rawClient.retrieve(classifierId, versionId, requestOptions).body();
+    }
+
+    /**
+     * Retrieve a specific version of a classifier in Extend
+     */
+    public ClassifierVersion retrieve(
+            String classifierId, String versionId, ClassifierVersionsRetrieveRequest request) {
+        return this.rawClient.retrieve(classifierId, versionId, request).body();
+    }
+
+    /**
+     * Retrieve a specific version of a classifier in Extend
+     */
+    public ClassifierVersion retrieve(
+            String classifierId,
+            String versionId,
+            ClassifierVersionsRetrieveRequest request,
+            RequestOptions requestOptions) {
+        return this.rawClient
+                .retrieve(classifierId, versionId, request, requestOptions)
+                .body();
     }
 }

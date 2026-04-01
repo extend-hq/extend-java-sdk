@@ -16,6 +16,7 @@ import ai.extend.resources.classifiers.ClassifiersClient;
 import ai.extend.resources.classifierversions.ClassifierVersionsClient;
 import ai.extend.resources.classifyruns.ClassifyRunsClient;
 import ai.extend.resources.editruns.EditRunsClient;
+import ai.extend.resources.editschemas.EditSchemasClient;
 import ai.extend.resources.evaluationsetitems.EvaluationSetItemsClient;
 import ai.extend.resources.evaluationsetruns.EvaluationSetRunsClient;
 import ai.extend.resources.evaluationsets.EvaluationSetsClient;
@@ -51,6 +52,8 @@ public class ExtendClient {
     protected final Supplier<ParseRunsClient> parseRunsClient;
 
     protected final Supplier<EditRunsClient> editRunsClient;
+
+    protected final Supplier<EditSchemasClient> editSchemasClient;
 
     protected final Supplier<ExtractRunsClient> extractRunsClient;
 
@@ -98,6 +101,7 @@ public class ExtendClient {
         this.filesClient = Suppliers.memoize(() -> new FilesClient(clientOptions));
         this.parseRunsClient = Suppliers.memoize(() -> new ParseRunsClient(clientOptions));
         this.editRunsClient = Suppliers.memoize(() -> new EditRunsClient(clientOptions));
+        this.editSchemasClient = Suppliers.memoize(() -> new EditSchemasClient(clientOptions));
         this.extractRunsClient = Suppliers.memoize(() -> new ExtractRunsClient(clientOptions));
         this.extractorsClient = Suppliers.memoize(() -> new ExtractorsClient(clientOptions));
         this.extractorVersionsClient = Suppliers.memoize(() -> new ExtractorVersionsClient(clientOptions));
@@ -237,6 +241,10 @@ public class ExtendClient {
 
     public EditRunsClient editRuns() {
         return this.editRunsClient.get();
+    }
+
+    public EditSchemasClient editSchemas() {
+        return this.editSchemasClient.get();
     }
 
     public ExtractRunsClient extractRuns() {

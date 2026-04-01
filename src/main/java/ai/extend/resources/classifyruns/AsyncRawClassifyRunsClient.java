@@ -19,8 +19,11 @@ import ai.extend.errors.PaymentRequiredError;
 import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
+import ai.extend.resources.classifyruns.requests.ClassifyRunsCancelRequest;
 import ai.extend.resources.classifyruns.requests.ClassifyRunsCreateRequest;
+import ai.extend.resources.classifyruns.requests.ClassifyRunsDeleteRequest;
 import ai.extend.resources.classifyruns.requests.ClassifyRunsListRequest;
+import ai.extend.resources.classifyruns.requests.ClassifyRunsRetrieveRequest;
 import ai.extend.resources.classifyruns.types.ClassifyRunsDeleteResponse;
 import ai.extend.resources.classifyruns.types.ClassifyRunsListResponse;
 import ai.extend.types.ApiError;
@@ -125,6 +128,10 @@ public class AsyncRawClassifyRunsClient {
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
@@ -324,7 +331,7 @@ public class AsyncRawClassifyRunsClient {
      * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> retrieve(String id) {
-        return retrieve(id, null);
+        return retrieve(id, ClassifyRunsRetrieveRequest.builder().build());
     }
 
     /**
@@ -332,6 +339,24 @@ public class AsyncRawClassifyRunsClient {
      * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> retrieve(String id, RequestOptions requestOptions) {
+        return retrieve(id, ClassifyRunsRetrieveRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Retrieve details about a specific classify run, including its status and outputs.
+     * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> retrieve(
+            String id, ClassifyRunsRetrieveRequest request) {
+        return retrieve(id, request, null);
+    }
+
+    /**
+     * Retrieve details about a specific classify run, including its status and outputs.
+     * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> retrieve(
+            String id, ClassifyRunsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("classify_runs")
@@ -341,12 +366,16 @@ public class AsyncRawClassifyRunsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -430,7 +459,7 @@ public class AsyncRawClassifyRunsClient {
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ClassifyRunsDeleteResponse>> delete(String id) {
-        return delete(id, null);
+        return delete(id, ClassifyRunsDeleteRequest.builder().build());
     }
 
     /**
@@ -439,6 +468,24 @@ public class AsyncRawClassifyRunsClient {
      */
     public CompletableFuture<ExtendClientHttpResponse<ClassifyRunsDeleteResponse>> delete(
             String id, RequestOptions requestOptions) {
+        return delete(id, ClassifyRunsDeleteRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Delete a classify run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ClassifyRunsDeleteResponse>> delete(
+            String id, ClassifyRunsDeleteRequest request) {
+        return delete(id, request, null);
+    }
+
+    /**
+     * Delete a classify run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ClassifyRunsDeleteResponse>> delete(
+            String id, ClassifyRunsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("classify_runs")
@@ -448,12 +495,16 @@ public class AsyncRawClassifyRunsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("DELETE", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -539,7 +590,7 @@ public class AsyncRawClassifyRunsClient {
      * <p>Note: Only classify runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Classifier runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> cancel(String id) {
-        return cancel(id, null);
+        return cancel(id, ClassifyRunsCancelRequest.builder().build());
     }
 
     /**
@@ -547,6 +598,24 @@ public class AsyncRawClassifyRunsClient {
      * <p>Note: Only classify runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Classifier runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> cancel(String id, RequestOptions requestOptions) {
+        return cancel(id, ClassifyRunsCancelRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Cancel an in-progress classify run.
+     * <p>Note: Only classify runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Classifier runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> cancel(
+            String id, ClassifyRunsCancelRequest request) {
+        return cancel(id, request, null);
+    }
+
+    /**
+     * Cancel an in-progress classify run.
+     * <p>Note: Only classify runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Classifier runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> cancel(
+            String id, ClassifyRunsCancelRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("classify_runs")
@@ -557,12 +626,16 @@ public class AsyncRawClassifyRunsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("POST", RequestBody.create("", null))
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

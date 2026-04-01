@@ -7,6 +7,7 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.evaluationsets.requests.EvaluationSetsCreateRequest;
 import ai.extend.resources.evaluationsets.requests.EvaluationSetsListRequest;
+import ai.extend.resources.evaluationsets.requests.EvaluationSetsRetrieveRequest;
 import ai.extend.resources.evaluationsets.types.EvaluationSetsListResponse;
 import ai.extend.types.EvaluationSet;
 
@@ -83,5 +84,19 @@ public class EvaluationSetsClient {
      */
     public EvaluationSet retrieve(String id, RequestOptions requestOptions) {
         return this.rawClient.retrieve(id, requestOptions).body();
+    }
+
+    /**
+     * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
+     */
+    public EvaluationSet retrieve(String id, EvaluationSetsRetrieveRequest request) {
+        return this.rawClient.retrieve(id, request).body();
+    }
+
+    /**
+     * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
+     */
+    public EvaluationSet retrieve(String id, EvaluationSetsRetrieveRequest request, RequestOptions requestOptions) {
+        return this.rawClient.retrieve(id, request, requestOptions).body();
     }
 }

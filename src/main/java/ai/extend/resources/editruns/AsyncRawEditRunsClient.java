@@ -19,6 +19,8 @@ import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
 import ai.extend.resources.editruns.requests.EditRunsCreateRequest;
+import ai.extend.resources.editruns.requests.EditRunsDeleteRequest;
+import ai.extend.resources.editruns.requests.EditRunsRetrieveRequest;
 import ai.extend.resources.editruns.types.EditRunsDeleteResponse;
 import ai.extend.types.ApiError;
 import ai.extend.types.EditRun;
@@ -164,7 +166,7 @@ public class AsyncRawEditRunsClient {
      * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<EditRun>> retrieve(String id) {
-        return retrieve(id, null);
+        return retrieve(id, EditRunsRetrieveRequest.builder().build());
     }
 
     /**
@@ -172,6 +174,23 @@ public class AsyncRawEditRunsClient {
      * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<EditRun>> retrieve(String id, RequestOptions requestOptions) {
+        return retrieve(id, EditRunsRetrieveRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Retrieve the status and results of an edit run.
+     * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<EditRun>> retrieve(String id, EditRunsRetrieveRequest request) {
+        return retrieve(id, request, null);
+    }
+
+    /**
+     * Retrieve the status and results of an edit run.
+     * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<EditRun>> retrieve(
+            String id, EditRunsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("edit_runs")
@@ -181,12 +200,16 @@ public class AsyncRawEditRunsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -270,7 +293,7 @@ public class AsyncRawEditRunsClient {
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<EditRunsDeleteResponse>> delete(String id) {
-        return delete(id, null);
+        return delete(id, EditRunsDeleteRequest.builder().build());
     }
 
     /**
@@ -279,6 +302,24 @@ public class AsyncRawEditRunsClient {
      */
     public CompletableFuture<ExtendClientHttpResponse<EditRunsDeleteResponse>> delete(
             String id, RequestOptions requestOptions) {
+        return delete(id, EditRunsDeleteRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<EditRunsDeleteResponse>> delete(
+            String id, EditRunsDeleteRequest request) {
+        return delete(id, request, null);
+    }
+
+    /**
+     * Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<EditRunsDeleteResponse>> delete(
+            String id, EditRunsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("edit_runs")
@@ -288,12 +329,16 @@ public class AsyncRawEditRunsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("DELETE", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

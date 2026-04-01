@@ -7,6 +7,7 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.classifiers.requests.ClassifiersCreateRequest;
 import ai.extend.resources.classifiers.requests.ClassifiersListRequest;
+import ai.extend.resources.classifiers.requests.ClassifiersRetrieveRequest;
 import ai.extend.resources.classifiers.requests.ClassifiersUpdateRequest;
 import ai.extend.resources.classifiers.types.ClassifiersListResponse;
 import ai.extend.types.Classifier;
@@ -86,6 +87,20 @@ public class ClassifiersClient {
      */
     public Classifier retrieve(String id, RequestOptions requestOptions) {
         return this.rawClient.retrieve(id, requestOptions).body();
+    }
+
+    /**
+     * Get details of a classifier.
+     */
+    public Classifier retrieve(String id, ClassifiersRetrieveRequest request) {
+        return this.rawClient.retrieve(id, request).body();
+    }
+
+    /**
+     * Get details of a classifier.
+     */
+    public Classifier retrieve(String id, ClassifiersRetrieveRequest request, RequestOptions requestOptions) {
+        return this.rawClient.retrieve(id, request, requestOptions).body();
     }
 
     /**

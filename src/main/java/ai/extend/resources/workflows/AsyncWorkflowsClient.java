@@ -6,7 +6,14 @@ package ai.extend.resources.workflows;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.workflows.requests.WorkflowsCreateRequest;
+import ai.extend.resources.workflows.requests.WorkflowsDeployRequest;
+import ai.extend.resources.workflows.requests.WorkflowsListRequest;
+import ai.extend.resources.workflows.requests.WorkflowsListVersionsRequest;
+import ai.extend.resources.workflows.requests.WorkflowsUpdateRequest;
+import ai.extend.resources.workflows.types.WorkflowsListResponse;
+import ai.extend.resources.workflows.types.WorkflowsListVersionsResponse;
 import ai.extend.types.Workflow;
+import ai.extend.types.WorkflowVersion;
 import java.util.concurrent.CompletableFuture;
 
 public class AsyncWorkflowsClient {
@@ -27,18 +34,185 @@ public class AsyncWorkflowsClient {
     }
 
     /**
-     * Create a new workflow in Extend. Workflows are sequences of steps that process files and data in a specific order to achieve a desired outcome.
-     * <p>This endpoint will create a new workflow in Extend, which can then be configured and deployed. Typically, workflows are created from our UI, however this endpoint can be used to create workflows programmatically. Configuration of the flow still needs to be done in the dashboard.</p>
+     * List all workflows. Returns a paginated list of workflow summaries.
+     */
+    public CompletableFuture<WorkflowsListResponse> list() {
+        return this.rawClient.list().thenApply(response -> response.body());
+    }
+
+    /**
+     * List all workflows. Returns a paginated list of workflow summaries.
+     */
+    public CompletableFuture<WorkflowsListResponse> list(RequestOptions requestOptions) {
+        return this.rawClient.list(requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * List all workflows. Returns a paginated list of workflow summaries.
+     */
+    public CompletableFuture<WorkflowsListResponse> list(WorkflowsListRequest request) {
+        return this.rawClient.list(request).thenApply(response -> response.body());
+    }
+
+    /**
+     * List all workflows. Returns a paginated list of workflow summaries.
+     */
+    public CompletableFuture<WorkflowsListResponse> list(WorkflowsListRequest request, RequestOptions requestOptions) {
+        return this.rawClient.list(request, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Create a new workflow. Optionally provide <code>steps</code> to define the workflow's step graph.
+     * <p>When <code>steps</code> is omitted, the workflow is created with default steps (<code>TRIGGER</code> → <code>PARSE</code>). When <code>steps</code> is provided, the step graph is validated and the draft version is populated with the given steps.</p>
+     * <p><strong>Note:</strong> The default steps may change in the future. If your integration depends on a specific step graph, provide <code>steps</code> explicitly.</p>
      */
     public CompletableFuture<Workflow> create(WorkflowsCreateRequest request) {
         return this.rawClient.create(request).thenApply(response -> response.body());
     }
 
     /**
-     * Create a new workflow in Extend. Workflows are sequences of steps that process files and data in a specific order to achieve a desired outcome.
-     * <p>This endpoint will create a new workflow in Extend, which can then be configured and deployed. Typically, workflows are created from our UI, however this endpoint can be used to create workflows programmatically. Configuration of the flow still needs to be done in the dashboard.</p>
+     * Create a new workflow. Optionally provide <code>steps</code> to define the workflow's step graph.
+     * <p>When <code>steps</code> is omitted, the workflow is created with default steps (<code>TRIGGER</code> → <code>PARSE</code>). When <code>steps</code> is provided, the step graph is validated and the draft version is populated with the given steps.</p>
+     * <p><strong>Note:</strong> The default steps may change in the future. If your integration depends on a specific step graph, provide <code>steps</code> explicitly.</p>
      */
     public CompletableFuture<Workflow> create(WorkflowsCreateRequest request, RequestOptions requestOptions) {
         return this.rawClient.create(request, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Get details of a workflow, including its draft version and steps.
+     */
+    public CompletableFuture<Workflow> retrieve(String id) {
+        return this.rawClient.retrieve(id).thenApply(response -> response.body());
+    }
+
+    /**
+     * Get details of a workflow, including its draft version and steps.
+     */
+    public CompletableFuture<Workflow> retrieve(String id, RequestOptions requestOptions) {
+        return this.rawClient.retrieve(id, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Update a workflow's draft. You can update the name, the steps, or both.
+     * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
+     */
+    public CompletableFuture<Workflow> update(String id) {
+        return this.rawClient.update(id).thenApply(response -> response.body());
+    }
+
+    /**
+     * Update a workflow's draft. You can update the name, the steps, or both.
+     * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
+     */
+    public CompletableFuture<Workflow> update(String id, RequestOptions requestOptions) {
+        return this.rawClient.update(id, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Update a workflow's draft. You can update the name, the steps, or both.
+     * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
+     */
+    public CompletableFuture<Workflow> update(String id, WorkflowsUpdateRequest request) {
+        return this.rawClient.update(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Update a workflow's draft. You can update the name, the steps, or both.
+     * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
+     */
+    public CompletableFuture<Workflow> update(
+            String id, WorkflowsUpdateRequest request, RequestOptions requestOptions) {
+        return this.rawClient.update(id, request, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * List all versions of a workflow, including the draft version. Returns a paginated list of version summaries.
+     */
+    public CompletableFuture<WorkflowsListVersionsResponse> listVersions(String id) {
+        return this.rawClient.listVersions(id).thenApply(response -> response.body());
+    }
+
+    /**
+     * List all versions of a workflow, including the draft version. Returns a paginated list of version summaries.
+     */
+    public CompletableFuture<WorkflowsListVersionsResponse> listVersions(String id, RequestOptions requestOptions) {
+        return this.rawClient.listVersions(id, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * List all versions of a workflow, including the draft version. Returns a paginated list of version summaries.
+     */
+    public CompletableFuture<WorkflowsListVersionsResponse> listVersions(
+            String id, WorkflowsListVersionsRequest request) {
+        return this.rawClient.listVersions(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * List all versions of a workflow, including the draft version. Returns a paginated list of version summaries.
+     */
+    public CompletableFuture<WorkflowsListVersionsResponse> listVersions(
+            String id, WorkflowsListVersionsRequest request, RequestOptions requestOptions) {
+        return this.rawClient.listVersions(id, request, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Deploy a new version of a workflow. The deployed version becomes available for running workflow runs.
+     * <p>When <code>steps</code> is omitted, the current draft is deployed as-is. When <code>steps</code> is provided, the given steps are deployed directly without modifying the draft.</p>
+     */
+    public CompletableFuture<WorkflowVersion> deploy(String id) {
+        return this.rawClient.deploy(id).thenApply(response -> response.body());
+    }
+
+    /**
+     * Deploy a new version of a workflow. The deployed version becomes available for running workflow runs.
+     * <p>When <code>steps</code> is omitted, the current draft is deployed as-is. When <code>steps</code> is provided, the given steps are deployed directly without modifying the draft.</p>
+     */
+    public CompletableFuture<WorkflowVersion> deploy(String id, RequestOptions requestOptions) {
+        return this.rawClient.deploy(id, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Deploy a new version of a workflow. The deployed version becomes available for running workflow runs.
+     * <p>When <code>steps</code> is omitted, the current draft is deployed as-is. When <code>steps</code> is provided, the given steps are deployed directly without modifying the draft.</p>
+     */
+    public CompletableFuture<WorkflowVersion> deploy(String id, WorkflowsDeployRequest request) {
+        return this.rawClient.deploy(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Deploy a new version of a workflow. The deployed version becomes available for running workflow runs.
+     * <p>When <code>steps</code> is omitted, the current draft is deployed as-is. When <code>steps</code> is provided, the given steps are deployed directly without modifying the draft.</p>
+     */
+    public CompletableFuture<WorkflowVersion> deploy(
+            String id, WorkflowsDeployRequest request, RequestOptions requestOptions) {
+        return this.rawClient.deploy(id, request, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Get a specific version of a workflow, including its step definitions.
+     * <p>The <code>versionId</code> parameter accepts:</p>
+     * <ul>
+     * <li><code>&quot;draft&quot;</code> — returns the current draft version</li>
+     * <li>A version number (e.g. <code>&quot;1&quot;</code>, <code>&quot;2&quot;</code>) — returns that deployed version</li>
+     * <li>An internal version ID (e.g. <code>&quot;workflow_version_abc123&quot;</code>) — returns that specific version</li>
+     * </ul>
+     */
+    public CompletableFuture<WorkflowVersion> retrieveVersion(String id, String versionId) {
+        return this.rawClient.retrieveVersion(id, versionId).thenApply(response -> response.body());
+    }
+
+    /**
+     * Get a specific version of a workflow, including its step definitions.
+     * <p>The <code>versionId</code> parameter accepts:</p>
+     * <ul>
+     * <li><code>&quot;draft&quot;</code> — returns the current draft version</li>
+     * <li>A version number (e.g. <code>&quot;1&quot;</code>, <code>&quot;2&quot;</code>) — returns that deployed version</li>
+     * <li>An internal version ID (e.g. <code>&quot;workflow_version_abc123&quot;</code>) — returns that specific version</li>
+     * </ul>
+     */
+    public CompletableFuture<WorkflowVersion> retrieveVersion(
+            String id, String versionId, RequestOptions requestOptions) {
+        return this.rawClient.retrieveVersion(id, versionId, requestOptions).thenApply(response -> response.body());
     }
 }

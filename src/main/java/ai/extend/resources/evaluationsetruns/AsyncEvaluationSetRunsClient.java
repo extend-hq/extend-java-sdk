@@ -5,6 +5,7 @@ package ai.extend.resources.evaluationsetruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
+import ai.extend.resources.evaluationsetruns.requests.EvaluationSetRunsRetrieveRequest;
 import ai.extend.types.EvaluationSetRun;
 import java.util.concurrent.CompletableFuture;
 
@@ -37,5 +38,20 @@ public class AsyncEvaluationSetRunsClient {
      */
     public CompletableFuture<EvaluationSetRun> retrieve(String id, RequestOptions requestOptions) {
         return this.rawClient.retrieve(id, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Get details of an evaluation set run.
+     */
+    public CompletableFuture<EvaluationSetRun> retrieve(String id, EvaluationSetRunsRetrieveRequest request) {
+        return this.rawClient.retrieve(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Get details of an evaluation set run.
+     */
+    public CompletableFuture<EvaluationSetRun> retrieve(
+            String id, EvaluationSetRunsRetrieveRequest request, RequestOptions requestOptions) {
+        return this.rawClient.retrieve(id, request, requestOptions).thenApply(response -> response.body());
     }
 }

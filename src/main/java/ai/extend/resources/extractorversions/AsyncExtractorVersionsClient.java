@@ -7,6 +7,7 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.extractorversions.requests.ExtractorVersionsCreateRequest;
 import ai.extend.resources.extractorversions.requests.ExtractorVersionsListRequest;
+import ai.extend.resources.extractorversions.requests.ExtractorVersionsRetrieveRequest;
 import ai.extend.resources.extractorversions.types.ExtractorVersionsListResponse;
 import ai.extend.types.ExtractorVersion;
 import java.util.concurrent.CompletableFuture;
@@ -92,5 +93,26 @@ public class AsyncExtractorVersionsClient {
     public CompletableFuture<ExtractorVersion> retrieve(
             String extractorId, String versionId, RequestOptions requestOptions) {
         return this.rawClient.retrieve(extractorId, versionId, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Retrieve a specific version of an extractor in Extend
+     */
+    public CompletableFuture<ExtractorVersion> retrieve(
+            String extractorId, String versionId, ExtractorVersionsRetrieveRequest request) {
+        return this.rawClient.retrieve(extractorId, versionId, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Retrieve a specific version of an extractor in Extend
+     */
+    public CompletableFuture<ExtractorVersion> retrieve(
+            String extractorId,
+            String versionId,
+            ExtractorVersionsRetrieveRequest request,
+            RequestOptions requestOptions) {
+        return this.rawClient
+                .retrieve(extractorId, versionId, request, requestOptions)
+                .thenApply(response -> response.body());
     }
 }

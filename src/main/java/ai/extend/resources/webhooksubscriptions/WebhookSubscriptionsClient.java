@@ -6,7 +6,9 @@ package ai.extend.resources.webhooksubscriptions;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.webhooksubscriptions.requests.WebhookSubscriptionsCreateRequest;
+import ai.extend.resources.webhooksubscriptions.requests.WebhookSubscriptionsDeleteRequest;
 import ai.extend.resources.webhooksubscriptions.requests.WebhookSubscriptionsListRequest;
+import ai.extend.resources.webhooksubscriptions.requests.WebhookSubscriptionsRetrieveRequest;
 import ai.extend.resources.webhooksubscriptions.requests.WebhookSubscriptionsUpdateRequest;
 import ai.extend.resources.webhooksubscriptions.types.WebhookSubscriptionsDeleteResponse;
 import ai.extend.resources.webhooksubscriptions.types.WebhookSubscriptionsListResponse;
@@ -91,6 +93,21 @@ public class WebhookSubscriptionsClient {
     }
 
     /**
+     * Retrieve a webhook subscription by ID.
+     */
+    public WebhookSubscription retrieve(String id, WebhookSubscriptionsRetrieveRequest request) {
+        return this.rawClient.retrieve(id, request).body();
+    }
+
+    /**
+     * Retrieve a webhook subscription by ID.
+     */
+    public WebhookSubscription retrieve(
+            String id, WebhookSubscriptionsRetrieveRequest request, RequestOptions requestOptions) {
+        return this.rawClient.retrieve(id, request, requestOptions).body();
+    }
+
+    /**
      * Update the enabled events on a webhook subscription.
      */
     public WebhookSubscription update(String id, WebhookSubscriptionsUpdateRequest request) {
@@ -117,5 +134,20 @@ public class WebhookSubscriptionsClient {
      */
     public WebhookSubscriptionsDeleteResponse delete(String id, RequestOptions requestOptions) {
         return this.rawClient.delete(id, requestOptions).body();
+    }
+
+    /**
+     * Delete a webhook subscription. This operation is permanent and cannot be undone.
+     */
+    public WebhookSubscriptionsDeleteResponse delete(String id, WebhookSubscriptionsDeleteRequest request) {
+        return this.rawClient.delete(id, request).body();
+    }
+
+    /**
+     * Delete a webhook subscription. This operation is permanent and cannot be undone.
+     */
+    public WebhookSubscriptionsDeleteResponse delete(
+            String id, WebhookSubscriptionsDeleteRequest request, RequestOptions requestOptions) {
+        return this.rawClient.delete(id, request, requestOptions).body();
     }
 }

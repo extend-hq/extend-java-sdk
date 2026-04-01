@@ -20,7 +20,9 @@ import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
 import ai.extend.resources.webhooksubscriptions.requests.WebhookSubscriptionsCreateRequest;
+import ai.extend.resources.webhooksubscriptions.requests.WebhookSubscriptionsDeleteRequest;
 import ai.extend.resources.webhooksubscriptions.requests.WebhookSubscriptionsListRequest;
+import ai.extend.resources.webhooksubscriptions.requests.WebhookSubscriptionsRetrieveRequest;
 import ai.extend.resources.webhooksubscriptions.requests.WebhookSubscriptionsUpdateRequest;
 import ai.extend.resources.webhooksubscriptions.types.WebhookSubscriptionsDeleteResponse;
 import ai.extend.resources.webhooksubscriptions.types.WebhookSubscriptionsListResponse;
@@ -108,6 +110,10 @@ public class AsyncRawWebhookSubscriptionsClient {
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
@@ -312,7 +318,7 @@ public class AsyncRawWebhookSubscriptionsClient {
      * Retrieve a webhook subscription by ID.
      */
     public CompletableFuture<ExtendClientHttpResponse<WebhookSubscription>> retrieve(String id) {
-        return retrieve(id, null);
+        return retrieve(id, WebhookSubscriptionsRetrieveRequest.builder().build());
     }
 
     /**
@@ -320,6 +326,22 @@ public class AsyncRawWebhookSubscriptionsClient {
      */
     public CompletableFuture<ExtendClientHttpResponse<WebhookSubscription>> retrieve(
             String id, RequestOptions requestOptions) {
+        return retrieve(id, WebhookSubscriptionsRetrieveRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Retrieve a webhook subscription by ID.
+     */
+    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscription>> retrieve(
+            String id, WebhookSubscriptionsRetrieveRequest request) {
+        return retrieve(id, request, null);
+    }
+
+    /**
+     * Retrieve a webhook subscription by ID.
+     */
+    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscription>> retrieve(
+            String id, WebhookSubscriptionsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("webhook_subscriptions")
@@ -329,12 +351,16 @@ public class AsyncRawWebhookSubscriptionsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -440,16 +466,20 @@ public class AsyncRawWebhookSubscriptionsClient {
         try {
             body = RequestBody.create(
                     ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new ExtendClientException("Failed to serialize request", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -533,7 +563,7 @@ public class AsyncRawWebhookSubscriptionsClient {
      * Delete a webhook subscription. This operation is permanent and cannot be undone.
      */
     public CompletableFuture<ExtendClientHttpResponse<WebhookSubscriptionsDeleteResponse>> delete(String id) {
-        return delete(id, null);
+        return delete(id, WebhookSubscriptionsDeleteRequest.builder().build());
     }
 
     /**
@@ -541,6 +571,22 @@ public class AsyncRawWebhookSubscriptionsClient {
      */
     public CompletableFuture<ExtendClientHttpResponse<WebhookSubscriptionsDeleteResponse>> delete(
             String id, RequestOptions requestOptions) {
+        return delete(id, WebhookSubscriptionsDeleteRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Delete a webhook subscription. This operation is permanent and cannot be undone.
+     */
+    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscriptionsDeleteResponse>> delete(
+            String id, WebhookSubscriptionsDeleteRequest request) {
+        return delete(id, request, null);
+    }
+
+    /**
+     * Delete a webhook subscription. This operation is permanent and cannot be undone.
+     */
+    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscriptionsDeleteResponse>> delete(
+            String id, WebhookSubscriptionsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("webhook_subscriptions")
@@ -550,12 +596,16 @@ public class AsyncRawWebhookSubscriptionsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("DELETE", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

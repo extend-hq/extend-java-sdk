@@ -19,8 +19,11 @@ import ai.extend.errors.PaymentRequiredError;
 import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
+import ai.extend.resources.extractruns.requests.ExtractRunsCancelRequest;
 import ai.extend.resources.extractruns.requests.ExtractRunsCreateRequest;
+import ai.extend.resources.extractruns.requests.ExtractRunsDeleteRequest;
 import ai.extend.resources.extractruns.requests.ExtractRunsListRequest;
+import ai.extend.resources.extractruns.requests.ExtractRunsRetrieveRequest;
 import ai.extend.resources.extractruns.types.ExtractRunsDeleteResponse;
 import ai.extend.resources.extractruns.types.ExtractRunsListResponse;
 import ai.extend.types.ApiError;
@@ -121,6 +124,10 @@ public class RawExtractRunsClient {
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
@@ -262,7 +269,7 @@ public class RawExtractRunsClient {
      * <p>A common use case for this endpoint is to poll for the status and final output of an extract run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/extract/create-extract-run">Create Extract Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
     public ExtendClientHttpResponse<ExtractRun> retrieve(String id) {
-        return retrieve(id, null);
+        return retrieve(id, ExtractRunsRetrieveRequest.builder().build());
     }
 
     /**
@@ -270,6 +277,23 @@ public class RawExtractRunsClient {
      * <p>A common use case for this endpoint is to poll for the status and final output of an extract run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/extract/create-extract-run">Create Extract Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
     public ExtendClientHttpResponse<ExtractRun> retrieve(String id, RequestOptions requestOptions) {
+        return retrieve(id, ExtractRunsRetrieveRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Retrieve details about a specific extract run, including its status, outputs, and any edits made during review.
+     * <p>A common use case for this endpoint is to poll for the status and final output of an extract run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/extract/create-extract-run">Create Extract Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     */
+    public ExtendClientHttpResponse<ExtractRun> retrieve(String id, ExtractRunsRetrieveRequest request) {
+        return retrieve(id, request, null);
+    }
+
+    /**
+     * Retrieve details about a specific extract run, including its status, outputs, and any edits made during review.
+     * <p>A common use case for this endpoint is to poll for the status and final output of an extract run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/extract/create-extract-run">Create Extract Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     */
+    public ExtendClientHttpResponse<ExtractRun> retrieve(
+            String id, ExtractRunsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("extract_runs")
@@ -279,12 +303,16 @@ public class RawExtractRunsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -339,7 +367,7 @@ public class RawExtractRunsClient {
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
     public ExtendClientHttpResponse<ExtractRunsDeleteResponse> delete(String id) {
-        return delete(id, null);
+        return delete(id, ExtractRunsDeleteRequest.builder().build());
     }
 
     /**
@@ -347,6 +375,23 @@ public class RawExtractRunsClient {
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
     public ExtendClientHttpResponse<ExtractRunsDeleteResponse> delete(String id, RequestOptions requestOptions) {
+        return delete(id, ExtractRunsDeleteRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Delete an extract run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public ExtendClientHttpResponse<ExtractRunsDeleteResponse> delete(String id, ExtractRunsDeleteRequest request) {
+        return delete(id, request, null);
+    }
+
+    /**
+     * Delete an extract run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public ExtendClientHttpResponse<ExtractRunsDeleteResponse> delete(
+            String id, ExtractRunsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("extract_runs")
@@ -356,12 +401,16 @@ public class RawExtractRunsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("DELETE", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -417,7 +466,7 @@ public class RawExtractRunsClient {
      * <p>Note: Only extract runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Extractor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
     public ExtendClientHttpResponse<ExtractRun> cancel(String id) {
-        return cancel(id, null);
+        return cancel(id, ExtractRunsCancelRequest.builder().build());
     }
 
     /**
@@ -425,6 +474,23 @@ public class RawExtractRunsClient {
      * <p>Note: Only extract runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Extractor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
     public ExtendClientHttpResponse<ExtractRun> cancel(String id, RequestOptions requestOptions) {
+        return cancel(id, ExtractRunsCancelRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Cancel an in-progress extract run.
+     * <p>Note: Only extract runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Extractor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public ExtendClientHttpResponse<ExtractRun> cancel(String id, ExtractRunsCancelRequest request) {
+        return cancel(id, request, null);
+    }
+
+    /**
+     * Cancel an in-progress extract run.
+     * <p>Note: Only extract runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Extractor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public ExtendClientHttpResponse<ExtractRun> cancel(
+            String id, ExtractRunsCancelRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("extract_runs")
@@ -435,12 +501,16 @@ public class RawExtractRunsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("POST", RequestBody.create("", null))
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

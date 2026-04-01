@@ -20,7 +20,9 @@ import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
 import ai.extend.resources.webhookendpoints.requests.WebhookEndpointsCreateRequest;
+import ai.extend.resources.webhookendpoints.requests.WebhookEndpointsDeleteRequest;
 import ai.extend.resources.webhookendpoints.requests.WebhookEndpointsListRequest;
+import ai.extend.resources.webhookendpoints.requests.WebhookEndpointsRetrieveRequest;
 import ai.extend.resources.webhookendpoints.requests.WebhookEndpointsUpdateRequest;
 import ai.extend.resources.webhookendpoints.types.WebhookEndpointsDeleteResponse;
 import ai.extend.resources.webhookendpoints.types.WebhookEndpointsListResponse;
@@ -99,6 +101,10 @@ public class RawWebhookEndpointsClient {
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
@@ -241,13 +247,28 @@ public class RawWebhookEndpointsClient {
      * Retrieve a webhook endpoint by ID.
      */
     public ExtendClientHttpResponse<WebhookEndpoint> retrieve(String id) {
-        return retrieve(id, null);
+        return retrieve(id, WebhookEndpointsRetrieveRequest.builder().build());
     }
 
     /**
      * Retrieve a webhook endpoint by ID.
      */
     public ExtendClientHttpResponse<WebhookEndpoint> retrieve(String id, RequestOptions requestOptions) {
+        return retrieve(id, WebhookEndpointsRetrieveRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Retrieve a webhook endpoint by ID.
+     */
+    public ExtendClientHttpResponse<WebhookEndpoint> retrieve(String id, WebhookEndpointsRetrieveRequest request) {
+        return retrieve(id, request, null);
+    }
+
+    /**
+     * Retrieve a webhook endpoint by ID.
+     */
+    public ExtendClientHttpResponse<WebhookEndpoint> retrieve(
+            String id, WebhookEndpointsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("webhook_endpoints")
@@ -257,12 +278,16 @@ public class RawWebhookEndpointsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -355,16 +380,20 @@ public class RawWebhookEndpointsClient {
         try {
             body = RequestBody.create(
                     ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new ExtendClientException("Failed to serialize request", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -418,13 +447,29 @@ public class RawWebhookEndpointsClient {
      * Delete a webhook endpoint and all of its subscriptions. This operation is permanent and cannot be undone.
      */
     public ExtendClientHttpResponse<WebhookEndpointsDeleteResponse> delete(String id) {
-        return delete(id, null);
+        return delete(id, WebhookEndpointsDeleteRequest.builder().build());
     }
 
     /**
      * Delete a webhook endpoint and all of its subscriptions. This operation is permanent and cannot be undone.
      */
     public ExtendClientHttpResponse<WebhookEndpointsDeleteResponse> delete(String id, RequestOptions requestOptions) {
+        return delete(id, WebhookEndpointsDeleteRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Delete a webhook endpoint and all of its subscriptions. This operation is permanent and cannot be undone.
+     */
+    public ExtendClientHttpResponse<WebhookEndpointsDeleteResponse> delete(
+            String id, WebhookEndpointsDeleteRequest request) {
+        return delete(id, request, null);
+    }
+
+    /**
+     * Delete a webhook endpoint and all of its subscriptions. This operation is permanent and cannot be undone.
+     */
+    public ExtendClientHttpResponse<WebhookEndpointsDeleteResponse> delete(
+            String id, WebhookEndpointsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("webhook_endpoints")
@@ -434,12 +479,16 @@ public class RawWebhookEndpointsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("DELETE", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

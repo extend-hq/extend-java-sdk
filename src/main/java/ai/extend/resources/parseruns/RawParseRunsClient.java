@@ -20,6 +20,7 @@ import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
 import ai.extend.resources.parseruns.requests.ParseRunsCreateRequest;
+import ai.extend.resources.parseruns.requests.ParseRunsDeleteRequest;
 import ai.extend.resources.parseruns.requests.ParseRunsRetrieveRequest;
 import ai.extend.resources.parseruns.types.ParseRunsDeleteResponse;
 import ai.extend.types.ApiError;
@@ -175,6 +176,10 @@ public class RawParseRunsClient {
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
@@ -230,7 +235,7 @@ public class RawParseRunsClient {
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
     public ExtendClientHttpResponse<ParseRunsDeleteResponse> delete(String id) {
-        return delete(id, null);
+        return delete(id, ParseRunsDeleteRequest.builder().build());
     }
 
     /**
@@ -238,6 +243,23 @@ public class RawParseRunsClient {
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
     public ExtendClientHttpResponse<ParseRunsDeleteResponse> delete(String id, RequestOptions requestOptions) {
+        return delete(id, ParseRunsDeleteRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Delete a parse run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public ExtendClientHttpResponse<ParseRunsDeleteResponse> delete(String id, ParseRunsDeleteRequest request) {
+        return delete(id, request, null);
+    }
+
+    /**
+     * Delete a parse run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public ExtendClientHttpResponse<ParseRunsDeleteResponse> delete(
+            String id, ParseRunsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("parse_runs")
@@ -247,12 +269,16 @@ public class RawParseRunsClient {
                 httpUrl.addQueryParameter(_key, _value);
             });
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("DELETE", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

@@ -7,6 +7,7 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.splitters.requests.SplittersCreateRequest;
 import ai.extend.resources.splitters.requests.SplittersListRequest;
+import ai.extend.resources.splitters.requests.SplittersRetrieveRequest;
 import ai.extend.resources.splitters.requests.SplittersUpdateRequest;
 import ai.extend.resources.splitters.types.SplittersListResponse;
 import ai.extend.types.Splitter;
@@ -86,6 +87,20 @@ public class SplittersClient {
      */
     public Splitter retrieve(String id, RequestOptions requestOptions) {
         return this.rawClient.retrieve(id, requestOptions).body();
+    }
+
+    /**
+     * Get details of a splitter.
+     */
+    public Splitter retrieve(String id, SplittersRetrieveRequest request) {
+        return this.rawClient.retrieve(id, request).body();
+    }
+
+    /**
+     * Get details of a splitter.
+     */
+    public Splitter retrieve(String id, SplittersRetrieveRequest request, RequestOptions requestOptions) {
+        return this.rawClient.retrieve(id, request, requestOptions).body();
     }
 
     /**
