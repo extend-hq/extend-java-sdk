@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import ai.extend.core.ClientOptions;
+import ai.extend.core.RequestOptions;
 import ai.extend.types.WorkflowRun;
 import ai.extend.types.WorkflowRunStatus;
 import ai.extend.wrapper.errors.PollingTimeoutError;
@@ -61,7 +62,7 @@ class WorkflowRunsClientTest {
             doReturn(processingResponse)
                     .doReturn(processedResponse)
                     .when(wrapper)
-                    .retrieve(eq(runId), any());
+                    .retrieve(eq(runId), any(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -73,7 +74,7 @@ class WorkflowRunsClientTest {
 
             assertEquals(WorkflowRunStatus.PROCESSED, result.getStatus());
             verify(wrapper, times(1)).create(any(), any());
-            verify(wrapper, times(2)).retrieve(eq(runId), any());
+            verify(wrapper, times(2)).retrieve(eq(runId), any(RequestOptions.class));
         }
 
         @Test
@@ -88,7 +89,7 @@ class WorkflowRunsClientTest {
             WorkflowRun processedResponse = mock(WorkflowRun.class);
             when(processedResponse.getStatus()).thenReturn(WorkflowRunStatus.PROCESSED);
 
-            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), any());
+            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), any(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -99,7 +100,7 @@ class WorkflowRunsClientTest {
             WorkflowRun result = wrapper.createAndPoll(null, options);
 
             assertEquals(WorkflowRunStatus.PROCESSED, result.getStatus());
-            verify(wrapper, times(1)).retrieve(eq(runId), any());
+            verify(wrapper, times(1)).retrieve(eq(runId), any(RequestOptions.class));
         }
 
         @Test
@@ -114,7 +115,7 @@ class WorkflowRunsClientTest {
             WorkflowRun failedResponse = mock(WorkflowRun.class);
             when(failedResponse.getStatus()).thenReturn(WorkflowRunStatus.FAILED);
 
-            doReturn(failedResponse).when(wrapper).retrieve(eq(runId), any());
+            doReturn(failedResponse).when(wrapper).retrieve(eq(runId), any(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -139,7 +140,7 @@ class WorkflowRunsClientTest {
             WorkflowRun cancelledResponse = mock(WorkflowRun.class);
             when(cancelledResponse.getStatus()).thenReturn(WorkflowRunStatus.CANCELLED);
 
-            doReturn(cancelledResponse).when(wrapper).retrieve(eq(runId), any());
+            doReturn(cancelledResponse).when(wrapper).retrieve(eq(runId), any(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -164,7 +165,7 @@ class WorkflowRunsClientTest {
             WorkflowRun needsReviewResponse = mock(WorkflowRun.class);
             when(needsReviewResponse.getStatus()).thenReturn(WorkflowRunStatus.NEEDS_REVIEW);
 
-            doReturn(needsReviewResponse).when(wrapper).retrieve(eq(runId), any());
+            doReturn(needsReviewResponse).when(wrapper).retrieve(eq(runId), any(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -189,7 +190,7 @@ class WorkflowRunsClientTest {
             WorkflowRun rejectedResponse = mock(WorkflowRun.class);
             when(rejectedResponse.getStatus()).thenReturn(WorkflowRunStatus.REJECTED);
 
-            doReturn(rejectedResponse).when(wrapper).retrieve(eq(runId), any());
+            doReturn(rejectedResponse).when(wrapper).retrieve(eq(runId), any(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -224,7 +225,7 @@ class WorkflowRunsClientTest {
                     .doReturn(processingResponse)
                     .doReturn(processedResponse)
                     .when(wrapper)
-                    .retrieve(eq(runId), any());
+                    .retrieve(eq(runId), any(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -235,7 +236,7 @@ class WorkflowRunsClientTest {
             WorkflowRun result = wrapper.createAndPoll(null, options);
 
             assertEquals(WorkflowRunStatus.PROCESSED, result.getStatus());
-            verify(wrapper, times(3)).retrieve(eq(runId), any());
+            verify(wrapper, times(3)).retrieve(eq(runId), any(RequestOptions.class));
         }
 
         @Test
@@ -256,7 +257,7 @@ class WorkflowRunsClientTest {
             doReturn(cancellingResponse)
                     .doReturn(cancelledResponse)
                     .when(wrapper)
-                    .retrieve(eq(runId), any());
+                    .retrieve(eq(runId), any(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(1)
@@ -267,7 +268,7 @@ class WorkflowRunsClientTest {
             WorkflowRun result = wrapper.createAndPoll(null, options);
 
             assertEquals(WorkflowRunStatus.CANCELLED, result.getStatus());
-            verify(wrapper, times(2)).retrieve(eq(runId), any());
+            verify(wrapper, times(2)).retrieve(eq(runId), any(RequestOptions.class));
         }
 
         @Test
@@ -282,7 +283,7 @@ class WorkflowRunsClientTest {
             WorkflowRun processingResponse = mock(WorkflowRun.class);
             when(processingResponse.getStatus()).thenReturn(WorkflowRunStatus.PROCESSING);
 
-            doReturn(processingResponse).when(wrapper).retrieve(eq(runId), any());
+            doReturn(processingResponse).when(wrapper).retrieve(eq(runId), any(RequestOptions.class));
 
             PollingOptions options = PollingOptions.builder()
                     .initialDelayMs(10)
@@ -307,7 +308,7 @@ class WorkflowRunsClientTest {
             WorkflowRun processedResponse = mock(WorkflowRun.class);
             when(processedResponse.getStatus()).thenReturn(WorkflowRunStatus.PROCESSED);
 
-            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), any());
+            doReturn(processedResponse).when(wrapper).retrieve(eq(runId), any(RequestOptions.class));
 
             // Should complete - polls indefinitely by default
             WorkflowRun result = wrapper.createAndPoll(null);
