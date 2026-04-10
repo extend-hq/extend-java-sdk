@@ -7,6 +7,8 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.edit.requests.EditCreateAsyncRequest;
 import ai.extend.resources.edit.requests.EditCreateRequest;
+import ai.extend.resources.edit.requests.EditDeleteRequest;
+import ai.extend.resources.edit.requests.EditGetRequest;
 import ai.extend.resources.edit.types.EditDeleteResponse;
 import ai.extend.resources.edit.types.EditGetResponse;
 import ai.extend.types.EditRun;
@@ -88,8 +90,17 @@ public class AsyncEditClient {
      * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an asynchronous edit run initiated via the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/edit-endpoints/edit-file-async">Edit File Asynchronously</a> endpoint.</p>
      * <p>If editing is still in progress, you'll receive a response with just the status. Once complete, you'll receive the full edited file information in the response.</p>
      */
-    public CompletableFuture<EditGetResponse> get(String id, RequestOptions requestOptions) {
-        return this.rawClient.get(id, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<EditGetResponse> get(String id, EditGetRequest request) {
+        return this.rawClient.get(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Retrieve the status and results of an edit run.
+     * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an asynchronous edit run initiated via the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/edit-endpoints/edit-file-async">Edit File Asynchronously</a> endpoint.</p>
+     * <p>If editing is still in progress, you'll receive a response with just the status. Once complete, you'll receive the full edited file information in the response.</p>
+     */
+    public CompletableFuture<EditGetResponse> get(String id, EditGetRequest request, RequestOptions requestOptions) {
+        return this.rawClient.get(id, request, requestOptions).thenApply(response -> response.body());
     }
 
     /**
@@ -104,7 +115,16 @@ public class AsyncEditClient {
      * Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<EditDeleteResponse> delete(String id, RequestOptions requestOptions) {
-        return this.rawClient.delete(id, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<EditDeleteResponse> delete(String id, EditDeleteRequest request) {
+        return this.rawClient.delete(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.</p>
+     */
+    public CompletableFuture<EditDeleteResponse> delete(
+            String id, EditDeleteRequest request, RequestOptions requestOptions) {
+        return this.rawClient.delete(id, request, requestOptions).thenApply(response -> response.body());
     }
 }

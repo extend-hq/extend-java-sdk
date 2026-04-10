@@ -22,6 +22,8 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = EvaluationSetListRequest.Builder.class)
 public final class EvaluationSetListRequest {
+    private final Optional<String> extendWorkspaceId;
+
     private final Optional<String> processorId;
 
     private final Optional<SortByEnum> sortBy;
@@ -35,18 +37,28 @@ public final class EvaluationSetListRequest {
     private final Map<String, Object> additionalProperties;
 
     private EvaluationSetListRequest(
+            Optional<String> extendWorkspaceId,
             Optional<String> processorId,
             Optional<SortByEnum> sortBy,
             Optional<SortDirEnum> sortDir,
             Optional<String> nextPageToken,
             Optional<Integer> maxPageSize,
             Map<String, Object> additionalProperties) {
+        this.extendWorkspaceId = extendWorkspaceId;
         this.processorId = processorId;
         this.sortBy = sortBy;
         this.sortDir = sortDir;
         this.nextPageToken = nextPageToken;
         this.maxPageSize = maxPageSize;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2025-04-21/developers/authentication">Authentication</a> for details on API key scopes.
+     */
+    @JsonProperty("x-extend-workspace-id")
+    public Optional<String> getExtendWorkspaceId() {
+        return extendWorkspaceId;
     }
 
     /**
@@ -96,7 +108,8 @@ public final class EvaluationSetListRequest {
     }
 
     private boolean equalTo(EvaluationSetListRequest other) {
-        return processorId.equals(other.processorId)
+        return extendWorkspaceId.equals(other.extendWorkspaceId)
+                && processorId.equals(other.processorId)
                 && sortBy.equals(other.sortBy)
                 && sortDir.equals(other.sortDir)
                 && nextPageToken.equals(other.nextPageToken)
@@ -105,7 +118,13 @@ public final class EvaluationSetListRequest {
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.processorId, this.sortBy, this.sortDir, this.nextPageToken, this.maxPageSize);
+        return Objects.hash(
+                this.extendWorkspaceId,
+                this.processorId,
+                this.sortBy,
+                this.sortDir,
+                this.nextPageToken,
+                this.maxPageSize);
     }
 
     @java.lang.Override
@@ -119,6 +138,8 @@ public final class EvaluationSetListRequest {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<String> extendWorkspaceId = Optional.empty();
+
         private Optional<String> processorId = Optional.empty();
 
         private Optional<SortByEnum> sortBy = Optional.empty();
@@ -135,11 +156,26 @@ public final class EvaluationSetListRequest {
         private Builder() {}
 
         public Builder from(EvaluationSetListRequest other) {
+            extendWorkspaceId(other.getExtendWorkspaceId());
             processorId(other.getProcessorId());
             sortBy(other.getSortBy());
             sortDir(other.getSortDir());
             nextPageToken(other.getNextPageToken());
             maxPageSize(other.getMaxPageSize());
+            return this;
+        }
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2025-04-21/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        @JsonSetter(value = "x-extend-workspace-id", nulls = Nulls.SKIP)
+        public Builder extendWorkspaceId(Optional<String> extendWorkspaceId) {
+            this.extendWorkspaceId = extendWorkspaceId;
+            return this;
+        }
+
+        public Builder extendWorkspaceId(String extendWorkspaceId) {
+            this.extendWorkspaceId = Optional.ofNullable(extendWorkspaceId);
             return this;
         }
 
@@ -210,7 +246,7 @@ public final class EvaluationSetListRequest {
 
         public EvaluationSetListRequest build() {
             return new EvaluationSetListRequest(
-                    processorId, sortBy, sortDir, nextPageToken, maxPageSize, additionalProperties);
+                    extendWorkspaceId, processorId, sortBy, sortDir, nextPageToken, maxPageSize, additionalProperties);
         }
     }
 }

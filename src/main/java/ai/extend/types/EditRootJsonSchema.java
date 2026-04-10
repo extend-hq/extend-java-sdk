@@ -28,16 +28,48 @@ public final class EditRootJsonSchema {
 
     private final Optional<Boolean> additionalProperties;
 
+    private final Optional<Map<String, List<String>>> dependentRequired;
+
+    private final Optional<EditConditionalClause> if_;
+
+    private final Optional<EditConditionalClause> then;
+
+    private final Optional<EditConditionalClause> else_;
+
+    private final Optional<List<EditConditionalClause>> allOf;
+
+    private final Optional<List<EditConditionalClause>> oneOf;
+
+    private final Optional<List<EditConditionalClause>> anyOf;
+
+    private final Optional<EditConditionalClause> not;
+
     private final Map<String, Object> _additionalProperties;
 
     private EditRootJsonSchema(
             Map<String, EditJsonSchema> properties,
             Optional<List<String>> required,
             Optional<Boolean> additionalProperties,
+            Optional<Map<String, List<String>>> dependentRequired,
+            Optional<EditConditionalClause> if_,
+            Optional<EditConditionalClause> then,
+            Optional<EditConditionalClause> else_,
+            Optional<List<EditConditionalClause>> allOf,
+            Optional<List<EditConditionalClause>> oneOf,
+            Optional<List<EditConditionalClause>> anyOf,
+            Optional<EditConditionalClause> not,
             Map<String, Object> _additionalProperties) {
         this.properties = properties;
         this.required = required;
         this.additionalProperties = additionalProperties;
+        this.dependentRequired = dependentRequired;
+        this.if_ = if_;
+        this.then = then;
+        this.else_ = else_;
+        this.allOf = allOf;
+        this.oneOf = oneOf;
+        this.anyOf = anyOf;
+        this.not = not;
         this._additionalProperties = _additionalProperties;
     }
 
@@ -73,6 +105,55 @@ public final class EditRootJsonSchema {
         return additionalProperties;
     }
 
+    @JsonProperty("dependentRequired")
+    public Optional<Map<String, List<String>>> getDependentRequired() {
+        return dependentRequired;
+    }
+
+    @JsonProperty("if")
+    public Optional<EditConditionalClause> getIf() {
+        return if_;
+    }
+
+    @JsonProperty("then")
+    public Optional<EditConditionalClause> getThen() {
+        return then;
+    }
+
+    @JsonProperty("else")
+    public Optional<EditConditionalClause> getElse() {
+        return else_;
+    }
+
+    /**
+     * @return List of conditional clauses that must all match.
+     */
+    @JsonProperty("allOf")
+    public Optional<List<EditConditionalClause>> getAllOf() {
+        return allOf;
+    }
+
+    /**
+     * @return List of conditional clauses where exactly one must match.
+     */
+    @JsonProperty("oneOf")
+    public Optional<List<EditConditionalClause>> getOneOf() {
+        return oneOf;
+    }
+
+    /**
+     * @return List of conditional clauses where at least one must match.
+     */
+    @JsonProperty("anyOf")
+    public Optional<List<EditConditionalClause>> getAnyOf() {
+        return anyOf;
+    }
+
+    @JsonProperty("not")
+    public Optional<EditConditionalClause> getNot() {
+        return not;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -87,12 +168,31 @@ public final class EditRootJsonSchema {
     private boolean equalTo(EditRootJsonSchema other) {
         return properties.equals(other.properties)
                 && required.equals(other.required)
-                && additionalProperties.equals(other.additionalProperties);
+                && additionalProperties.equals(other.additionalProperties)
+                && dependentRequired.equals(other.dependentRequired)
+                && if_.equals(other.if_)
+                && then.equals(other.then)
+                && else_.equals(other.else_)
+                && allOf.equals(other.allOf)
+                && oneOf.equals(other.oneOf)
+                && anyOf.equals(other.anyOf)
+                && not.equals(other.not);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.properties, this.required, this.additionalProperties);
+        return Objects.hash(
+                this.properties,
+                this.required,
+                this.additionalProperties,
+                this.dependentRequired,
+                this.if_,
+                this.then,
+                this.else_,
+                this.allOf,
+                this.oneOf,
+                this.anyOf,
+                this.not);
     }
 
     @java.lang.Override
@@ -112,6 +212,22 @@ public final class EditRootJsonSchema {
 
         private Optional<Boolean> additionalProperties = Optional.empty();
 
+        private Optional<Map<String, List<String>>> dependentRequired = Optional.empty();
+
+        private Optional<EditConditionalClause> if_ = Optional.empty();
+
+        private Optional<EditConditionalClause> then = Optional.empty();
+
+        private Optional<EditConditionalClause> else_ = Optional.empty();
+
+        private Optional<List<EditConditionalClause>> allOf = Optional.empty();
+
+        private Optional<List<EditConditionalClause>> oneOf = Optional.empty();
+
+        private Optional<List<EditConditionalClause>> anyOf = Optional.empty();
+
+        private Optional<EditConditionalClause> not = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> _additionalProperties = new HashMap<>();
 
@@ -121,6 +237,14 @@ public final class EditRootJsonSchema {
             properties(other.getProperties());
             required(other.getRequired());
             additionalProperties(other.getAdditionalProperties());
+            dependentRequired(other.getDependentRequired());
+            if_(other.getIf());
+            then(other.getThen());
+            else_(other.getElse());
+            allOf(other.getAllOf());
+            oneOf(other.getOneOf());
+            anyOf(other.getAnyOf());
+            not(other.getNot());
             return this;
         }
 
@@ -172,8 +296,117 @@ public final class EditRootJsonSchema {
             return this;
         }
 
+        @JsonSetter(value = "dependentRequired", nulls = Nulls.SKIP)
+        public Builder dependentRequired(Optional<Map<String, List<String>>> dependentRequired) {
+            this.dependentRequired = dependentRequired;
+            return this;
+        }
+
+        public Builder dependentRequired(Map<String, List<String>> dependentRequired) {
+            this.dependentRequired = Optional.ofNullable(dependentRequired);
+            return this;
+        }
+
+        @JsonSetter(value = "if", nulls = Nulls.SKIP)
+        public Builder if_(Optional<EditConditionalClause> if_) {
+            this.if_ = if_;
+            return this;
+        }
+
+        public Builder if_(EditConditionalClause if_) {
+            this.if_ = Optional.ofNullable(if_);
+            return this;
+        }
+
+        @JsonSetter(value = "then", nulls = Nulls.SKIP)
+        public Builder then(Optional<EditConditionalClause> then) {
+            this.then = then;
+            return this;
+        }
+
+        public Builder then(EditConditionalClause then) {
+            this.then = Optional.ofNullable(then);
+            return this;
+        }
+
+        @JsonSetter(value = "else", nulls = Nulls.SKIP)
+        public Builder else_(Optional<EditConditionalClause> else_) {
+            this.else_ = else_;
+            return this;
+        }
+
+        public Builder else_(EditConditionalClause else_) {
+            this.else_ = Optional.ofNullable(else_);
+            return this;
+        }
+
+        /**
+         * <p>List of conditional clauses that must all match.</p>
+         */
+        @JsonSetter(value = "allOf", nulls = Nulls.SKIP)
+        public Builder allOf(Optional<List<EditConditionalClause>> allOf) {
+            this.allOf = allOf;
+            return this;
+        }
+
+        public Builder allOf(List<EditConditionalClause> allOf) {
+            this.allOf = Optional.ofNullable(allOf);
+            return this;
+        }
+
+        /**
+         * <p>List of conditional clauses where exactly one must match.</p>
+         */
+        @JsonSetter(value = "oneOf", nulls = Nulls.SKIP)
+        public Builder oneOf(Optional<List<EditConditionalClause>> oneOf) {
+            this.oneOf = oneOf;
+            return this;
+        }
+
+        public Builder oneOf(List<EditConditionalClause> oneOf) {
+            this.oneOf = Optional.ofNullable(oneOf);
+            return this;
+        }
+
+        /**
+         * <p>List of conditional clauses where at least one must match.</p>
+         */
+        @JsonSetter(value = "anyOf", nulls = Nulls.SKIP)
+        public Builder anyOf(Optional<List<EditConditionalClause>> anyOf) {
+            this.anyOf = anyOf;
+            return this;
+        }
+
+        public Builder anyOf(List<EditConditionalClause> anyOf) {
+            this.anyOf = Optional.ofNullable(anyOf);
+            return this;
+        }
+
+        @JsonSetter(value = "not", nulls = Nulls.SKIP)
+        public Builder not(Optional<EditConditionalClause> not) {
+            this.not = not;
+            return this;
+        }
+
+        public Builder not(EditConditionalClause not) {
+            this.not = Optional.ofNullable(not);
+            return this;
+        }
+
         public EditRootJsonSchema build() {
-            return new EditRootJsonSchema(properties, required, additionalProperties, _additionalProperties);
+            return new EditRootJsonSchema(
+                    properties,
+                    required,
+                    additionalProperties,
+                    dependentRequired,
+                    if_,
+                    then,
+                    else_,
+                    allOf,
+                    oneOf,
+                    anyOf,
+                    not,
+                    _additionalProperties);
         }
     }
 }

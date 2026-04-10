@@ -15,7 +15,10 @@ import ai.extend.errors.BadRequestError;
 import ai.extend.errors.InternalServerError;
 import ai.extend.errors.NotFoundError;
 import ai.extend.errors.UnauthorizedError;
+import ai.extend.resources.workflowrun.requests.WorkflowRunCancelRequest;
 import ai.extend.resources.workflowrun.requests.WorkflowRunCreateRequest;
+import ai.extend.resources.workflowrun.requests.WorkflowRunDeleteRequest;
+import ai.extend.resources.workflowrun.requests.WorkflowRunGetRequest;
 import ai.extend.resources.workflowrun.requests.WorkflowRunListRequest;
 import ai.extend.resources.workflowrun.requests.WorkflowRunUpdateRequest;
 import ai.extend.resources.workflowrun.types.WorkflowRunCancelResponse;
@@ -27,6 +30,8 @@ import ai.extend.resources.workflowrun.types.WorkflowRunUpdateResponse;
 import ai.extend.types.Error;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -105,6 +110,10 @@ public class AsyncRawWorkflowRunClient {
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
@@ -245,25 +254,37 @@ public class AsyncRawWorkflowRunClient {
      * Once a workflow has been run, you can check the status and output of a specific WorkflowRun.
      */
     public CompletableFuture<ExtendClientHttpResponse<WorkflowRunGetResponse>> get(String workflowRunId) {
-        return get(workflowRunId, null);
+        return get(workflowRunId, WorkflowRunGetRequest.builder().build());
     }
 
     /**
      * Once a workflow has been run, you can check the status and output of a specific WorkflowRun.
      */
     public CompletableFuture<ExtendClientHttpResponse<WorkflowRunGetResponse>> get(
-            String workflowRunId, RequestOptions requestOptions) {
+            String workflowRunId, WorkflowRunGetRequest request) {
+        return get(workflowRunId, request, null);
+    }
+
+    /**
+     * Once a workflow has been run, you can check the status and output of a specific WorkflowRun.
+     */
+    public CompletableFuture<ExtendClientHttpResponse<WorkflowRunGetResponse>> get(
+            String workflowRunId, WorkflowRunGetRequest request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("workflow_runs")
                 .addPathSegment(workflowRunId)
                 .build();
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -346,20 +367,31 @@ public class AsyncRawWorkflowRunClient {
                 .addPathSegments("workflow_runs")
                 .addPathSegment(workflowRunId)
                 .build();
+        Map<String, Object> properties = new HashMap<>();
+        if (request.getName().isPresent()) {
+            properties.put("name", request.getName());
+        }
+        if (request.getMetadata().isPresent()) {
+            properties.put("metadata", request.getMetadata());
+        }
         RequestBody body;
         try {
             body = RequestBody.create(
-                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new ExtendClientException("Failed to serialize request", e);
+                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(properties), MediaTypes.APPLICATION_JSON);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl)
                 .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -422,7 +454,7 @@ public class AsyncRawWorkflowRunClient {
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<WorkflowRunDeleteResponse>> delete(String workflowRunId) {
-        return delete(workflowRunId, null);
+        return delete(workflowRunId, WorkflowRunDeleteRequest.builder().build());
     }
 
     /**
@@ -430,18 +462,31 @@ public class AsyncRawWorkflowRunClient {
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<WorkflowRunDeleteResponse>> delete(
-            String workflowRunId, RequestOptions requestOptions) {
+            String workflowRunId, WorkflowRunDeleteRequest request) {
+        return delete(workflowRunId, request, null);
+    }
+
+    /**
+     * Delete a workflow run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<WorkflowRunDeleteResponse>> delete(
+            String workflowRunId, WorkflowRunDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("workflow_runs")
                 .addPathSegment(workflowRunId)
                 .build();
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl)
                 .method("DELETE", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -499,7 +544,7 @@ public class AsyncRawWorkflowRunClient {
      * <p>Note: Only workflow runs with a status of <code>PROCESSING</code> or <code>PENDING</code> can be cancelled. Workflow runs that are completed, failed, in review, rejected, or already cancelled cannot be cancelled.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<WorkflowRunCancelResponse>> cancel(String workflowRunId) {
-        return cancel(workflowRunId, null);
+        return cancel(workflowRunId, WorkflowRunCancelRequest.builder().build());
     }
 
     /**
@@ -507,19 +552,32 @@ public class AsyncRawWorkflowRunClient {
      * <p>Note: Only workflow runs with a status of <code>PROCESSING</code> or <code>PENDING</code> can be cancelled. Workflow runs that are completed, failed, in review, rejected, or already cancelled cannot be cancelled.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<WorkflowRunCancelResponse>> cancel(
-            String workflowRunId, RequestOptions requestOptions) {
+            String workflowRunId, WorkflowRunCancelRequest request) {
+        return cancel(workflowRunId, request, null);
+    }
+
+    /**
+     * Cancel a running workflow run by its ID. This endpoint allows you to stop a workflow run that is currently in progress.
+     * <p>Note: Only workflow runs with a status of <code>PROCESSING</code> or <code>PENDING</code> can be cancelled. Workflow runs that are completed, failed, in review, rejected, or already cancelled cannot be cancelled.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<WorkflowRunCancelResponse>> cancel(
+            String workflowRunId, WorkflowRunCancelRequest request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("workflow_runs")
                 .addPathSegment(workflowRunId)
                 .addPathSegments("cancel")
                 .build();
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl)
                 .method("POST", RequestBody.create("", null))
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

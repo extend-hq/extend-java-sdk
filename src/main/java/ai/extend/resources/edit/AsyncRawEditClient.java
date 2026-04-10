@@ -18,6 +18,8 @@ import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
 import ai.extend.resources.edit.requests.EditCreateAsyncRequest;
 import ai.extend.resources.edit.requests.EditCreateRequest;
+import ai.extend.resources.edit.requests.EditDeleteRequest;
+import ai.extend.resources.edit.requests.EditGetRequest;
 import ai.extend.resources.edit.types.EditDeleteResponse;
 import ai.extend.resources.edit.types.EditGetResponse;
 import ai.extend.types.EditRun;
@@ -248,7 +250,7 @@ public class AsyncRawEditClient {
      * <p>If editing is still in progress, you'll receive a response with just the status. Once complete, you'll receive the full edited file information in the response.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<EditGetResponse>> get(String id) {
-        return get(id, null);
+        return get(id, EditGetRequest.builder().build());
     }
 
     /**
@@ -256,18 +258,32 @@ public class AsyncRawEditClient {
      * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an asynchronous edit run initiated via the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/edit-endpoints/edit-file-async">Edit File Asynchronously</a> endpoint.</p>
      * <p>If editing is still in progress, you'll receive a response with just the status. Once complete, you'll receive the full edited file information in the response.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EditGetResponse>> get(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientHttpResponse<EditGetResponse>> get(String id, EditGetRequest request) {
+        return get(id, request, null);
+    }
+
+    /**
+     * Retrieve the status and results of an edit run.
+     * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an asynchronous edit run initiated via the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/edit-endpoints/edit-file-async">Edit File Asynchronously</a> endpoint.</p>
+     * <p>If editing is still in progress, you'll receive a response with just the status. Once complete, you'll receive the full edited file information in the response.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<EditGetResponse>> get(
+            String id, EditGetRequest request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("edit_runs")
                 .addPathSegment(id)
                 .build();
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
@@ -324,7 +340,7 @@ public class AsyncRawEditClient {
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<EditDeleteResponse>> delete(String id) {
-        return delete(id, null);
+        return delete(id, EditDeleteRequest.builder().build());
     }
 
     /**
@@ -332,18 +348,31 @@ public class AsyncRawEditClient {
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<EditDeleteResponse>> delete(
-            String id, RequestOptions requestOptions) {
+            String id, EditDeleteRequest request) {
+        return delete(id, request, null);
+    }
+
+    /**
+     * Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<EditDeleteResponse>> delete(
+            String id, EditDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("edit_runs")
                 .addPathSegment(id)
                 .build();
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl)
                 .method("DELETE", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

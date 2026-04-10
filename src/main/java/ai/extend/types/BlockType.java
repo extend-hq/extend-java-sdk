@@ -18,7 +18,13 @@ public enum BlockType {
 
     TABLE_HEAD("table_head"),
 
-    TABLE_CELL("table_cell");
+    TABLE_CELL("table_cell"),
+
+    KEY_VALUE("key_value"),
+
+    HEADER("header"),
+
+    FOOTER("footer");
 
     private final String value;
 

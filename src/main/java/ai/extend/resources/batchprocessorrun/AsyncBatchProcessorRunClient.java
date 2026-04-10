@@ -5,6 +5,7 @@ package ai.extend.resources.batchprocessorrun;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
+import ai.extend.resources.batchprocessorrun.requests.BatchProcessorRunGetRequest;
 import ai.extend.resources.batchprocessorrun.types.BatchProcessorRunGetResponse;
 import java.util.concurrent.CompletableFuture;
 
@@ -35,7 +36,15 @@ public class AsyncBatchProcessorRunClient {
     /**
      * Retrieve details about a batch processor run, including evaluation runs
      */
-    public CompletableFuture<BatchProcessorRunGetResponse> get(String id, RequestOptions requestOptions) {
-        return this.rawClient.get(id, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<BatchProcessorRunGetResponse> get(String id, BatchProcessorRunGetRequest request) {
+        return this.rawClient.get(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Retrieve details about a batch processor run, including evaluation runs
+     */
+    public CompletableFuture<BatchProcessorRunGetResponse> get(
+            String id, BatchProcessorRunGetRequest request, RequestOptions requestOptions) {
+        return this.rawClient.get(id, request, requestOptions).thenApply(response -> response.body());
     }
 }

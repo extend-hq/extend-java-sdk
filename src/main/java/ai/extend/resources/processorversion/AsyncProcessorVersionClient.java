@@ -6,6 +6,8 @@ package ai.extend.resources.processorversion;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.processorversion.requests.ProcessorVersionCreateRequest;
+import ai.extend.resources.processorversion.requests.ProcessorVersionGetRequest;
+import ai.extend.resources.processorversion.requests.ProcessorVersionListRequest;
 import ai.extend.resources.processorversion.types.ProcessorVersionCreateResponse;
 import ai.extend.resources.processorversion.types.ProcessorVersionGetResponse;
 import ai.extend.resources.processorversion.types.ProcessorVersionListResponse;
@@ -42,8 +44,18 @@ public class AsyncProcessorVersionClient {
      * <p>Versions are typically returned in descending order of creation (newest first), but this should be confirmed in the actual implementation.
      * The <code>draft</code> version is the latest unpublished version of the processor, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public CompletableFuture<ProcessorVersionListResponse> list(String id, RequestOptions requestOptions) {
-        return this.rawClient.list(id, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<ProcessorVersionListResponse> list(String id, ProcessorVersionListRequest request) {
+        return this.rawClient.list(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * This endpoint allows you to fetch all versions of a given processor, including the current <code>draft</code> version.
+     * <p>Versions are typically returned in descending order of creation (newest first), but this should be confirmed in the actual implementation.
+     * The <code>draft</code> version is the latest unpublished version of the processor, which can be published to create a new version. It might not have any changes from the last published version.</p>
+     */
+    public CompletableFuture<ProcessorVersionListResponse> list(
+            String id, ProcessorVersionListRequest request, RequestOptions requestOptions) {
+        return this.rawClient.list(id, request, requestOptions).thenApply(response -> response.body());
     }
 
     /**
@@ -74,9 +86,20 @@ public class AsyncProcessorVersionClient {
      * Retrieve a specific version of a processor in Extend
      */
     public CompletableFuture<ProcessorVersionGetResponse> get(
-            String processorId, String processorVersionId, RequestOptions requestOptions) {
+            String processorId, String processorVersionId, ProcessorVersionGetRequest request) {
+        return this.rawClient.get(processorId, processorVersionId, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Retrieve a specific version of a processor in Extend
+     */
+    public CompletableFuture<ProcessorVersionGetResponse> get(
+            String processorId,
+            String processorVersionId,
+            ProcessorVersionGetRequest request,
+            RequestOptions requestOptions) {
         return this.rawClient
-                .get(processorId, processorVersionId, requestOptions)
+                .get(processorId, processorVersionId, request, requestOptions)
                 .thenApply(response -> response.body());
     }
 }

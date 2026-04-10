@@ -11,6 +11,7 @@ import ai.extend.requests.ParseRequest;
 import ai.extend.resources.batchprocessorrun.BatchProcessorRunClient;
 import ai.extend.resources.batchworkflowrun.BatchWorkflowRunClient;
 import ai.extend.resources.edit.EditClient;
+import ai.extend.resources.editschemas.EditSchemasClient;
 import ai.extend.resources.evaluationset.EvaluationSetClient;
 import ai.extend.resources.evaluationsetitem.EvaluationSetItemClient;
 import ai.extend.resources.file.FileClient;
@@ -35,6 +36,8 @@ public class ExtendClient {
     protected final Supplier<ParserRunClient> parserRunClient;
 
     protected final Supplier<EditClient> editClient;
+
+    protected final Supplier<EditSchemasClient> editSchemasClient;
 
     protected final Supplier<WorkflowClient> workflowClient;
 
@@ -62,6 +65,7 @@ public class ExtendClient {
         this.fileClient = Suppliers.memoize(() -> new FileClient(clientOptions));
         this.parserRunClient = Suppliers.memoize(() -> new ParserRunClient(clientOptions));
         this.editClient = Suppliers.memoize(() -> new EditClient(clientOptions));
+        this.editSchemasClient = Suppliers.memoize(() -> new EditSchemasClient(clientOptions));
         this.workflowClient = Suppliers.memoize(() -> new WorkflowClient(clientOptions));
         this.workflowRunClient = Suppliers.memoize(() -> new WorkflowRunClient(clientOptions));
         this.workflowRunOutputClient = Suppliers.memoize(() -> new WorkflowRunOutputClient(clientOptions));
@@ -139,6 +143,10 @@ public class ExtendClient {
 
     public EditClient edit() {
         return this.editClient.get();
+    }
+
+    public EditSchemasClient editSchemas() {
+        return this.editSchemasClient.get();
     }
 
     public WorkflowClient workflow() {

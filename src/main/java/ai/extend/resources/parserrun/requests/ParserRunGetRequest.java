@@ -21,14 +21,27 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ParserRunGetRequest.Builder.class)
 public final class ParserRunGetRequest {
+    private final Optional<String> extendWorkspaceId;
+
     private final Optional<ParserRunGetRequestResponseType> responseType;
 
     private final Map<String, Object> additionalProperties;
 
     private ParserRunGetRequest(
-            Optional<ParserRunGetRequestResponseType> responseType, Map<String, Object> additionalProperties) {
+            Optional<String> extendWorkspaceId,
+            Optional<ParserRunGetRequestResponseType> responseType,
+            Map<String, Object> additionalProperties) {
+        this.extendWorkspaceId = extendWorkspaceId;
         this.responseType = responseType;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2025-04-21/developers/authentication">Authentication</a> for details on API key scopes.
+     */
+    @JsonProperty("x-extend-workspace-id")
+    public Optional<String> getExtendWorkspaceId() {
+        return extendWorkspaceId;
     }
 
     /**
@@ -55,12 +68,12 @@ public final class ParserRunGetRequest {
     }
 
     private boolean equalTo(ParserRunGetRequest other) {
-        return responseType.equals(other.responseType);
+        return extendWorkspaceId.equals(other.extendWorkspaceId) && responseType.equals(other.responseType);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.responseType);
+        return Objects.hash(this.extendWorkspaceId, this.responseType);
     }
 
     @java.lang.Override
@@ -74,6 +87,8 @@ public final class ParserRunGetRequest {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<String> extendWorkspaceId = Optional.empty();
+
         private Optional<ParserRunGetRequestResponseType> responseType = Optional.empty();
 
         @JsonAnySetter
@@ -82,7 +97,22 @@ public final class ParserRunGetRequest {
         private Builder() {}
 
         public Builder from(ParserRunGetRequest other) {
+            extendWorkspaceId(other.getExtendWorkspaceId());
             responseType(other.getResponseType());
+            return this;
+        }
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2025-04-21/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        @JsonSetter(value = "x-extend-workspace-id", nulls = Nulls.SKIP)
+        public Builder extendWorkspaceId(Optional<String> extendWorkspaceId) {
+            this.extendWorkspaceId = extendWorkspaceId;
+            return this;
+        }
+
+        public Builder extendWorkspaceId(String extendWorkspaceId) {
+            this.extendWorkspaceId = Optional.ofNullable(extendWorkspaceId);
             return this;
         }
 
@@ -105,7 +135,7 @@ public final class ParserRunGetRequest {
         }
 
         public ParserRunGetRequest build() {
-            return new ParserRunGetRequest(responseType, additionalProperties);
+            return new ParserRunGetRequest(extendWorkspaceId, responseType, additionalProperties);
         }
     }
 }

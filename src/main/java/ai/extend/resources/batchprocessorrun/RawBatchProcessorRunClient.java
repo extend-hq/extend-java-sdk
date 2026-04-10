@@ -12,6 +12,7 @@ import ai.extend.core.RequestOptions;
 import ai.extend.errors.BadRequestError;
 import ai.extend.errors.NotFoundError;
 import ai.extend.errors.UnauthorizedError;
+import ai.extend.resources.batchprocessorrun.requests.BatchProcessorRunGetRequest;
 import ai.extend.resources.batchprocessorrun.types.BatchProcessorRunGetResponse;
 import ai.extend.types.Error;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -34,24 +35,36 @@ public class RawBatchProcessorRunClient {
      * Retrieve details about a batch processor run, including evaluation runs
      */
     public ExtendClientHttpResponse<BatchProcessorRunGetResponse> get(String id) {
-        return get(id, null);
+        return get(id, BatchProcessorRunGetRequest.builder().build());
     }
 
     /**
      * Retrieve details about a batch processor run, including evaluation runs
      */
-    public ExtendClientHttpResponse<BatchProcessorRunGetResponse> get(String id, RequestOptions requestOptions) {
+    public ExtendClientHttpResponse<BatchProcessorRunGetResponse> get(String id, BatchProcessorRunGetRequest request) {
+        return get(id, request, null);
+    }
+
+    /**
+     * Retrieve details about a batch processor run, including evaluation runs
+     */
+    public ExtendClientHttpResponse<BatchProcessorRunGetResponse> get(
+            String id, BatchProcessorRunGetRequest request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("batch_processor_runs")
                 .addPathSegment(id)
                 .build();
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

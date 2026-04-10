@@ -104,6 +104,9 @@ public final class Block {
      * <li><code>&quot;table_head&quot;</code> - Table header cells</li>
      * <li><code>&quot;table_cell&quot;</code> - Table body cells</li>
      * <li><code>&quot;figure&quot;</code> - Images, charts, diagrams, or logos</li>
+     * <li><code>&quot;key_value&quot;</code> - Key-value pair content (e.g., form field labels and values)</li>
+     * <li><code>&quot;header&quot;</code> - Page header content</li>
+     * <li><code>&quot;footer&quot;</code> - Page footer content</li>
      * </ul>
      */
     @JsonProperty("type")
@@ -234,6 +237,9 @@ public final class Block {
          * <li><code>&quot;table_head&quot;</code> - Table header cells</li>
          * <li><code>&quot;table_cell&quot;</code> - Table body cells</li>
          * <li><code>&quot;figure&quot;</code> - Images, charts, diagrams, or logos</li>
+         * <li><code>&quot;key_value&quot;</code> - Key-value pair content (e.g., form field labels and values)</li>
+         * <li><code>&quot;header&quot;</code> - Page header content</li>
+         * <li><code>&quot;footer&quot;</code> - Page footer content</li>
          * </ul>
          */
         ContentStage type(@NotNull BlockType type);
@@ -378,6 +384,9 @@ public final class Block {
          * <li><code>&quot;table_head&quot;</code> - Table header cells</li>
          * <li><code>&quot;table_cell&quot;</code> - Table body cells</li>
          * <li><code>&quot;figure&quot;</code> - Images, charts, diagrams, or logos</li>
+         * <li><code>&quot;key_value&quot;</code> - Key-value pair content (e.g., form field labels and values)</li>
+         * <li><code>&quot;header&quot;</code> - Page header content</li>
+         * <li><code>&quot;footer&quot;</code> - Page footer content</li>
          * </ul>
          * <p>The type of block:</p>
          * <ul>
@@ -388,6 +397,9 @@ public final class Block {
          * <li><code>&quot;table_head&quot;</code> - Table header cells</li>
          * <li><code>&quot;table_cell&quot;</code> - Table body cells</li>
          * <li><code>&quot;figure&quot;</code> - Images, charts, diagrams, or logos</li>
+         * <li><code>&quot;key_value&quot;</code> - Key-value pair content (e.g., form field labels and values)</li>
+         * <li><code>&quot;header&quot;</code> - Page header content</li>
+         * <li><code>&quot;footer&quot;</code> - Page footer content</li>
          * </ul>
          * @return Reference to {@code this} so that method calls can be chained together.
          */

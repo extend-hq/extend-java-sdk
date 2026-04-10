@@ -14,6 +14,7 @@ import ai.extend.errors.BadRequestError;
 import ai.extend.errors.InternalServerError;
 import ai.extend.errors.NotFoundError;
 import ai.extend.errors.UnauthorizedError;
+import ai.extend.resources.parserrun.requests.ParserRunDeleteRequest;
 import ai.extend.resources.parserrun.requests.ParserRunGetRequest;
 import ai.extend.resources.parserrun.types.ParserRunDeleteResponse;
 import ai.extend.resources.parserrun.types.ParserRunGetResponse;
@@ -72,6 +73,10 @@ public class RawParserRunClient {
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
@@ -115,25 +120,38 @@ public class RawParserRunClient {
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
     public ExtendClientHttpResponse<ParserRunDeleteResponse> delete(String id) {
-        return delete(id, null);
+        return delete(id, ParserRunDeleteRequest.builder().build());
     }
 
     /**
      * Delete a parser run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<ParserRunDeleteResponse> delete(String id, RequestOptions requestOptions) {
+    public ExtendClientHttpResponse<ParserRunDeleteResponse> delete(String id, ParserRunDeleteRequest request) {
+        return delete(id, request, null);
+    }
+
+    /**
+     * Delete a parser run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public ExtendClientHttpResponse<ParserRunDeleteResponse> delete(
+            String id, ParserRunDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("parser_runs")
                 .addPathSegment(id)
                 .build();
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl)
                 .method("DELETE", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

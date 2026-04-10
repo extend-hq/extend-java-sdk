@@ -5,7 +5,10 @@ package ai.extend.resources.workflowrun;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
+import ai.extend.resources.workflowrun.requests.WorkflowRunCancelRequest;
 import ai.extend.resources.workflowrun.requests.WorkflowRunCreateRequest;
+import ai.extend.resources.workflowrun.requests.WorkflowRunDeleteRequest;
+import ai.extend.resources.workflowrun.requests.WorkflowRunGetRequest;
 import ai.extend.resources.workflowrun.requests.WorkflowRunListRequest;
 import ai.extend.resources.workflowrun.requests.WorkflowRunUpdateRequest;
 import ai.extend.resources.workflowrun.types.WorkflowRunCancelResponse;
@@ -77,8 +80,16 @@ public class WorkflowRunClient {
     /**
      * Once a workflow has been run, you can check the status and output of a specific WorkflowRun.
      */
-    public WorkflowRunGetResponse get(String workflowRunId, RequestOptions requestOptions) {
-        return this.rawClient.get(workflowRunId, requestOptions).body();
+    public WorkflowRunGetResponse get(String workflowRunId, WorkflowRunGetRequest request) {
+        return this.rawClient.get(workflowRunId, request).body();
+    }
+
+    /**
+     * Once a workflow has been run, you can check the status and output of a specific WorkflowRun.
+     */
+    public WorkflowRunGetResponse get(
+            String workflowRunId, WorkflowRunGetRequest request, RequestOptions requestOptions) {
+        return this.rawClient.get(workflowRunId, request, requestOptions).body();
     }
 
     /**
@@ -115,8 +126,17 @@ public class WorkflowRunClient {
      * Delete a workflow run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public WorkflowRunDeleteResponse delete(String workflowRunId, RequestOptions requestOptions) {
-        return this.rawClient.delete(workflowRunId, requestOptions).body();
+    public WorkflowRunDeleteResponse delete(String workflowRunId, WorkflowRunDeleteRequest request) {
+        return this.rawClient.delete(workflowRunId, request).body();
+    }
+
+    /**
+     * Delete a workflow run and all associated data from Extend. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
+     */
+    public WorkflowRunDeleteResponse delete(
+            String workflowRunId, WorkflowRunDeleteRequest request, RequestOptions requestOptions) {
+        return this.rawClient.delete(workflowRunId, request, requestOptions).body();
     }
 
     /**
@@ -131,7 +151,16 @@ public class WorkflowRunClient {
      * Cancel a running workflow run by its ID. This endpoint allows you to stop a workflow run that is currently in progress.
      * <p>Note: Only workflow runs with a status of <code>PROCESSING</code> or <code>PENDING</code> can be cancelled. Workflow runs that are completed, failed, in review, rejected, or already cancelled cannot be cancelled.</p>
      */
-    public WorkflowRunCancelResponse cancel(String workflowRunId, RequestOptions requestOptions) {
-        return this.rawClient.cancel(workflowRunId, requestOptions).body();
+    public WorkflowRunCancelResponse cancel(String workflowRunId, WorkflowRunCancelRequest request) {
+        return this.rawClient.cancel(workflowRunId, request).body();
+    }
+
+    /**
+     * Cancel a running workflow run by its ID. This endpoint allows you to stop a workflow run that is currently in progress.
+     * <p>Note: Only workflow runs with a status of <code>PROCESSING</code> or <code>PENDING</code> can be cancelled. Workflow runs that are completed, failed, in review, rejected, or already cancelled cannot be cancelled.</p>
+     */
+    public WorkflowRunCancelResponse cancel(
+            String workflowRunId, WorkflowRunCancelRequest request, RequestOptions requestOptions) {
+        return this.rawClient.cancel(workflowRunId, request, requestOptions).body();
     }
 }

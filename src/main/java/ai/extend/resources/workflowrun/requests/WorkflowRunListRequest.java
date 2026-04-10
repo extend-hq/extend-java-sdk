@@ -23,6 +23,8 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = WorkflowRunListRequest.Builder.class)
 public final class WorkflowRunListRequest {
+    private final Optional<String> extendWorkspaceId;
+
     private final Optional<WorkflowStatus> status;
 
     private final Optional<String> workflowId;
@@ -42,6 +44,7 @@ public final class WorkflowRunListRequest {
     private final Map<String, Object> additionalProperties;
 
     private WorkflowRunListRequest(
+            Optional<String> extendWorkspaceId,
             Optional<WorkflowStatus> status,
             Optional<String> workflowId,
             Optional<String> batchId,
@@ -51,6 +54,7 @@ public final class WorkflowRunListRequest {
             Optional<String> nextPageToken,
             Optional<Integer> maxPageSize,
             Map<String, Object> additionalProperties) {
+        this.extendWorkspaceId = extendWorkspaceId;
         this.status = status;
         this.workflowId = workflowId;
         this.batchId = batchId;
@@ -60,6 +64,14 @@ public final class WorkflowRunListRequest {
         this.nextPageToken = nextPageToken;
         this.maxPageSize = maxPageSize;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2025-04-21/developers/authentication">Authentication</a> for details on API key scopes.
+     */
+    @JsonProperty("x-extend-workspace-id")
+    public Optional<String> getExtendWorkspaceId() {
+        return extendWorkspaceId;
     }
 
     /**
@@ -146,7 +158,8 @@ public final class WorkflowRunListRequest {
     }
 
     private boolean equalTo(WorkflowRunListRequest other) {
-        return status.equals(other.status)
+        return extendWorkspaceId.equals(other.extendWorkspaceId)
+                && status.equals(other.status)
                 && workflowId.equals(other.workflowId)
                 && batchId.equals(other.batchId)
                 && fileNameContains.equals(other.fileNameContains)
@@ -159,6 +172,7 @@ public final class WorkflowRunListRequest {
     @java.lang.Override
     public int hashCode() {
         return Objects.hash(
+                this.extendWorkspaceId,
                 this.status,
                 this.workflowId,
                 this.batchId,
@@ -180,6 +194,8 @@ public final class WorkflowRunListRequest {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<String> extendWorkspaceId = Optional.empty();
+
         private Optional<WorkflowStatus> status = Optional.empty();
 
         private Optional<String> workflowId = Optional.empty();
@@ -202,6 +218,7 @@ public final class WorkflowRunListRequest {
         private Builder() {}
 
         public Builder from(WorkflowRunListRequest other) {
+            extendWorkspaceId(other.getExtendWorkspaceId());
             status(other.getStatus());
             workflowId(other.getWorkflowId());
             batchId(other.getBatchId());
@@ -210,6 +227,20 @@ public final class WorkflowRunListRequest {
             sortDir(other.getSortDir());
             nextPageToken(other.getNextPageToken());
             maxPageSize(other.getMaxPageSize());
+            return this;
+        }
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2025-04-21/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        @JsonSetter(value = "x-extend-workspace-id", nulls = Nulls.SKIP)
+        public Builder extendWorkspaceId(Optional<String> extendWorkspaceId) {
+            this.extendWorkspaceId = extendWorkspaceId;
+            return this;
+        }
+
+        public Builder extendWorkspaceId(String extendWorkspaceId) {
+            this.extendWorkspaceId = Optional.ofNullable(extendWorkspaceId);
             return this;
         }
 
@@ -335,6 +366,7 @@ public final class WorkflowRunListRequest {
 
         public WorkflowRunListRequest build() {
             return new WorkflowRunListRequest(
+                    extendWorkspaceId,
                     status,
                     workflowId,
                     batchId,

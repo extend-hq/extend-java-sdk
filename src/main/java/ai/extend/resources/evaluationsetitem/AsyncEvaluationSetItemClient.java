@@ -7,6 +7,7 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.evaluationsetitem.requests.EvaluationSetItemCreateBatchRequest;
 import ai.extend.resources.evaluationsetitem.requests.EvaluationSetItemCreateRequest;
+import ai.extend.resources.evaluationsetitem.requests.EvaluationSetItemDeleteRequest;
 import ai.extend.resources.evaluationsetitem.requests.EvaluationSetItemListRequest;
 import ai.extend.resources.evaluationsetitem.requests.EvaluationSetItemUpdateRequest;
 import ai.extend.resources.evaluationsetitem.types.EvaluationSetItemCreateBatchResponse;
@@ -153,8 +154,18 @@ public class AsyncEvaluationSetItemClient {
      * Delete an evaluation set item from an evaluation set. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used to remove individual items from an evaluation set when they are no longer needed or if they were added in error.</p>
      */
-    public CompletableFuture<EvaluationSetItemDeleteResponse> delete(String id, RequestOptions requestOptions) {
-        return this.rawClient.delete(id, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<EvaluationSetItemDeleteResponse> delete(
+            String id, EvaluationSetItemDeleteRequest request) {
+        return this.rawClient.delete(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Delete an evaluation set item from an evaluation set. This operation is permanent and cannot be undone.
+     * <p>This endpoint can be used to remove individual items from an evaluation set when they are no longer needed or if they were added in error.</p>
+     */
+    public CompletableFuture<EvaluationSetItemDeleteResponse> delete(
+            String id, EvaluationSetItemDeleteRequest request, RequestOptions requestOptions) {
+        return this.rawClient.delete(id, request, requestOptions).thenApply(response -> response.body());
     }
 
     /**

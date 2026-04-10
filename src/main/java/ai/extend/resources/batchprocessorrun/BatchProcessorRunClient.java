@@ -5,6 +5,7 @@ package ai.extend.resources.batchprocessorrun;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
+import ai.extend.resources.batchprocessorrun.requests.BatchProcessorRunGetRequest;
 import ai.extend.resources.batchprocessorrun.types.BatchProcessorRunGetResponse;
 
 public class BatchProcessorRunClient {
@@ -34,7 +35,15 @@ public class BatchProcessorRunClient {
     /**
      * Retrieve details about a batch processor run, including evaluation runs
      */
-    public BatchProcessorRunGetResponse get(String id, RequestOptions requestOptions) {
-        return this.rawClient.get(id, requestOptions).body();
+    public BatchProcessorRunGetResponse get(String id, BatchProcessorRunGetRequest request) {
+        return this.rawClient.get(id, request).body();
+    }
+
+    /**
+     * Retrieve details about a batch processor run, including evaluation runs
+     */
+    public BatchProcessorRunGetResponse get(
+            String id, BatchProcessorRunGetRequest request, RequestOptions requestOptions) {
+        return this.rawClient.get(id, request, requestOptions).body();
     }
 }

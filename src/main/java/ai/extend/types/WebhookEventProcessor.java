@@ -40,6 +40,9 @@ public final class WebhookEventProcessor {
         this.additionalProperties = additionalProperties;
     }
 
+    /**
+     * @return Type of the event that occurred
+     */
     @JsonProperty("eventType")
     public Optional<WebhookEventProcessorEventType> getEventType() {
         return eventType;
@@ -99,6 +102,9 @@ public final class WebhookEventProcessor {
     public interface _FinalStage {
         WebhookEventProcessor build();
 
+        /**
+         * <p>Type of the event that occurred</p>
+         */
         _FinalStage eventType(Optional<WebhookEventProcessorEventType> eventType);
 
         _FinalStage eventType(WebhookEventProcessorEventType eventType);
@@ -154,12 +160,19 @@ public final class WebhookEventProcessor {
             return this;
         }
 
+        /**
+         * <p>Type of the event that occurred</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
         @java.lang.Override
         public _FinalStage eventType(WebhookEventProcessorEventType eventType) {
             this.eventType = Optional.ofNullable(eventType);
             return this;
         }
 
+        /**
+         * <p>Type of the event that occurred</p>
+         */
         @java.lang.Override
         @JsonSetter(value = "eventType", nulls = Nulls.SKIP)
         public _FinalStage eventType(Optional<WebhookEventProcessorEventType> eventType) {

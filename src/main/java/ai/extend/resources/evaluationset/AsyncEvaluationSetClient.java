@@ -6,6 +6,7 @@ package ai.extend.resources.evaluationset;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.evaluationset.requests.EvaluationSetCreateRequest;
+import ai.extend.resources.evaluationset.requests.EvaluationSetGetRequest;
 import ai.extend.resources.evaluationset.requests.EvaluationSetListRequest;
 import ai.extend.resources.evaluationset.types.EvaluationSetCreateResponse;
 import ai.extend.resources.evaluationset.types.EvaluationSetGetResponse;
@@ -81,7 +82,15 @@ public class AsyncEvaluationSetClient {
     /**
      * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/evaluation-set-endpoints/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
      */
-    public CompletableFuture<EvaluationSetGetResponse> get(String id, RequestOptions requestOptions) {
-        return this.rawClient.get(id, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<EvaluationSetGetResponse> get(String id, EvaluationSetGetRequest request) {
+        return this.rawClient.get(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/evaluation-set-endpoints/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
+     */
+    public CompletableFuture<EvaluationSetGetResponse> get(
+            String id, EvaluationSetGetRequest request, RequestOptions requestOptions) {
+        return this.rawClient.get(id, request, requestOptions).thenApply(response -> response.body());
     }
 }

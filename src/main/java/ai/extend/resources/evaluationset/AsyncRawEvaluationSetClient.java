@@ -15,6 +15,7 @@ import ai.extend.errors.BadRequestError;
 import ai.extend.errors.NotFoundError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.resources.evaluationset.requests.EvaluationSetCreateRequest;
+import ai.extend.resources.evaluationset.requests.EvaluationSetGetRequest;
 import ai.extend.resources.evaluationset.requests.EvaluationSetListRequest;
 import ai.extend.resources.evaluationset.types.EvaluationSetCreateResponse;
 import ai.extend.resources.evaluationset.types.EvaluationSetGetResponse;
@@ -92,6 +93,10 @@ public class AsyncRawEvaluationSetClient {
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
@@ -234,25 +239,37 @@ public class AsyncRawEvaluationSetClient {
      * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/evaluation-set-endpoints/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
      */
     public CompletableFuture<ExtendClientHttpResponse<EvaluationSetGetResponse>> get(String id) {
-        return get(id, null);
+        return get(id, EvaluationSetGetRequest.builder().build());
     }
 
     /**
      * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/evaluation-set-endpoints/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
      */
     public CompletableFuture<ExtendClientHttpResponse<EvaluationSetGetResponse>> get(
-            String id, RequestOptions requestOptions) {
+            String id, EvaluationSetGetRequest request) {
+        return get(id, request, null);
+    }
+
+    /**
+     * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2025-04-21/developers/api-reference/evaluation-set-endpoints/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
+     */
+    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetGetResponse>> get(
+            String id, EvaluationSetGetRequest request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("evaluation_sets")
                 .addPathSegment(id)
                 .build();
-        Request okhttpRequest = new Request.Builder()
+        Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json")
-                .build();
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);

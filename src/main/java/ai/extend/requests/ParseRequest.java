@@ -24,6 +24,8 @@ import org.jetbrains.annotations.NotNull;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ParseRequest.Builder.class)
 public final class ParseRequest {
+    private final Optional<String> extendWorkspaceId;
+
     private final Optional<ParseRequestResponseType> responseType;
 
     private final ParseRequestFile file;
@@ -33,14 +35,24 @@ public final class ParseRequest {
     private final Map<String, Object> additionalProperties;
 
     private ParseRequest(
+            Optional<String> extendWorkspaceId,
             Optional<ParseRequestResponseType> responseType,
             ParseRequestFile file,
             Optional<ParseConfig> config,
             Map<String, Object> additionalProperties) {
+        this.extendWorkspaceId = extendWorkspaceId;
         this.responseType = responseType;
         this.file = file;
         this.config = config;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2025-04-21/developers/authentication">Authentication</a> for details on API key scopes.
+     */
+    @JsonProperty("x-extend-workspace-id")
+    public Optional<String> getExtendWorkspaceId() {
+        return extendWorkspaceId;
     }
 
     /**
@@ -80,12 +92,15 @@ public final class ParseRequest {
     }
 
     private boolean equalTo(ParseRequest other) {
-        return responseType.equals(other.responseType) && file.equals(other.file) && config.equals(other.config);
+        return extendWorkspaceId.equals(other.extendWorkspaceId)
+                && responseType.equals(other.responseType)
+                && file.equals(other.file)
+                && config.equals(other.config);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.responseType, this.file, this.config);
+        return Objects.hash(this.extendWorkspaceId, this.responseType, this.file, this.config);
     }
 
     @java.lang.Override
@@ -108,6 +123,13 @@ public final class ParseRequest {
 
     public interface _FinalStage {
         ParseRequest build();
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2025-04-21/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        _FinalStage extendWorkspaceId(Optional<String> extendWorkspaceId);
+
+        _FinalStage extendWorkspaceId(String extendWorkspaceId);
 
         /**
          * <p>Controls the format of the response chunks. Defaults to <code>json</code> if not specified.</p>
@@ -133,6 +155,8 @@ public final class ParseRequest {
 
         private Optional<ParseRequestResponseType> responseType = Optional.empty();
 
+        private Optional<String> extendWorkspaceId = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -140,6 +164,7 @@ public final class ParseRequest {
 
         @java.lang.Override
         public Builder from(ParseRequest other) {
+            extendWorkspaceId(other.getExtendWorkspaceId());
             responseType(other.getResponseType());
             file(other.getFile());
             config(other.getConfig());
@@ -199,9 +224,29 @@ public final class ParseRequest {
             return this;
         }
 
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2025-04-21/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage extendWorkspaceId(String extendWorkspaceId) {
+            this.extendWorkspaceId = Optional.ofNullable(extendWorkspaceId);
+            return this;
+        }
+
+        /**
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2025-04-21/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "x-extend-workspace-id", nulls = Nulls.SKIP)
+        public _FinalStage extendWorkspaceId(Optional<String> extendWorkspaceId) {
+            this.extendWorkspaceId = extendWorkspaceId;
+            return this;
+        }
+
         @java.lang.Override
         public ParseRequest build() {
-            return new ParseRequest(responseType, file, config, additionalProperties);
+            return new ParseRequest(extendWorkspaceId, responseType, file, config, additionalProperties);
         }
     }
 }
