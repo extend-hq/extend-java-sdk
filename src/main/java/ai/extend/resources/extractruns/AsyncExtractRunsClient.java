@@ -6,12 +6,14 @@ package ai.extend.resources.extractruns;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.extractruns.requests.ExtractRunsCancelRequest;
+import ai.extend.resources.extractruns.requests.ExtractRunsCreateBatchRequest;
 import ai.extend.resources.extractruns.requests.ExtractRunsCreateRequest;
 import ai.extend.resources.extractruns.requests.ExtractRunsDeleteRequest;
 import ai.extend.resources.extractruns.requests.ExtractRunsListRequest;
 import ai.extend.resources.extractruns.requests.ExtractRunsRetrieveRequest;
 import ai.extend.resources.extractruns.types.ExtractRunsDeleteResponse;
 import ai.extend.resources.extractruns.types.ExtractRunsListResponse;
+import ai.extend.types.BatchRun;
 import ai.extend.types.ExtractRun;
 import java.util.concurrent.CompletableFuture;
 
@@ -178,5 +180,44 @@ public class AsyncExtractRunsClient {
     public CompletableFuture<ExtractRun> cancel(
             String id, ExtractRunsCancelRequest request, RequestOptions requestOptions) {
         return this.rawClient.cancel(id, request, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Submit up to <strong>1,000 files</strong> for extraction in a single request. Each file is processed as an independent extract run using the same extractor and configuration.
+     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/extract/create-extract-run">Extract File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
+     * <p><strong>Monitoring results:</strong></p>
+     * <ul>
+     * <li><strong>Webhooks (recommended):</strong> Subscribe to <code>batch_processor_run.processed</code> and <code>batch_processor_run.failed</code> events. The webhook payload indicates the batch has finished — fetch individual run results using <code>GET /extract_runs?batchId={id}</code>.</li>
+     * <li><strong>Polling:</strong> Call <code>GET /batch_runs/{id}</code> to check the overall batch status, and use <code>GET /extract_runs</code> filtered by <code>batchId</code> to retrieve individual run results.</li>
+     * </ul>
+     * <p><strong>Notes:</strong></p>
+     * <ul>
+     * <li>A processor reference (<code>extractor.id</code>) is required — inline <code>config</code> is not supported for batch requests.</li>
+     * <li><code>inputs</code> must contain between 1 and 1,000 items.</li>
+     * <li>All inputs in a batch use the same extractor version and override config.</li>
+     * </ul>
+     */
+    public CompletableFuture<BatchRun> createBatch(ExtractRunsCreateBatchRequest request) {
+        return this.rawClient.createBatch(request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Submit up to <strong>1,000 files</strong> for extraction in a single request. Each file is processed as an independent extract run using the same extractor and configuration.
+     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/extract/create-extract-run">Extract File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
+     * <p><strong>Monitoring results:</strong></p>
+     * <ul>
+     * <li><strong>Webhooks (recommended):</strong> Subscribe to <code>batch_processor_run.processed</code> and <code>batch_processor_run.failed</code> events. The webhook payload indicates the batch has finished — fetch individual run results using <code>GET /extract_runs?batchId={id}</code>.</li>
+     * <li><strong>Polling:</strong> Call <code>GET /batch_runs/{id}</code> to check the overall batch status, and use <code>GET /extract_runs</code> filtered by <code>batchId</code> to retrieve individual run results.</li>
+     * </ul>
+     * <p><strong>Notes:</strong></p>
+     * <ul>
+     * <li>A processor reference (<code>extractor.id</code>) is required — inline <code>config</code> is not supported for batch requests.</li>
+     * <li><code>inputs</code> must contain between 1 and 1,000 items.</li>
+     * <li>All inputs in a batch use the same extractor version and override config.</li>
+     * </ul>
+     */
+    public CompletableFuture<BatchRun> createBatch(
+            ExtractRunsCreateBatchRequest request, RequestOptions requestOptions) {
+        return this.rawClient.createBatch(request, requestOptions).thenApply(response -> response.body());
     }
 }

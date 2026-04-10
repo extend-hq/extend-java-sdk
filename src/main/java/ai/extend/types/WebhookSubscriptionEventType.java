@@ -10,23 +10,11 @@ public final class WebhookSubscriptionEventType {
     public static final WebhookSubscriptionEventType SPLIT_RUN_PROCESSED =
             new WebhookSubscriptionEventType(Value.SPLIT_RUN_PROCESSED, "split_run.processed");
 
-    public static final WebhookSubscriptionEventType WORKFLOW_RUN_COMPLETED =
-            new WebhookSubscriptionEventType(Value.WORKFLOW_RUN_COMPLETED, "workflow_run.completed");
-
     public static final WebhookSubscriptionEventType WORKFLOW_RUN_STEP_RUN_PROCESSED =
             new WebhookSubscriptionEventType(Value.WORKFLOW_RUN_STEP_RUN_PROCESSED, "workflow_run.step_run.processed");
 
     public static final WebhookSubscriptionEventType WORKFLOW_RUN_FAILED =
             new WebhookSubscriptionEventType(Value.WORKFLOW_RUN_FAILED, "workflow_run.failed");
-
-    public static final WebhookSubscriptionEventType WORKFLOW_RUN_REJECTED =
-            new WebhookSubscriptionEventType(Value.WORKFLOW_RUN_REJECTED, "workflow_run.rejected");
-
-    public static final WebhookSubscriptionEventType WORKFLOW_RUN_NEEDS_REVIEW =
-            new WebhookSubscriptionEventType(Value.WORKFLOW_RUN_NEEDS_REVIEW, "workflow_run.needs_review");
-
-    public static final WebhookSubscriptionEventType WORKFLOW_RUN_CANCELLED =
-            new WebhookSubscriptionEventType(Value.WORKFLOW_RUN_CANCELLED, "workflow_run.cancelled");
 
     public static final WebhookSubscriptionEventType CLASSIFY_RUN_FAILED =
             new WebhookSubscriptionEventType(Value.CLASSIFY_RUN_FAILED, "classify_run.failed");
@@ -39,6 +27,24 @@ public final class WebhookSubscriptionEventType {
 
     public static final WebhookSubscriptionEventType EXTRACT_RUN_FAILED =
             new WebhookSubscriptionEventType(Value.EXTRACT_RUN_FAILED, "extract_run.failed");
+
+    public static final WebhookSubscriptionEventType WORKFLOW_RUN_COMPLETED =
+            new WebhookSubscriptionEventType(Value.WORKFLOW_RUN_COMPLETED, "workflow_run.completed");
+
+    public static final WebhookSubscriptionEventType WORKFLOW_RUN_REJECTED =
+            new WebhookSubscriptionEventType(Value.WORKFLOW_RUN_REJECTED, "workflow_run.rejected");
+
+    public static final WebhookSubscriptionEventType WORKFLOW_RUN_NEEDS_REVIEW =
+            new WebhookSubscriptionEventType(Value.WORKFLOW_RUN_NEEDS_REVIEW, "workflow_run.needs_review");
+
+    public static final WebhookSubscriptionEventType WORKFLOW_RUN_CANCELLED =
+            new WebhookSubscriptionEventType(Value.WORKFLOW_RUN_CANCELLED, "workflow_run.cancelled");
+
+    public static final WebhookSubscriptionEventType BATCH_PROCESSOR_RUN_PROCESSED =
+            new WebhookSubscriptionEventType(Value.BATCH_PROCESSOR_RUN_PROCESSED, "batch_processor_run.processed");
+
+    public static final WebhookSubscriptionEventType BATCH_PROCESSOR_RUN_FAILED =
+            new WebhookSubscriptionEventType(Value.BATCH_PROCESSOR_RUN_FAILED, "batch_processor_run.failed");
 
     public static final WebhookSubscriptionEventType SPLIT_RUN_FAILED =
             new WebhookSubscriptionEventType(Value.SPLIT_RUN_FAILED, "split_run.failed");
@@ -78,18 +84,10 @@ public final class WebhookSubscriptionEventType {
         switch (value) {
             case SPLIT_RUN_PROCESSED:
                 return visitor.visitSplitRunProcessed();
-            case WORKFLOW_RUN_COMPLETED:
-                return visitor.visitWorkflowRunCompleted();
             case WORKFLOW_RUN_STEP_RUN_PROCESSED:
                 return visitor.visitWorkflowRunStepRunProcessed();
             case WORKFLOW_RUN_FAILED:
                 return visitor.visitWorkflowRunFailed();
-            case WORKFLOW_RUN_REJECTED:
-                return visitor.visitWorkflowRunRejected();
-            case WORKFLOW_RUN_NEEDS_REVIEW:
-                return visitor.visitWorkflowRunNeedsReview();
-            case WORKFLOW_RUN_CANCELLED:
-                return visitor.visitWorkflowRunCancelled();
             case CLASSIFY_RUN_FAILED:
                 return visitor.visitClassifyRunFailed();
             case CLASSIFY_RUN_PROCESSED:
@@ -98,6 +96,18 @@ public final class WebhookSubscriptionEventType {
                 return visitor.visitExtractRunProcessed();
             case EXTRACT_RUN_FAILED:
                 return visitor.visitExtractRunFailed();
+            case WORKFLOW_RUN_COMPLETED:
+                return visitor.visitWorkflowRunCompleted();
+            case WORKFLOW_RUN_REJECTED:
+                return visitor.visitWorkflowRunRejected();
+            case WORKFLOW_RUN_NEEDS_REVIEW:
+                return visitor.visitWorkflowRunNeedsReview();
+            case WORKFLOW_RUN_CANCELLED:
+                return visitor.visitWorkflowRunCancelled();
+            case BATCH_PROCESSOR_RUN_PROCESSED:
+                return visitor.visitBatchProcessorRunProcessed();
+            case BATCH_PROCESSOR_RUN_FAILED:
+                return visitor.visitBatchProcessorRunFailed();
             case SPLIT_RUN_FAILED:
                 return visitor.visitSplitRunFailed();
             case UNKNOWN:
@@ -111,18 +121,10 @@ public final class WebhookSubscriptionEventType {
         switch (value) {
             case "split_run.processed":
                 return SPLIT_RUN_PROCESSED;
-            case "workflow_run.completed":
-                return WORKFLOW_RUN_COMPLETED;
             case "workflow_run.step_run.processed":
                 return WORKFLOW_RUN_STEP_RUN_PROCESSED;
             case "workflow_run.failed":
                 return WORKFLOW_RUN_FAILED;
-            case "workflow_run.rejected":
-                return WORKFLOW_RUN_REJECTED;
-            case "workflow_run.needs_review":
-                return WORKFLOW_RUN_NEEDS_REVIEW;
-            case "workflow_run.cancelled":
-                return WORKFLOW_RUN_CANCELLED;
             case "classify_run.failed":
                 return CLASSIFY_RUN_FAILED;
             case "classify_run.processed":
@@ -131,6 +133,18 @@ public final class WebhookSubscriptionEventType {
                 return EXTRACT_RUN_PROCESSED;
             case "extract_run.failed":
                 return EXTRACT_RUN_FAILED;
+            case "workflow_run.completed":
+                return WORKFLOW_RUN_COMPLETED;
+            case "workflow_run.rejected":
+                return WORKFLOW_RUN_REJECTED;
+            case "workflow_run.needs_review":
+                return WORKFLOW_RUN_NEEDS_REVIEW;
+            case "workflow_run.cancelled":
+                return WORKFLOW_RUN_CANCELLED;
+            case "batch_processor_run.processed":
+                return BATCH_PROCESSOR_RUN_PROCESSED;
+            case "batch_processor_run.failed":
+                return BATCH_PROCESSOR_RUN_FAILED;
             case "split_run.failed":
                 return SPLIT_RUN_FAILED;
             default:
@@ -150,6 +164,10 @@ public final class WebhookSubscriptionEventType {
         SPLIT_RUN_PROCESSED,
 
         SPLIT_RUN_FAILED,
+
+        BATCH_PROCESSOR_RUN_PROCESSED,
+
+        BATCH_PROCESSOR_RUN_FAILED,
 
         WORKFLOW_RUN_COMPLETED,
 
@@ -178,6 +196,10 @@ public final class WebhookSubscriptionEventType {
         T visitSplitRunProcessed();
 
         T visitSplitRunFailed();
+
+        T visitBatchProcessorRunProcessed();
+
+        T visitBatchProcessorRunFailed();
 
         T visitWorkflowRunCompleted();
 

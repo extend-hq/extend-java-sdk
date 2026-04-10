@@ -35,10 +35,10 @@ public final class ClientOptions {
         this.headers.putAll(headers);
         this.headers.putAll(new HashMap<String, String>() {
             {
-                put("User-Agent", "ai.extend:extend-java-sdk/1.7.0");
+                put("User-Agent", "ai.extend:extend-java-sdk/1.8.0");
                 put("X-Fern-Language", "JAVA");
                 put("X-Fern-SDK-Name", "com.extendconfig.fern:api-sdk");
-                put("X-Fern-SDK-Version", "1.7.0");
+                put("X-Fern-SDK-Version", "1.8.0");
             }
         });
         this.headerSuppliers = headerSuppliers;

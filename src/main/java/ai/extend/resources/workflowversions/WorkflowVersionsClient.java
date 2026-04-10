@@ -90,12 +90,6 @@ public class WorkflowVersionsClient {
 
     /**
      * Get a specific version of a workflow, including its step definitions.
-     * <p>The <code>versionId</code> parameter accepts:</p>
-     * <ul>
-     * <li><code>&quot;draft&quot;</code> — returns the current draft version</li>
-     * <li>A version number (e.g. <code>&quot;1&quot;</code>, <code>&quot;2&quot;</code>) — returns that deployed version</li>
-     * <li>An internal version ID (e.g. <code>&quot;workflow_version_abc123&quot;</code>) — returns that specific version</li>
-     * </ul>
      */
     public WorkflowVersion retrieve(String id, String versionId) {
         return this.rawClient.retrieve(id, versionId).body();
@@ -103,12 +97,6 @@ public class WorkflowVersionsClient {
 
     /**
      * Get a specific version of a workflow, including its step definitions.
-     * <p>The <code>versionId</code> parameter accepts:</p>
-     * <ul>
-     * <li><code>&quot;draft&quot;</code> — returns the current draft version</li>
-     * <li>A version number (e.g. <code>&quot;1&quot;</code>, <code>&quot;2&quot;</code>) — returns that deployed version</li>
-     * <li>An internal version ID (e.g. <code>&quot;workflow_version_abc123&quot;</code>) — returns that specific version</li>
-     * </ul>
      */
     public WorkflowVersion retrieve(String id, String versionId, RequestOptions requestOptions) {
         return this.rawClient.retrieve(id, versionId, requestOptions).body();

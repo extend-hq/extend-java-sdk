@@ -103,6 +103,7 @@ public final class Block {
      * <li><code>&quot;key_value&quot;</code> - Key-value pairs (e.g., form regions, key-val groups, etc)</li>
      * <li><code>&quot;page_number&quot;</code> - Page number indicators</li>
      * <li><code>&quot;barcode&quot;</code> - Barcodes and QR codes</li>
+     * <li><code>&quot;formula&quot;</code> - Mathematical formulas and equations</li>
      * <li><code>&quot;header&quot;</code> - Page headers</li>
      * <li><code>&quot;footer&quot;</code> - Page footers</li>
      * </ul>
@@ -229,6 +230,7 @@ public final class Block {
          * <li><code>&quot;key_value&quot;</code> - Key-value pairs (e.g., form regions, key-val groups, etc)</li>
          * <li><code>&quot;page_number&quot;</code> - Page number indicators</li>
          * <li><code>&quot;barcode&quot;</code> - Barcodes and QR codes</li>
+         * <li><code>&quot;formula&quot;</code> - Mathematical formulas and equations</li>
          * <li><code>&quot;header&quot;</code> - Page headers</li>
          * <li><code>&quot;footer&quot;</code> - Page footers</li>
          * </ul>
@@ -356,6 +358,7 @@ public final class Block {
          * <li><code>&quot;key_value&quot;</code> - Key-value pairs (e.g., form regions, key-val groups, etc)</li>
          * <li><code>&quot;page_number&quot;</code> - Page number indicators</li>
          * <li><code>&quot;barcode&quot;</code> - Barcodes and QR codes</li>
+         * <li><code>&quot;formula&quot;</code> - Mathematical formulas and equations</li>
          * <li><code>&quot;header&quot;</code> - Page headers</li>
          * <li><code>&quot;footer&quot;</code> - Page footers</li>
          * </ul>
@@ -371,6 +374,7 @@ public final class Block {
          * <li><code>&quot;key_value&quot;</code> - Key-value pairs (e.g., form regions, key-val groups, etc)</li>
          * <li><code>&quot;page_number&quot;</code> - Page number indicators</li>
          * <li><code>&quot;barcode&quot;</code> - Barcodes and QR codes</li>
+         * <li><code>&quot;formula&quot;</code> - Mathematical formulas and equations</li>
          * <li><code>&quot;header&quot;</code> - Page headers</li>
          * <li><code>&quot;footer&quot;</code> - Page footers</li>
          * </ul>

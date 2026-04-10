@@ -9,6 +9,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public final class BatchRunStatus {
     public static final BatchRunStatus PROCESSING = new BatchRunStatus(Value.PROCESSING, "PROCESSING");
 
+    public static final BatchRunStatus CANCELLED = new BatchRunStatus(Value.CANCELLED, "CANCELLED");
+
     public static final BatchRunStatus PROCESSED = new BatchRunStatus(Value.PROCESSED, "PROCESSED");
 
     public static final BatchRunStatus PENDING = new BatchRunStatus(Value.PENDING, "PENDING");
@@ -49,6 +51,8 @@ public final class BatchRunStatus {
         switch (value) {
             case PROCESSING:
                 return visitor.visitProcessing();
+            case CANCELLED:
+                return visitor.visitCancelled();
             case PROCESSED:
                 return visitor.visitProcessed();
             case PENDING:
@@ -66,6 +70,8 @@ public final class BatchRunStatus {
         switch (value) {
             case "PROCESSING":
                 return PROCESSING;
+            case "CANCELLED":
+                return CANCELLED;
             case "PROCESSED":
                 return PROCESSED;
             case "PENDING":
@@ -86,6 +92,8 @@ public final class BatchRunStatus {
 
         FAILED,
 
+        CANCELLED,
+
         UNKNOWN
     }
 
@@ -97,6 +105,8 @@ public final class BatchRunStatus {
         T visitProcessed();
 
         T visitFailed();
+
+        T visitCancelled();
 
         T visitUnknown(String unknownType);
     }

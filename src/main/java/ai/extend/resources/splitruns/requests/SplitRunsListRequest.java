@@ -31,6 +31,8 @@ public final class SplitRunsListRequest {
 
     private final Optional<String> splitterId;
 
+    private final Optional<String> batchId;
+
     private final Optional<String> sourceId;
 
     private final Optional<RunSource> source;
@@ -51,6 +53,7 @@ public final class SplitRunsListRequest {
             Optional<String> extendWorkspaceId,
             Optional<ProcessorRunStatus> status,
             Optional<String> splitterId,
+            Optional<String> batchId,
             Optional<String> sourceId,
             Optional<RunSource> source,
             Optional<String> fileNameContains,
@@ -62,6 +65,7 @@ public final class SplitRunsListRequest {
         this.extendWorkspaceId = extendWorkspaceId;
         this.status = status;
         this.splitterId = splitterId;
+        this.batchId = batchId;
         this.sourceId = sourceId;
         this.source = source;
         this.fileNameContains = fileNameContains;
@@ -92,6 +96,15 @@ public final class SplitRunsListRequest {
     @JsonProperty("splitterId")
     public Optional<String> getSplitterId() {
         return splitterId;
+    }
+
+    /**
+     * @return Filters runs by the batch they belong to. Only returns runs created as part of the specified batch.
+     * <p>Example: <code>&quot;bpr_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+     */
+    @JsonProperty("batchId")
+    public Optional<String> getBatchId() {
+        return batchId;
     }
 
     /**
@@ -154,6 +167,7 @@ public final class SplitRunsListRequest {
         return extendWorkspaceId.equals(other.extendWorkspaceId)
                 && status.equals(other.status)
                 && splitterId.equals(other.splitterId)
+                && batchId.equals(other.batchId)
                 && sourceId.equals(other.sourceId)
                 && source.equals(other.source)
                 && fileNameContains.equals(other.fileNameContains)
@@ -169,6 +183,7 @@ public final class SplitRunsListRequest {
                 this.extendWorkspaceId,
                 this.status,
                 this.splitterId,
+                this.batchId,
                 this.sourceId,
                 this.source,
                 this.fileNameContains,
@@ -195,6 +210,8 @@ public final class SplitRunsListRequest {
 
         private Optional<String> splitterId = Optional.empty();
 
+        private Optional<String> batchId = Optional.empty();
+
         private Optional<String> sourceId = Optional.empty();
 
         private Optional<RunSource> source = Optional.empty();
@@ -218,6 +235,7 @@ public final class SplitRunsListRequest {
             extendWorkspaceId(other.getExtendWorkspaceId());
             status(other.getStatus());
             splitterId(other.getSplitterId());
+            batchId(other.getBatchId());
             sourceId(other.getSourceId());
             source(other.getSource());
             fileNameContains(other.getFileNameContains());
@@ -264,6 +282,21 @@ public final class SplitRunsListRequest {
 
         public Builder splitterId(String splitterId) {
             this.splitterId = Optional.ofNullable(splitterId);
+            return this;
+        }
+
+        /**
+         * <p>Filters runs by the batch they belong to. Only returns runs created as part of the specified batch.</p>
+         * <p>Example: <code>&quot;bpr_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         */
+        @JsonSetter(value = "batchId", nulls = Nulls.SKIP)
+        public Builder batchId(Optional<String> batchId) {
+            this.batchId = batchId;
+            return this;
+        }
+
+        public Builder batchId(String batchId) {
+            this.batchId = Optional.ofNullable(batchId);
             return this;
         }
 
@@ -359,6 +392,7 @@ public final class SplitRunsListRequest {
                     extendWorkspaceId,
                     status,
                     splitterId,
+                    batchId,
                     sourceId,
                     source,
                     fileNameContains,

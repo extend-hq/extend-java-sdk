@@ -25,8 +25,6 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = LegacyListProcessorsResponse.Builder.class)
 public final class LegacyListProcessorsResponse {
-    private final boolean success;
-
     private final Optional<String> warning;
 
     private final List<LegacyListProcessorsProcessor> processors;
@@ -36,12 +34,10 @@ public final class LegacyListProcessorsResponse {
     private final Map<String, Object> additionalProperties;
 
     private LegacyListProcessorsResponse(
-            boolean success,
             Optional<String> warning,
             List<LegacyListProcessorsProcessor> processors,
             Optional<String> nextPageToken,
             Map<String, Object> additionalProperties) {
-        this.success = success;
         this.warning = warning;
         this.processors = processors;
         this.nextPageToken = nextPageToken;
@@ -52,8 +48,8 @@ public final class LegacyListProcessorsResponse {
      * @return Indicates the request was successful
      */
     @JsonProperty("success")
-    public boolean getSuccess() {
-        return success;
+    public Boolean getSuccess() {
+        return true;
     }
 
     /**
@@ -110,15 +106,14 @@ public final class LegacyListProcessorsResponse {
     }
 
     private boolean equalTo(LegacyListProcessorsResponse other) {
-        return success == other.success
-                && warning.equals(other.warning)
+        return warning.equals(other.warning)
                 && processors.equals(other.processors)
                 && nextPageToken.equals(other.nextPageToken);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.success, this.warning, this.processors, this.nextPageToken);
+        return Objects.hash(this.warning, this.processors, this.nextPageToken);
     }
 
     @java.lang.Override
@@ -126,68 +121,24 @@ public final class LegacyListProcessorsResponse {
         return ObjectMappers.stringify(this);
     }
 
-    public static SuccessStage builder() {
+    public static Builder builder() {
         return new Builder();
     }
 
-    public interface SuccessStage {
-        /**
-         * <p>Indicates the request was successful</p>
-         */
-        _FinalStage success(boolean success);
-
-        Builder from(LegacyListProcessorsResponse other);
-    }
-
-    public interface _FinalStage {
-        LegacyListProcessorsResponse build();
-
-        /**
-         * <p>Optional warning message</p>
-         */
-        _FinalStage warning(Optional<String> warning);
-
-        _FinalStage warning(String warning);
-
-        _FinalStage warning(Nullable<String> warning);
-
-        /**
-         * <p>Array of processors</p>
-         */
-        _FinalStage processors(List<LegacyListProcessorsProcessor> processors);
-
-        _FinalStage addProcessors(LegacyListProcessorsProcessor processors);
-
-        _FinalStage addAllProcessors(List<LegacyListProcessorsProcessor> processors);
-
-        /**
-         * <p>Token for retrieving the next page of results. Will be null if there are no more results.</p>
-         */
-        _FinalStage nextPageToken(Optional<String> nextPageToken);
-
-        _FinalStage nextPageToken(String nextPageToken);
-
-        _FinalStage nextPageToken(Nullable<String> nextPageToken);
-    }
-
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements SuccessStage, _FinalStage {
-        private boolean success;
-
-        private Optional<String> nextPageToken = Optional.empty();
+    public static final class Builder {
+        private Optional<String> warning = Optional.empty();
 
         private List<LegacyListProcessorsProcessor> processors = new ArrayList<>();
 
-        private Optional<String> warning = Optional.empty();
+        private Optional<String> nextPageToken = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
-        @java.lang.Override
         public Builder from(LegacyListProcessorsResponse other) {
-            success(other.getSuccess());
             warning(other.getWarning());
             processors(other.getProcessors());
             nextPageToken(other.getNextPageToken());
@@ -195,94 +146,20 @@ public final class LegacyListProcessorsResponse {
         }
 
         /**
-         * <p>Indicates the request was successful</p>
-         * <p>Indicates the request was successful</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("success")
-        public _FinalStage success(boolean success) {
-            this.success = success;
-            return this;
-        }
-
-        /**
-         * <p>Token for retrieving the next page of results. Will be null if there are no more results.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage nextPageToken(Nullable<String> nextPageToken) {
-            if (nextPageToken.isNull()) {
-                this.nextPageToken = null;
-            } else if (nextPageToken.isEmpty()) {
-                this.nextPageToken = Optional.empty();
-            } else {
-                this.nextPageToken = Optional.of(nextPageToken.get());
-            }
-            return this;
-        }
-
-        /**
-         * <p>Token for retrieving the next page of results. Will be null if there are no more results.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage nextPageToken(String nextPageToken) {
-            this.nextPageToken = Optional.ofNullable(nextPageToken);
-            return this;
-        }
-
-        /**
-         * <p>Token for retrieving the next page of results. Will be null if there are no more results.</p>
-         */
-        @java.lang.Override
-        @JsonSetter(value = "nextPageToken", nulls = Nulls.SKIP)
-        public _FinalStage nextPageToken(Optional<String> nextPageToken) {
-            this.nextPageToken = nextPageToken;
-            return this;
-        }
-
-        /**
-         * <p>Array of processors</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage addAllProcessors(List<LegacyListProcessorsProcessor> processors) {
-            if (processors != null) {
-                this.processors.addAll(processors);
-            }
-            return this;
-        }
-
-        /**
-         * <p>Array of processors</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage addProcessors(LegacyListProcessorsProcessor processors) {
-            this.processors.add(processors);
-            return this;
-        }
-
-        /**
-         * <p>Array of processors</p>
-         */
-        @java.lang.Override
-        @JsonSetter(value = "processors", nulls = Nulls.SKIP)
-        public _FinalStage processors(List<LegacyListProcessorsProcessor> processors) {
-            this.processors.clear();
-            if (processors != null) {
-                this.processors.addAll(processors);
-            }
-            return this;
-        }
-
-        /**
          * <p>Optional warning message</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
          */
-        @java.lang.Override
-        public _FinalStage warning(Nullable<String> warning) {
+        @JsonSetter(value = "warning", nulls = Nulls.SKIP)
+        public Builder warning(Optional<String> warning) {
+            this.warning = warning;
+            return this;
+        }
+
+        public Builder warning(String warning) {
+            this.warning = Optional.ofNullable(warning);
+            return this;
+        }
+
+        public Builder warning(Nullable<String> warning) {
             if (warning.isNull()) {
                 this.warning = null;
             } else if (warning.isEmpty()) {
@@ -294,28 +171,56 @@ public final class LegacyListProcessorsResponse {
         }
 
         /**
-         * <p>Optional warning message</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
+         * <p>Array of processors</p>
          */
-        @java.lang.Override
-        public _FinalStage warning(String warning) {
-            this.warning = Optional.ofNullable(warning);
+        @JsonSetter(value = "processors", nulls = Nulls.SKIP)
+        public Builder processors(List<LegacyListProcessorsProcessor> processors) {
+            this.processors.clear();
+            if (processors != null) {
+                this.processors.addAll(processors);
+            }
+            return this;
+        }
+
+        public Builder addProcessors(LegacyListProcessorsProcessor processors) {
+            this.processors.add(processors);
+            return this;
+        }
+
+        public Builder addAllProcessors(List<LegacyListProcessorsProcessor> processors) {
+            if (processors != null) {
+                this.processors.addAll(processors);
+            }
             return this;
         }
 
         /**
-         * <p>Optional warning message</p>
+         * <p>Token for retrieving the next page of results. Will be null if there are no more results.</p>
          */
-        @java.lang.Override
-        @JsonSetter(value = "warning", nulls = Nulls.SKIP)
-        public _FinalStage warning(Optional<String> warning) {
-            this.warning = warning;
+        @JsonSetter(value = "nextPageToken", nulls = Nulls.SKIP)
+        public Builder nextPageToken(Optional<String> nextPageToken) {
+            this.nextPageToken = nextPageToken;
             return this;
         }
 
-        @java.lang.Override
+        public Builder nextPageToken(String nextPageToken) {
+            this.nextPageToken = Optional.ofNullable(nextPageToken);
+            return this;
+        }
+
+        public Builder nextPageToken(Nullable<String> nextPageToken) {
+            if (nextPageToken.isNull()) {
+                this.nextPageToken = null;
+            } else if (nextPageToken.isEmpty()) {
+                this.nextPageToken = Optional.empty();
+            } else {
+                this.nextPageToken = Optional.of(nextPageToken.get());
+            }
+            return this;
+        }
+
         public LegacyListProcessorsResponse build() {
-            return new LegacyListProcessorsResponse(success, warning, processors, nextPageToken, additionalProperties);
+            return new LegacyListProcessorsResponse(warning, processors, nextPageToken, additionalProperties);
         }
     }
 }

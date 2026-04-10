@@ -43,6 +43,8 @@ public final class ParseConfigAdvancedOptions {
 
     private final Optional<ParseConfigAdvancedOptionsImageConversionQuality> imageConversionQuality;
 
+    private final Optional<List<ParseConfigAdvancedOptionsFormattingDetectionItem>> formattingDetection;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseConfigAdvancedOptions(
@@ -57,6 +59,7 @@ public final class ParseConfigAdvancedOptions {
             Optional<Boolean> alwaysConvertToPdf,
             Optional<ParseConfigAdvancedOptionsEnrichmentFormat> enrichmentFormat,
             Optional<ParseConfigAdvancedOptionsImageConversionQuality> imageConversionQuality,
+            Optional<List<ParseConfigAdvancedOptionsFormattingDetectionItem>> formattingDetection,
             Map<String, Object> additionalProperties) {
         this.pageRotationEnabled = pageRotationEnabled;
         this.pageRanges = pageRanges;
@@ -69,6 +72,7 @@ public final class ParseConfigAdvancedOptions {
         this.alwaysConvertToPdf = alwaysConvertToPdf;
         this.enrichmentFormat = enrichmentFormat;
         this.imageConversionQuality = imageConversionQuality;
+        this.formattingDetection = formattingDetection;
         this.additionalProperties = additionalProperties;
     }
 
@@ -171,6 +175,17 @@ public final class ParseConfigAdvancedOptions {
         return imageConversionQuality;
     }
 
+    /**
+     * @return Enable detection of formatting-based annotations in the document. Currently supports change tracking detection.
+     * <p>When enabled, detected changes are represented inline within the <code>content</code> field of applicable blocks using standard HTML change-tracking elements: <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ins"><code>&lt;ins&gt;</code></a> for insertions and <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/del"><code>&lt;del&gt;</code></a> for deletions, grouped inside a <code>&lt;change&gt;</code> wrapper.</p>
+     * <p>Affected block types: <code>text</code>, <code>heading</code>, <code>section_heading</code>, <code>header</code>, <code>footer</code>.</p>
+     * <p><strong>Note:</strong> Requires <code>engine: &quot;parse_performance&quot;</code> with <code>engineVersion &gt;= &quot;2.0.0&quot;</code>.</p>
+     */
+    @JsonProperty("formattingDetection")
+    public Optional<List<ParseConfigAdvancedOptionsFormattingDetectionItem>> getFormattingDetection() {
+        return formattingDetection;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -193,7 +208,8 @@ public final class ParseConfigAdvancedOptions {
                 && returnOcr.equals(other.returnOcr)
                 && alwaysConvertToPdf.equals(other.alwaysConvertToPdf)
                 && enrichmentFormat.equals(other.enrichmentFormat)
-                && imageConversionQuality.equals(other.imageConversionQuality);
+                && imageConversionQuality.equals(other.imageConversionQuality)
+                && formattingDetection.equals(other.formattingDetection);
     }
 
     @java.lang.Override
@@ -209,7 +225,8 @@ public final class ParseConfigAdvancedOptions {
                 this.returnOcr,
                 this.alwaysConvertToPdf,
                 this.enrichmentFormat,
-                this.imageConversionQuality);
+                this.imageConversionQuality,
+                this.formattingDetection);
     }
 
     @java.lang.Override
@@ -245,6 +262,9 @@ public final class ParseConfigAdvancedOptions {
 
         private Optional<ParseConfigAdvancedOptionsImageConversionQuality> imageConversionQuality = Optional.empty();
 
+        private Optional<List<ParseConfigAdvancedOptionsFormattingDetectionItem>> formattingDetection =
+                Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -262,6 +282,7 @@ public final class ParseConfigAdvancedOptions {
             alwaysConvertToPdf(other.getAlwaysConvertToPdf());
             enrichmentFormat(other.getEnrichmentFormat());
             imageConversionQuality(other.getImageConversionQuality());
+            formattingDetection(other.getFormattingDetection());
             return this;
         }
 
@@ -431,6 +452,25 @@ public final class ParseConfigAdvancedOptions {
             return this;
         }
 
+        /**
+         * <p>Enable detection of formatting-based annotations in the document. Currently supports change tracking detection.</p>
+         * <p>When enabled, detected changes are represented inline within the <code>content</code> field of applicable blocks using standard HTML change-tracking elements: <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ins"><code>&lt;ins&gt;</code></a> for insertions and <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/del"><code>&lt;del&gt;</code></a> for deletions, grouped inside a <code>&lt;change&gt;</code> wrapper.</p>
+         * <p>Affected block types: <code>text</code>, <code>heading</code>, <code>section_heading</code>, <code>header</code>, <code>footer</code>.</p>
+         * <p><strong>Note:</strong> Requires <code>engine: &quot;parse_performance&quot;</code> with <code>engineVersion &gt;= &quot;2.0.0&quot;</code>.</p>
+         */
+        @JsonSetter(value = "formattingDetection", nulls = Nulls.SKIP)
+        public Builder formattingDetection(
+                Optional<List<ParseConfigAdvancedOptionsFormattingDetectionItem>> formattingDetection) {
+            this.formattingDetection = formattingDetection;
+            return this;
+        }
+
+        public Builder formattingDetection(
+                List<ParseConfigAdvancedOptionsFormattingDetectionItem> formattingDetection) {
+            this.formattingDetection = Optional.ofNullable(formattingDetection);
+            return this;
+        }
+
         public ParseConfigAdvancedOptions build() {
             return new ParseConfigAdvancedOptions(
                     pageRotationEnabled,
@@ -444,6 +484,7 @@ public final class ParseConfigAdvancedOptions {
                     alwaysConvertToPdf,
                     enrichmentFormat,
                     imageConversionQuality,
+                    formattingDetection,
                     additionalProperties);
         }
     }

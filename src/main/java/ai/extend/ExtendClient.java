@@ -12,6 +12,7 @@ import ai.extend.requests.ExtractRequest;
 import ai.extend.requests.ParseRequest;
 import ai.extend.requests.SplitRequest;
 import ai.extend.resources.batchprocessorrun.BatchProcessorRunClient;
+import ai.extend.resources.batchruns.BatchRunsClient;
 import ai.extend.resources.classifiers.ClassifiersClient;
 import ai.extend.resources.classifierversions.ClassifierVersionsClient;
 import ai.extend.resources.classifyruns.ClassifyRunsClient;
@@ -88,6 +89,8 @@ public class ExtendClient {
 
     protected final Supplier<BatchProcessorRunClient> batchProcessorRunClient;
 
+    protected final Supplier<BatchRunsClient> batchRunsClient;
+
     protected final Supplier<EvaluationSetsClient> evaluationSetsClient;
 
     protected final Supplier<EvaluationSetItemsClient> evaluationSetItemsClient;
@@ -121,6 +124,7 @@ public class ExtendClient {
         this.processorClient = Suppliers.memoize(() -> new ProcessorClient(clientOptions));
         this.processorVersionClient = Suppliers.memoize(() -> new ProcessorVersionClient(clientOptions));
         this.batchProcessorRunClient = Suppliers.memoize(() -> new BatchProcessorRunClient(clientOptions));
+        this.batchRunsClient = Suppliers.memoize(() -> new BatchRunsClient(clientOptions));
         this.evaluationSetsClient = Suppliers.memoize(() -> new EvaluationSetsClient(clientOptions));
         this.evaluationSetItemsClient = Suppliers.memoize(() -> new EvaluationSetItemsClient(clientOptions));
         this.evaluationSetRunsClient = Suppliers.memoize(() -> new EvaluationSetRunsClient(clientOptions));
@@ -313,6 +317,10 @@ public class ExtendClient {
 
     public BatchProcessorRunClient batchProcessorRun() {
         return this.batchProcessorRunClient.get();
+    }
+
+    public BatchRunsClient batchRuns() {
+        return this.batchRunsClient.get();
     }
 
     public EvaluationSetsClient evaluationSets() {
