@@ -31,6 +31,8 @@ public final class ClassifyRunsListRequest {
 
     private final Optional<String> classifierId;
 
+    private final Optional<String> batchId;
+
     private final Optional<String> sourceId;
 
     private final Optional<RunSource> source;
@@ -51,6 +53,7 @@ public final class ClassifyRunsListRequest {
             Optional<String> extendWorkspaceId,
             Optional<ProcessorRunStatus> status,
             Optional<String> classifierId,
+            Optional<String> batchId,
             Optional<String> sourceId,
             Optional<RunSource> source,
             Optional<String> fileNameContains,
@@ -62,6 +65,7 @@ public final class ClassifyRunsListRequest {
         this.extendWorkspaceId = extendWorkspaceId;
         this.status = status;
         this.classifierId = classifierId;
+        this.batchId = batchId;
         this.sourceId = sourceId;
         this.source = source;
         this.fileNameContains = fileNameContains;
@@ -92,6 +96,15 @@ public final class ClassifyRunsListRequest {
     @JsonProperty("classifierId")
     public Optional<String> getClassifierId() {
         return classifierId;
+    }
+
+    /**
+     * @return Filters runs by the batch they belong to. Only returns runs created as part of the specified batch.
+     * <p>Example: <code>&quot;bpr_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+     */
+    @JsonProperty("batchId")
+    public Optional<String> getBatchId() {
+        return batchId;
     }
 
     /**
@@ -154,6 +167,7 @@ public final class ClassifyRunsListRequest {
         return extendWorkspaceId.equals(other.extendWorkspaceId)
                 && status.equals(other.status)
                 && classifierId.equals(other.classifierId)
+                && batchId.equals(other.batchId)
                 && sourceId.equals(other.sourceId)
                 && source.equals(other.source)
                 && fileNameContains.equals(other.fileNameContains)
@@ -169,6 +183,7 @@ public final class ClassifyRunsListRequest {
                 this.extendWorkspaceId,
                 this.status,
                 this.classifierId,
+                this.batchId,
                 this.sourceId,
                 this.source,
                 this.fileNameContains,
@@ -195,6 +210,8 @@ public final class ClassifyRunsListRequest {
 
         private Optional<String> classifierId = Optional.empty();
 
+        private Optional<String> batchId = Optional.empty();
+
         private Optional<String> sourceId = Optional.empty();
 
         private Optional<RunSource> source = Optional.empty();
@@ -218,6 +235,7 @@ public final class ClassifyRunsListRequest {
             extendWorkspaceId(other.getExtendWorkspaceId());
             status(other.getStatus());
             classifierId(other.getClassifierId());
+            batchId(other.getBatchId());
             sourceId(other.getSourceId());
             source(other.getSource());
             fileNameContains(other.getFileNameContains());
@@ -264,6 +282,21 @@ public final class ClassifyRunsListRequest {
 
         public Builder classifierId(String classifierId) {
             this.classifierId = Optional.ofNullable(classifierId);
+            return this;
+        }
+
+        /**
+         * <p>Filters runs by the batch they belong to. Only returns runs created as part of the specified batch.</p>
+         * <p>Example: <code>&quot;bpr_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         */
+        @JsonSetter(value = "batchId", nulls = Nulls.SKIP)
+        public Builder batchId(Optional<String> batchId) {
+            this.batchId = batchId;
+            return this;
+        }
+
+        public Builder batchId(String batchId) {
+            this.batchId = Optional.ofNullable(batchId);
             return this;
         }
 
@@ -359,6 +392,7 @@ public final class ClassifyRunsListRequest {
                     extendWorkspaceId,
                     status,
                     classifierId,
+                    batchId,
                     sourceId,
                     source,
                     fileNameContains,

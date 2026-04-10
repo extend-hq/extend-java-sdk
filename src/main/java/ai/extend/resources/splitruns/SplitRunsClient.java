@@ -6,12 +6,14 @@ package ai.extend.resources.splitruns;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.splitruns.requests.SplitRunsCancelRequest;
+import ai.extend.resources.splitruns.requests.SplitRunsCreateBatchRequest;
 import ai.extend.resources.splitruns.requests.SplitRunsCreateRequest;
 import ai.extend.resources.splitruns.requests.SplitRunsDeleteRequest;
 import ai.extend.resources.splitruns.requests.SplitRunsListRequest;
 import ai.extend.resources.splitruns.requests.SplitRunsRetrieveRequest;
 import ai.extend.resources.splitruns.types.SplitRunsDeleteResponse;
 import ai.extend.resources.splitruns.types.SplitRunsListResponse;
+import ai.extend.types.BatchRun;
 import ai.extend.types.SplitRun;
 
 public class SplitRunsClient {
@@ -173,5 +175,45 @@ public class SplitRunsClient {
      */
     public SplitRun cancel(String id, SplitRunsCancelRequest request, RequestOptions requestOptions) {
         return this.rawClient.cancel(id, request, requestOptions).body();
+    }
+
+    /**
+     * Submit up to <strong>1,000 files</strong> for splitting in a single request. Each file is processed as an independent split run using the same splitter and configuration.
+     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/split/create-split-run">Split File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
+     * <p><strong>Monitoring results:</strong></p>
+     * <ul>
+     * <li><strong>Webhooks (recommended):</strong> Subscribe to <code>batch_processor_run.processed</code> and <code>batch_processor_run.failed</code> events. The webhook payload indicates the batch has finished — fetch individual run results using <code>GET /split_runs?batchId={id}</code>.</li>
+     * <li><strong>Polling:</strong> Call <code>GET /batch_runs/{id}</code> to check the overall batch status, and use <code>GET /split_runs</code> filtered by <code>batchId</code> to retrieve individual run results.</li>
+     * </ul>
+     * <p><strong>Notes:</strong></p>
+     * <ul>
+     * <li>A processor reference (<code>splitter.id</code>) is required — inline <code>config</code> is not supported for batch requests.</li>
+     * <li><code>inputs</code> must contain between 1 and 1,000 items.</li>
+     * <li>All inputs in a batch use the same splitter version and override config.</li>
+     * <li>Raw text input (<code>FileFromText</code>) is not supported for split runs. Use a URL or file ID.</li>
+     * </ul>
+     */
+    public BatchRun createBatch(SplitRunsCreateBatchRequest request) {
+        return this.rawClient.createBatch(request).body();
+    }
+
+    /**
+     * Submit up to <strong>1,000 files</strong> for splitting in a single request. Each file is processed as an independent split run using the same splitter and configuration.
+     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/split/create-split-run">Split File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
+     * <p><strong>Monitoring results:</strong></p>
+     * <ul>
+     * <li><strong>Webhooks (recommended):</strong> Subscribe to <code>batch_processor_run.processed</code> and <code>batch_processor_run.failed</code> events. The webhook payload indicates the batch has finished — fetch individual run results using <code>GET /split_runs?batchId={id}</code>.</li>
+     * <li><strong>Polling:</strong> Call <code>GET /batch_runs/{id}</code> to check the overall batch status, and use <code>GET /split_runs</code> filtered by <code>batchId</code> to retrieve individual run results.</li>
+     * </ul>
+     * <p><strong>Notes:</strong></p>
+     * <ul>
+     * <li>A processor reference (<code>splitter.id</code>) is required — inline <code>config</code> is not supported for batch requests.</li>
+     * <li><code>inputs</code> must contain between 1 and 1,000 items.</li>
+     * <li>All inputs in a batch use the same splitter version and override config.</li>
+     * <li>Raw text input (<code>FileFromText</code>) is not supported for split runs. Use a URL or file ID.</li>
+     * </ul>
+     */
+    public BatchRun createBatch(SplitRunsCreateBatchRequest request, RequestOptions requestOptions) {
+        return this.rawClient.createBatch(request, requestOptions).body();
     }
 }

@@ -30,6 +30,8 @@ public final class ParseConfigBlockOptions {
 
     private final Optional<ParseConfigBlockOptionsBarcodes> barcodes;
 
+    private final Optional<ParseConfigBlockOptionsFormulas> formulas;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseConfigBlockOptions(
@@ -38,12 +40,14 @@ public final class ParseConfigBlockOptions {
             Optional<ParseConfigBlockOptionsText> text,
             Optional<ParseConfigBlockOptionsKeyValue> keyValue,
             Optional<ParseConfigBlockOptionsBarcodes> barcodes,
+            Optional<ParseConfigBlockOptionsFormulas> formulas,
             Map<String, Object> additionalProperties) {
         this.figures = figures;
         this.tables = tables;
         this.text = text;
         this.keyValue = keyValue;
         this.barcodes = barcodes;
+        this.formulas = formulas;
         this.additionalProperties = additionalProperties;
     }
 
@@ -87,6 +91,14 @@ public final class ParseConfigBlockOptions {
         return barcodes;
     }
 
+    /**
+     * @return Options for formula blocks.
+     */
+    @JsonProperty("formulas")
+    public Optional<ParseConfigBlockOptionsFormulas> getFormulas() {
+        return formulas;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -103,12 +115,13 @@ public final class ParseConfigBlockOptions {
                 && tables.equals(other.tables)
                 && text.equals(other.text)
                 && keyValue.equals(other.keyValue)
-                && barcodes.equals(other.barcodes);
+                && barcodes.equals(other.barcodes)
+                && formulas.equals(other.formulas);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.figures, this.tables, this.text, this.keyValue, this.barcodes);
+        return Objects.hash(this.figures, this.tables, this.text, this.keyValue, this.barcodes, this.formulas);
     }
 
     @java.lang.Override
@@ -132,6 +145,8 @@ public final class ParseConfigBlockOptions {
 
         private Optional<ParseConfigBlockOptionsBarcodes> barcodes = Optional.empty();
 
+        private Optional<ParseConfigBlockOptionsFormulas> formulas = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -143,6 +158,7 @@ public final class ParseConfigBlockOptions {
             text(other.getText());
             keyValue(other.getKeyValue());
             barcodes(other.getBarcodes());
+            formulas(other.getFormulas());
             return this;
         }
 
@@ -216,8 +232,23 @@ public final class ParseConfigBlockOptions {
             return this;
         }
 
+        /**
+         * <p>Options for formula blocks.</p>
+         */
+        @JsonSetter(value = "formulas", nulls = Nulls.SKIP)
+        public Builder formulas(Optional<ParseConfigBlockOptionsFormulas> formulas) {
+            this.formulas = formulas;
+            return this;
+        }
+
+        public Builder formulas(ParseConfigBlockOptionsFormulas formulas) {
+            this.formulas = Optional.ofNullable(formulas);
+            return this;
+        }
+
         public ParseConfigBlockOptions build() {
-            return new ParseConfigBlockOptions(figures, tables, text, keyValue, barcodes, additionalProperties);
+            return new ParseConfigBlockOptions(
+                    figures, tables, text, keyValue, barcodes, formulas, additionalProperties);
         }
     }
 }

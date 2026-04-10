@@ -1568,6 +1568,18 @@ Example: `"ex_BMdfq_yWM3sT-ZzvCnA3f"`
 <dl>
 <dd>
 
+**batchId:** `Optional<String>` 
+
+Filters runs by the batch they belong to. Only returns runs created as part of the specified batch.
+
+Example: `"bpr_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **sourceId:** `Optional<String>` — Filters runs by the source ID.
     
 </dd>
@@ -1950,6 +1962,149 @@ Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
 <dd>
 
 **extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.extractRuns.createBatch(request) -> BatchRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Submit up to **1,000 files** for extraction in a single request. Each file is processed as an independent extract run using the same extractor and configuration.
+
+Unlike the single [Extract File (Async)](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/extract/create-extract-run) endpoint, this batch endpoint accepts an `inputs` array and immediately returns a `BatchRun` object containing a batch `id` and a `PENDING` status. The individual runs are then queued and processed asynchronously.
+
+**Monitoring results:**
+- **Webhooks (recommended):** Subscribe to `batch_processor_run.processed` and `batch_processor_run.failed` events. The webhook payload indicates the batch has finished — fetch individual run results using `GET /extract_runs?batchId={id}`.
+- **Polling:** Call `GET /batch_runs/{id}` to check the overall batch status, and use `GET /extract_runs` filtered by `batchId` to retrieve individual run results.
+
+**Notes:**
+- A processor reference (`extractor.id`) is required — inline `config` is not supported for batch requests.
+- `inputs` must contain between 1 and 1,000 items.
+- All inputs in a batch use the same extractor version and override config.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.extractRuns().createBatch(
+    ExtractRunsCreateBatchRequest
+        .builder()
+        .extractor(
+            ExtractRunsCreateBatchRequestExtractor
+                .builder()
+                .id("ex_xK9mLPqRtN3vS8wF5hB2cQ")
+                .build()
+        )
+        .inputs(
+            Arrays.asList(
+                ExtractRunsCreateBatchRequestInputsItem
+                    .builder()
+                    .file(
+                        ExtractRunsCreateBatchRequestInputsItemFile.of(
+                            FileFromUrl
+                                .builder()
+                                .url("https://example.com/invoice1.pdf")
+                                .build()
+                        )
+                    )
+                    .metadata(
+                        new HashMap<String, Object>() {{
+                            put("customerId", "cust_abc123");
+                        }}
+                    )
+                    .build(),
+                ExtractRunsCreateBatchRequestInputsItem
+                    .builder()
+                    .file(
+                        ExtractRunsCreateBatchRequestInputsItemFile.of(
+                            FileFromUrl
+                                .builder()
+                                .url("https://example.com/invoice2.pdf")
+                                .build()
+                        )
+                    )
+                    .metadata(
+                        new HashMap<String, Object>() {{
+                            put("customerId", "cust_def456");
+                        }}
+                    )
+                    .build(),
+                ExtractRunsCreateBatchRequestInputsItem
+                    .builder()
+                    .file(
+                        ExtractRunsCreateBatchRequestInputsItemFile.of(
+                            FileFromUrl
+                                .builder()
+                                .url("https://example.com/invoice3.pdf")
+                                .build()
+                        )
+                    )
+                    .metadata(
+                        new HashMap<String, Object>() {{
+                            put("customerId", "cust_ghi789");
+                        }}
+                    )
+                    .build()
+            )
+        )
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**extractor:** `ExtractRunsCreateBatchRequestExtractor` — Reference to the extractor to run against every input in this batch.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**inputs:** `List<ExtractRunsCreateBatchRequestInputsItem>` — An array of inputs to process. Each item produces one extract run. Must contain between 1 and 1,000 items.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**priority:** `Optional<Integer>` 
     
 </dd>
 </dl>
@@ -2544,7 +2699,7 @@ Retrieve a specific version of an extractor in Extend
 ```java
 client.extractorVersions().retrieve(
     "extractor_id_here",
-    "extractor_version_id_here",
+    "draft",
     ExtractorVersionsRetrieveRequest
         .builder()
         .build()
@@ -2577,9 +2732,12 @@ Example: `"ex_Xj8mK2pL9nR4vT7qY5wZ"`
 
 **versionId:** `String` 
 
-The ID of the specific extractor version.
+The version to retrieve. Accepts any of the following:
 
-Example: `"extv_QYk6jgHA_8CsO8rVWhyNC"`
+- `"draft"` — returns the current draft version
+- `"latest"` — returns the latest published version (falls back to draft if none published)
+- A version number (e.g. `"0.1"`, `"1.0"`) — returns that specific published version
+- A version ID (e.g. `"extv_QYk6jgHA_8CsO8rVWhyNC"`) — returns that specific version by ID
     
 </dd>
 </dl>
@@ -2662,6 +2820,18 @@ client.classifyRuns().list(
 Filters classify runs by the classifier ID. If not provided, all classify runs are returned.
 
 Example: `"cl_BMdfq_yWM3sT-ZzvCnA3f"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**batchId:** `Optional<String>` 
+
+Filters runs by the batch they belong to. Only returns runs created as part of the specified batch.
+
+Example: `"bpr_Xj8mK2pL9nR4vT7qY5wZ"`
     
 </dd>
 </dl>
@@ -3051,6 +3221,149 @@ Example: `"cl_Xj8mK2pL9nR4vT7qY5wZ"`
 <dd>
 
 **extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.classifyRuns.createBatch(request) -> BatchRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Submit up to **1,000 files** for classification in a single request. Each file is processed as an independent classify run using the same classifier and configuration.
+
+Unlike the single [Classify File (Async)](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/create-classify-run) endpoint, this batch endpoint accepts an `inputs` array and immediately returns a `BatchRun` object containing a batch `id` and a `PENDING` status. The individual runs are then queued and processed asynchronously.
+
+**Monitoring results:**
+- **Webhooks (recommended):** Subscribe to `batch_processor_run.processed` and `batch_processor_run.failed` events. The webhook payload indicates the batch has finished — fetch individual run results using `GET /classify_runs?batchId={id}`.
+- **Polling:** Call `GET /batch_runs/{id}` to check the overall batch status, and use `GET /classify_runs` filtered by `batchId` to retrieve individual run results.
+
+**Notes:**
+- A processor reference (`classifier.id`) is required — inline `config` is not supported for batch requests.
+- `inputs` must contain between 1 and 1,000 items.
+- All inputs in a batch use the same classifier version and override config.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.classifyRuns().createBatch(
+    ClassifyRunsCreateBatchRequest
+        .builder()
+        .classifier(
+            ClassifyRunsCreateBatchRequestClassifier
+                .builder()
+                .id("cl_xK9mLPqRtN3vS8wF5hB2cQ")
+                .build()
+        )
+        .inputs(
+            Arrays.asList(
+                ClassifyRunsCreateBatchRequestInputsItem
+                    .builder()
+                    .file(
+                        ClassifyRunsCreateBatchRequestInputsItemFile.of(
+                            FileFromUrl
+                                .builder()
+                                .url("https://example.com/document1.pdf")
+                                .build()
+                        )
+                    )
+                    .metadata(
+                        new HashMap<String, Object>() {{
+                            put("customerId", "cust_abc123");
+                        }}
+                    )
+                    .build(),
+                ClassifyRunsCreateBatchRequestInputsItem
+                    .builder()
+                    .file(
+                        ClassifyRunsCreateBatchRequestInputsItemFile.of(
+                            FileFromUrl
+                                .builder()
+                                .url("https://example.com/document2.pdf")
+                                .build()
+                        )
+                    )
+                    .metadata(
+                        new HashMap<String, Object>() {{
+                            put("customerId", "cust_def456");
+                        }}
+                    )
+                    .build(),
+                ClassifyRunsCreateBatchRequestInputsItem
+                    .builder()
+                    .file(
+                        ClassifyRunsCreateBatchRequestInputsItemFile.of(
+                            FileFromUrl
+                                .builder()
+                                .url("https://example.com/document3.pdf")
+                                .build()
+                        )
+                    )
+                    .metadata(
+                        new HashMap<String, Object>() {{
+                            put("customerId", "cust_ghi789");
+                        }}
+                    )
+                    .build()
+            )
+        )
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**classifier:** `ClassifyRunsCreateBatchRequestClassifier` — Reference to the classifier to run against every input in this batch.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**inputs:** `List<ClassifyRunsCreateBatchRequestInputsItem>` — An array of inputs to process. Each item produces one classify run. Must contain between 1 and 1,000 items.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**priority:** `Optional<Integer>` 
     
 </dd>
 </dl>
@@ -3648,7 +3961,7 @@ Retrieve a specific version of a classifier in Extend
 ```java
 client.classifierVersions().retrieve(
     "classifier_id_here",
-    "classifier_version_id_here",
+    "draft",
     ClassifierVersionsRetrieveRequest
         .builder()
         .build()
@@ -3681,9 +3994,12 @@ Example: `"cl_Xj8mK2pL9nR4vT7qY5wZ"`
 
 **versionId:** `String` 
 
-The ID of the specific classifier version.
+The version to retrieve. Accepts any of the following:
 
-Example: `"clsv_QYk6jgHA_8CsO8rVWhyNC"`
+- `"draft"` — returns the current draft version
+- `"latest"` — returns the latest published version (falls back to draft if none published)
+- A version number (e.g. `"0.1"`, `"1.0"`) — returns that specific published version
+- A version ID (e.g. `"clsv_QYk6jgHA_8CsO8rVWhyNC"`) — returns that specific version by ID
     
 </dd>
 </dl>
@@ -3766,6 +4082,18 @@ client.splitRuns().list(
 Filters split runs by the splitter ID. If not provided, all split runs are returned.
 
 Example: `"spl_BMdfq_yWM3sT-ZzvCnA3f"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**batchId:** `Optional<String>` 
+
+Filters runs by the batch they belong to. Only returns runs created as part of the specified batch.
+
+Example: `"bpr_Xj8mK2pL9nR4vT7qY5wZ"`
     
 </dd>
 </dl>
@@ -4155,6 +4483,150 @@ Example: `"spl_Xj8mK2pL9nR4vT7qY5wZ"`
 <dd>
 
 **extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.splitRuns.createBatch(request) -> BatchRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Submit up to **1,000 files** for splitting in a single request. Each file is processed as an independent split run using the same splitter and configuration.
+
+Unlike the single [Split File (Async)](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/split/create-split-run) endpoint, this batch endpoint accepts an `inputs` array and immediately returns a `BatchRun` object containing a batch `id` and a `PENDING` status. The individual runs are then queued and processed asynchronously.
+
+**Monitoring results:**
+- **Webhooks (recommended):** Subscribe to `batch_processor_run.processed` and `batch_processor_run.failed` events. The webhook payload indicates the batch has finished — fetch individual run results using `GET /split_runs?batchId={id}`.
+- **Polling:** Call `GET /batch_runs/{id}` to check the overall batch status, and use `GET /split_runs` filtered by `batchId` to retrieve individual run results.
+
+**Notes:**
+- A processor reference (`splitter.id`) is required — inline `config` is not supported for batch requests.
+- `inputs` must contain between 1 and 1,000 items.
+- All inputs in a batch use the same splitter version and override config.
+- Raw text input (`FileFromText`) is not supported for split runs. Use a URL or file ID.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.splitRuns().createBatch(
+    SplitRunsCreateBatchRequest
+        .builder()
+        .splitter(
+            SplitRunsCreateBatchRequestSplitter
+                .builder()
+                .id("spl_xK9mLPqRtN3vS8wF5hB2cQ")
+                .build()
+        )
+        .inputs(
+            Arrays.asList(
+                SplitRunsCreateBatchRequestInputsItem
+                    .builder()
+                    .file(
+                        SplitRunsCreateBatchRequestInputsItemFile.of(
+                            FileFromUrl
+                                .builder()
+                                .url("https://example.com/multi-doc1.pdf")
+                                .build()
+                        )
+                    )
+                    .metadata(
+                        new HashMap<String, Object>() {{
+                            put("customerId", "cust_abc123");
+                        }}
+                    )
+                    .build(),
+                SplitRunsCreateBatchRequestInputsItem
+                    .builder()
+                    .file(
+                        SplitRunsCreateBatchRequestInputsItemFile.of(
+                            FileFromUrl
+                                .builder()
+                                .url("https://example.com/multi-doc2.pdf")
+                                .build()
+                        )
+                    )
+                    .metadata(
+                        new HashMap<String, Object>() {{
+                            put("customerId", "cust_def456");
+                        }}
+                    )
+                    .build(),
+                SplitRunsCreateBatchRequestInputsItem
+                    .builder()
+                    .file(
+                        SplitRunsCreateBatchRequestInputsItemFile.of(
+                            FileFromUrl
+                                .builder()
+                                .url("https://example.com/multi-doc3.pdf")
+                                .build()
+                        )
+                    )
+                    .metadata(
+                        new HashMap<String, Object>() {{
+                            put("customerId", "cust_ghi789");
+                        }}
+                    )
+                    .build()
+            )
+        )
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**splitter:** `SplitRunsCreateBatchRequestSplitter` — Reference to the splitter to run against every input in this batch.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**inputs:** `List<SplitRunsCreateBatchRequestInputsItem>` — An array of inputs to process. Each item produces one split run. Must contain between 1 and 1,000 items. Raw text input is not supported — use a URL or file ID.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**priority:** `Optional<Integer>` 
     
 </dd>
 </dl>
@@ -4754,7 +5226,7 @@ Retrieve a specific version of a splitter in Extend
 ```java
 client.splitterVersions().retrieve(
     "splitter_id_here",
-    "splitter_version_id_here",
+    "draft",
     SplitterVersionsRetrieveRequest
         .builder()
         .build()
@@ -4787,9 +5259,12 @@ Example: `"spl_Xj8mK2pL9nR4vT7qY5wZ"`
 
 **versionId:** `String` 
 
-The ID of the specific splitter version.
+The version to retrieve. Accepts any of the following:
 
-Example: `"splv_QYk6jgHA_8CsO8rVWhyNC"`
+- `"draft"` — returns the current draft version
+- `"latest"` — returns the latest published version (falls back to draft if none published)
+- A version number (e.g. `"0.1"`, `"1.0"`) — returns that specific published version
+- A version ID (e.g. `"splv_QYk6jgHA_8CsO8rVWhyNC"`) — returns that specific version by ID
     
 </dd>
 </dl>
@@ -5287,11 +5762,6 @@ See the [Configuring Workflows via API guide](https://docs.extend.ai/2026-02-09/
 <dd>
 
 Get a specific version of a workflow, including its step definitions.
-
-The `versionId` parameter accepts:
-- `"draft"` — returns the current draft version
-- A version number (e.g. `"1"`, `"2"`) — returns that deployed version
-- An internal version ID (e.g. `"workflow_version_abc123"`) — returns that specific version
 </dd>
 </dl>
 </dd>
@@ -5329,7 +5799,14 @@ client.workflowVersions().retrieve("workflow_abc123", "draft");
 <dl>
 <dd>
 
-**versionId:** `String` — The version to retrieve. Use `"draft"` for the draft, a number like `"1"` for a deployed version, or the internal version ID.
+**versionId:** `String` 
+
+The version to retrieve. Accepts any of the following:
+
+- `"draft"` — returns the current draft version
+- `"latest"` — returns the latest published version (falls back to draft if none published)
+- A version number (e.g. `"1"`, `"2"`) — returns that specific published version
+- A version ID (e.g. `"workflow_version_abc123"`) — returns that specific version by ID
     
 </dd>
 </dl>
@@ -7158,6 +7635,80 @@ Example: `"bpr_Xj8mK2pL9nR4vT7qY5wZ"`
 <dd>
 
 **extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## BatchRuns
+<details><summary><code>client.batchRuns.get(id) -> BatchRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve the status of a batch run by its ID. The `status` field reflects the aggregate state of the batch.
+
+This is a unified endpoint that works for batches created via any of the batch submission endpoints (`POST /extract_runs/batch`, `POST /classify_runs/batch`, `POST /split_runs/batch`).
+
+| Status | Meaning |
+|---|---|
+| `PENDING` | Queued, not yet started |
+| `PROCESSING` | Runs are actively being processed |
+| `PROCESSED` | All runs have completed |
+| `FAILED` | The batch encountered a fatal error |
+| `CANCELLED` | The batch was cancelled |
+
+To retrieve individual run results, use the List endpoint for the relevant processor type filtered by `batchId`:
+- `GET /extract_runs?batchId={id}`
+- `GET /classify_runs?batchId={id}`
+- `GET /split_runs?batchId={id}`
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.batchRuns().get("bpr_Xj8mK2pL9nR4vT7qY5wZ");
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The unique identifier of the batch processor run to retrieve.
+
+Example: `"bpr_Xj8mK2pL9nR4vT7qY5wZ"`
     
 </dd>
 </dl>

@@ -34,8 +34,14 @@ public final class WebhookEndpointEventType {
     public static final WebhookEndpointEventType CLASSIFIER_DELETED =
             new WebhookEndpointEventType(Value.CLASSIFIER_DELETED, "classifier.deleted");
 
+    public static final WebhookEndpointEventType BATCH_PROCESSOR_RUN_PROCESSED =
+            new WebhookEndpointEventType(Value.BATCH_PROCESSOR_RUN_PROCESSED, "batch_processor_run.processed");
+
     public static final WebhookEndpointEventType SPLITTER_DELETED =
             new WebhookEndpointEventType(Value.SPLITTER_DELETED, "splitter.deleted");
+
+    public static final WebhookEndpointEventType BATCH_PROCESSOR_RUN_FAILED =
+            new WebhookEndpointEventType(Value.BATCH_PROCESSOR_RUN_FAILED, "batch_processor_run.failed");
 
     public static final WebhookEndpointEventType CLASSIFIER_VERSION_PUBLISHED =
             new WebhookEndpointEventType(Value.CLASSIFIER_VERSION_PUBLISHED, "classifier.version.published");
@@ -142,8 +148,12 @@ public final class WebhookEndpointEventType {
                 return visitor.visitWorkflowDeployed();
             case CLASSIFIER_DELETED:
                 return visitor.visitClassifierDeleted();
+            case BATCH_PROCESSOR_RUN_PROCESSED:
+                return visitor.visitBatchProcessorRunProcessed();
             case SPLITTER_DELETED:
                 return visitor.visitSplitterDeleted();
+            case BATCH_PROCESSOR_RUN_FAILED:
+                return visitor.visitBatchProcessorRunFailed();
             case CLASSIFIER_VERSION_PUBLISHED:
                 return visitor.visitClassifierVersionPublished();
             case SPLITTER_DRAFT_UPDATED:
@@ -207,8 +217,12 @@ public final class WebhookEndpointEventType {
                 return WORKFLOW_DEPLOYED;
             case "classifier.deleted":
                 return CLASSIFIER_DELETED;
+            case "batch_processor_run.processed":
+                return BATCH_PROCESSOR_RUN_PROCESSED;
             case "splitter.deleted":
                 return SPLITTER_DELETED;
+            case "batch_processor_run.failed":
+                return BATCH_PROCESSOR_RUN_FAILED;
             case "classifier.version.published":
                 return CLASSIFIER_VERSION_PUBLISHED;
             case "splitter.draft.updated":
@@ -271,6 +285,10 @@ public final class WebhookEndpointEventType {
 
         SPLIT_RUN_FAILED,
 
+        BATCH_PROCESSOR_RUN_PROCESSED,
+
+        BATCH_PROCESSOR_RUN_FAILED,
+
         EXTRACTOR_CREATED,
 
         EXTRACTOR_UPDATED,
@@ -330,6 +348,10 @@ public final class WebhookEndpointEventType {
         T visitSplitRunProcessed();
 
         T visitSplitRunFailed();
+
+        T visitBatchProcessorRunProcessed();
+
+        T visitBatchProcessorRunFailed();
 
         T visitExtractorCreated();
 

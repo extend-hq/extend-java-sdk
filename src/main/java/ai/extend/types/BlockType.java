@@ -21,6 +21,8 @@ public final class BlockType {
 
     public static final BlockType HEADER = new BlockType(Value.HEADER, "header");
 
+    public static final BlockType FORMULA = new BlockType(Value.FORMULA, "formula");
+
     public static final BlockType BARCODE = new BlockType(Value.BARCODE, "barcode");
 
     public static final BlockType TABLE = new BlockType(Value.TABLE, "table");
@@ -76,6 +78,8 @@ public final class BlockType {
                 return visitor.visitSectionHeading();
             case HEADER:
                 return visitor.visitHeader();
+            case FORMULA:
+                return visitor.visitFormula();
             case BARCODE:
                 return visitor.visitBarcode();
             case TABLE:
@@ -109,6 +113,8 @@ public final class BlockType {
                 return SECTION_HEADING;
             case "header":
                 return HEADER;
+            case "formula":
+                return FORMULA;
             case "barcode":
                 return BARCODE;
             case "table":
@@ -145,6 +151,8 @@ public final class BlockType {
 
         BARCODE,
 
+        FORMULA,
+
         HEADER,
 
         FOOTER,
@@ -172,6 +180,8 @@ public final class BlockType {
         T visitPageNumber();
 
         T visitBarcode();
+
+        T visitFormula();
 
         T visitHeader();
 

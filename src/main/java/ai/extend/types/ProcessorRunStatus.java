@@ -13,6 +13,8 @@ public final class ProcessorRunStatus {
 
     public static final ProcessorRunStatus PROCESSED = new ProcessorRunStatus(Value.PROCESSED, "PROCESSED");
 
+    public static final ProcessorRunStatus PENDING = new ProcessorRunStatus(Value.PENDING, "PENDING");
+
     public static final ProcessorRunStatus FAILED = new ProcessorRunStatus(Value.FAILED, "FAILED");
 
     private final Value value;
@@ -53,6 +55,8 @@ public final class ProcessorRunStatus {
                 return visitor.visitCancelled();
             case PROCESSED:
                 return visitor.visitProcessed();
+            case PENDING:
+                return visitor.visitPending();
             case FAILED:
                 return visitor.visitFailed();
             case UNKNOWN:
@@ -70,6 +74,8 @@ public final class ProcessorRunStatus {
                 return CANCELLED;
             case "PROCESSED":
                 return PROCESSED;
+            case "PENDING":
+                return PENDING;
             case "FAILED":
                 return FAILED;
             default:
@@ -78,6 +84,8 @@ public final class ProcessorRunStatus {
     }
 
     public enum Value {
+        PENDING,
+
         PROCESSING,
 
         PROCESSED,
@@ -90,6 +98,8 @@ public final class ProcessorRunStatus {
     }
 
     public interface Visitor<T> {
+        T visitPending();
+
         T visitProcessing();
 
         T visitProcessed();

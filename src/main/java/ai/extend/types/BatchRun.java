@@ -3,23 +3,18 @@
  */
 package ai.extend.types;
 
-import ai.extend.core.Nullable;
-import ai.extend.core.NullableNonemptyFilter;
 import ai.extend.core.ObjectMappers;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
@@ -27,41 +22,29 @@ import org.jetbrains.annotations.NotNull;
 public final class BatchRun {
     private final String id;
 
-    private final Optional<BatchRunEntity> entity;
-
-    private final Optional<BatchRunEntityVersion> entityVersion;
-
     private final BatchRunStatus status;
 
-    private final BatchRunMetrics metrics;
+    private final int runCount;
 
     private final OffsetDateTime createdAt;
-
-    private final OffsetDateTime updatedAt;
 
     private final Map<String, Object> additionalProperties;
 
     private BatchRun(
             String id,
-            Optional<BatchRunEntity> entity,
-            Optional<BatchRunEntityVersion> entityVersion,
             BatchRunStatus status,
-            BatchRunMetrics metrics,
+            int runCount,
             OffsetDateTime createdAt,
-            OffsetDateTime updatedAt,
             Map<String, Object> additionalProperties) {
         this.id = id;
-        this.entity = entity;
-        this.entityVersion = entityVersion;
         this.status = status;
-        this.metrics = metrics;
+        this.runCount = runCount;
         this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
         this.additionalProperties = additionalProperties;
     }
 
     /**
-     * @return The type of object. In this case, it will always be <code>&quot;batch_run&quot;</code>.
+     * @return The type of object. Always <code>&quot;batch_run&quot;</code>.
      */
     @JsonProperty("object")
     public String getObject() {
@@ -70,35 +53,11 @@ public final class BatchRun {
 
     /**
      * @return The unique identifier for this batch run.
-     * <p>Example: <code>&quot;batch_run_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+     * <p>Example: <code>&quot;bpr_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
      */
     @JsonProperty("id")
     public String getId() {
         return id;
-    }
-
-    /**
-     * @return The extractor, classifier, or splitter that was run.
-     * <p><strong>Availability:</strong> Present when an entity was provided when creating the batch run.</p>
-     */
-    @JsonIgnore
-    public Optional<BatchRunEntity> getEntity() {
-        if (entity == null) {
-            return Optional.empty();
-        }
-        return entity;
-    }
-
-    /**
-     * @return The version of the extractor, classifier, or splitter that was run.
-     * <p><strong>Availability:</strong> Present when an entity was provided when creating the batch run.</p>
-     */
-    @JsonIgnore
-    public Optional<BatchRunEntityVersion> getEntityVersion() {
-        if (entityVersion == null) {
-            return Optional.empty();
-        }
-        return entityVersion;
     }
 
     @JsonProperty("status")
@@ -106,31 +65,17 @@ public final class BatchRun {
         return status;
     }
 
-    @JsonProperty("metrics")
-    public BatchRunMetrics getMetrics() {
-        return metrics;
+    /**
+     * @return The number of individual runs in this batch.
+     */
+    @JsonProperty("runCount")
+    public int getRunCount() {
+        return runCount;
     }
 
     @JsonProperty("createdAt")
     public OffsetDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    @JsonProperty("updatedAt")
-    public OffsetDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
-    @JsonProperty("entity")
-    private Optional<BatchRunEntity> _getEntity() {
-        return entity;
-    }
-
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
-    @JsonProperty("entityVersion")
-    private Optional<BatchRunEntityVersion> _getEntityVersion() {
-        return entityVersion;
     }
 
     @java.lang.Override
@@ -146,18 +91,14 @@ public final class BatchRun {
 
     private boolean equalTo(BatchRun other) {
         return id.equals(other.id)
-                && entity.equals(other.entity)
-                && entityVersion.equals(other.entityVersion)
                 && status.equals(other.status)
-                && metrics.equals(other.metrics)
-                && createdAt.equals(other.createdAt)
-                && updatedAt.equals(other.updatedAt);
+                && runCount == other.runCount
+                && createdAt.equals(other.createdAt);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(
-                this.id, this.entity, this.entityVersion, this.status, this.metrics, this.createdAt, this.updatedAt);
+        return Objects.hash(this.id, this.status, this.runCount, this.createdAt);
     }
 
     @java.lang.Override
@@ -172,7 +113,7 @@ public final class BatchRun {
     public interface IdStage {
         /**
          * <p>The unique identifier for this batch run.</p>
-         * <p>Example: <code>&quot;batch_run_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         * <p>Example: <code>&quot;bpr_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
          */
         StatusStage id(@NotNull String id);
 
@@ -180,61 +121,33 @@ public final class BatchRun {
     }
 
     public interface StatusStage {
-        MetricsStage status(@NotNull BatchRunStatus status);
+        RunCountStage status(@NotNull BatchRunStatus status);
     }
 
-    public interface MetricsStage {
-        CreatedAtStage metrics(@NotNull BatchRunMetrics metrics);
+    public interface RunCountStage {
+        /**
+         * <p>The number of individual runs in this batch.</p>
+         */
+        CreatedAtStage runCount(int runCount);
     }
 
     public interface CreatedAtStage {
-        UpdatedAtStage createdAt(@NotNull OffsetDateTime createdAt);
-    }
-
-    public interface UpdatedAtStage {
-        _FinalStage updatedAt(@NotNull OffsetDateTime updatedAt);
+        _FinalStage createdAt(@NotNull OffsetDateTime createdAt);
     }
 
     public interface _FinalStage {
         BatchRun build();
-
-        /**
-         * <p>The extractor, classifier, or splitter that was run.</p>
-         * <p><strong>Availability:</strong> Present when an entity was provided when creating the batch run.</p>
-         */
-        _FinalStage entity(Optional<BatchRunEntity> entity);
-
-        _FinalStage entity(BatchRunEntity entity);
-
-        _FinalStage entity(Nullable<BatchRunEntity> entity);
-
-        /**
-         * <p>The version of the extractor, classifier, or splitter that was run.</p>
-         * <p><strong>Availability:</strong> Present when an entity was provided when creating the batch run.</p>
-         */
-        _FinalStage entityVersion(Optional<BatchRunEntityVersion> entityVersion);
-
-        _FinalStage entityVersion(BatchRunEntityVersion entityVersion);
-
-        _FinalStage entityVersion(Nullable<BatchRunEntityVersion> entityVersion);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder
-            implements IdStage, StatusStage, MetricsStage, CreatedAtStage, UpdatedAtStage, _FinalStage {
+    public static final class Builder implements IdStage, StatusStage, RunCountStage, CreatedAtStage, _FinalStage {
         private String id;
 
         private BatchRunStatus status;
 
-        private BatchRunMetrics metrics;
+        private int runCount;
 
         private OffsetDateTime createdAt;
-
-        private OffsetDateTime updatedAt;
-
-        private Optional<BatchRunEntityVersion> entityVersion = Optional.empty();
-
-        private Optional<BatchRunEntity> entity = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -244,20 +157,17 @@ public final class BatchRun {
         @java.lang.Override
         public Builder from(BatchRun other) {
             id(other.getId());
-            entity(other.getEntity());
-            entityVersion(other.getEntityVersion());
             status(other.getStatus());
-            metrics(other.getMetrics());
+            runCount(other.getRunCount());
             createdAt(other.getCreatedAt());
-            updatedAt(other.getUpdatedAt());
             return this;
         }
 
         /**
          * <p>The unique identifier for this batch run.</p>
-         * <p>Example: <code>&quot;batch_run_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         * <p>Example: <code>&quot;bpr_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
          * <p>The unique identifier for this batch run.</p>
-         * <p>Example: <code>&quot;batch_run_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         * <p>Example: <code>&quot;bpr_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -269,113 +179,33 @@ public final class BatchRun {
 
         @java.lang.Override
         @JsonSetter("status")
-        public MetricsStage status(@NotNull BatchRunStatus status) {
+        public RunCountStage status(@NotNull BatchRunStatus status) {
             this.status = Objects.requireNonNull(status, "status must not be null");
             return this;
         }
 
+        /**
+         * <p>The number of individual runs in this batch.</p>
+         * <p>The number of individual runs in this batch.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
         @java.lang.Override
-        @JsonSetter("metrics")
-        public CreatedAtStage metrics(@NotNull BatchRunMetrics metrics) {
-            this.metrics = Objects.requireNonNull(metrics, "metrics must not be null");
+        @JsonSetter("runCount")
+        public CreatedAtStage runCount(int runCount) {
+            this.runCount = runCount;
             return this;
         }
 
         @java.lang.Override
         @JsonSetter("createdAt")
-        public UpdatedAtStage createdAt(@NotNull OffsetDateTime createdAt) {
+        public _FinalStage createdAt(@NotNull OffsetDateTime createdAt) {
             this.createdAt = Objects.requireNonNull(createdAt, "createdAt must not be null");
             return this;
         }
 
         @java.lang.Override
-        @JsonSetter("updatedAt")
-        public _FinalStage updatedAt(@NotNull OffsetDateTime updatedAt) {
-            this.updatedAt = Objects.requireNonNull(updatedAt, "updatedAt must not be null");
-            return this;
-        }
-
-        /**
-         * <p>The version of the extractor, classifier, or splitter that was run.</p>
-         * <p><strong>Availability:</strong> Present when an entity was provided when creating the batch run.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage entityVersion(Nullable<BatchRunEntityVersion> entityVersion) {
-            if (entityVersion.isNull()) {
-                this.entityVersion = null;
-            } else if (entityVersion.isEmpty()) {
-                this.entityVersion = Optional.empty();
-            } else {
-                this.entityVersion = Optional.of(entityVersion.get());
-            }
-            return this;
-        }
-
-        /**
-         * <p>The version of the extractor, classifier, or splitter that was run.</p>
-         * <p><strong>Availability:</strong> Present when an entity was provided when creating the batch run.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage entityVersion(BatchRunEntityVersion entityVersion) {
-            this.entityVersion = Optional.ofNullable(entityVersion);
-            return this;
-        }
-
-        /**
-         * <p>The version of the extractor, classifier, or splitter that was run.</p>
-         * <p><strong>Availability:</strong> Present when an entity was provided when creating the batch run.</p>
-         */
-        @java.lang.Override
-        @JsonSetter(value = "entityVersion", nulls = Nulls.SKIP)
-        public _FinalStage entityVersion(Optional<BatchRunEntityVersion> entityVersion) {
-            this.entityVersion = entityVersion;
-            return this;
-        }
-
-        /**
-         * <p>The extractor, classifier, or splitter that was run.</p>
-         * <p><strong>Availability:</strong> Present when an entity was provided when creating the batch run.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage entity(Nullable<BatchRunEntity> entity) {
-            if (entity.isNull()) {
-                this.entity = null;
-            } else if (entity.isEmpty()) {
-                this.entity = Optional.empty();
-            } else {
-                this.entity = Optional.of(entity.get());
-            }
-            return this;
-        }
-
-        /**
-         * <p>The extractor, classifier, or splitter that was run.</p>
-         * <p><strong>Availability:</strong> Present when an entity was provided when creating the batch run.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage entity(BatchRunEntity entity) {
-            this.entity = Optional.ofNullable(entity);
-            return this;
-        }
-
-        /**
-         * <p>The extractor, classifier, or splitter that was run.</p>
-         * <p><strong>Availability:</strong> Present when an entity was provided when creating the batch run.</p>
-         */
-        @java.lang.Override
-        @JsonSetter(value = "entity", nulls = Nulls.SKIP)
-        public _FinalStage entity(Optional<BatchRunEntity> entity) {
-            this.entity = entity;
-            return this;
-        }
-
-        @java.lang.Override
         public BatchRun build() {
-            return new BatchRun(id, entity, entityVersion, status, metrics, createdAt, updatedAt, additionalProperties);
+            return new BatchRun(id, status, runCount, createdAt, additionalProperties);
         }
     }
 }

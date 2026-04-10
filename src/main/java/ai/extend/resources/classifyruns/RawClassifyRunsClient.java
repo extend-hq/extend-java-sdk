@@ -20,6 +20,7 @@ import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
 import ai.extend.resources.classifyruns.requests.ClassifyRunsCancelRequest;
+import ai.extend.resources.classifyruns.requests.ClassifyRunsCreateBatchRequest;
 import ai.extend.resources.classifyruns.requests.ClassifyRunsCreateRequest;
 import ai.extend.resources.classifyruns.requests.ClassifyRunsDeleteRequest;
 import ai.extend.resources.classifyruns.requests.ClassifyRunsListRequest;
@@ -27,6 +28,7 @@ import ai.extend.resources.classifyruns.requests.ClassifyRunsRetrieveRequest;
 import ai.extend.resources.classifyruns.types.ClassifyRunsDeleteResponse;
 import ai.extend.resources.classifyruns.types.ClassifyRunsListResponse;
 import ai.extend.types.ApiError;
+import ai.extend.types.BatchRun;
 import ai.extend.types.ClassifyRun;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
@@ -85,6 +87,10 @@ public class RawClassifyRunsClient {
         if (request.getClassifierId().isPresent()) {
             QueryStringMapper.addQueryParameter(
                     httpUrl, "classifierId", request.getClassifierId().get(), false);
+        }
+        if (request.getBatchId().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "batchId", request.getBatchId().get(), false);
         }
         if (request.getSourceId().isPresent()) {
             QueryStringMapper.addQueryParameter(
@@ -521,6 +527,113 @@ public class RawClassifyRunsClient {
             if (response.isSuccessful()) {
                 return new ExtendClientHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ClassifyRun.class), response);
+            }
+            try {
+                switch (response.code()) {
+                    case 400:
+                        throw new BadRequestError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 401:
+                        throw new UnauthorizedError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 402:
+                        throw new PaymentRequiredError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 403:
+                        throw new ForbiddenError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 404:
+                        throw new NotFoundError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 422:
+                        throw new UnprocessableEntityError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 429:
+                        throw new TooManyRequestsError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 500:
+                        throw new InternalServerError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                }
+            } catch (JsonProcessingException ignored) {
+                // unable to map error response, throwing generic error
+            }
+            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
+            throw new ExtendClientApiException(
+                    "Error with status code " + response.code(), response.code(), errorBody, response);
+        } catch (IOException e) {
+            throw new ExtendClientException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
+     * Submit up to <strong>1,000 files</strong> for classification in a single request. Each file is processed as an independent classify run using the same classifier and configuration.
+     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/create-classify-run">Classify File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
+     * <p><strong>Monitoring results:</strong></p>
+     * <ul>
+     * <li><strong>Webhooks (recommended):</strong> Subscribe to <code>batch_processor_run.processed</code> and <code>batch_processor_run.failed</code> events. The webhook payload indicates the batch has finished — fetch individual run results using <code>GET /classify_runs?batchId={id}</code>.</li>
+     * <li><strong>Polling:</strong> Call <code>GET /batch_runs/{id}</code> to check the overall batch status, and use <code>GET /classify_runs</code> filtered by <code>batchId</code> to retrieve individual run results.</li>
+     * </ul>
+     * <p><strong>Notes:</strong></p>
+     * <ul>
+     * <li>A processor reference (<code>classifier.id</code>) is required — inline <code>config</code> is not supported for batch requests.</li>
+     * <li><code>inputs</code> must contain between 1 and 1,000 items.</li>
+     * <li>All inputs in a batch use the same classifier version and override config.</li>
+     * </ul>
+     */
+    public ExtendClientHttpResponse<BatchRun> createBatch(ClassifyRunsCreateBatchRequest request) {
+        return createBatch(request, null);
+    }
+
+    /**
+     * Submit up to <strong>1,000 files</strong> for classification in a single request. Each file is processed as an independent classify run using the same classifier and configuration.
+     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/create-classify-run">Classify File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
+     * <p><strong>Monitoring results:</strong></p>
+     * <ul>
+     * <li><strong>Webhooks (recommended):</strong> Subscribe to <code>batch_processor_run.processed</code> and <code>batch_processor_run.failed</code> events. The webhook payload indicates the batch has finished — fetch individual run results using <code>GET /classify_runs?batchId={id}</code>.</li>
+     * <li><strong>Polling:</strong> Call <code>GET /batch_runs/{id}</code> to check the overall batch status, and use <code>GET /classify_runs</code> filtered by <code>batchId</code> to retrieve individual run results.</li>
+     * </ul>
+     * <p><strong>Notes:</strong></p>
+     * <ul>
+     * <li>A processor reference (<code>classifier.id</code>) is required — inline <code>config</code> is not supported for batch requests.</li>
+     * <li><code>inputs</code> must contain between 1 and 1,000 items.</li>
+     * <li>All inputs in a batch use the same classifier version and override config.</li>
+     * </ul>
+     */
+    public ExtendClientHttpResponse<BatchRun> createBatch(
+            ClassifyRunsCreateBatchRequest request, RequestOptions requestOptions) {
+        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("classify_runs/batch");
+        if (requestOptions != null) {
+            requestOptions.getQueryParameters().forEach((_key, _value) -> {
+                httpUrl.addQueryParameter(_key, _value);
+            });
+        }
+        RequestBody body;
+        try {
+            body = RequestBody.create(
+                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
+        } catch (JsonProcessingException e) {
+            throw new ExtendClientException("Failed to serialize request", e);
+        }
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl.build())
+                .method("POST", body)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            if (response.isSuccessful()) {
+                return new ExtendClientHttpResponse<>(
+                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, BatchRun.class), response);
             }
             try {
                 switch (response.code()) {

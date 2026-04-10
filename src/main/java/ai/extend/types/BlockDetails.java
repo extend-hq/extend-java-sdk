@@ -42,8 +42,10 @@ public final class BlockDetails {
         } else if (this.type == 3) {
             return visitor.visit((BarcodeDetails) this.value);
         } else if (this.type == 4) {
-            return visitor.visit((KeyValueDetails) this.value);
+            return visitor.visit((FormulaDetails) this.value);
         } else if (this.type == 5) {
+            return visitor.visit((KeyValueDetails) this.value);
+        } else if (this.type == 6) {
             return visitor.visit((Map<String, Object>) this.value);
         }
         throw new IllegalStateException("Failed to visit value. This should never happen.");
@@ -85,12 +87,16 @@ public final class BlockDetails {
         return new BlockDetails(value, 3);
     }
 
-    public static BlockDetails of(KeyValueDetails value) {
+    public static BlockDetails of(FormulaDetails value) {
         return new BlockDetails(value, 4);
     }
 
-    public static BlockDetails of(Map<String, Object> value) {
+    public static BlockDetails of(KeyValueDetails value) {
         return new BlockDetails(value, 5);
+    }
+
+    public static BlockDetails of(Map<String, Object> value) {
+        return new BlockDetails(value, 6);
     }
 
     public interface Visitor<T> {
@@ -101,6 +107,8 @@ public final class BlockDetails {
         T visit(FigureDetails value);
 
         T visit(BarcodeDetails value);
+
+        T visit(FormulaDetails value);
 
         T visit(KeyValueDetails value);
 
@@ -129,6 +137,10 @@ public final class BlockDetails {
             }
             try {
                 return of(ObjectMappers.JSON_MAPPER.convertValue(value, BarcodeDetails.class));
+            } catch (RuntimeException e) {
+            }
+            try {
+                return of(ObjectMappers.JSON_MAPPER.convertValue(value, FormulaDetails.class));
             } catch (RuntimeException e) {
             }
             try {

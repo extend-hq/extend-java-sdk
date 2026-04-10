@@ -6,12 +6,14 @@ package ai.extend.resources.classifyruns;
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.classifyruns.requests.ClassifyRunsCancelRequest;
+import ai.extend.resources.classifyruns.requests.ClassifyRunsCreateBatchRequest;
 import ai.extend.resources.classifyruns.requests.ClassifyRunsCreateRequest;
 import ai.extend.resources.classifyruns.requests.ClassifyRunsDeleteRequest;
 import ai.extend.resources.classifyruns.requests.ClassifyRunsListRequest;
 import ai.extend.resources.classifyruns.requests.ClassifyRunsRetrieveRequest;
 import ai.extend.resources.classifyruns.types.ClassifyRunsDeleteResponse;
 import ai.extend.resources.classifyruns.types.ClassifyRunsListResponse;
+import ai.extend.types.BatchRun;
 import ai.extend.types.ClassifyRun;
 import java.util.concurrent.CompletableFuture;
 
@@ -178,5 +180,44 @@ public class AsyncClassifyRunsClient {
     public CompletableFuture<ClassifyRun> cancel(
             String id, ClassifyRunsCancelRequest request, RequestOptions requestOptions) {
         return this.rawClient.cancel(id, request, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Submit up to <strong>1,000 files</strong> for classification in a single request. Each file is processed as an independent classify run using the same classifier and configuration.
+     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/create-classify-run">Classify File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
+     * <p><strong>Monitoring results:</strong></p>
+     * <ul>
+     * <li><strong>Webhooks (recommended):</strong> Subscribe to <code>batch_processor_run.processed</code> and <code>batch_processor_run.failed</code> events. The webhook payload indicates the batch has finished — fetch individual run results using <code>GET /classify_runs?batchId={id}</code>.</li>
+     * <li><strong>Polling:</strong> Call <code>GET /batch_runs/{id}</code> to check the overall batch status, and use <code>GET /classify_runs</code> filtered by <code>batchId</code> to retrieve individual run results.</li>
+     * </ul>
+     * <p><strong>Notes:</strong></p>
+     * <ul>
+     * <li>A processor reference (<code>classifier.id</code>) is required — inline <code>config</code> is not supported for batch requests.</li>
+     * <li><code>inputs</code> must contain between 1 and 1,000 items.</li>
+     * <li>All inputs in a batch use the same classifier version and override config.</li>
+     * </ul>
+     */
+    public CompletableFuture<BatchRun> createBatch(ClassifyRunsCreateBatchRequest request) {
+        return this.rawClient.createBatch(request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Submit up to <strong>1,000 files</strong> for classification in a single request. Each file is processed as an independent classify run using the same classifier and configuration.
+     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/create-classify-run">Classify File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
+     * <p><strong>Monitoring results:</strong></p>
+     * <ul>
+     * <li><strong>Webhooks (recommended):</strong> Subscribe to <code>batch_processor_run.processed</code> and <code>batch_processor_run.failed</code> events. The webhook payload indicates the batch has finished — fetch individual run results using <code>GET /classify_runs?batchId={id}</code>.</li>
+     * <li><strong>Polling:</strong> Call <code>GET /batch_runs/{id}</code> to check the overall batch status, and use <code>GET /classify_runs</code> filtered by <code>batchId</code> to retrieve individual run results.</li>
+     * </ul>
+     * <p><strong>Notes:</strong></p>
+     * <ul>
+     * <li>A processor reference (<code>classifier.id</code>) is required — inline <code>config</code> is not supported for batch requests.</li>
+     * <li><code>inputs</code> must contain between 1 and 1,000 items.</li>
+     * <li>All inputs in a batch use the same classifier version and override config.</li>
+     * </ul>
+     */
+    public CompletableFuture<BatchRun> createBatch(
+            ClassifyRunsCreateBatchRequest request, RequestOptions requestOptions) {
+        return this.rawClient.createBatch(request, requestOptions).thenApply(response -> response.body());
     }
 }
