@@ -923,6 +923,115 @@ client.files().upload(
 </details>
 
 ## ParseRuns
+<details><summary><code>client.parseRuns.list() -> ParseRunsListResponse</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List parse runs, with optional filters for status, batch ID, and file name.
+
+Returns a paginated list of parse runs. Use `GET /parse_runs/{id}` to retrieve the full result including output for a specific run.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.parseRuns().list(
+    ParseRunsListRequest
+        .builder()
+        .nextPageToken("xK9mLPqRtN3vS8wF5hB2cQ==:zWvUxYjM4nKpL7aDgE9HbTcR2mAyX3/Q+CNkfBSw1dZ=")
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**status:** `Optional<ParseRunsListRequestStatus>` — Filter parse runs by status.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**batchId:** `Optional<String>` 
+
+Filter parse runs by the batch they belong to. Use this after submitting a batch via `POST /parse_runs/batch` to retrieve individual run results.
+
+Example: `"bpar_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fileNameContains:** `Optional<String>` 
+
+Filters runs by the name of the file. Only returns runs where the file name contains this string.
+
+Example: `"invoice"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**nextPageToken:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**maxPageSize:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.parseRuns.create(request) -> ParseRun</code></summary>
 <dl>
 <dd>
@@ -1157,6 +1266,141 @@ Example: `"pr_xK9mLPqRtN3vS8wF5hB2cQ"`
 <dd>
 
 **extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.parseRuns.createBatch(request) -> BatchRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Submit up to **1,000 files** for parsing in a single request. Each file is processed as an independent parse run using the same configuration.
+
+Unlike the single [Parse File (Async)](https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/parse/create-parse-run) endpoint, this batch endpoint accepts an `inputs` array and immediately returns a `BatchRun` object containing a batch `id` and a `PENDING` status. The individual runs are then queued and processed asynchronously.
+
+**Monitoring results:**
+- **Webhooks (recommended):** Subscribe to `batch_parse_run.processed` and `batch_parse_run.failed` events. The webhook payload indicates the batch has finished — fetch individual run results using `GET /parse_runs?batchId={id}`.
+- **Polling:** Call `GET /batch_runs/{id}` to check the overall batch status, and use `GET /parse_runs?batchId={id}` to retrieve individual run results.
+
+**Notes:**
+- `inputs` must contain between 1 and 1,000 items.
+- File input supports URLs, Extend file IDs, and raw text strings.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.parseRuns().createBatch(
+    ParseRunsCreateBatchRequest
+        .builder()
+        .inputs(
+            Arrays.asList(
+                ParseRunsCreateBatchRequestInputsItem
+                    .builder()
+                    .file(
+                        ParseRunsCreateBatchRequestInputsItemFile.of(
+                            FileFromUrl
+                                .builder()
+                                .url("https://example.com/document1.pdf")
+                                .build()
+                        )
+                    )
+                    .metadata(
+                        new HashMap<String, Object>() {{
+                            put("customerId", "cust_abc123");
+                        }}
+                    )
+                    .build(),
+                ParseRunsCreateBatchRequestInputsItem
+                    .builder()
+                    .file(
+                        ParseRunsCreateBatchRequestInputsItemFile.of(
+                            FileFromUrl
+                                .builder()
+                                .url("https://example.com/document2.pdf")
+                                .build()
+                        )
+                    )
+                    .metadata(
+                        new HashMap<String, Object>() {{
+                            put("customerId", "cust_def456");
+                        }}
+                    )
+                    .build(),
+                ParseRunsCreateBatchRequestInputsItem
+                    .builder()
+                    .file(
+                        ParseRunsCreateBatchRequestInputsItemFile.of(
+                            FileFromUrl
+                                .builder()
+                                .build()
+                        )
+                    )
+                    .metadata(
+                        new HashMap<String, Object>() {{
+                            put("source", "manual-entry");
+                        }}
+                    )
+                    .build()
+            )
+        )
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**inputs:** `List<ParseRunsCreateBatchRequestInputsItem>` — An array of inputs to parse. Each item produces one parse run. Must contain between 1 and 1,000 items.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**config:** `Optional<ParseConfig>` — Optional parsing configuration applied to every run in this batch. If omitted, default parse settings are used.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**priority:** `Optional<Integer>` 
     
 </dd>
 </dl>
@@ -7661,7 +7905,7 @@ Example: `"bpr_Xj8mK2pL9nR4vT7qY5wZ"`
 
 Retrieve the status of a batch run by its ID. The `status` field reflects the aggregate state of the batch.
 
-This is a unified endpoint that works for batches created via any of the batch submission endpoints (`POST /extract_runs/batch`, `POST /classify_runs/batch`, `POST /split_runs/batch`).
+This is a unified endpoint that works for batches created via any of the batch submission endpoints (`POST /parse_runs/batch`, `POST /extract_runs/batch`, `POST /classify_runs/batch`, `POST /split_runs/batch`).
 
 | Status | Meaning |
 |---|---|
@@ -7671,7 +7915,8 @@ This is a unified endpoint that works for batches created via any of the batch s
 | `FAILED` | The batch encountered a fatal error |
 | `CANCELLED` | The batch was cancelled |
 
-To retrieve individual run results, use the List endpoint for the relevant processor type filtered by `batchId`:
+To retrieve individual run results, use the List endpoint for the relevant type filtered by `batchId`:
+- `GET /parse_runs?batchId={id}`
 - `GET /extract_runs?batchId={id}`
 - `GET /classify_runs?batchId={id}`
 - `GET /split_runs?batchId={id}`

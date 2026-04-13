@@ -55,6 +55,9 @@ public final class WebhookEndpointEventType {
     public static final WebhookEndpointEventType SPLIT_RUN_PROCESSED =
             new WebhookEndpointEventType(Value.SPLIT_RUN_PROCESSED, "split_run.processed");
 
+    public static final WebhookEndpointEventType BATCH_PARSE_RUN_PROCESSED =
+            new WebhookEndpointEventType(Value.BATCH_PARSE_RUN_PROCESSED, "batch_parse_run.processed");
+
     public static final WebhookEndpointEventType WORKFLOW_CREATED =
             new WebhookEndpointEventType(Value.WORKFLOW_CREATED, "workflow.created");
 
@@ -96,6 +99,9 @@ public final class WebhookEndpointEventType {
 
     public static final WebhookEndpointEventType SPLIT_RUN_FAILED =
             new WebhookEndpointEventType(Value.SPLIT_RUN_FAILED, "split_run.failed");
+
+    public static final WebhookEndpointEventType BATCH_PARSE_RUN_FAILED =
+            new WebhookEndpointEventType(Value.BATCH_PARSE_RUN_FAILED, "batch_parse_run.failed");
 
     private final Value value;
 
@@ -162,6 +168,8 @@ public final class WebhookEndpointEventType {
                 return visitor.visitExtractorVersionPublished();
             case SPLIT_RUN_PROCESSED:
                 return visitor.visitSplitRunProcessed();
+            case BATCH_PARSE_RUN_PROCESSED:
+                return visitor.visitBatchParseRunProcessed();
             case WORKFLOW_CREATED:
                 return visitor.visitWorkflowCreated();
             case CLASSIFY_RUN_FAILED:
@@ -190,6 +198,8 @@ public final class WebhookEndpointEventType {
                 return visitor.visitSplitterVersionPublished();
             case SPLIT_RUN_FAILED:
                 return visitor.visitSplitRunFailed();
+            case BATCH_PARSE_RUN_FAILED:
+                return visitor.visitBatchParseRunFailed();
             case UNKNOWN:
             default:
                 return visitor.visitUnknown(string);
@@ -231,6 +241,8 @@ public final class WebhookEndpointEventType {
                 return EXTRACTOR_VERSION_PUBLISHED;
             case "split_run.processed":
                 return SPLIT_RUN_PROCESSED;
+            case "batch_parse_run.processed":
+                return BATCH_PARSE_RUN_PROCESSED;
             case "workflow.created":
                 return WORKFLOW_CREATED;
             case "classify_run.failed":
@@ -259,6 +271,8 @@ public final class WebhookEndpointEventType {
                 return SPLITTER_VERSION_PUBLISHED;
             case "split_run.failed":
                 return SPLIT_RUN_FAILED;
+            case "batch_parse_run.failed":
+                return BATCH_PARSE_RUN_FAILED;
             default:
                 return new WebhookEndpointEventType(Value.UNKNOWN, value);
         }
@@ -288,6 +302,10 @@ public final class WebhookEndpointEventType {
         BATCH_PROCESSOR_RUN_PROCESSED,
 
         BATCH_PROCESSOR_RUN_FAILED,
+
+        BATCH_PARSE_RUN_PROCESSED,
+
+        BATCH_PARSE_RUN_FAILED,
 
         EXTRACTOR_CREATED,
 
@@ -352,6 +370,10 @@ public final class WebhookEndpointEventType {
         T visitBatchProcessorRunProcessed();
 
         T visitBatchProcessorRunFailed();
+
+        T visitBatchParseRunProcessed();
+
+        T visitBatchParseRunFailed();
 
         T visitExtractorCreated();
 

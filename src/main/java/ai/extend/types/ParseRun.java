@@ -26,6 +26,8 @@ import org.jetbrains.annotations.NotNull;
 public final class ParseRun {
     private final String id;
 
+    private final Optional<String> batchId;
+
     private final FileSummary file;
 
     private final ParseRunStatusEnum status;
@@ -48,6 +50,7 @@ public final class ParseRun {
 
     private ParseRun(
             String id,
+            Optional<String> batchId,
             FileSummary file,
             ParseRunStatusEnum status,
             Optional<String> failureReason,
@@ -59,6 +62,7 @@ public final class ParseRun {
             Optional<RunUsage> usage,
             Map<String, Object> additionalProperties) {
         this.id = id;
+        this.batchId = batchId;
         this.file = file;
         this.status = status;
         this.failureReason = failureReason;
@@ -89,7 +93,20 @@ public final class ParseRun {
     }
 
     /**
-     * @return The file that was parsed. This file can be used as a parameter for other Extend endpoints, such as <code>POST /workflow_runs</code>.
+     * @return The ID of the batch this run belongs to, if created via <code>POST /parse_runs/batch</code>.
+     * <p><strong>Availability:</strong> Present when the run was submitted as part of a batch.</p>
+     * <p>Example: <code>&quot;bpar_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+     */
+    @JsonIgnore
+    public Optional<String> getBatchId() {
+        if (batchId == null) {
+            return Optional.empty();
+        }
+        return batchId;
+    }
+
+    /**
+     * @return The file that was parsed. This file can be used as a parameter for other Extend endpoints, such as <code>POST /workflow_runs</code>. May be <code>null</code> for batch parse runs where file ingestion failed.
      */
     @JsonProperty("file")
     public FileSummary getFile() {
@@ -99,6 +116,7 @@ public final class ParseRun {
     /**
      * @return The status of the parse run:
      * <ul>
+     * <li><code>&quot;PENDING&quot;</code> - The run has been created and is waiting to be processed. Only applies to runs created via <code>POST /parse_runs/batch</code>.</li>
      * <li><code>&quot;PROCESSING&quot;</code> - The file is still being processed</li>
      * <li><code>&quot;PROCESSED&quot;</code> - The file was successfully processed</li>
      * <li><code>&quot;FAILED&quot;</code> - The processing failed (see <code>failureReason</code> for details)</li>
@@ -207,6 +225,12 @@ public final class ParseRun {
     }
 
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("batchId")
+    private Optional<String> _getBatchId() {
+        return batchId;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
     @JsonProperty("failureReason")
     private Optional<String> _getFailureReason() {
         return failureReason;
@@ -255,6 +279,7 @@ public final class ParseRun {
 
     private boolean equalTo(ParseRun other) {
         return id.equals(other.id)
+                && batchId.equals(other.batchId)
                 && file.equals(other.file)
                 && status.equals(other.status)
                 && failureReason.equals(other.failureReason)
@@ -270,6 +295,7 @@ public final class ParseRun {
     public int hashCode() {
         return Objects.hash(
                 this.id,
+                this.batchId,
                 this.file,
                 this.status,
                 this.failureReason,
@@ -302,7 +328,7 @@ public final class ParseRun {
 
     public interface FileStage {
         /**
-         * <p>The file that was parsed. This file can be used as a parameter for other Extend endpoints, such as <code>POST /workflow_runs</code>.</p>
+         * <p>The file that was parsed. This file can be used as a parameter for other Extend endpoints, such as <code>POST /workflow_runs</code>. May be <code>null</code> for batch parse runs where file ingestion failed.</p>
          */
         StatusStage file(@NotNull FileSummary file);
     }
@@ -311,6 +337,7 @@ public final class ParseRun {
         /**
          * <p>The status of the parse run:</p>
          * <ul>
+         * <li><code>&quot;PENDING&quot;</code> - The run has been created and is waiting to be processed. Only applies to runs created via <code>POST /parse_runs/batch</code>.</li>
          * <li><code>&quot;PROCESSING&quot;</code> - The file is still being processed</li>
          * <li><code>&quot;PROCESSED&quot;</code> - The file was successfully processed</li>
          * <li><code>&quot;FAILED&quot;</code> - The processing failed (see <code>failureReason</code> for details)</li>
@@ -328,6 +355,17 @@ public final class ParseRun {
 
     public interface _FinalStage {
         ParseRun build();
+
+        /**
+         * <p>The ID of the batch this run belongs to, if created via <code>POST /parse_runs/batch</code>.</p>
+         * <p><strong>Availability:</strong> Present when the run was submitted as part of a batch.</p>
+         * <p>Example: <code>&quot;bpar_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         */
+        _FinalStage batchId(Optional<String> batchId);
+
+        _FinalStage batchId(String batchId);
+
+        _FinalStage batchId(Nullable<String> batchId);
 
         /**
          * <p>The reason for failure.</p>
@@ -429,6 +467,8 @@ public final class ParseRun {
 
         private Optional<String> failureReason = Optional.empty();
 
+        private Optional<String> batchId = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -437,6 +477,7 @@ public final class ParseRun {
         @java.lang.Override
         public Builder from(ParseRun other) {
             id(other.getId());
+            batchId(other.getBatchId());
             file(other.getFile());
             status(other.getStatus());
             failureReason(other.getFailureReason());
@@ -464,8 +505,8 @@ public final class ParseRun {
         }
 
         /**
-         * <p>The file that was parsed. This file can be used as a parameter for other Extend endpoints, such as <code>POST /workflow_runs</code>.</p>
-         * <p>The file that was parsed. This file can be used as a parameter for other Extend endpoints, such as <code>POST /workflow_runs</code>.</p>
+         * <p>The file that was parsed. This file can be used as a parameter for other Extend endpoints, such as <code>POST /workflow_runs</code>. May be <code>null</code> for batch parse runs where file ingestion failed.</p>
+         * <p>The file that was parsed. This file can be used as a parameter for other Extend endpoints, such as <code>POST /workflow_runs</code>. May be <code>null</code> for batch parse runs where file ingestion failed.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -478,12 +519,14 @@ public final class ParseRun {
         /**
          * <p>The status of the parse run:</p>
          * <ul>
+         * <li><code>&quot;PENDING&quot;</code> - The run has been created and is waiting to be processed. Only applies to runs created via <code>POST /parse_runs/batch</code>.</li>
          * <li><code>&quot;PROCESSING&quot;</code> - The file is still being processed</li>
          * <li><code>&quot;PROCESSED&quot;</code> - The file was successfully processed</li>
          * <li><code>&quot;FAILED&quot;</code> - The processing failed (see <code>failureReason</code> for details)</li>
          * </ul>
          * <p>The status of the parse run:</p>
          * <ul>
+         * <li><code>&quot;PENDING&quot;</code> - The run has been created and is waiting to be processed. Only applies to runs created via <code>POST /parse_runs/batch</code>.</li>
          * <li><code>&quot;PROCESSING&quot;</code> - The file is still being processed</li>
          * <li><code>&quot;PROCESSED&quot;</code> - The file was successfully processed</li>
          * <li><code>&quot;FAILED&quot;</code> - The processing failed (see <code>failureReason</code> for details)</li>
@@ -794,10 +837,53 @@ public final class ParseRun {
             return this;
         }
 
+        /**
+         * <p>The ID of the batch this run belongs to, if created via <code>POST /parse_runs/batch</code>.</p>
+         * <p><strong>Availability:</strong> Present when the run was submitted as part of a batch.</p>
+         * <p>Example: <code>&quot;bpar_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage batchId(Nullable<String> batchId) {
+            if (batchId.isNull()) {
+                this.batchId = null;
+            } else if (batchId.isEmpty()) {
+                this.batchId = Optional.empty();
+            } else {
+                this.batchId = Optional.of(batchId.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>The ID of the batch this run belongs to, if created via <code>POST /parse_runs/batch</code>.</p>
+         * <p><strong>Availability:</strong> Present when the run was submitted as part of a batch.</p>
+         * <p>Example: <code>&quot;bpar_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage batchId(String batchId) {
+            this.batchId = Optional.ofNullable(batchId);
+            return this;
+        }
+
+        /**
+         * <p>The ID of the batch this run belongs to, if created via <code>POST /parse_runs/batch</code>.</p>
+         * <p><strong>Availability:</strong> Present when the run was submitted as part of a batch.</p>
+         * <p>Example: <code>&quot;bpar_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "batchId", nulls = Nulls.SKIP)
+        public _FinalStage batchId(Optional<String> batchId) {
+            this.batchId = batchId;
+            return this;
+        }
+
         @java.lang.Override
         public ParseRun build() {
             return new ParseRun(
                     id,
+                    batchId,
                     file,
                     status,
                     failureReason,

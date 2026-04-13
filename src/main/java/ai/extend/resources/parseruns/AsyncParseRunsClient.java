@@ -5,10 +5,14 @@ package ai.extend.resources.parseruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
+import ai.extend.resources.parseruns.requests.ParseRunsCreateBatchRequest;
 import ai.extend.resources.parseruns.requests.ParseRunsCreateRequest;
 import ai.extend.resources.parseruns.requests.ParseRunsDeleteRequest;
+import ai.extend.resources.parseruns.requests.ParseRunsListRequest;
 import ai.extend.resources.parseruns.requests.ParseRunsRetrieveRequest;
 import ai.extend.resources.parseruns.types.ParseRunsDeleteResponse;
+import ai.extend.resources.parseruns.types.ParseRunsListResponse;
+import ai.extend.types.BatchRun;
 import ai.extend.types.ParseRun;
 import java.util.concurrent.CompletableFuture;
 
@@ -27,6 +31,38 @@ public class AsyncParseRunsClient {
      */
     public AsyncRawParseRunsClient withRawResponse() {
         return this.rawClient;
+    }
+
+    /**
+     * List parse runs, with optional filters for status, batch ID, and file name.
+     * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
+     */
+    public CompletableFuture<ParseRunsListResponse> list() {
+        return this.rawClient.list().thenApply(response -> response.body());
+    }
+
+    /**
+     * List parse runs, with optional filters for status, batch ID, and file name.
+     * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
+     */
+    public CompletableFuture<ParseRunsListResponse> list(RequestOptions requestOptions) {
+        return this.rawClient.list(requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * List parse runs, with optional filters for status, batch ID, and file name.
+     * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
+     */
+    public CompletableFuture<ParseRunsListResponse> list(ParseRunsListRequest request) {
+        return this.rawClient.list(request).thenApply(response -> response.body());
+    }
+
+    /**
+     * List parse runs, with optional filters for status, batch ID, and file name.
+     * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
+     */
+    public CompletableFuture<ParseRunsListResponse> list(ParseRunsListRequest request, RequestOptions requestOptions) {
+        return this.rawClient.list(request, requestOptions).thenApply(response -> response.body());
     }
 
     /**
@@ -111,5 +147,41 @@ public class AsyncParseRunsClient {
     public CompletableFuture<ParseRunsDeleteResponse> delete(
             String id, ParseRunsDeleteRequest request, RequestOptions requestOptions) {
         return this.rawClient.delete(id, request, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Submit up to <strong>1,000 files</strong> for parsing in a single request. Each file is processed as an independent parse run using the same configuration.
+     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/parse/create-parse-run">Parse File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
+     * <p><strong>Monitoring results:</strong></p>
+     * <ul>
+     * <li><strong>Webhooks (recommended):</strong> Subscribe to <code>batch_parse_run.processed</code> and <code>batch_parse_run.failed</code> events. The webhook payload indicates the batch has finished — fetch individual run results using <code>GET /parse_runs?batchId={id}</code>.</li>
+     * <li><strong>Polling:</strong> Call <code>GET /batch_runs/{id}</code> to check the overall batch status, and use <code>GET /parse_runs?batchId={id}</code> to retrieve individual run results.</li>
+     * </ul>
+     * <p><strong>Notes:</strong></p>
+     * <ul>
+     * <li><code>inputs</code> must contain between 1 and 1,000 items.</li>
+     * <li>File input supports URLs, Extend file IDs, and raw text strings.</li>
+     * </ul>
+     */
+    public CompletableFuture<BatchRun> createBatch(ParseRunsCreateBatchRequest request) {
+        return this.rawClient.createBatch(request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Submit up to <strong>1,000 files</strong> for parsing in a single request. Each file is processed as an independent parse run using the same configuration.
+     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/parse/create-parse-run">Parse File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
+     * <p><strong>Monitoring results:</strong></p>
+     * <ul>
+     * <li><strong>Webhooks (recommended):</strong> Subscribe to <code>batch_parse_run.processed</code> and <code>batch_parse_run.failed</code> events. The webhook payload indicates the batch has finished — fetch individual run results using <code>GET /parse_runs?batchId={id}</code>.</li>
+     * <li><strong>Polling:</strong> Call <code>GET /batch_runs/{id}</code> to check the overall batch status, and use <code>GET /parse_runs?batchId={id}</code> to retrieve individual run results.</li>
+     * </ul>
+     * <p><strong>Notes:</strong></p>
+     * <ul>
+     * <li><code>inputs</code> must contain between 1 and 1,000 items.</li>
+     * <li>File input supports URLs, Extend file IDs, and raw text strings.</li>
+     * </ul>
+     */
+    public CompletableFuture<BatchRun> createBatch(ParseRunsCreateBatchRequest request, RequestOptions requestOptions) {
+        return this.rawClient.createBatch(request, requestOptions).thenApply(response -> response.body());
     }
 }

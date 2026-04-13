@@ -82,6 +82,14 @@ public final class WebhookEvent {
         return new WebhookEvent(new BatchProcessorRunFailedValue(value));
     }
 
+    public static WebhookEvent batchParseRunProcessed(BatchParseRunCompletedWebhookEvent value) {
+        return new WebhookEvent(new BatchParseRunProcessedValue(value));
+    }
+
+    public static WebhookEvent batchParseRunFailed(BatchParseRunFailedWebhookEvent value) {
+        return new WebhookEvent(new BatchParseRunFailedValue(value));
+    }
+
     public static WebhookEvent parseRunProcessed(ParseRunProcessedWebhookEvent value) {
         return new WebhookEvent(new ParseRunProcessedValue(value));
     }
@@ -224,6 +232,14 @@ public final class WebhookEvent {
 
     public boolean isBatchProcessorRunFailed() {
         return value instanceof BatchProcessorRunFailedValue;
+    }
+
+    public boolean isBatchParseRunProcessed() {
+        return value instanceof BatchParseRunProcessedValue;
+    }
+
+    public boolean isBatchParseRunFailed() {
+        return value instanceof BatchParseRunFailedValue;
     }
 
     public boolean isParseRunProcessed() {
@@ -412,6 +428,20 @@ public final class WebhookEvent {
     public Optional<BatchProcessorRunFailedWebhookEvent> getBatchProcessorRunFailed() {
         if (isBatchProcessorRunFailed()) {
             return Optional.of(((BatchProcessorRunFailedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<BatchParseRunCompletedWebhookEvent> getBatchParseRunProcessed() {
+        if (isBatchParseRunProcessed()) {
+            return Optional.of(((BatchParseRunProcessedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<BatchParseRunFailedWebhookEvent> getBatchParseRunFailed() {
+        if (isBatchParseRunFailed()) {
+            return Optional.of(((BatchParseRunFailedValue) value).value);
         }
         return Optional.empty();
     }
@@ -611,6 +641,10 @@ public final class WebhookEvent {
 
         T visitBatchProcessorRunFailed(BatchProcessorRunFailedWebhookEvent batchProcessorRunFailed);
 
+        T visitBatchParseRunProcessed(BatchParseRunCompletedWebhookEvent batchParseRunProcessed);
+
+        T visitBatchParseRunFailed(BatchParseRunFailedWebhookEvent batchParseRunFailed);
+
         T visitParseRunProcessed(ParseRunProcessedWebhookEvent parseRunProcessed);
 
         T visitParseRunFailed(ParseRunFailedWebhookEvent parseRunFailed);
@@ -674,6 +708,8 @@ public final class WebhookEvent {
         @JsonSubTypes.Type(SplitRunFailedValue.class),
         @JsonSubTypes.Type(BatchProcessorRunProcessedValue.class),
         @JsonSubTypes.Type(BatchProcessorRunFailedValue.class),
+        @JsonSubTypes.Type(BatchParseRunProcessedValue.class),
+        @JsonSubTypes.Type(BatchParseRunFailedValue.class),
         @JsonSubTypes.Type(ParseRunProcessedValue.class),
         @JsonSubTypes.Type(ParseRunFailedValue.class),
         @JsonSubTypes.Type(EditRunProcessedValue.class),
@@ -1235,6 +1271,84 @@ public final class WebhookEvent {
         }
 
         private boolean equalTo(BatchProcessorRunFailedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("batch_parse_run.processed")
+    @JsonIgnoreProperties("eventType")
+    private static final class BatchParseRunProcessedValue implements Value {
+        @JsonUnwrapped
+        private BatchParseRunCompletedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private BatchParseRunProcessedValue() {}
+
+        private BatchParseRunProcessedValue(BatchParseRunCompletedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitBatchParseRunProcessed(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof BatchParseRunProcessedValue && equalTo((BatchParseRunProcessedValue) other);
+        }
+
+        private boolean equalTo(BatchParseRunProcessedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("batch_parse_run.failed")
+    @JsonIgnoreProperties("eventType")
+    private static final class BatchParseRunFailedValue implements Value {
+        @JsonUnwrapped
+        private BatchParseRunFailedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private BatchParseRunFailedValue() {}
+
+        private BatchParseRunFailedValue(BatchParseRunFailedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitBatchParseRunFailed(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof BatchParseRunFailedValue && equalTo((BatchParseRunFailedValue) other);
+        }
+
+        private boolean equalTo(BatchParseRunFailedValue other) {
             return value.equals(other.value);
         }
 
