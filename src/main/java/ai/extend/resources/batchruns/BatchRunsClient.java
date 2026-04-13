@@ -26,7 +26,7 @@ public class BatchRunsClient {
 
     /**
      * Retrieve the status of a batch run by its ID. The <code>status</code> field reflects the aggregate state of the batch.
-     * <p>This is a unified endpoint that works for batches created via any of the batch submission endpoints (<code>POST /extract_runs/batch</code>, <code>POST /classify_runs/batch</code>, <code>POST /split_runs/batch</code>).</p>
+     * <p>This is a unified endpoint that works for batches created via any of the batch submission endpoints (<code>POST /parse_runs/batch</code>, <code>POST /extract_runs/batch</code>, <code>POST /classify_runs/batch</code>, <code>POST /split_runs/batch</code>).</p>
      * <p>| Status | Meaning |
      * |---|---|
      * | <code>PENDING</code> | Queued, not yet started |
@@ -34,8 +34,9 @@ public class BatchRunsClient {
      * | <code>PROCESSED</code> | All runs have completed |
      * | <code>FAILED</code> | The batch encountered a fatal error |
      * | <code>CANCELLED</code> | The batch was cancelled |</p>
-     * <p>To retrieve individual run results, use the List endpoint for the relevant processor type filtered by <code>batchId</code>:</p>
+     * <p>To retrieve individual run results, use the List endpoint for the relevant type filtered by <code>batchId</code>:</p>
      * <ul>
+     * <li><code>GET /parse_runs?batchId={id}</code></li>
      * <li><code>GET /extract_runs?batchId={id}</code></li>
      * <li><code>GET /classify_runs?batchId={id}</code></li>
      * <li><code>GET /split_runs?batchId={id}</code></li>
@@ -47,7 +48,7 @@ public class BatchRunsClient {
 
     /**
      * Retrieve the status of a batch run by its ID. The <code>status</code> field reflects the aggregate state of the batch.
-     * <p>This is a unified endpoint that works for batches created via any of the batch submission endpoints (<code>POST /extract_runs/batch</code>, <code>POST /classify_runs/batch</code>, <code>POST /split_runs/batch</code>).</p>
+     * <p>This is a unified endpoint that works for batches created via any of the batch submission endpoints (<code>POST /parse_runs/batch</code>, <code>POST /extract_runs/batch</code>, <code>POST /classify_runs/batch</code>, <code>POST /split_runs/batch</code>).</p>
      * <p>| Status | Meaning |
      * |---|---|
      * | <code>PENDING</code> | Queued, not yet started |
@@ -55,8 +56,9 @@ public class BatchRunsClient {
      * | <code>PROCESSED</code> | All runs have completed |
      * | <code>FAILED</code> | The batch encountered a fatal error |
      * | <code>CANCELLED</code> | The batch was cancelled |</p>
-     * <p>To retrieve individual run results, use the List endpoint for the relevant processor type filtered by <code>batchId</code>:</p>
+     * <p>To retrieve individual run results, use the List endpoint for the relevant type filtered by <code>batchId</code>:</p>
      * <ul>
+     * <li><code>GET /parse_runs?batchId={id}</code></li>
      * <li><code>GET /extract_runs?batchId={id}</code></li>
      * <li><code>GET /classify_runs?batchId={id}</code></li>
      * <li><code>GET /split_runs?batchId={id}</code></li>
