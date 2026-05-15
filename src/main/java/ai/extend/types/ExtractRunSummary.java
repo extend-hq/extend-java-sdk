@@ -49,7 +49,7 @@ public final class ExtractRunSummary {
 
     private final String dashboardUrl;
 
-    private final Optional<RunUsage> usage;
+    private final Optional<RunUsageSummary> usage;
 
     private final OffsetDateTime createdAt;
 
@@ -70,7 +70,7 @@ public final class ExtractRunSummary {
             FileSummary file,
             Optional<String> parseRunId,
             String dashboardUrl,
-            Optional<RunUsage> usage,
+            Optional<RunUsageSummary> usage,
             OffsetDateTime createdAt,
             OffsetDateTime updatedAt,
             Map<String, Object> additionalProperties) {
@@ -218,11 +218,11 @@ public final class ExtractRunSummary {
     }
 
     /**
-     * @return Usage credits consumed by this run.
-     * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+     * @return Usage credits consumed by this extract run. Omits <code>breakdown</code> — fetch the full extract run by id to see the per-line items.
+     * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>. Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
      */
     @JsonIgnore
-    public Optional<RunUsage> getUsage() {
+    public Optional<RunUsageSummary> getUsage() {
         if (usage == null) {
             return Optional.empty();
         }
@@ -277,7 +277,7 @@ public final class ExtractRunSummary {
 
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
     @JsonProperty("usage")
-    private Optional<RunUsage> _getUsage() {
+    private Optional<RunUsageSummary> _getUsage() {
         return usage;
     }
 
@@ -452,14 +452,14 @@ public final class ExtractRunSummary {
         _FinalStage parseRunId(Nullable<String> parseRunId);
 
         /**
-         * <p>Usage credits consumed by this run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+         * <p>Usage credits consumed by this extract run. Omits <code>breakdown</code> — fetch the full extract run by id to see the per-line items.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>. Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
          */
-        _FinalStage usage(Optional<RunUsage> usage);
+        _FinalStage usage(Optional<RunUsageSummary> usage);
 
-        _FinalStage usage(RunUsage usage);
+        _FinalStage usage(RunUsageSummary usage);
 
-        _FinalStage usage(Nullable<RunUsage> usage);
+        _FinalStage usage(Nullable<RunUsageSummary> usage);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -489,7 +489,7 @@ public final class ExtractRunSummary {
 
         private OffsetDateTime updatedAt;
 
-        private Optional<RunUsage> usage = Optional.empty();
+        private Optional<RunUsageSummary> usage = Optional.empty();
 
         private Optional<String> parseRunId = Optional.empty();
 
@@ -610,12 +610,12 @@ public final class ExtractRunSummary {
         }
 
         /**
-         * <p>Usage credits consumed by this run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+         * <p>Usage credits consumed by this extract run. Omits <code>breakdown</code> — fetch the full extract run by id to see the per-line items.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>. Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage usage(Nullable<RunUsage> usage) {
+        public _FinalStage usage(Nullable<RunUsageSummary> usage) {
             if (usage.isNull()) {
                 this.usage = null;
             } else if (usage.isEmpty()) {
@@ -627,23 +627,23 @@ public final class ExtractRunSummary {
         }
 
         /**
-         * <p>Usage credits consumed by this run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+         * <p>Usage credits consumed by this extract run. Omits <code>breakdown</code> — fetch the full extract run by id to see the per-line items.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>. Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage usage(RunUsage usage) {
+        public _FinalStage usage(RunUsageSummary usage) {
             this.usage = Optional.ofNullable(usage);
             return this;
         }
 
         /**
-         * <p>Usage credits consumed by this run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+         * <p>Usage credits consumed by this extract run. Omits <code>breakdown</code> — fetch the full extract run by id to see the per-line items.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>. Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "usage", nulls = Nulls.SKIP)
-        public _FinalStage usage(Optional<RunUsage> usage) {
+        public _FinalStage usage(Optional<RunUsageSummary> usage) {
             this.usage = usage;
             return this;
         }

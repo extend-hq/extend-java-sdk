@@ -33,7 +33,7 @@ public class ParseRunsClient {
     }
 
     /**
-     * List parse runs, with optional filters for status, batch ID, and file name.
+     * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
     public ParseRunsListResponse list() {
@@ -41,7 +41,7 @@ public class ParseRunsClient {
     }
 
     /**
-     * List parse runs, with optional filters for status, batch ID, and file name.
+     * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
     public ParseRunsListResponse list(RequestOptions requestOptions) {
@@ -49,7 +49,7 @@ public class ParseRunsClient {
     }
 
     /**
-     * List parse runs, with optional filters for status, batch ID, and file name.
+     * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
     public ParseRunsListResponse list(ParseRunsListRequest request) {
@@ -57,7 +57,7 @@ public class ParseRunsClient {
     }
 
     /**
-     * List parse runs, with optional filters for status, batch ID, and file name.
+     * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
     public ParseRunsListResponse list(ParseRunsListRequest request, RequestOptions requestOptions) {

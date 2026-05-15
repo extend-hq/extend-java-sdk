@@ -34,7 +34,7 @@ public class AsyncParseRunsClient {
     }
 
     /**
-     * List parse runs, with optional filters for status, batch ID, and file name.
+     * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
     public CompletableFuture<ParseRunsListResponse> list() {
@@ -42,7 +42,7 @@ public class AsyncParseRunsClient {
     }
 
     /**
-     * List parse runs, with optional filters for status, batch ID, and file name.
+     * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
     public CompletableFuture<ParseRunsListResponse> list(RequestOptions requestOptions) {
@@ -50,7 +50,7 @@ public class AsyncParseRunsClient {
     }
 
     /**
-     * List parse runs, with optional filters for status, batch ID, and file name.
+     * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
     public CompletableFuture<ParseRunsListResponse> list(ParseRunsListRequest request) {
@@ -58,7 +58,7 @@ public class AsyncParseRunsClient {
     }
 
     /**
-     * List parse runs, with optional filters for status, batch ID, and file name.
+     * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
     public CompletableFuture<ParseRunsListResponse> list(ParseRunsListRequest request, RequestOptions requestOptions) {

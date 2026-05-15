@@ -27,6 +27,8 @@ public final class ExtractAdvancedOptions {
 
     private final Optional<Boolean> citationsEnabled;
 
+    private final Optional<Boolean> currentDateEnabled;
+
     private final Optional<ExtractAdvancedOptionsArrayCitationStrategy> arrayCitationStrategy;
 
     private final Optional<ArrayStrategy> arrayStrategy;
@@ -47,6 +49,7 @@ public final class ExtractAdvancedOptions {
             Optional<Boolean> modelReasoningInsightsEnabled,
             Optional<Boolean> advancedMultimodalEnabled,
             Optional<Boolean> citationsEnabled,
+            Optional<Boolean> currentDateEnabled,
             Optional<ExtractAdvancedOptionsArrayCitationStrategy> arrayCitationStrategy,
             Optional<ArrayStrategy> arrayStrategy,
             Optional<ExtractChunkingOptions> chunkingOptions,
@@ -58,6 +61,7 @@ public final class ExtractAdvancedOptions {
         this.modelReasoningInsightsEnabled = modelReasoningInsightsEnabled;
         this.advancedMultimodalEnabled = advancedMultimodalEnabled;
         this.citationsEnabled = citationsEnabled;
+        this.currentDateEnabled = currentDateEnabled;
         this.arrayCitationStrategy = arrayCitationStrategy;
         this.arrayStrategy = arrayStrategy;
         this.chunkingOptions = chunkingOptions;
@@ -90,6 +94,14 @@ public final class ExtractAdvancedOptions {
     @JsonProperty("citationsEnabled")
     public Optional<Boolean> getCitationsEnabled() {
         return citationsEnabled;
+    }
+
+    /**
+     * @return Whether to include the current date as context for the model during extraction. Defaults to <code>false</code>.
+     */
+    @JsonProperty("currentDateEnabled")
+    public Optional<Boolean> getCurrentDateEnabled() {
+        return currentDateEnabled;
     }
 
     /**
@@ -161,6 +173,7 @@ public final class ExtractAdvancedOptions {
         return modelReasoningInsightsEnabled.equals(other.modelReasoningInsightsEnabled)
                 && advancedMultimodalEnabled.equals(other.advancedMultimodalEnabled)
                 && citationsEnabled.equals(other.citationsEnabled)
+                && currentDateEnabled.equals(other.currentDateEnabled)
                 && arrayCitationStrategy.equals(other.arrayCitationStrategy)
                 && arrayStrategy.equals(other.arrayStrategy)
                 && chunkingOptions.equals(other.chunkingOptions)
@@ -176,6 +189,7 @@ public final class ExtractAdvancedOptions {
                 this.modelReasoningInsightsEnabled,
                 this.advancedMultimodalEnabled,
                 this.citationsEnabled,
+                this.currentDateEnabled,
                 this.arrayCitationStrategy,
                 this.arrayStrategy,
                 this.chunkingOptions,
@@ -202,6 +216,8 @@ public final class ExtractAdvancedOptions {
 
         private Optional<Boolean> citationsEnabled = Optional.empty();
 
+        private Optional<Boolean> currentDateEnabled = Optional.empty();
+
         private Optional<ExtractAdvancedOptionsArrayCitationStrategy> arrayCitationStrategy = Optional.empty();
 
         private Optional<ArrayStrategy> arrayStrategy = Optional.empty();
@@ -226,6 +242,7 @@ public final class ExtractAdvancedOptions {
             modelReasoningInsightsEnabled(other.getModelReasoningInsightsEnabled());
             advancedMultimodalEnabled(other.getAdvancedMultimodalEnabled());
             citationsEnabled(other.getCitationsEnabled());
+            currentDateEnabled(other.getCurrentDateEnabled());
             arrayCitationStrategy(other.getArrayCitationStrategy());
             arrayStrategy(other.getArrayStrategy());
             chunkingOptions(other.getChunkingOptions());
@@ -275,6 +292,20 @@ public final class ExtractAdvancedOptions {
 
         public Builder citationsEnabled(Boolean citationsEnabled) {
             this.citationsEnabled = Optional.ofNullable(citationsEnabled);
+            return this;
+        }
+
+        /**
+         * <p>Whether to include the current date as context for the model during extraction. Defaults to <code>false</code>.</p>
+         */
+        @JsonSetter(value = "currentDateEnabled", nulls = Nulls.SKIP)
+        public Builder currentDateEnabled(Optional<Boolean> currentDateEnabled) {
+            this.currentDateEnabled = currentDateEnabled;
+            return this;
+        }
+
+        public Builder currentDateEnabled(Boolean currentDateEnabled) {
+            this.currentDateEnabled = Optional.ofNullable(currentDateEnabled);
             return this;
         }
 
@@ -382,6 +413,7 @@ public final class ExtractAdvancedOptions {
                     modelReasoningInsightsEnabled,
                     advancedMultimodalEnabled,
                     citationsEnabled,
+                    currentDateEnabled,
                     arrayCitationStrategy,
                     arrayStrategy,
                     chunkingOptions,

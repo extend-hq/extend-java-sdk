@@ -37,7 +37,7 @@ public final class WebhookEndpointCreate {
 
     private final List<WebhookEndpointEventType> enabledEvents;
 
-    private final ApiVersionEnum apiVersion;
+    private final String apiVersion;
 
     private final Optional<WebhookAdvancedOptions> advancedOptions;
 
@@ -53,7 +53,7 @@ public final class WebhookEndpointCreate {
             String name,
             WebhookEndpointStatus status,
             List<WebhookEndpointEventType> enabledEvents,
-            ApiVersionEnum apiVersion,
+            String apiVersion,
             Optional<WebhookAdvancedOptions> advancedOptions,
             String signingSecret,
             OffsetDateTime createdAt,
@@ -113,7 +113,7 @@ public final class WebhookEndpointCreate {
     }
 
     @JsonProperty("apiVersion")
-    public ApiVersionEnum getApiVersion() {
+    public String getApiVersion() {
         return apiVersion;
     }
 
@@ -225,7 +225,7 @@ public final class WebhookEndpointCreate {
     }
 
     public interface ApiVersionStage {
-        SigningSecretStage apiVersion(@NotNull ApiVersionEnum apiVersion);
+        SigningSecretStage apiVersion(@NotNull String apiVersion);
     }
 
     public interface SigningSecretStage {
@@ -283,7 +283,7 @@ public final class WebhookEndpointCreate {
 
         private WebhookEndpointStatus status;
 
-        private ApiVersionEnum apiVersion;
+        private String apiVersion;
 
         private String signingSecret;
 
@@ -357,7 +357,7 @@ public final class WebhookEndpointCreate {
 
         @java.lang.Override
         @JsonSetter("apiVersion")
-        public SigningSecretStage apiVersion(@NotNull ApiVersionEnum apiVersion) {
+        public SigningSecretStage apiVersion(@NotNull String apiVersion) {
             this.apiVersion = Objects.requireNonNull(apiVersion, "apiVersion must not be null");
             return this;
         }
