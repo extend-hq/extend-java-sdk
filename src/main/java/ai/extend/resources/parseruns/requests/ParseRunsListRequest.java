@@ -5,6 +5,7 @@ package ai.extend.resources.parseruns.requests;
 
 import ai.extend.core.ObjectMappers;
 import ai.extend.resources.parseruns.types.ParseRunsListRequestStatus;
+import ai.extend.types.ParseRunSource;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,6 +29,10 @@ public final class ParseRunsListRequest {
 
     private final Optional<String> batchId;
 
+    private final Optional<ParseRunSource> source;
+
+    private final Optional<String> sourceId;
+
     private final Optional<String> fileNameContains;
 
     private final Optional<String> nextPageToken;
@@ -40,6 +45,8 @@ public final class ParseRunsListRequest {
             Optional<String> extendWorkspaceId,
             Optional<ParseRunsListRequestStatus> status,
             Optional<String> batchId,
+            Optional<ParseRunSource> source,
+            Optional<String> sourceId,
             Optional<String> fileNameContains,
             Optional<String> nextPageToken,
             Optional<Integer> maxPageSize,
@@ -47,6 +54,8 @@ public final class ParseRunsListRequest {
         this.extendWorkspaceId = extendWorkspaceId;
         this.status = status;
         this.batchId = batchId;
+        this.source = source;
+        this.sourceId = sourceId;
         this.fileNameContains = fileNameContains;
         this.nextPageToken = nextPageToken;
         this.maxPageSize = maxPageSize;
@@ -76,6 +85,23 @@ public final class ParseRunsListRequest {
     @JsonProperty("batchId")
     public Optional<String> getBatchId() {
         return batchId;
+    }
+
+    /**
+     * @return Filters parse runs by the source that created them. If not provided, runs from all sources are returned.
+     * <p><strong>Note:</strong> When <code>batchId</code> is provided, it takes precedence and this filter is ignored.</p>
+     */
+    @JsonProperty("source")
+    public Optional<ParseRunSource> getSource() {
+        return source;
+    }
+
+    /**
+     * @return Filters runs by the source ID.
+     */
+    @JsonProperty("sourceId")
+    public Optional<String> getSourceId() {
+        return sourceId;
     }
 
     /**
@@ -112,6 +138,8 @@ public final class ParseRunsListRequest {
         return extendWorkspaceId.equals(other.extendWorkspaceId)
                 && status.equals(other.status)
                 && batchId.equals(other.batchId)
+                && source.equals(other.source)
+                && sourceId.equals(other.sourceId)
                 && fileNameContains.equals(other.fileNameContains)
                 && nextPageToken.equals(other.nextPageToken)
                 && maxPageSize.equals(other.maxPageSize);
@@ -123,6 +151,8 @@ public final class ParseRunsListRequest {
                 this.extendWorkspaceId,
                 this.status,
                 this.batchId,
+                this.source,
+                this.sourceId,
                 this.fileNameContains,
                 this.nextPageToken,
                 this.maxPageSize);
@@ -145,6 +175,10 @@ public final class ParseRunsListRequest {
 
         private Optional<String> batchId = Optional.empty();
 
+        private Optional<ParseRunSource> source = Optional.empty();
+
+        private Optional<String> sourceId = Optional.empty();
+
         private Optional<String> fileNameContains = Optional.empty();
 
         private Optional<String> nextPageToken = Optional.empty();
@@ -160,6 +194,8 @@ public final class ParseRunsListRequest {
             extendWorkspaceId(other.getExtendWorkspaceId());
             status(other.getStatus());
             batchId(other.getBatchId());
+            source(other.getSource());
+            sourceId(other.getSourceId());
             fileNameContains(other.getFileNameContains());
             nextPageToken(other.getNextPageToken());
             maxPageSize(other.getMaxPageSize());
@@ -209,6 +245,35 @@ public final class ParseRunsListRequest {
         }
 
         /**
+         * <p>Filters parse runs by the source that created them. If not provided, runs from all sources are returned.</p>
+         * <p><strong>Note:</strong> When <code>batchId</code> is provided, it takes precedence and this filter is ignored.</p>
+         */
+        @JsonSetter(value = "source", nulls = Nulls.SKIP)
+        public Builder source(Optional<ParseRunSource> source) {
+            this.source = source;
+            return this;
+        }
+
+        public Builder source(ParseRunSource source) {
+            this.source = Optional.ofNullable(source);
+            return this;
+        }
+
+        /**
+         * <p>Filters runs by the source ID.</p>
+         */
+        @JsonSetter(value = "sourceId", nulls = Nulls.SKIP)
+        public Builder sourceId(Optional<String> sourceId) {
+            this.sourceId = sourceId;
+            return this;
+        }
+
+        public Builder sourceId(String sourceId) {
+            this.sourceId = Optional.ofNullable(sourceId);
+            return this;
+        }
+
+        /**
          * <p>Filters runs by the name of the file. Only returns runs where the file name contains this string.</p>
          * <p>Example: <code>&quot;invoice&quot;</code></p>
          */
@@ -250,6 +315,8 @@ public final class ParseRunsListRequest {
                     extendWorkspaceId,
                     status,
                     batchId,
+                    source,
+                    sourceId,
                     fileNameContains,
                     nextPageToken,
                     maxPageSize,

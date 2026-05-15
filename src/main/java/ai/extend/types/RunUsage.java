@@ -10,29 +10,60 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = RunUsage.Builder.class)
 public final class RunUsage {
     private final double credits;
 
+    private final Optional<Double> totalCredits;
+
+    private final Optional<List<RunUsageBreakdownEntry>> breakdown;
+
     private final Map<String, Object> additionalProperties;
 
-    private RunUsage(double credits, Map<String, Object> additionalProperties) {
+    private RunUsage(
+            double credits,
+            Optional<Double> totalCredits,
+            Optional<List<RunUsageBreakdownEntry>> breakdown,
+            Map<String, Object> additionalProperties) {
         this.credits = credits;
+        this.totalCredits = totalCredits;
+        this.breakdown = breakdown;
         this.additionalProperties = additionalProperties;
     }
 
     /**
-     * @return The number of credits consumed for this run.
+     * @return The credits consumed by this run. For most run types this is the line item for the run's own work; for <code>workflow_run</code> this is the aggregate across all child runs.
      */
     @JsonProperty("credits")
     public double getCredits() {
         return credits;
+    }
+
+    /**
+     * @return The total credits accounted for under this run, including any other runs it was responsible for creating. For example, an extract run on a fresh upload triggers a parse run, so <code>totalCredits</code> includes both line items. For runs that didn't trigger any other work — like <code>parse_run</code>, <code>edit_run</code> and <code>workflow_run</code> — <code>totalCredits</code> equals <code>credits</code>.
+     * <p><strong>Availability:</strong> Present on runs persisted on or after May 14, 2026. Runs persisted before that date will omit this field.</p>
+     */
+    @JsonProperty("totalCredits")
+    public Optional<Double> getTotalCredits() {
+        return totalCredits;
+    }
+
+    /**
+     * @return The chargeable resources that make up <code>totalCredits</code>, including this run itself when it has its own line item. For <code>workflow_run</code>, lists every contributing child run sorted by creation time (the workflow itself isn't chargeable and has no line item).
+     * <p><strong>Availability:</strong> Present on runs persisted on or after May 14, 2026. Runs persisted before that date will omit this field.</p>
+     */
+    @JsonProperty("breakdown")
+    public Optional<List<RunUsageBreakdownEntry>> getBreakdown() {
+        return breakdown;
     }
 
     @java.lang.Override
@@ -47,12 +78,12 @@ public final class RunUsage {
     }
 
     private boolean equalTo(RunUsage other) {
-        return credits == other.credits;
+        return credits == other.credits && totalCredits.equals(other.totalCredits) && breakdown.equals(other.breakdown);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.credits);
+        return Objects.hash(this.credits, this.totalCredits, this.breakdown);
     }
 
     @java.lang.Override
@@ -66,7 +97,7 @@ public final class RunUsage {
 
     public interface CreditsStage {
         /**
-         * <p>The number of credits consumed for this run.</p>
+         * <p>The credits consumed by this run. For most run types this is the line item for the run's own work; for <code>workflow_run</code> this is the aggregate across all child runs.</p>
          */
         _FinalStage credits(double credits);
 
@@ -75,11 +106,31 @@ public final class RunUsage {
 
     public interface _FinalStage {
         RunUsage build();
+
+        /**
+         * <p>The total credits accounted for under this run, including any other runs it was responsible for creating. For example, an extract run on a fresh upload triggers a parse run, so <code>totalCredits</code> includes both line items. For runs that didn't trigger any other work — like <code>parse_run</code>, <code>edit_run</code> and <code>workflow_run</code> — <code>totalCredits</code> equals <code>credits</code>.</p>
+         * <p><strong>Availability:</strong> Present on runs persisted on or after May 14, 2026. Runs persisted before that date will omit this field.</p>
+         */
+        _FinalStage totalCredits(Optional<Double> totalCredits);
+
+        _FinalStage totalCredits(Double totalCredits);
+
+        /**
+         * <p>The chargeable resources that make up <code>totalCredits</code>, including this run itself when it has its own line item. For <code>workflow_run</code>, lists every contributing child run sorted by creation time (the workflow itself isn't chargeable and has no line item).</p>
+         * <p><strong>Availability:</strong> Present on runs persisted on or after May 14, 2026. Runs persisted before that date will omit this field.</p>
+         */
+        _FinalStage breakdown(Optional<List<RunUsageBreakdownEntry>> breakdown);
+
+        _FinalStage breakdown(List<RunUsageBreakdownEntry> breakdown);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements CreditsStage, _FinalStage {
         private double credits;
+
+        private Optional<List<RunUsageBreakdownEntry>> breakdown = Optional.empty();
+
+        private Optional<Double> totalCredits = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -89,12 +140,14 @@ public final class RunUsage {
         @java.lang.Override
         public Builder from(RunUsage other) {
             credits(other.getCredits());
+            totalCredits(other.getTotalCredits());
+            breakdown(other.getBreakdown());
             return this;
         }
 
         /**
-         * <p>The number of credits consumed for this run.</p>
-         * <p>The number of credits consumed for this run.</p>
+         * <p>The credits consumed by this run. For most run types this is the line item for the run's own work; for <code>workflow_run</code> this is the aggregate across all child runs.</p>
+         * <p>The credits consumed by this run. For most run types this is the line item for the run's own work; for <code>workflow_run</code> this is the aggregate across all child runs.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -104,9 +157,53 @@ public final class RunUsage {
             return this;
         }
 
+        /**
+         * <p>The chargeable resources that make up <code>totalCredits</code>, including this run itself when it has its own line item. For <code>workflow_run</code>, lists every contributing child run sorted by creation time (the workflow itself isn't chargeable and has no line item).</p>
+         * <p><strong>Availability:</strong> Present on runs persisted on or after May 14, 2026. Runs persisted before that date will omit this field.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage breakdown(List<RunUsageBreakdownEntry> breakdown) {
+            this.breakdown = Optional.ofNullable(breakdown);
+            return this;
+        }
+
+        /**
+         * <p>The chargeable resources that make up <code>totalCredits</code>, including this run itself when it has its own line item. For <code>workflow_run</code>, lists every contributing child run sorted by creation time (the workflow itself isn't chargeable and has no line item).</p>
+         * <p><strong>Availability:</strong> Present on runs persisted on or after May 14, 2026. Runs persisted before that date will omit this field.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "breakdown", nulls = Nulls.SKIP)
+        public _FinalStage breakdown(Optional<List<RunUsageBreakdownEntry>> breakdown) {
+            this.breakdown = breakdown;
+            return this;
+        }
+
+        /**
+         * <p>The total credits accounted for under this run, including any other runs it was responsible for creating. For example, an extract run on a fresh upload triggers a parse run, so <code>totalCredits</code> includes both line items. For runs that didn't trigger any other work — like <code>parse_run</code>, <code>edit_run</code> and <code>workflow_run</code> — <code>totalCredits</code> equals <code>credits</code>.</p>
+         * <p><strong>Availability:</strong> Present on runs persisted on or after May 14, 2026. Runs persisted before that date will omit this field.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage totalCredits(Double totalCredits) {
+            this.totalCredits = Optional.ofNullable(totalCredits);
+            return this;
+        }
+
+        /**
+         * <p>The total credits accounted for under this run, including any other runs it was responsible for creating. For example, an extract run on a fresh upload triggers a parse run, so <code>totalCredits</code> includes both line items. For runs that didn't trigger any other work — like <code>parse_run</code>, <code>edit_run</code> and <code>workflow_run</code> — <code>totalCredits</code> equals <code>credits</code>.</p>
+         * <p><strong>Availability:</strong> Present on runs persisted on or after May 14, 2026. Runs persisted before that date will omit this field.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "totalCredits", nulls = Nulls.SKIP)
+        public _FinalStage totalCredits(Optional<Double> totalCredits) {
+            this.totalCredits = totalCredits;
+            return this;
+        }
+
         @java.lang.Override
         public RunUsage build() {
-            return new RunUsage(credits, additionalProperties);
+            return new RunUsage(credits, totalCredits, breakdown, additionalProperties);
         }
     }
 }

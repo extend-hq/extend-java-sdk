@@ -935,7 +935,7 @@ client.files().upload(
 <dl>
 <dd>
 
-List parse runs, with optional filters for status, batch ID, and file name.
+List parse runs, with optional filters for status, batch ID, source, and file name.
 
 Returns a paginated list of parse runs. Use `GET /parse_runs/{id}` to retrieve the full result including output for a specific run.
 </dd>
@@ -985,6 +985,26 @@ client.parseRuns().list(
 Filter parse runs by the batch they belong to. Use this after submitting a batch via `POST /parse_runs/batch` to retrieve individual run results.
 
 Example: `"bpar_Xj8mK2pL9nR4vT7qY5wZ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**source:** `Optional<ParseRunSource>` 
+
+Filters parse runs by the source that created them. If not provided, runs from all sources are returned.
+
+**Note:** When `batchId` is provided, it takes precedence and this filter is ignored.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**sourceId:** `Optional<String>` — Filters runs by the source ID.
     
 </dd>
 </dl>
@@ -1630,6 +1650,80 @@ client.editRuns().delete(
 The ID of the edit run to delete.
 
 Example: `"edr_xK9mLPqRtN3vS8wF5hB2cQ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## EditTemplates
+<details><summary><code>client.editTemplates.retrieve(id) -> EditTemplate</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve a saved edit template by ID.
+
+Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned `config` with `POST /edit` or `POST /edit_runs`, and reuse `schemaConfig` with `POST /edit_schemas/generate`.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.editTemplates().retrieve(
+    "edit_template_id_here",
+    EditTemplatesRetrieveRequest
+        .builder()
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The unique identifier for the edit template.
+
+Example: `"edt_xK9mLPqRtN3vS8wF5hB2cQ"`
     
 </dd>
 </dl>
@@ -8918,7 +9012,7 @@ client.webhookEndpoints().create(
         .builder()
         .url("https://example.com/webhooks")
         .name("Production webhook")
-        .apiVersion(ApiVersionEnum.TWO_THOUSAND_TWENTY_SIX_0209)
+        .apiVersion("apiVersion")
         .enabledEvents(
             Arrays.asList(WebhookEndpointEventType.EXTRACT_RUN_PROCESSED, WebhookEndpointEventType.WORKFLOW_CREATED)
         )
@@ -8970,7 +9064,7 @@ client.webhookEndpoints().create(
 <dl>
 <dd>
 
-**apiVersion:** `ApiVersionEnum` 
+**apiVersion:** `String` 
     
 </dd>
 </dl>

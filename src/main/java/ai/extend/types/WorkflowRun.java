@@ -287,6 +287,10 @@ public final class WorkflowRun {
         return stepRuns;
     }
 
+    /**
+     * @return Usage credits consumed by this workflow run, including a breakdown of every contributing child run.
+     * <p><strong>Availability:</strong> Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
+     */
     @JsonIgnore
     public Optional<RunUsage> getUsage() {
         if (usage == null) {
@@ -573,6 +577,10 @@ public final class WorkflowRun {
 
         _FinalStage addAllStepRuns(List<StepRun> stepRuns);
 
+        /**
+         * <p>Usage credits consumed by this workflow run, including a breakdown of every contributing child run.</p>
+         * <p><strong>Availability:</strong> Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
+         */
         _FinalStage usage(Optional<RunUsage> usage);
 
         _FinalStage usage(RunUsage usage);
@@ -717,6 +725,11 @@ public final class WorkflowRun {
             return this;
         }
 
+        /**
+         * <p>Usage credits consumed by this workflow run, including a breakdown of every contributing child run.</p>
+         * <p><strong>Availability:</strong> Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
         @java.lang.Override
         public _FinalStage usage(Nullable<RunUsage> usage) {
             if (usage.isNull()) {
@@ -729,12 +742,21 @@ public final class WorkflowRun {
             return this;
         }
 
+        /**
+         * <p>Usage credits consumed by this workflow run, including a breakdown of every contributing child run.</p>
+         * <p><strong>Availability:</strong> Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
         @java.lang.Override
         public _FinalStage usage(RunUsage usage) {
             this.usage = Optional.ofNullable(usage);
             return this;
         }
 
+        /**
+         * <p>Usage credits consumed by this workflow run, including a breakdown of every contributing child run.</p>
+         * <p><strong>Availability:</strong> Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
+         */
         @java.lang.Override
         @JsonSetter(value = "usage", nulls = Nulls.SKIP)
         public _FinalStage usage(Optional<RunUsage> usage) {

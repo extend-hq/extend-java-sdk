@@ -32,6 +32,8 @@ public final class ParseRunStatus {
 
     private final Optional<String> failureMessage;
 
+    private final Optional<Map<String, Object>> metadata;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseRunStatus(
@@ -39,11 +41,13 @@ public final class ParseRunStatus {
             ParseRunStatusStatus status,
             Optional<String> failureReason,
             Optional<String> failureMessage,
+            Optional<Map<String, Object>> metadata,
             Map<String, Object> additionalProperties) {
         this.id = id;
         this.status = status;
         this.failureReason = failureReason;
         this.failureMessage = failureMessage;
+        this.metadata = metadata;
         this.additionalProperties = additionalProperties;
     }
 
@@ -101,6 +105,18 @@ public final class ParseRunStatus {
         return failureMessage;
     }
 
+    /**
+     * @return Any metadata that was provided when creating the parse run.
+     * <p><strong>Availability:</strong> Present when metadata was provided during creation.</p>
+     */
+    @JsonIgnore
+    public Optional<Map<String, Object>> getMetadata() {
+        if (metadata == null) {
+            return Optional.empty();
+        }
+        return metadata;
+    }
+
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
     @JsonProperty("failureReason")
     private Optional<String> _getFailureReason() {
@@ -111,6 +127,12 @@ public final class ParseRunStatus {
     @JsonProperty("failureMessage")
     private Optional<String> _getFailureMessage() {
         return failureMessage;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("metadata")
+    private Optional<Map<String, Object>> _getMetadata() {
+        return metadata;
     }
 
     @java.lang.Override
@@ -128,12 +150,13 @@ public final class ParseRunStatus {
         return id.equals(other.id)
                 && status.equals(other.status)
                 && failureReason.equals(other.failureReason)
-                && failureMessage.equals(other.failureMessage);
+                && failureMessage.equals(other.failureMessage)
+                && metadata.equals(other.metadata);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.id, this.status, this.failureReason, this.failureMessage);
+        return Objects.hash(this.id, this.status, this.failureReason, this.failureMessage, this.metadata);
     }
 
     @java.lang.Override
@@ -189,6 +212,16 @@ public final class ParseRunStatus {
         _FinalStage failureMessage(String failureMessage);
 
         _FinalStage failureMessage(Nullable<String> failureMessage);
+
+        /**
+         * <p>Any metadata that was provided when creating the parse run.</p>
+         * <p><strong>Availability:</strong> Present when metadata was provided during creation.</p>
+         */
+        _FinalStage metadata(Optional<Map<String, Object>> metadata);
+
+        _FinalStage metadata(Map<String, Object> metadata);
+
+        _FinalStage metadata(Nullable<Map<String, Object>> metadata);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -196,6 +229,8 @@ public final class ParseRunStatus {
         private String id;
 
         private ParseRunStatusStatus status;
+
+        private Optional<Map<String, Object>> metadata = Optional.empty();
 
         private Optional<String> failureMessage = Optional.empty();
 
@@ -212,6 +247,7 @@ public final class ParseRunStatus {
             status(other.getStatus());
             failureReason(other.getFailureReason());
             failureMessage(other.getFailureMessage());
+            metadata(other.getMetadata());
             return this;
         }
 
@@ -248,6 +284,45 @@ public final class ParseRunStatus {
         @JsonSetter("status")
         public _FinalStage status(@NotNull ParseRunStatusStatus status) {
             this.status = Objects.requireNonNull(status, "status must not be null");
+            return this;
+        }
+
+        /**
+         * <p>Any metadata that was provided when creating the parse run.</p>
+         * <p><strong>Availability:</strong> Present when metadata was provided during creation.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage metadata(Nullable<Map<String, Object>> metadata) {
+            if (metadata.isNull()) {
+                this.metadata = null;
+            } else if (metadata.isEmpty()) {
+                this.metadata = Optional.empty();
+            } else {
+                this.metadata = Optional.of(metadata.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>Any metadata that was provided when creating the parse run.</p>
+         * <p><strong>Availability:</strong> Present when metadata was provided during creation.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage metadata(Map<String, Object> metadata) {
+            this.metadata = Optional.ofNullable(metadata);
+            return this;
+        }
+
+        /**
+         * <p>Any metadata that was provided when creating the parse run.</p>
+         * <p><strong>Availability:</strong> Present when metadata was provided during creation.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "metadata", nulls = Nulls.SKIP)
+        public _FinalStage metadata(Optional<Map<String, Object>> metadata) {
+            this.metadata = metadata;
             return this;
         }
 
@@ -331,7 +406,7 @@ public final class ParseRunStatus {
 
         @java.lang.Override
         public ParseRunStatus build() {
-            return new ParseRunStatus(id, status, failureReason, failureMessage, additionalProperties);
+            return new ParseRunStatus(id, status, failureReason, failureMessage, metadata, additionalProperties);
         }
     }
 }

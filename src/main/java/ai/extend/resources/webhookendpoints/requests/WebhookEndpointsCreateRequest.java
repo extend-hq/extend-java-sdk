@@ -4,7 +4,6 @@
 package ai.extend.resources.webhookendpoints.requests;
 
 import ai.extend.core.ObjectMappers;
-import ai.extend.types.ApiVersionEnum;
 import ai.extend.types.WebhookAdvancedOptions;
 import ai.extend.types.WebhookEndpointEventType;
 import ai.extend.types.WebhookEndpointStatus;
@@ -35,7 +34,7 @@ public final class WebhookEndpointsCreateRequest {
 
     private final List<WebhookEndpointEventType> enabledEvents;
 
-    private final ApiVersionEnum apiVersion;
+    private final String apiVersion;
 
     private final Optional<WebhookAdvancedOptions> advancedOptions;
 
@@ -46,7 +45,7 @@ public final class WebhookEndpointsCreateRequest {
             String name,
             Optional<WebhookEndpointStatus> status,
             List<WebhookEndpointEventType> enabledEvents,
-            ApiVersionEnum apiVersion,
+            String apiVersion,
             Optional<WebhookAdvancedOptions> advancedOptions,
             Map<String, Object> additionalProperties) {
         this.url = url;
@@ -88,7 +87,7 @@ public final class WebhookEndpointsCreateRequest {
     }
 
     @JsonProperty("apiVersion")
-    public ApiVersionEnum getApiVersion() {
+    public String getApiVersion() {
         return apiVersion;
     }
 
@@ -149,7 +148,7 @@ public final class WebhookEndpointsCreateRequest {
     }
 
     public interface ApiVersionStage {
-        _FinalStage apiVersion(@NotNull ApiVersionEnum apiVersion);
+        _FinalStage apiVersion(@NotNull String apiVersion);
     }
 
     public interface _FinalStage {
@@ -179,7 +178,7 @@ public final class WebhookEndpointsCreateRequest {
 
         private String name;
 
-        private ApiVersionEnum apiVersion;
+        private String apiVersion;
 
         private Optional<WebhookAdvancedOptions> advancedOptions = Optional.empty();
 
@@ -229,7 +228,7 @@ public final class WebhookEndpointsCreateRequest {
 
         @java.lang.Override
         @JsonSetter("apiVersion")
-        public _FinalStage apiVersion(@NotNull ApiVersionEnum apiVersion) {
+        public _FinalStage apiVersion(@NotNull String apiVersion) {
             this.apiVersion = Objects.requireNonNull(apiVersion, "apiVersion must not be null");
             return this;
         }

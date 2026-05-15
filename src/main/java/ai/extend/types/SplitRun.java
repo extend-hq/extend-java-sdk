@@ -292,8 +292,8 @@ public final class SplitRun {
     }
 
     /**
-     * @return Usage credits consumed by this run.
-     * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+     * @return Usage credits consumed by this split run.
+     * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>. Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
      */
     @JsonIgnore
     public Optional<RunUsage> getUsage() {
@@ -603,8 +603,8 @@ public final class SplitRun {
         _FinalStage parseRunId(Nullable<String> parseRunId);
 
         /**
-         * <p>Usage credits consumed by this run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+         * <p>Usage credits consumed by this split run.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>. Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
          */
         _FinalStage usage(Optional<RunUsage> usage);
 
@@ -788,8 +788,8 @@ public final class SplitRun {
         }
 
         /**
-         * <p>Usage credits consumed by this run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+         * <p>Usage credits consumed by this split run.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>. Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -805,8 +805,8 @@ public final class SplitRun {
         }
 
         /**
-         * <p>Usage credits consumed by this run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+         * <p>Usage credits consumed by this split run.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>. Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -816,8 +816,8 @@ public final class SplitRun {
         }
 
         /**
-         * <p>Usage credits consumed by this run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+         * <p>Usage credits consumed by this split run.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>. Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "usage", nulls = Nulls.SKIP)

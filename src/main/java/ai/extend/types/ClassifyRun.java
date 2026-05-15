@@ -292,12 +292,8 @@ public final class ClassifyRun {
     }
 
     /**
-     * @return Usage credits consumed by this run.
-     * <p><strong>Availability:</strong> This field will not be returned for:</p>
-     * <ul>
-     * <li>Runs created before October 7, 2025</li>
-     * <li>Customers on legacy billing systems</li>
-     * </ul>
+     * @return Usage credits consumed by this classify run.
+     * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>. Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
      */
     @JsonIgnore
     public Optional<RunUsage> getUsage() {
@@ -607,12 +603,8 @@ public final class ClassifyRun {
         _FinalStage parseRunId(Nullable<String> parseRunId);
 
         /**
-         * <p>Usage credits consumed by this run.</p>
-         * <p><strong>Availability:</strong> This field will not be returned for:</p>
-         * <ul>
-         * <li>Runs created before October 7, 2025</li>
-         * <li>Customers on legacy billing systems</li>
-         * </ul>
+         * <p>Usage credits consumed by this classify run.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>. Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
          */
         _FinalStage usage(Optional<RunUsage> usage);
 
@@ -796,12 +788,8 @@ public final class ClassifyRun {
         }
 
         /**
-         * <p>Usage credits consumed by this run.</p>
-         * <p><strong>Availability:</strong> This field will not be returned for:</p>
-         * <ul>
-         * <li>Runs created before October 7, 2025</li>
-         * <li>Customers on legacy billing systems</li>
-         * </ul>
+         * <p>Usage credits consumed by this classify run.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>. Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -817,12 +805,8 @@ public final class ClassifyRun {
         }
 
         /**
-         * <p>Usage credits consumed by this run.</p>
-         * <p><strong>Availability:</strong> This field will not be returned for:</p>
-         * <ul>
-         * <li>Runs created before October 7, 2025</li>
-         * <li>Customers on legacy billing systems</li>
-         * </ul>
+         * <p>Usage credits consumed by this classify run.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>. Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -832,12 +816,8 @@ public final class ClassifyRun {
         }
 
         /**
-         * <p>Usage credits consumed by this run.</p>
-         * <p><strong>Availability:</strong> This field will not be returned for:</p>
-         * <ul>
-         * <li>Runs created before October 7, 2025</li>
-         * <li>Customers on legacy billing systems</li>
-         * </ul>
+         * <p>Usage credits consumed by this classify run.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>. Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "usage", nulls = Nulls.SKIP)

@@ -37,7 +37,7 @@ public final class WebhookEndpoint {
 
     private final List<WebhookEndpointEventType> enabledEvents;
 
-    private final ApiVersionEnum apiVersion;
+    private final String apiVersion;
 
     private final Optional<WebhookAdvancedOptions> advancedOptions;
 
@@ -51,7 +51,7 @@ public final class WebhookEndpoint {
             String name,
             WebhookEndpointStatus status,
             List<WebhookEndpointEventType> enabledEvents,
-            ApiVersionEnum apiVersion,
+            String apiVersion,
             Optional<WebhookAdvancedOptions> advancedOptions,
             OffsetDateTime createdAt,
             Map<String, Object> additionalProperties) {
@@ -109,7 +109,7 @@ public final class WebhookEndpoint {
     }
 
     @JsonProperty("apiVersion")
-    public ApiVersionEnum getApiVersion() {
+    public String getApiVersion() {
         return apiVersion;
     }
 
@@ -210,7 +210,7 @@ public final class WebhookEndpoint {
     }
 
     public interface ApiVersionStage {
-        CreatedAtStage apiVersion(@NotNull ApiVersionEnum apiVersion);
+        CreatedAtStage apiVersion(@NotNull String apiVersion);
     }
 
     public interface CreatedAtStage {
@@ -253,7 +253,7 @@ public final class WebhookEndpoint {
 
         private WebhookEndpointStatus status;
 
-        private ApiVersionEnum apiVersion;
+        private String apiVersion;
 
         private OffsetDateTime createdAt;
 
@@ -324,7 +324,7 @@ public final class WebhookEndpoint {
 
         @java.lang.Override
         @JsonSetter("apiVersion")
-        public CreatedAtStage apiVersion(@NotNull ApiVersionEnum apiVersion) {
+        public CreatedAtStage apiVersion(@NotNull String apiVersion) {
             this.apiVersion = Objects.requireNonNull(apiVersion, "apiVersion must not be null");
             return this;
         }

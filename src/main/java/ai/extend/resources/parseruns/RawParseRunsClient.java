@@ -47,7 +47,7 @@ public class RawParseRunsClient {
     }
 
     /**
-     * List parse runs, with optional filters for status, batch ID, and file name.
+     * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
     public ExtendClientHttpResponse<ParseRunsListResponse> list() {
@@ -55,7 +55,7 @@ public class RawParseRunsClient {
     }
 
     /**
-     * List parse runs, with optional filters for status, batch ID, and file name.
+     * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
     public ExtendClientHttpResponse<ParseRunsListResponse> list(RequestOptions requestOptions) {
@@ -63,7 +63,7 @@ public class RawParseRunsClient {
     }
 
     /**
-     * List parse runs, with optional filters for status, batch ID, and file name.
+     * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
     public ExtendClientHttpResponse<ParseRunsListResponse> list(ParseRunsListRequest request) {
@@ -71,7 +71,7 @@ public class RawParseRunsClient {
     }
 
     /**
-     * List parse runs, with optional filters for status, batch ID, and file name.
+     * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
     public ExtendClientHttpResponse<ParseRunsListResponse> list(
@@ -86,6 +86,14 @@ public class RawParseRunsClient {
         if (request.getBatchId().isPresent()) {
             QueryStringMapper.addQueryParameter(
                     httpUrl, "batchId", request.getBatchId().get(), false);
+        }
+        if (request.getSource().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "source", request.getSource().get(), false);
+        }
+        if (request.getSourceId().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "sourceId", request.getSourceId().get(), false);
         }
         if (request.getFileNameContains().isPresent()) {
             QueryStringMapper.addQueryParameter(

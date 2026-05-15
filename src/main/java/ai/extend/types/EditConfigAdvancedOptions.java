@@ -52,7 +52,7 @@ public final class EditConfigAdvancedOptions {
     }
 
     /**
-     * @return Whether to flatten the PDF (form widgets will not be editable with a PDF edit). Defaults to <code>true</code>.
+     * @return Whether to flatten PDF forms after editing (makes form fields non-editable). Defaults to <code>true</code>.
      */
     @JsonProperty("flattenPdf")
     public Optional<Boolean> getFlattenPdf() {
@@ -145,7 +145,7 @@ public final class EditConfigAdvancedOptions {
         }
 
         /**
-         * <p>Whether to flatten the PDF (form widgets will not be editable with a PDF edit). Defaults to <code>true</code>.</p>
+         * <p>Whether to flatten PDF forms after editing (makes form fields non-editable). Defaults to <code>true</code>.</p>
          */
         @JsonSetter(value = "flattenPdf", nulls = Nulls.SKIP)
         public Builder flattenPdf(Optional<Boolean> flattenPdf) {

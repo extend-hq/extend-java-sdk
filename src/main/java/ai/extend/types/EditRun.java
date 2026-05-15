@@ -177,7 +177,7 @@ public final class EditRun {
     }
 
     /**
-     * @return Usage credits consumed by this run.
+     * @return Usage credits consumed by this edit run.
      * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
      */
     @JsonIgnore
@@ -359,7 +359,7 @@ public final class EditRun {
         _FinalStage metrics(Nullable<EditRunMetrics> metrics);
 
         /**
-         * <p>Usage credits consumed by this run.</p>
+         * <p>Usage credits consumed by this edit run.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
          */
         _FinalStage usage(Optional<RunUsage> usage);
@@ -469,7 +469,7 @@ public final class EditRun {
         }
 
         /**
-         * <p>Usage credits consumed by this run.</p>
+         * <p>Usage credits consumed by this edit run.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
@@ -486,7 +486,7 @@ public final class EditRun {
         }
 
         /**
-         * <p>Usage credits consumed by this run.</p>
+         * <p>Usage credits consumed by this edit run.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
@@ -497,7 +497,7 @@ public final class EditRun {
         }
 
         /**
-         * <p>Usage credits consumed by this run.</p>
+         * <p>Usage credits consumed by this edit run.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
          */
         @java.lang.Override
