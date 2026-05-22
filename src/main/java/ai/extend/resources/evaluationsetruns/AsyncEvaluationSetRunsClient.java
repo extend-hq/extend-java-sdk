@@ -5,6 +5,7 @@ package ai.extend.resources.evaluationsetruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
+import ai.extend.resources.evaluationsetruns.requests.EvaluationSetRunsCreateRequest;
 import ai.extend.resources.evaluationsetruns.requests.EvaluationSetRunsRetrieveRequest;
 import ai.extend.types.EvaluationSetRun;
 import java.util.concurrent.CompletableFuture;
@@ -24,6 +25,23 @@ public class AsyncEvaluationSetRunsClient {
      */
     public AsyncRawEvaluationSetRunsClient withRawResponse() {
         return this.rawClient;
+    }
+
+    /**
+     * Create and start an async evaluation set run. The response returns the evaluation set run object with its initial status; use <code>GET /evaluation_set_runs/{id}</code> to poll for completion.
+     * <p>Evaluation set runs are currently supported for document processor evaluation sets.</p>
+     */
+    public CompletableFuture<EvaluationSetRun> create(EvaluationSetRunsCreateRequest request) {
+        return this.rawClient.create(request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Create and start an async evaluation set run. The response returns the evaluation set run object with its initial status; use <code>GET /evaluation_set_runs/{id}</code> to poll for completion.
+     * <p>Evaluation set runs are currently supported for document processor evaluation sets.</p>
+     */
+    public CompletableFuture<EvaluationSetRun> create(
+            EvaluationSetRunsCreateRequest request, RequestOptions requestOptions) {
+        return this.rawClient.create(request, requestOptions).thenApply(response -> response.body());
     }
 
     /**

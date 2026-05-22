@@ -2561,6 +2561,8 @@ client.extractors().list(
 <dd>
 
 Create a new extractor.
+
+You can optionally provide a `generate` object to automatically generate an extraction schema from sample documents using AI. `generate` is mutually exclusive with `config` and `cloneExtractorId`.
 </dd>
 </dl>
 </dd>
@@ -2587,15 +2589,15 @@ client.extractors().create(
                         put("type", "object");
                         put("properties", new 
                         HashMap<String, Object>() {{put("vendor_name", new 
-                            HashMap<String, Object>() {{put("type", "string");
+                            HashMap<String, Object>() {{put("type", new ArrayList<Object>(Arrays.asList("string", "null")));
                                 put("description", "The name of the vendor");
                             }});
                             put("invoice_number", new 
-                            HashMap<String, Object>() {{put("type", "string");
+                            HashMap<String, Object>() {{put("type", new ArrayList<Object>(Arrays.asList("string", "null")));
                                 put("description", "The invoice number");
                             }});
                             put("total_amount", new 
-                            HashMap<String, Object>() {{put("type", "number");
+                            HashMap<String, Object>() {{put("type", new ArrayList<Object>(Arrays.asList("number", "null")));
                                 put("description", "The total amount due");
                             }});
                         }});
@@ -2629,7 +2631,7 @@ client.extractors().create(
 
 **cloneExtractorId:** `Optional<String>` 
 
-The ID of an existing extractor to clone. If provided, the new extractor will be created with the same config as the extractor with this ID. Cannot be provided together with `config`.
+The ID of an existing extractor to clone. If provided, the new extractor will be created with the same config as the extractor with this ID. Cannot be provided together with `config` or `generate`.
 
 Example: `"ex_BMdfq_yWM3sT-ZzvCnA3f"`
     
@@ -2639,7 +2641,19 @@ Example: `"ex_BMdfq_yWM3sT-ZzvCnA3f"`
 <dl>
 <dd>
 
-**config:** `Optional<ExtractConfigJson>` — The configuration for the extractor. Cannot be provided together with `cloneExtractorId`.
+**config:** `Optional<ExtractConfigJson>` — The configuration for the extractor. Cannot be provided together with `cloneExtractorId` or `generate`.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**generate:** `Optional<ExtractorsCreateRequestGenerate>` 
+
+If provided, an extraction schema is automatically generated from the supplied sample documents and applied to the extractor's draft. The response includes the extractor with the generated schema already in place.
+
+Cannot be provided together with `config` or `cloneExtractorId`.
     
 </dd>
 </dl>
@@ -8813,6 +8827,98 @@ Example: `"evi_kR9mNP12Qw4yTv8BdR3H"`
 </details>
 
 ## EvaluationSetRuns
+<details><summary><code>client.evaluationSetRuns.create(request) -> EvaluationSetRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create and start an async evaluation set run. The response returns the evaluation set run object with its initial status; use `GET /evaluation_set_runs/{id}` to poll for completion.
+
+Evaluation set runs are currently supported for document processor evaluation sets.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.evaluationSetRuns().create(
+    EvaluationSetRunsCreateRequest
+        .builder()
+        .evaluationSetId("ev_2LcgeY_mp2T5yPaEuq5Lw")
+        .entity(
+            EvaluationSetRunsCreateRequestEntity
+                .builder()
+                .id("ex_Xj8mK2pL9nR4vT7qY5wZ")
+                .version("1.0")
+                .build()
+        )
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/developers/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**evaluationSetId:** `String` — The ID of the evaluation set to run.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**entity:** `Optional<EvaluationSetRunsCreateRequestEntity>` — Optional processor and version to run against the evaluation set. If omitted, the evaluation set's processor is run at its draft version.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**evaluationSetItemIds:** `Optional<List<String>>` — Optional list of evaluation set item IDs to run. If omitted, all items in the evaluation set are run.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.evaluationSetRuns.retrieve(id) -> EvaluationSetRun</code></summary>
 <dl>
 <dd>

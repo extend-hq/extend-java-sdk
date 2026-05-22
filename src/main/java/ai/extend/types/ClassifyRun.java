@@ -27,13 +27,13 @@ import org.jetbrains.annotations.NotNull;
 public final class ClassifyRun {
     private final String id;
 
-    private final Optional<ClassifierSummary> classifier;
-
-    private final Optional<ClassifierVersionSummary> classifierVersion;
-
     private final ProcessorRunStatus status;
 
     private final Optional<ClassifyOutput> output;
+
+    private final Optional<ClassifierSummary> classifier;
+
+    private final Optional<ClassifierVersionSummary> classifierVersion;
 
     private final Optional<ClassifyOutput> initialOutput;
 
@@ -67,10 +67,10 @@ public final class ClassifyRun {
 
     private ClassifyRun(
             String id,
-            Optional<ClassifierSummary> classifier,
-            Optional<ClassifierVersionSummary> classifierVersion,
             ProcessorRunStatus status,
             Optional<ClassifyOutput> output,
+            Optional<ClassifierSummary> classifier,
+            Optional<ClassifierVersionSummary> classifierVersion,
             Optional<ClassifyOutput> initialOutput,
             Optional<ClassifyOutput> reviewedOutput,
             Optional<String> failureReason,
@@ -87,10 +87,10 @@ public final class ClassifyRun {
             OffsetDateTime updatedAt,
             Map<String, Object> additionalProperties) {
         this.id = id;
-        this.classifier = classifier;
-        this.classifierVersion = classifierVersion;
         this.status = status;
         this.output = output;
+        this.classifier = classifier;
+        this.classifierVersion = classifierVersion;
         this.initialOutput = initialOutput;
         this.reviewedOutput = reviewedOutput;
         this.failureReason = failureReason;
@@ -125,6 +125,23 @@ public final class ClassifyRun {
         return id;
     }
 
+    @JsonProperty("status")
+    public ProcessorRunStatus getStatus() {
+        return status;
+    }
+
+    /**
+     * @return The final output, either reviewed or initial.
+     * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+     */
+    @JsonIgnore
+    public Optional<ClassifyOutput> getOutput() {
+        if (output == null) {
+            return Optional.empty();
+        }
+        return output;
+    }
+
     /**
      * @return The classifier that was used for this run.
      * <p><strong>Availability:</strong> Present when a classifier reference was provided. Not present when using inline <code>config</code>.</p>
@@ -147,23 +164,6 @@ public final class ClassifyRun {
             return Optional.empty();
         }
         return classifierVersion;
-    }
-
-    @JsonProperty("status")
-    public ProcessorRunStatus getStatus() {
-        return status;
-    }
-
-    /**
-     * @return The final output, either reviewed or initial.
-     * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
-     */
-    @JsonIgnore
-    public Optional<ClassifyOutput> getOutput() {
-        if (output == null) {
-            return Optional.empty();
-        }
-        return output;
     }
 
     /**
@@ -314,6 +314,12 @@ public final class ClassifyRun {
     }
 
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("output")
+    private Optional<ClassifyOutput> _getOutput() {
+        return output;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
     @JsonProperty("classifier")
     private Optional<ClassifierSummary> _getClassifier() {
         return classifier;
@@ -323,12 +329,6 @@ public final class ClassifyRun {
     @JsonProperty("classifierVersion")
     private Optional<ClassifierVersionSummary> _getClassifierVersion() {
         return classifierVersion;
-    }
-
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
-    @JsonProperty("output")
-    private Optional<ClassifyOutput> _getOutput() {
-        return output;
     }
 
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
@@ -386,10 +386,10 @@ public final class ClassifyRun {
 
     private boolean equalTo(ClassifyRun other) {
         return id.equals(other.id)
-                && classifier.equals(other.classifier)
-                && classifierVersion.equals(other.classifierVersion)
                 && status.equals(other.status)
                 && output.equals(other.output)
+                && classifier.equals(other.classifier)
+                && classifierVersion.equals(other.classifierVersion)
                 && initialOutput.equals(other.initialOutput)
                 && reviewedOutput.equals(other.reviewedOutput)
                 && failureReason.equals(other.failureReason)
@@ -410,10 +410,10 @@ public final class ClassifyRun {
     public int hashCode() {
         return Objects.hash(
                 this.id,
-                this.classifier,
-                this.classifierVersion,
                 this.status,
                 this.output,
+                this.classifier,
+                this.classifierVersion,
                 this.initialOutput,
                 this.reviewedOutput,
                 this.failureReason,
@@ -500,6 +500,16 @@ public final class ClassifyRun {
         ClassifyRun build();
 
         /**
+         * <p>The final output, either reviewed or initial.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+         */
+        _FinalStage output(Optional<ClassifyOutput> output);
+
+        _FinalStage output(ClassifyOutput output);
+
+        _FinalStage output(Nullable<ClassifyOutput> output);
+
+        /**
          * <p>The classifier that was used for this run.</p>
          * <p><strong>Availability:</strong> Present when a classifier reference was provided. Not present when using inline <code>config</code>.</p>
          */
@@ -518,16 +528,6 @@ public final class ClassifyRun {
         _FinalStage classifierVersion(ClassifierVersionSummary classifierVersion);
 
         _FinalStage classifierVersion(Nullable<ClassifierVersionSummary> classifierVersion);
-
-        /**
-         * <p>The final output, either reviewed or initial.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
-         */
-        _FinalStage output(Optional<ClassifyOutput> output);
-
-        _FinalStage output(ClassifyOutput output);
-
-        _FinalStage output(Nullable<ClassifyOutput> output);
 
         /**
          * <p>The initial output from the classify run, before any review edits.</p>
@@ -657,11 +657,11 @@ public final class ClassifyRun {
 
         private Optional<ClassifyOutput> initialOutput = Optional.empty();
 
-        private Optional<ClassifyOutput> output = Optional.empty();
-
         private Optional<ClassifierVersionSummary> classifierVersion = Optional.empty();
 
         private Optional<ClassifierSummary> classifier = Optional.empty();
+
+        private Optional<ClassifyOutput> output = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -671,10 +671,10 @@ public final class ClassifyRun {
         @java.lang.Override
         public Builder from(ClassifyRun other) {
             id(other.getId());
-            classifier(other.getClassifier());
-            classifierVersion(other.getClassifierVersion());
             status(other.getStatus());
             output(other.getOutput());
+            classifier(other.getClassifier());
+            classifierVersion(other.getClassifierVersion());
             initialOutput(other.getInitialOutput());
             reviewedOutput(other.getReviewedOutput());
             failureReason(other.getFailureReason());
@@ -1100,45 +1100,6 @@ public final class ClassifyRun {
         }
 
         /**
-         * <p>The final output, either reviewed or initial.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage output(Nullable<ClassifyOutput> output) {
-            if (output.isNull()) {
-                this.output = null;
-            } else if (output.isEmpty()) {
-                this.output = Optional.empty();
-            } else {
-                this.output = Optional.of(output.get());
-            }
-            return this;
-        }
-
-        /**
-         * <p>The final output, either reviewed or initial.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage output(ClassifyOutput output) {
-            this.output = Optional.ofNullable(output);
-            return this;
-        }
-
-        /**
-         * <p>The final output, either reviewed or initial.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
-         */
-        @java.lang.Override
-        @JsonSetter(value = "output", nulls = Nulls.SKIP)
-        public _FinalStage output(Optional<ClassifyOutput> output) {
-            this.output = output;
-            return this;
-        }
-
-        /**
          * <p>The version of the classifier that was used for this run.</p>
          * <p><strong>Availability:</strong> Present when a classifier reference was provided. Not present when using inline <code>config</code>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
@@ -1216,14 +1177,53 @@ public final class ClassifyRun {
             return this;
         }
 
+        /**
+         * <p>The final output, either reviewed or initial.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage output(Nullable<ClassifyOutput> output) {
+            if (output.isNull()) {
+                this.output = null;
+            } else if (output.isEmpty()) {
+                this.output = Optional.empty();
+            } else {
+                this.output = Optional.of(output.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>The final output, either reviewed or initial.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage output(ClassifyOutput output) {
+            this.output = Optional.ofNullable(output);
+            return this;
+        }
+
+        /**
+         * <p>The final output, either reviewed or initial.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "output", nulls = Nulls.SKIP)
+        public _FinalStage output(Optional<ClassifyOutput> output) {
+            this.output = output;
+            return this;
+        }
+
         @java.lang.Override
         public ClassifyRun build() {
             return new ClassifyRun(
                     id,
-                    classifier,
-                    classifierVersion,
                     status,
                     output,
+                    classifier,
+                    classifierVersion,
                     initialOutput,
                     reviewedOutput,
                     failureReason,

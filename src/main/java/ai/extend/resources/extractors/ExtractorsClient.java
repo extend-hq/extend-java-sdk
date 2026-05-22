@@ -63,6 +63,7 @@ public class ExtractorsClient {
 
     /**
      * Create a new extractor.
+     * <p>You can optionally provide a <code>generate</code> object to automatically generate an extraction schema from sample documents using AI. <code>generate</code> is mutually exclusive with <code>config</code> and <code>cloneExtractorId</code>.</p>
      */
     public Extractor create(ExtractorsCreateRequest request) {
         return this.rawClient.create(request).body();
@@ -70,6 +71,7 @@ public class ExtractorsClient {
 
     /**
      * Create a new extractor.
+     * <p>You can optionally provide a <code>generate</code> object to automatically generate an extraction schema from sample documents using AI. <code>generate</code> is mutually exclusive with <code>config</code> and <code>cloneExtractorId</code>.</p>
      */
     public Extractor create(ExtractorsCreateRequest request, RequestOptions requestOptions) {
         return this.rawClient.create(request, requestOptions).body();

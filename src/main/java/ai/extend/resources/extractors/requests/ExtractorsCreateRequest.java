@@ -4,6 +4,7 @@
 package ai.extend.resources.extractors.requests;
 
 import ai.extend.core.ObjectMappers;
+import ai.extend.resources.extractors.types.ExtractorsCreateRequestGenerate;
 import ai.extend.types.ExtractConfigJson;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -28,16 +29,20 @@ public final class ExtractorsCreateRequest {
 
     private final Optional<ExtractConfigJson> config;
 
+    private final Optional<ExtractorsCreateRequestGenerate> generate;
+
     private final Map<String, Object> additionalProperties;
 
     private ExtractorsCreateRequest(
             String name,
             Optional<String> cloneExtractorId,
             Optional<ExtractConfigJson> config,
+            Optional<ExtractorsCreateRequestGenerate> generate,
             Map<String, Object> additionalProperties) {
         this.name = name;
         this.cloneExtractorId = cloneExtractorId;
         this.config = config;
+        this.generate = generate;
         this.additionalProperties = additionalProperties;
     }
 
@@ -50,7 +55,7 @@ public final class ExtractorsCreateRequest {
     }
 
     /**
-     * @return The ID of an existing extractor to clone. If provided, the new extractor will be created with the same config as the extractor with this ID. Cannot be provided together with <code>config</code>.
+     * @return The ID of an existing extractor to clone. If provided, the new extractor will be created with the same config as the extractor with this ID. Cannot be provided together with <code>config</code> or <code>generate</code>.
      * <p>Example: <code>&quot;ex_BMdfq_yWM3sT-ZzvCnA3f&quot;</code></p>
      */
     @JsonProperty("cloneExtractorId")
@@ -59,11 +64,20 @@ public final class ExtractorsCreateRequest {
     }
 
     /**
-     * @return The configuration for the extractor. Cannot be provided together with <code>cloneExtractorId</code>.
+     * @return The configuration for the extractor. Cannot be provided together with <code>cloneExtractorId</code> or <code>generate</code>.
      */
     @JsonProperty("config")
     public Optional<ExtractConfigJson> getConfig() {
         return config;
+    }
+
+    /**
+     * @return If provided, an extraction schema is automatically generated from the supplied sample documents and applied to the extractor's draft. The response includes the extractor with the generated schema already in place.
+     * <p>Cannot be provided together with <code>config</code> or <code>cloneExtractorId</code>.</p>
+     */
+    @JsonProperty("generate")
+    public Optional<ExtractorsCreateRequestGenerate> getGenerate() {
+        return generate;
     }
 
     @java.lang.Override
@@ -80,12 +94,13 @@ public final class ExtractorsCreateRequest {
     private boolean equalTo(ExtractorsCreateRequest other) {
         return name.equals(other.name)
                 && cloneExtractorId.equals(other.cloneExtractorId)
-                && config.equals(other.config);
+                && config.equals(other.config)
+                && generate.equals(other.generate);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.name, this.cloneExtractorId, this.config);
+        return Objects.hash(this.name, this.cloneExtractorId, this.config, this.generate);
     }
 
     @java.lang.Override
@@ -110,7 +125,7 @@ public final class ExtractorsCreateRequest {
         ExtractorsCreateRequest build();
 
         /**
-         * <p>The ID of an existing extractor to clone. If provided, the new extractor will be created with the same config as the extractor with this ID. Cannot be provided together with <code>config</code>.</p>
+         * <p>The ID of an existing extractor to clone. If provided, the new extractor will be created with the same config as the extractor with this ID. Cannot be provided together with <code>config</code> or <code>generate</code>.</p>
          * <p>Example: <code>&quot;ex_BMdfq_yWM3sT-ZzvCnA3f&quot;</code></p>
          */
         _FinalStage cloneExtractorId(Optional<String> cloneExtractorId);
@@ -118,16 +133,26 @@ public final class ExtractorsCreateRequest {
         _FinalStage cloneExtractorId(String cloneExtractorId);
 
         /**
-         * <p>The configuration for the extractor. Cannot be provided together with <code>cloneExtractorId</code>.</p>
+         * <p>The configuration for the extractor. Cannot be provided together with <code>cloneExtractorId</code> or <code>generate</code>.</p>
          */
         _FinalStage config(Optional<ExtractConfigJson> config);
 
         _FinalStage config(ExtractConfigJson config);
+
+        /**
+         * <p>If provided, an extraction schema is automatically generated from the supplied sample documents and applied to the extractor's draft. The response includes the extractor with the generated schema already in place.</p>
+         * <p>Cannot be provided together with <code>config</code> or <code>cloneExtractorId</code>.</p>
+         */
+        _FinalStage generate(Optional<ExtractorsCreateRequestGenerate> generate);
+
+        _FinalStage generate(ExtractorsCreateRequestGenerate generate);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements NameStage, _FinalStage {
         private String name;
+
+        private Optional<ExtractorsCreateRequestGenerate> generate = Optional.empty();
 
         private Optional<ExtractConfigJson> config = Optional.empty();
 
@@ -143,6 +168,7 @@ public final class ExtractorsCreateRequest {
             name(other.getName());
             cloneExtractorId(other.getCloneExtractorId());
             config(other.getConfig());
+            generate(other.getGenerate());
             return this;
         }
 
@@ -159,7 +185,29 @@ public final class ExtractorsCreateRequest {
         }
 
         /**
-         * <p>The configuration for the extractor. Cannot be provided together with <code>cloneExtractorId</code>.</p>
+         * <p>If provided, an extraction schema is automatically generated from the supplied sample documents and applied to the extractor's draft. The response includes the extractor with the generated schema already in place.</p>
+         * <p>Cannot be provided together with <code>config</code> or <code>cloneExtractorId</code>.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage generate(ExtractorsCreateRequestGenerate generate) {
+            this.generate = Optional.ofNullable(generate);
+            return this;
+        }
+
+        /**
+         * <p>If provided, an extraction schema is automatically generated from the supplied sample documents and applied to the extractor's draft. The response includes the extractor with the generated schema already in place.</p>
+         * <p>Cannot be provided together with <code>config</code> or <code>cloneExtractorId</code>.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "generate", nulls = Nulls.SKIP)
+        public _FinalStage generate(Optional<ExtractorsCreateRequestGenerate> generate) {
+            this.generate = generate;
+            return this;
+        }
+
+        /**
+         * <p>The configuration for the extractor. Cannot be provided together with <code>cloneExtractorId</code> or <code>generate</code>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -169,7 +217,7 @@ public final class ExtractorsCreateRequest {
         }
 
         /**
-         * <p>The configuration for the extractor. Cannot be provided together with <code>cloneExtractorId</code>.</p>
+         * <p>The configuration for the extractor. Cannot be provided together with <code>cloneExtractorId</code> or <code>generate</code>.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "config", nulls = Nulls.SKIP)
@@ -179,7 +227,7 @@ public final class ExtractorsCreateRequest {
         }
 
         /**
-         * <p>The ID of an existing extractor to clone. If provided, the new extractor will be created with the same config as the extractor with this ID. Cannot be provided together with <code>config</code>.</p>
+         * <p>The ID of an existing extractor to clone. If provided, the new extractor will be created with the same config as the extractor with this ID. Cannot be provided together with <code>config</code> or <code>generate</code>.</p>
          * <p>Example: <code>&quot;ex_BMdfq_yWM3sT-ZzvCnA3f&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
@@ -190,7 +238,7 @@ public final class ExtractorsCreateRequest {
         }
 
         /**
-         * <p>The ID of an existing extractor to clone. If provided, the new extractor will be created with the same config as the extractor with this ID. Cannot be provided together with <code>config</code>.</p>
+         * <p>The ID of an existing extractor to clone. If provided, the new extractor will be created with the same config as the extractor with this ID. Cannot be provided together with <code>config</code> or <code>generate</code>.</p>
          * <p>Example: <code>&quot;ex_BMdfq_yWM3sT-ZzvCnA3f&quot;</code></p>
          */
         @java.lang.Override
@@ -202,7 +250,7 @@ public final class ExtractorsCreateRequest {
 
         @java.lang.Override
         public ExtractorsCreateRequest build() {
-            return new ExtractorsCreateRequest(name, cloneExtractorId, config, additionalProperties);
+            return new ExtractorsCreateRequest(name, cloneExtractorId, config, generate, additionalProperties);
         }
     }
 }

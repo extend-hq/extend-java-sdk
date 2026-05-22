@@ -5,6 +5,7 @@ package ai.extend.resources.evaluationsetruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
+import ai.extend.resources.evaluationsetruns.requests.EvaluationSetRunsCreateRequest;
 import ai.extend.resources.evaluationsetruns.requests.EvaluationSetRunsRetrieveRequest;
 import ai.extend.types.EvaluationSetRun;
 
@@ -23,6 +24,22 @@ public class EvaluationSetRunsClient {
      */
     public RawEvaluationSetRunsClient withRawResponse() {
         return this.rawClient;
+    }
+
+    /**
+     * Create and start an async evaluation set run. The response returns the evaluation set run object with its initial status; use <code>GET /evaluation_set_runs/{id}</code> to poll for completion.
+     * <p>Evaluation set runs are currently supported for document processor evaluation sets.</p>
+     */
+    public EvaluationSetRun create(EvaluationSetRunsCreateRequest request) {
+        return this.rawClient.create(request).body();
+    }
+
+    /**
+     * Create and start an async evaluation set run. The response returns the evaluation set run object with its initial status; use <code>GET /evaluation_set_runs/{id}</code> to poll for completion.
+     * <p>Evaluation set runs are currently supported for document processor evaluation sets.</p>
+     */
+    public EvaluationSetRun create(EvaluationSetRunsCreateRequest request, RequestOptions requestOptions) {
+        return this.rawClient.create(request, requestOptions).body();
     }
 
     /**

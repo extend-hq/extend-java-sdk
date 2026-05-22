@@ -192,6 +192,7 @@ public class AsyncRawExtractorsClient {
 
     /**
      * Create a new extractor.
+     * <p>You can optionally provide a <code>generate</code> object to automatically generate an extraction schema from sample documents using AI. <code>generate</code> is mutually exclusive with <code>config</code> and <code>cloneExtractorId</code>.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<Extractor>> create(ExtractorsCreateRequest request) {
         return create(request, null);
@@ -199,6 +200,7 @@ public class AsyncRawExtractorsClient {
 
     /**
      * Create a new extractor.
+     * <p>You can optionally provide a <code>generate</code> object to automatically generate an extraction schema from sample documents using AI. <code>generate</code> is mutually exclusive with <code>config</code> and <code>cloneExtractorId</code>.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<Extractor>> create(
             ExtractorsCreateRequest request, RequestOptions requestOptions) {

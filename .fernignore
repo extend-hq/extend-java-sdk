@@ -11,3 +11,6 @@ src/main/java/ai/extend/wrapper/
 
 # Protect custom tests
 src/test/java/ai/extend/wrapper/
+.fern/replay.lock
+.fern/replay.yml
+.gitattributes

@@ -27,10 +27,6 @@ import org.jetbrains.annotations.NotNull;
 public final class ExtractRun {
     private final String id;
 
-    private final Optional<ExtractorSummary> extractor;
-
-    private final Optional<ExtractorVersionSummary> extractorVersion;
-
     private final ProcessorRunStatus status;
 
     private final Optional<ExtractOutput> output;
@@ -53,6 +49,10 @@ public final class ExtractRun {
 
     private final ExtractConfig config;
 
+    private final Optional<ExtractorSummary> extractor;
+
+    private final Optional<ExtractorVersionSummary> extractorVersion;
+
     private final FileSummary file;
 
     private final Optional<String> parseRunId;
@@ -69,8 +69,6 @@ public final class ExtractRun {
 
     private ExtractRun(
             String id,
-            Optional<ExtractorSummary> extractor,
-            Optional<ExtractorVersionSummary> extractorVersion,
             ProcessorRunStatus status,
             Optional<ExtractOutput> output,
             Optional<ExtractOutput> initialOutput,
@@ -82,6 +80,8 @@ public final class ExtractRun {
             boolean edited,
             Optional<Map<String, Optional<ExtractOutputEdits>>> edits,
             ExtractConfig config,
+            Optional<ExtractorSummary> extractor,
+            Optional<ExtractorVersionSummary> extractorVersion,
             FileSummary file,
             Optional<String> parseRunId,
             String dashboardUrl,
@@ -90,8 +90,6 @@ public final class ExtractRun {
             OffsetDateTime updatedAt,
             Map<String, Object> additionalProperties) {
         this.id = id;
-        this.extractor = extractor;
-        this.extractorVersion = extractorVersion;
         this.status = status;
         this.output = output;
         this.initialOutput = initialOutput;
@@ -103,6 +101,8 @@ public final class ExtractRun {
         this.edited = edited;
         this.edits = edits;
         this.config = config;
+        this.extractor = extractor;
+        this.extractorVersion = extractorVersion;
         this.file = file;
         this.parseRunId = parseRunId;
         this.dashboardUrl = dashboardUrl;
@@ -127,30 +127,6 @@ public final class ExtractRun {
     @JsonProperty("id")
     public String getId() {
         return id;
-    }
-
-    /**
-     * @return The extractor that was used for this run.
-     * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
-     */
-    @JsonIgnore
-    public Optional<ExtractorSummary> getExtractor() {
-        if (extractor == null) {
-            return Optional.empty();
-        }
-        return extractor;
-    }
-
-    /**
-     * @return The version of the extractor that was used for this run.
-     * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
-     */
-    @JsonIgnore
-    public Optional<ExtractorVersionSummary> getExtractorVersion() {
-        if (extractorVersion == null) {
-            return Optional.empty();
-        }
-        return extractorVersion;
     }
 
     @JsonProperty("status")
@@ -288,6 +264,30 @@ public final class ExtractRun {
     }
 
     /**
+     * @return The extractor that was used for this run.
+     * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
+     */
+    @JsonIgnore
+    public Optional<ExtractorSummary> getExtractor() {
+        if (extractor == null) {
+            return Optional.empty();
+        }
+        return extractor;
+    }
+
+    /**
+     * @return The version of the extractor that was used for this run.
+     * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
+     */
+    @JsonIgnore
+    public Optional<ExtractorVersionSummary> getExtractorVersion() {
+        if (extractorVersion == null) {
+            return Optional.empty();
+        }
+        return extractorVersion;
+    }
+
+    /**
      * @return The file that was processed.
      */
     @JsonProperty("file")
@@ -338,18 +338,6 @@ public final class ExtractRun {
     }
 
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
-    @JsonProperty("extractor")
-    private Optional<ExtractorSummary> _getExtractor() {
-        return extractor;
-    }
-
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
-    @JsonProperty("extractorVersion")
-    private Optional<ExtractorVersionSummary> _getExtractorVersion() {
-        return extractorVersion;
-    }
-
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
     @JsonProperty("output")
     private Optional<ExtractOutput> _getOutput() {
         return output;
@@ -392,6 +380,18 @@ public final class ExtractRun {
     }
 
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("extractor")
+    private Optional<ExtractorSummary> _getExtractor() {
+        return extractor;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("extractorVersion")
+    private Optional<ExtractorVersionSummary> _getExtractorVersion() {
+        return extractorVersion;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
     @JsonProperty("parseRunId")
     private Optional<String> _getParseRunId() {
         return parseRunId;
@@ -416,8 +416,6 @@ public final class ExtractRun {
 
     private boolean equalTo(ExtractRun other) {
         return id.equals(other.id)
-                && extractor.equals(other.extractor)
-                && extractorVersion.equals(other.extractorVersion)
                 && status.equals(other.status)
                 && output.equals(other.output)
                 && initialOutput.equals(other.initialOutput)
@@ -429,6 +427,8 @@ public final class ExtractRun {
                 && edited == other.edited
                 && edits.equals(other.edits)
                 && config.equals(other.config)
+                && extractor.equals(other.extractor)
+                && extractorVersion.equals(other.extractorVersion)
                 && file.equals(other.file)
                 && parseRunId.equals(other.parseRunId)
                 && dashboardUrl.equals(other.dashboardUrl)
@@ -441,8 +441,6 @@ public final class ExtractRun {
     public int hashCode() {
         return Objects.hash(
                 this.id,
-                this.extractor,
-                this.extractorVersion,
                 this.status,
                 this.output,
                 this.initialOutput,
@@ -454,6 +452,8 @@ public final class ExtractRun {
                 this.edited,
                 this.edits,
                 this.config,
+                this.extractor,
+                this.extractorVersion,
                 this.file,
                 this.parseRunId,
                 this.dashboardUrl,
@@ -534,26 +534,6 @@ public final class ExtractRun {
 
     public interface _FinalStage {
         ExtractRun build();
-
-        /**
-         * <p>The extractor that was used for this run.</p>
-         * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
-         */
-        _FinalStage extractor(Optional<ExtractorSummary> extractor);
-
-        _FinalStage extractor(ExtractorSummary extractor);
-
-        _FinalStage extractor(Nullable<ExtractorSummary> extractor);
-
-        /**
-         * <p>The version of the extractor that was used for this run.</p>
-         * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
-         */
-        _FinalStage extractorVersion(Optional<ExtractorVersionSummary> extractorVersion);
-
-        _FinalStage extractorVersion(ExtractorVersionSummary extractorVersion);
-
-        _FinalStage extractorVersion(Nullable<ExtractorVersionSummary> extractorVersion);
 
         /**
          * <p>The final output, either reviewed or initial. This is a union of two possible shapes:</p>
@@ -643,6 +623,26 @@ public final class ExtractRun {
         _FinalStage edits(Nullable<Map<String, Optional<ExtractOutputEdits>>> edits);
 
         /**
+         * <p>The extractor that was used for this run.</p>
+         * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
+         */
+        _FinalStage extractor(Optional<ExtractorSummary> extractor);
+
+        _FinalStage extractor(ExtractorSummary extractor);
+
+        _FinalStage extractor(Nullable<ExtractorSummary> extractor);
+
+        /**
+         * <p>The version of the extractor that was used for this run.</p>
+         * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
+         */
+        _FinalStage extractorVersion(Optional<ExtractorVersionSummary> extractorVersion);
+
+        _FinalStage extractorVersion(ExtractorVersionSummary extractorVersion);
+
+        _FinalStage extractorVersion(Nullable<ExtractorVersionSummary> extractorVersion);
+
+        /**
          * <p>The ID of the parse run that was used for this extract run.</p>
          * <p><strong>Availability:</strong> Present when a parse run was created.</p>
          */
@@ -697,6 +697,10 @@ public final class ExtractRun {
 
         private Optional<String> parseRunId = Optional.empty();
 
+        private Optional<ExtractorVersionSummary> extractorVersion = Optional.empty();
+
+        private Optional<ExtractorSummary> extractor = Optional.empty();
+
         private Optional<Map<String, Optional<ExtractOutputEdits>>> edits = Optional.empty();
 
         private Optional<Map<String, Object>> metadata = Optional.empty();
@@ -711,10 +715,6 @@ public final class ExtractRun {
 
         private Optional<ExtractOutput> output = Optional.empty();
 
-        private Optional<ExtractorVersionSummary> extractorVersion = Optional.empty();
-
-        private Optional<ExtractorSummary> extractor = Optional.empty();
-
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -723,8 +723,6 @@ public final class ExtractRun {
         @java.lang.Override
         public Builder from(ExtractRun other) {
             id(other.getId());
-            extractor(other.getExtractor());
-            extractorVersion(other.getExtractorVersion());
             status(other.getStatus());
             output(other.getOutput());
             initialOutput(other.getInitialOutput());
@@ -736,6 +734,8 @@ public final class ExtractRun {
             edited(other.getEdited());
             edits(other.getEdits());
             config(other.getConfig());
+            extractor(other.getExtractor());
+            extractorVersion(other.getExtractorVersion());
             file(other.getFile());
             parseRunId(other.getParseRunId());
             dashboardUrl(other.getDashboardUrl());
@@ -923,6 +923,84 @@ public final class ExtractRun {
         @JsonSetter(value = "parseRunId", nulls = Nulls.SKIP)
         public _FinalStage parseRunId(Optional<String> parseRunId) {
             this.parseRunId = parseRunId;
+            return this;
+        }
+
+        /**
+         * <p>The version of the extractor that was used for this run.</p>
+         * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage extractorVersion(Nullable<ExtractorVersionSummary> extractorVersion) {
+            if (extractorVersion.isNull()) {
+                this.extractorVersion = null;
+            } else if (extractorVersion.isEmpty()) {
+                this.extractorVersion = Optional.empty();
+            } else {
+                this.extractorVersion = Optional.of(extractorVersion.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>The version of the extractor that was used for this run.</p>
+         * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage extractorVersion(ExtractorVersionSummary extractorVersion) {
+            this.extractorVersion = Optional.ofNullable(extractorVersion);
+            return this;
+        }
+
+        /**
+         * <p>The version of the extractor that was used for this run.</p>
+         * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "extractorVersion", nulls = Nulls.SKIP)
+        public _FinalStage extractorVersion(Optional<ExtractorVersionSummary> extractorVersion) {
+            this.extractorVersion = extractorVersion;
+            return this;
+        }
+
+        /**
+         * <p>The extractor that was used for this run.</p>
+         * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage extractor(Nullable<ExtractorSummary> extractor) {
+            if (extractor.isNull()) {
+                this.extractor = null;
+            } else if (extractor.isEmpty()) {
+                this.extractor = Optional.empty();
+            } else {
+                this.extractor = Optional.of(extractor.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>The extractor that was used for this run.</p>
+         * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage extractor(ExtractorSummary extractor) {
+            this.extractor = Optional.ofNullable(extractor);
+            return this;
+        }
+
+        /**
+         * <p>The extractor that was used for this run.</p>
+         * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "extractor", nulls = Nulls.SKIP)
+        public _FinalStage extractor(Optional<ExtractorSummary> extractor) {
+            this.extractor = extractor;
             return this;
         }
 
@@ -1250,90 +1328,10 @@ public final class ExtractRun {
             return this;
         }
 
-        /**
-         * <p>The version of the extractor that was used for this run.</p>
-         * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage extractorVersion(Nullable<ExtractorVersionSummary> extractorVersion) {
-            if (extractorVersion.isNull()) {
-                this.extractorVersion = null;
-            } else if (extractorVersion.isEmpty()) {
-                this.extractorVersion = Optional.empty();
-            } else {
-                this.extractorVersion = Optional.of(extractorVersion.get());
-            }
-            return this;
-        }
-
-        /**
-         * <p>The version of the extractor that was used for this run.</p>
-         * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage extractorVersion(ExtractorVersionSummary extractorVersion) {
-            this.extractorVersion = Optional.ofNullable(extractorVersion);
-            return this;
-        }
-
-        /**
-         * <p>The version of the extractor that was used for this run.</p>
-         * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
-         */
-        @java.lang.Override
-        @JsonSetter(value = "extractorVersion", nulls = Nulls.SKIP)
-        public _FinalStage extractorVersion(Optional<ExtractorVersionSummary> extractorVersion) {
-            this.extractorVersion = extractorVersion;
-            return this;
-        }
-
-        /**
-         * <p>The extractor that was used for this run.</p>
-         * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage extractor(Nullable<ExtractorSummary> extractor) {
-            if (extractor.isNull()) {
-                this.extractor = null;
-            } else if (extractor.isEmpty()) {
-                this.extractor = Optional.empty();
-            } else {
-                this.extractor = Optional.of(extractor.get());
-            }
-            return this;
-        }
-
-        /**
-         * <p>The extractor that was used for this run.</p>
-         * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage extractor(ExtractorSummary extractor) {
-            this.extractor = Optional.ofNullable(extractor);
-            return this;
-        }
-
-        /**
-         * <p>The extractor that was used for this run.</p>
-         * <p><strong>Availability:</strong> Present when an extractor reference was provided. Not present when using inline <code>config</code>.</p>
-         */
-        @java.lang.Override
-        @JsonSetter(value = "extractor", nulls = Nulls.SKIP)
-        public _FinalStage extractor(Optional<ExtractorSummary> extractor) {
-            this.extractor = extractor;
-            return this;
-        }
-
         @java.lang.Override
         public ExtractRun build() {
             return new ExtractRun(
                     id,
-                    extractor,
-                    extractorVersion,
                     status,
                     output,
                     initialOutput,
@@ -1345,6 +1343,8 @@ public final class ExtractRun {
                     edited,
                     edits,
                     config,
+                    extractor,
+                    extractorVersion,
                     file,
                     parseRunId,
                     dashboardUrl,

@@ -3,165 +3,546 @@
  */
 package ai.extend.types;
 
-import ai.extend.core.ObjectMappers;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 
-@JsonDeserialize(using = StepRun.Deserializer.class)
 public final class StepRun {
-    private final Object value;
+    private final Value value;
 
-    private final int type;
-
-    private StepRun(Object value, int type) {
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    private StepRun(Value value) {
         this.value = value;
-        this.type = type;
+    }
+
+    public <T> T visit(Visitor<T> visitor) {
+        return value.visit(visitor);
+    }
+
+    public static StepRun parse(ParseStepRun value) {
+        return new StepRun(new ParseValue(value));
+    }
+
+    public static StepRun extract(ExtractStepRun value) {
+        return new StepRun(new ExtractValue(value));
+    }
+
+    public static StepRun classify(ClassifyStepRun value) {
+        return new StepRun(new ClassifyValue(value));
+    }
+
+    public static StepRun split(SplitStepRun value) {
+        return new StepRun(new SplitValue(value));
+    }
+
+    public static StepRun mergeExtract(MergeExtractStepRun value) {
+        return new StepRun(new MergeExtractValue(value));
+    }
+
+    public static StepRun conditionalExtract(ConditionalExtractStepRun value) {
+        return new StepRun(new ConditionalExtractValue(value));
+    }
+
+    public static StepRun ruleValidation(RuleValidationStepRun value) {
+        return new StepRun(new RuleValidationValue(value));
+    }
+
+    public static StepRun externalDataValidation(ExternalDataValidationStepRun value) {
+        return new StepRun(new ExternalDataValidationValue(value));
+    }
+
+    public boolean isParse() {
+        return value instanceof ParseValue;
+    }
+
+    public boolean isExtract() {
+        return value instanceof ExtractValue;
+    }
+
+    public boolean isClassify() {
+        return value instanceof ClassifyValue;
+    }
+
+    public boolean isSplit() {
+        return value instanceof SplitValue;
+    }
+
+    public boolean isMergeExtract() {
+        return value instanceof MergeExtractValue;
+    }
+
+    public boolean isConditionalExtract() {
+        return value instanceof ConditionalExtractValue;
+    }
+
+    public boolean isRuleValidation() {
+        return value instanceof RuleValidationValue;
+    }
+
+    public boolean isExternalDataValidation() {
+        return value instanceof ExternalDataValidationValue;
+    }
+
+    public boolean _isUnknown() {
+        return value instanceof _UnknownValue;
+    }
+
+    public Optional<ParseStepRun> getParse() {
+        if (isParse()) {
+            return Optional.of(((ParseValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ExtractStepRun> getExtract() {
+        if (isExtract()) {
+            return Optional.of(((ExtractValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ClassifyStepRun> getClassify() {
+        if (isClassify()) {
+            return Optional.of(((ClassifyValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<SplitStepRun> getSplit() {
+        if (isSplit()) {
+            return Optional.of(((SplitValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<MergeExtractStepRun> getMergeExtract() {
+        if (isMergeExtract()) {
+            return Optional.of(((MergeExtractValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ConditionalExtractStepRun> getConditionalExtract() {
+        if (isConditionalExtract()) {
+            return Optional.of(((ConditionalExtractValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<RuleValidationStepRun> getRuleValidation() {
+        if (isRuleValidation()) {
+            return Optional.of(((RuleValidationValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ExternalDataValidationStepRun> getExternalDataValidation() {
+        if (isExternalDataValidation()) {
+            return Optional.of(((ExternalDataValidationValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Object> _getUnknown() {
+        if (_isUnknown()) {
+            return Optional.of(((_UnknownValue) value).value);
+        }
+        return Optional.empty();
     }
 
     @JsonValue
-    public Object get() {
+    private Value getValue() {
         return this.value;
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T visit(Visitor<T> visitor) {
-        if (this.type == 0) {
-            return visitor.visit((ParseStepRun) this.value);
-        } else if (this.type == 1) {
-            return visitor.visit((ExtractStepRun) this.value);
-        } else if (this.type == 2) {
-            return visitor.visit((ClassifyStepRun) this.value);
-        } else if (this.type == 3) {
-            return visitor.visit((SplitStepRun) this.value);
-        } else if (this.type == 4) {
-            return visitor.visit((MergeExtractStepRun) this.value);
-        } else if (this.type == 5) {
-            return visitor.visit((ConditionalExtractStepRun) this.value);
-        } else if (this.type == 6) {
-            return visitor.visit((RuleValidationStepRun) this.value);
-        } else if (this.type == 7) {
-            return visitor.visit((ExternalDataValidationStepRun) this.value);
-        }
-        throw new IllegalStateException("Failed to visit value. This should never happen.");
-    }
-
-    @java.lang.Override
-    public boolean equals(Object other) {
-        if (this == other) return true;
-        return other instanceof StepRun && equalTo((StepRun) other);
-    }
-
-    private boolean equalTo(StepRun other) {
-        return value.equals(other.value);
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-        return Objects.hash(this.value);
-    }
-
-    @java.lang.Override
-    public String toString() {
-        return this.value.toString();
-    }
-
-    public static StepRun of(ParseStepRun value) {
-        return new StepRun(value, 0);
-    }
-
-    public static StepRun of(ExtractStepRun value) {
-        return new StepRun(value, 1);
-    }
-
-    public static StepRun of(ClassifyStepRun value) {
-        return new StepRun(value, 2);
-    }
-
-    public static StepRun of(SplitStepRun value) {
-        return new StepRun(value, 3);
-    }
-
-    public static StepRun of(MergeExtractStepRun value) {
-        return new StepRun(value, 4);
-    }
-
-    public static StepRun of(ConditionalExtractStepRun value) {
-        return new StepRun(value, 5);
-    }
-
-    public static StepRun of(RuleValidationStepRun value) {
-        return new StepRun(value, 6);
-    }
-
-    public static StepRun of(ExternalDataValidationStepRun value) {
-        return new StepRun(value, 7);
-    }
-
     public interface Visitor<T> {
-        T visit(ParseStepRun value);
+        T visitParse(ParseStepRun parse);
 
-        T visit(ExtractStepRun value);
+        T visitExtract(ExtractStepRun extract);
 
-        T visit(ClassifyStepRun value);
+        T visitClassify(ClassifyStepRun classify);
 
-        T visit(SplitStepRun value);
+        T visitSplit(SplitStepRun split);
 
-        T visit(MergeExtractStepRun value);
+        T visitMergeExtract(MergeExtractStepRun mergeExtract);
 
-        T visit(ConditionalExtractStepRun value);
+        T visitConditionalExtract(ConditionalExtractStepRun conditionalExtract);
 
-        T visit(RuleValidationStepRun value);
+        T visitRuleValidation(RuleValidationStepRun ruleValidation);
 
-        T visit(ExternalDataValidationStepRun value);
+        T visitExternalDataValidation(ExternalDataValidationStepRun externalDataValidation);
+
+        T _visitUnknown(Object unknownType);
     }
 
-    static final class Deserializer extends StdDeserializer<StepRun> {
-        Deserializer() {
-            super(StepRun.class);
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "stepType", visible = true, defaultImpl = _UnknownValue.class)
+    @JsonSubTypes({
+        @JsonSubTypes.Type(ParseValue.class),
+        @JsonSubTypes.Type(ExtractValue.class),
+        @JsonSubTypes.Type(ClassifyValue.class),
+        @JsonSubTypes.Type(SplitValue.class),
+        @JsonSubTypes.Type(MergeExtractValue.class),
+        @JsonSubTypes.Type(ConditionalExtractValue.class),
+        @JsonSubTypes.Type(RuleValidationValue.class),
+        @JsonSubTypes.Type(ExternalDataValidationValue.class)
+    })
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    private interface Value {
+        <T> T visit(Visitor<T> visitor);
+    }
+
+    @JsonTypeName("PARSE")
+    @JsonIgnoreProperties("stepType")
+    private static final class ParseValue implements Value {
+        @JsonUnwrapped
+        private ParseStepRun value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ParseValue() {}
+
+        private ParseValue(ParseStepRun value) {
+            this.value = value;
         }
 
         @java.lang.Override
-        public StepRun deserialize(JsonParser p, DeserializationContext context) throws IOException {
-            Object value = p.readValueAs(Object.class);
-            try {
-                return of(ObjectMappers.JSON_MAPPER.convertValue(value, ParseStepRun.class));
-            } catch (RuntimeException e) {
-            }
-            try {
-                return of(ObjectMappers.JSON_MAPPER.convertValue(value, ExtractStepRun.class));
-            } catch (RuntimeException e) {
-            }
-            try {
-                return of(ObjectMappers.JSON_MAPPER.convertValue(value, ClassifyStepRun.class));
-            } catch (RuntimeException e) {
-            }
-            try {
-                return of(ObjectMappers.JSON_MAPPER.convertValue(value, SplitStepRun.class));
-            } catch (RuntimeException e) {
-            }
-            try {
-                return of(ObjectMappers.JSON_MAPPER.convertValue(value, MergeExtractStepRun.class));
-            } catch (RuntimeException e) {
-            }
-            try {
-                return of(ObjectMappers.JSON_MAPPER.convertValue(value, ConditionalExtractStepRun.class));
-            } catch (RuntimeException e) {
-            }
-            try {
-                return of(ObjectMappers.JSON_MAPPER.convertValue(value, RuleValidationStepRun.class));
-            } catch (RuntimeException e) {
-            }
-            try {
-                return of(ObjectMappers.JSON_MAPPER.convertValue(value, ExternalDataValidationStepRun.class));
-            } catch (RuntimeException e) {
-            }
-            throw new JsonParseException(p, "Failed to deserialize");
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitParse(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ParseValue && equalTo((ParseValue) other);
+        }
+
+        private boolean equalTo(ParseValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "StepRun{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("EXTRACT")
+    @JsonIgnoreProperties("stepType")
+    private static final class ExtractValue implements Value {
+        @JsonUnwrapped
+        private ExtractStepRun value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ExtractValue() {}
+
+        private ExtractValue(ExtractStepRun value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitExtract(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ExtractValue && equalTo((ExtractValue) other);
+        }
+
+        private boolean equalTo(ExtractValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "StepRun{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("CLASSIFY")
+    @JsonIgnoreProperties("stepType")
+    private static final class ClassifyValue implements Value {
+        @JsonUnwrapped
+        private ClassifyStepRun value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ClassifyValue() {}
+
+        private ClassifyValue(ClassifyStepRun value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitClassify(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ClassifyValue && equalTo((ClassifyValue) other);
+        }
+
+        private boolean equalTo(ClassifyValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "StepRun{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("SPLIT")
+    @JsonIgnoreProperties("stepType")
+    private static final class SplitValue implements Value {
+        @JsonUnwrapped
+        private SplitStepRun value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private SplitValue() {}
+
+        private SplitValue(SplitStepRun value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitSplit(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof SplitValue && equalTo((SplitValue) other);
+        }
+
+        private boolean equalTo(SplitValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "StepRun{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("MERGE_EXTRACT")
+    @JsonIgnoreProperties("stepType")
+    private static final class MergeExtractValue implements Value {
+        @JsonUnwrapped
+        private MergeExtractStepRun value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private MergeExtractValue() {}
+
+        private MergeExtractValue(MergeExtractStepRun value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitMergeExtract(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof MergeExtractValue && equalTo((MergeExtractValue) other);
+        }
+
+        private boolean equalTo(MergeExtractValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "StepRun{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("CONDITIONAL_EXTRACT")
+    @JsonIgnoreProperties("stepType")
+    private static final class ConditionalExtractValue implements Value {
+        @JsonUnwrapped
+        private ConditionalExtractStepRun value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ConditionalExtractValue() {}
+
+        private ConditionalExtractValue(ConditionalExtractStepRun value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitConditionalExtract(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ConditionalExtractValue && equalTo((ConditionalExtractValue) other);
+        }
+
+        private boolean equalTo(ConditionalExtractValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "StepRun{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("RULE_VALIDATION")
+    @JsonIgnoreProperties("stepType")
+    private static final class RuleValidationValue implements Value {
+        @JsonUnwrapped
+        private RuleValidationStepRun value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private RuleValidationValue() {}
+
+        private RuleValidationValue(RuleValidationStepRun value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitRuleValidation(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof RuleValidationValue && equalTo((RuleValidationValue) other);
+        }
+
+        private boolean equalTo(RuleValidationValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "StepRun{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("EXTERNAL_DATA_VALIDATION")
+    @JsonIgnoreProperties("stepType")
+    private static final class ExternalDataValidationValue implements Value {
+        @JsonUnwrapped
+        private ExternalDataValidationStepRun value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ExternalDataValidationValue() {}
+
+        private ExternalDataValidationValue(ExternalDataValidationStepRun value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitExternalDataValidation(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ExternalDataValidationValue && equalTo((ExternalDataValidationValue) other);
+        }
+
+        private boolean equalTo(ExternalDataValidationValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "StepRun{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonIgnoreProperties("stepType")
+    private static final class _UnknownValue implements Value {
+        private String type;
+
+        @JsonValue
+        private Object value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private _UnknownValue(@JsonProperty("value") Object value) {}
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor._visitUnknown(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof _UnknownValue && equalTo((_UnknownValue) other);
+        }
+
+        private boolean equalTo(_UnknownValue other) {
+            return type.equals(other.type) && value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.type, this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "StepRun{" + "type: " + type + ", value: " + value + "}";
         }
     }
 }
