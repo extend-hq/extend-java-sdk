@@ -7,6 +7,7 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
 import ai.extend.core.ExtendClientException;
 import ai.extend.core.ExtendClientHttpResponse;
+import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.RequestOptions;
 import ai.extend.errors.BadRequestError;
@@ -17,6 +18,7 @@ import ai.extend.errors.PaymentRequiredError;
 import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
+import ai.extend.resources.evaluationsetruns.requests.EvaluationSetRunsCreateRequest;
 import ai.extend.resources.evaluationsetruns.requests.EvaluationSetRunsRetrieveRequest;
 import ai.extend.types.ApiError;
 import ai.extend.types.EvaluationSetRun;
@@ -26,6 +28,7 @@ import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -34,6 +37,95 @@ public class RawEvaluationSetRunsClient {
 
     public RawEvaluationSetRunsClient(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
+    }
+
+    /**
+     * Create and start an async evaluation set run. The response returns the evaluation set run object with its initial status; use <code>GET /evaluation_set_runs/{id}</code> to poll for completion.
+     * <p>Evaluation set runs are currently supported for document processor evaluation sets.</p>
+     */
+    public ExtendClientHttpResponse<EvaluationSetRun> create(EvaluationSetRunsCreateRequest request) {
+        return create(request, null);
+    }
+
+    /**
+     * Create and start an async evaluation set run. The response returns the evaluation set run object with its initial status; use <code>GET /evaluation_set_runs/{id}</code> to poll for completion.
+     * <p>Evaluation set runs are currently supported for document processor evaluation sets.</p>
+     */
+    public ExtendClientHttpResponse<EvaluationSetRun> create(
+            EvaluationSetRunsCreateRequest request, RequestOptions requestOptions) {
+        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("evaluation_set_runs");
+        if (requestOptions != null) {
+            requestOptions.getQueryParameters().forEach((_key, _value) -> {
+                httpUrl.addQueryParameter(_key, _value);
+            });
+        }
+        RequestBody body;
+        try {
+            body = RequestBody.create(
+                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        Request.Builder _requestBuilder = new Request.Builder()
+                .url(httpUrl.build())
+                .method("POST", body)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            if (response.isSuccessful()) {
+                return new ExtendClientHttpResponse<>(
+                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EvaluationSetRun.class), response);
+            }
+            try {
+                switch (response.code()) {
+                    case 400:
+                        throw new BadRequestError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 401:
+                        throw new UnauthorizedError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 402:
+                        throw new PaymentRequiredError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 403:
+                        throw new ForbiddenError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 404:
+                        throw new NotFoundError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 422:
+                        throw new UnprocessableEntityError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 429:
+                        throw new TooManyRequestsError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 500:
+                        throw new InternalServerError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                }
+            } catch (JsonProcessingException ignored) {
+                // unable to map error response, throwing generic error
+            }
+            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
+            throw new ExtendClientApiException(
+                    "Error with status code " + response.code(), response.code(), errorBody, response);
+        } catch (IOException e) {
+            throw new ExtendClientException("Network error executing HTTP request", e);
+        }
     }
 
     /**

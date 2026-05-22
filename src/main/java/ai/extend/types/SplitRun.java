@@ -27,13 +27,13 @@ import org.jetbrains.annotations.NotNull;
 public final class SplitRun {
     private final String id;
 
-    private final Optional<SplitterSummary> splitter;
-
-    private final Optional<SplitterVersionSummary> splitterVersion;
-
     private final ProcessorRunStatus status;
 
     private final Optional<SplitOutput> output;
+
+    private final Optional<SplitterSummary> splitter;
+
+    private final Optional<SplitterVersionSummary> splitterVersion;
 
     private final Optional<SplitOutput> initialOutput;
 
@@ -67,10 +67,10 @@ public final class SplitRun {
 
     private SplitRun(
             String id,
-            Optional<SplitterSummary> splitter,
-            Optional<SplitterVersionSummary> splitterVersion,
             ProcessorRunStatus status,
             Optional<SplitOutput> output,
+            Optional<SplitterSummary> splitter,
+            Optional<SplitterVersionSummary> splitterVersion,
             Optional<SplitOutput> initialOutput,
             Optional<SplitOutput> reviewedOutput,
             Optional<String> failureReason,
@@ -87,10 +87,10 @@ public final class SplitRun {
             OffsetDateTime updatedAt,
             Map<String, Object> additionalProperties) {
         this.id = id;
-        this.splitter = splitter;
-        this.splitterVersion = splitterVersion;
         this.status = status;
         this.output = output;
+        this.splitter = splitter;
+        this.splitterVersion = splitterVersion;
         this.initialOutput = initialOutput;
         this.reviewedOutput = reviewedOutput;
         this.failureReason = failureReason;
@@ -125,6 +125,23 @@ public final class SplitRun {
         return id;
     }
 
+    @JsonProperty("status")
+    public ProcessorRunStatus getStatus() {
+        return status;
+    }
+
+    /**
+     * @return The final output, either reviewed or initial.
+     * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+     */
+    @JsonIgnore
+    public Optional<SplitOutput> getOutput() {
+        if (output == null) {
+            return Optional.empty();
+        }
+        return output;
+    }
+
     /**
      * @return The splitter that was used for this run.
      * <p><strong>Availability:</strong> Present when a splitter reference was provided. Not present when using inline <code>config</code>.</p>
@@ -147,23 +164,6 @@ public final class SplitRun {
             return Optional.empty();
         }
         return splitterVersion;
-    }
-
-    @JsonProperty("status")
-    public ProcessorRunStatus getStatus() {
-        return status;
-    }
-
-    /**
-     * @return The final output, either reviewed or initial.
-     * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
-     */
-    @JsonIgnore
-    public Optional<SplitOutput> getOutput() {
-        if (output == null) {
-            return Optional.empty();
-        }
-        return output;
     }
 
     /**
@@ -314,6 +314,12 @@ public final class SplitRun {
     }
 
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("output")
+    private Optional<SplitOutput> _getOutput() {
+        return output;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
     @JsonProperty("splitter")
     private Optional<SplitterSummary> _getSplitter() {
         return splitter;
@@ -323,12 +329,6 @@ public final class SplitRun {
     @JsonProperty("splitterVersion")
     private Optional<SplitterVersionSummary> _getSplitterVersion() {
         return splitterVersion;
-    }
-
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
-    @JsonProperty("output")
-    private Optional<SplitOutput> _getOutput() {
-        return output;
     }
 
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
@@ -386,10 +386,10 @@ public final class SplitRun {
 
     private boolean equalTo(SplitRun other) {
         return id.equals(other.id)
-                && splitter.equals(other.splitter)
-                && splitterVersion.equals(other.splitterVersion)
                 && status.equals(other.status)
                 && output.equals(other.output)
+                && splitter.equals(other.splitter)
+                && splitterVersion.equals(other.splitterVersion)
                 && initialOutput.equals(other.initialOutput)
                 && reviewedOutput.equals(other.reviewedOutput)
                 && failureReason.equals(other.failureReason)
@@ -410,10 +410,10 @@ public final class SplitRun {
     public int hashCode() {
         return Objects.hash(
                 this.id,
-                this.splitter,
-                this.splitterVersion,
                 this.status,
                 this.output,
+                this.splitter,
+                this.splitterVersion,
                 this.initialOutput,
                 this.reviewedOutput,
                 this.failureReason,
@@ -500,6 +500,16 @@ public final class SplitRun {
         SplitRun build();
 
         /**
+         * <p>The final output, either reviewed or initial.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+         */
+        _FinalStage output(Optional<SplitOutput> output);
+
+        _FinalStage output(SplitOutput output);
+
+        _FinalStage output(Nullable<SplitOutput> output);
+
+        /**
          * <p>The splitter that was used for this run.</p>
          * <p><strong>Availability:</strong> Present when a splitter reference was provided. Not present when using inline <code>config</code>.</p>
          */
@@ -518,16 +528,6 @@ public final class SplitRun {
         _FinalStage splitterVersion(SplitterVersionSummary splitterVersion);
 
         _FinalStage splitterVersion(Nullable<SplitterVersionSummary> splitterVersion);
-
-        /**
-         * <p>The final output, either reviewed or initial.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
-         */
-        _FinalStage output(Optional<SplitOutput> output);
-
-        _FinalStage output(SplitOutput output);
-
-        _FinalStage output(Nullable<SplitOutput> output);
 
         /**
          * <p>The initial output from the split run, before any review edits.</p>
@@ -657,11 +657,11 @@ public final class SplitRun {
 
         private Optional<SplitOutput> initialOutput = Optional.empty();
 
-        private Optional<SplitOutput> output = Optional.empty();
-
         private Optional<SplitterVersionSummary> splitterVersion = Optional.empty();
 
         private Optional<SplitterSummary> splitter = Optional.empty();
+
+        private Optional<SplitOutput> output = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -671,10 +671,10 @@ public final class SplitRun {
         @java.lang.Override
         public Builder from(SplitRun other) {
             id(other.getId());
-            splitter(other.getSplitter());
-            splitterVersion(other.getSplitterVersion());
             status(other.getStatus());
             output(other.getOutput());
+            splitter(other.getSplitter());
+            splitterVersion(other.getSplitterVersion());
             initialOutput(other.getInitialOutput());
             reviewedOutput(other.getReviewedOutput());
             failureReason(other.getFailureReason());
@@ -1100,45 +1100,6 @@ public final class SplitRun {
         }
 
         /**
-         * <p>The final output, either reviewed or initial.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage output(Nullable<SplitOutput> output) {
-            if (output.isNull()) {
-                this.output = null;
-            } else if (output.isEmpty()) {
-                this.output = Optional.empty();
-            } else {
-                this.output = Optional.of(output.get());
-            }
-            return this;
-        }
-
-        /**
-         * <p>The final output, either reviewed or initial.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage output(SplitOutput output) {
-            this.output = Optional.ofNullable(output);
-            return this;
-        }
-
-        /**
-         * <p>The final output, either reviewed or initial.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
-         */
-        @java.lang.Override
-        @JsonSetter(value = "output", nulls = Nulls.SKIP)
-        public _FinalStage output(Optional<SplitOutput> output) {
-            this.output = output;
-            return this;
-        }
-
-        /**
          * <p>The version of the splitter that was used for this run.</p>
          * <p><strong>Availability:</strong> Present when a splitter reference was provided. Not present when using inline <code>config</code>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
@@ -1216,14 +1177,53 @@ public final class SplitRun {
             return this;
         }
 
+        /**
+         * <p>The final output, either reviewed or initial.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage output(Nullable<SplitOutput> output) {
+            if (output.isNull()) {
+                this.output = null;
+            } else if (output.isEmpty()) {
+                this.output = Optional.empty();
+            } else {
+                this.output = Optional.of(output.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>The final output, either reviewed or initial.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage output(SplitOutput output) {
+            this.output = Optional.ofNullable(output);
+            return this;
+        }
+
+        /**
+         * <p>The final output, either reviewed or initial.</p>
+         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "output", nulls = Nulls.SKIP)
+        public _FinalStage output(Optional<SplitOutput> output) {
+            this.output = output;
+            return this;
+        }
+
         @java.lang.Override
         public SplitRun build() {
             return new SplitRun(
                     id,
-                    splitter,
-                    splitterVersion,
                     status,
                     output,
+                    splitter,
+                    splitterVersion,
                     initialOutput,
                     reviewedOutput,
                     failureReason,

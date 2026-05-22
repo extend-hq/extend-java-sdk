@@ -7,6 +7,7 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
 import ai.extend.core.ExtendClientException;
 import ai.extend.core.ExtendClientHttpResponse;
+import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.RequestOptions;
 import ai.extend.errors.BadRequestError;
@@ -17,6 +18,7 @@ import ai.extend.errors.PaymentRequiredError;
 import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
+import ai.extend.resources.evaluationsetruns.requests.EvaluationSetRunsCreateRequest;
 import ai.extend.resources.evaluationsetruns.requests.EvaluationSetRunsRetrieveRequest;
 import ai.extend.types.ApiError;
 import ai.extend.types.EvaluationSetRun;
@@ -29,6 +31,7 @@ import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +41,126 @@ public class AsyncRawEvaluationSetRunsClient {
 
     public AsyncRawEvaluationSetRunsClient(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
+    }
+
+    /**
+     * Create and start an async evaluation set run. The response returns the evaluation set run object with its initial status; use <code>GET /evaluation_set_runs/{id}</code> to poll for completion.
+     * <p>Evaluation set runs are currently supported for document processor evaluation sets.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetRun>> create(
+            EvaluationSetRunsCreateRequest request) {
+        return create(request, null);
+    }
+
+    /**
+     * Create and start an async evaluation set run. The response returns the evaluation set run object with its initial status; use <code>GET /evaluation_set_runs/{id}</code> to poll for completion.
+     * <p>Evaluation set runs are currently supported for document processor evaluation sets.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetRun>> create(
+            EvaluationSetRunsCreateRequest request, RequestOptions requestOptions) {
+        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("evaluation_set_runs");
+        if (requestOptions != null) {
+            requestOptions.getQueryParameters().forEach((_key, _value) -> {
+                httpUrl.addQueryParameter(_key, _value);
+            });
+        }
+        RequestBody body;
+        try {
+            body = RequestBody.create(
+                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        Request.Builder _requestBuilder = new Request.Builder()
+                .url(httpUrl.build())
+                .method("POST", body)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<ExtendClientHttpResponse<EvaluationSetRun>> future = new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    if (response.isSuccessful()) {
+                        future.complete(new ExtendClientHttpResponse<>(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EvaluationSetRun.class),
+                                response));
+                        return;
+                    }
+                    try {
+                        switch (response.code()) {
+                            case 400:
+                                future.completeExceptionally(new BadRequestError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                            case 401:
+                                future.completeExceptionally(new UnauthorizedError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                            case 402:
+                                future.completeExceptionally(new PaymentRequiredError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
+                                        response));
+                                return;
+                            case 403:
+                                future.completeExceptionally(new ForbiddenError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
+                                        response));
+                                return;
+                            case 404:
+                                future.completeExceptionally(new NotFoundError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                            case 422:
+                                future.completeExceptionally(new UnprocessableEntityError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
+                                        response));
+                                return;
+                            case 429:
+                                future.completeExceptionally(new TooManyRequestsError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                            case 500:
+                                future.completeExceptionally(new InternalServerError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                        }
+                    } catch (JsonProcessingException ignored) {
+                        // unable to map error response, throwing generic error
+                    }
+                    Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
+                    future.completeExceptionally(new ExtendClientApiException(
+                            "Error with status code " + response.code(), response.code(), errorBody, response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
     }
 
     /**

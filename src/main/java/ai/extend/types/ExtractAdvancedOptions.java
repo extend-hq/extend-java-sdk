@@ -27,7 +27,7 @@ public final class ExtractAdvancedOptions {
 
     private final Optional<Boolean> citationsEnabled;
 
-    private final Optional<Boolean> currentDateEnabled;
+    private final Optional<ExtractAdvancedOptionsCitationMode> citationMode;
 
     private final Optional<ExtractAdvancedOptionsArrayCitationStrategy> arrayCitationStrategy;
 
@@ -43,13 +43,15 @@ public final class ExtractAdvancedOptions {
 
     private final Optional<ExtractAdvancedOptionsReviewAgent> reviewAgent;
 
+    private final Optional<Boolean> currentDateEnabled;
+
     private final Map<String, Object> additionalProperties;
 
     private ExtractAdvancedOptions(
             Optional<Boolean> modelReasoningInsightsEnabled,
             Optional<Boolean> advancedMultimodalEnabled,
             Optional<Boolean> citationsEnabled,
-            Optional<Boolean> currentDateEnabled,
+            Optional<ExtractAdvancedOptionsCitationMode> citationMode,
             Optional<ExtractAdvancedOptionsArrayCitationStrategy> arrayCitationStrategy,
             Optional<ArrayStrategy> arrayStrategy,
             Optional<ExtractChunkingOptions> chunkingOptions,
@@ -57,11 +59,12 @@ public final class ExtractAdvancedOptions {
             Optional<ExtractAdvancedOptionsExcelSheetSelectionStrategy> excelSheetSelectionStrategy,
             Optional<List<PageRangesItem>> pageRanges,
             Optional<ExtractAdvancedOptionsReviewAgent> reviewAgent,
+            Optional<Boolean> currentDateEnabled,
             Map<String, Object> additionalProperties) {
         this.modelReasoningInsightsEnabled = modelReasoningInsightsEnabled;
         this.advancedMultimodalEnabled = advancedMultimodalEnabled;
         this.citationsEnabled = citationsEnabled;
-        this.currentDateEnabled = currentDateEnabled;
+        this.citationMode = citationMode;
         this.arrayCitationStrategy = arrayCitationStrategy;
         this.arrayStrategy = arrayStrategy;
         this.chunkingOptions = chunkingOptions;
@@ -69,6 +72,7 @@ public final class ExtractAdvancedOptions {
         this.excelSheetSelectionStrategy = excelSheetSelectionStrategy;
         this.pageRanges = pageRanges;
         this.reviewAgent = reviewAgent;
+        this.currentDateEnabled = currentDateEnabled;
         this.additionalProperties = additionalProperties;
     }
 
@@ -97,11 +101,16 @@ public final class ExtractAdvancedOptions {
     }
 
     /**
-     * @return Whether to include the current date as context for the model during extraction. Defaults to <code>false</code>.
+     * @return Controls the granularity of citations returned alongside extracted values. Requires <code>citationsEnabled=true</code> and a base processor version that supports bounding box citations.
+     * <ul>
+     * <li><code>line</code>: Use OCR lines for citations. This can return one or more relevant OCR lines for each citation. This is the default mode.</li>
+     * <li><code>word</code>: Narrow each matched citation down to the relevant OCR word span when possible. Note: this might still return line citations in cases where the citation model is unable to reliably narrow down to a word-level citation. Typically, this only makes sense when you are doing array extraction and want precise word citations from a given cell in a table to match an array property, e.g. <code>line_items.total</code>.</li>
+     * <li><code>block</code>: Use parser blocks (e.g. full paragraphs, key-val regions, tables, lists, etc.) and return block-level polygons for each citation. Will have highest recall in terms of overlap with the extracted value source, but least granularity.</li>
+     * </ul>
      */
-    @JsonProperty("currentDateEnabled")
-    public Optional<Boolean> getCurrentDateEnabled() {
-        return currentDateEnabled;
+    @JsonProperty("citationMode")
+    public Optional<ExtractAdvancedOptionsCitationMode> getCitationMode() {
+        return citationMode;
     }
 
     /**
@@ -158,6 +167,14 @@ public final class ExtractAdvancedOptions {
         return reviewAgent;
     }
 
+    /**
+     * @return Whether to include the current date as context for the model during extraction. Defaults to <code>false</code>.
+     */
+    @JsonProperty("currentDateEnabled")
+    public Optional<Boolean> getCurrentDateEnabled() {
+        return currentDateEnabled;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -173,14 +190,15 @@ public final class ExtractAdvancedOptions {
         return modelReasoningInsightsEnabled.equals(other.modelReasoningInsightsEnabled)
                 && advancedMultimodalEnabled.equals(other.advancedMultimodalEnabled)
                 && citationsEnabled.equals(other.citationsEnabled)
-                && currentDateEnabled.equals(other.currentDateEnabled)
+                && citationMode.equals(other.citationMode)
                 && arrayCitationStrategy.equals(other.arrayCitationStrategy)
                 && arrayStrategy.equals(other.arrayStrategy)
                 && chunkingOptions.equals(other.chunkingOptions)
                 && excelSheetRanges.equals(other.excelSheetRanges)
                 && excelSheetSelectionStrategy.equals(other.excelSheetSelectionStrategy)
                 && pageRanges.equals(other.pageRanges)
-                && reviewAgent.equals(other.reviewAgent);
+                && reviewAgent.equals(other.reviewAgent)
+                && currentDateEnabled.equals(other.currentDateEnabled);
     }
 
     @java.lang.Override
@@ -189,14 +207,15 @@ public final class ExtractAdvancedOptions {
                 this.modelReasoningInsightsEnabled,
                 this.advancedMultimodalEnabled,
                 this.citationsEnabled,
-                this.currentDateEnabled,
+                this.citationMode,
                 this.arrayCitationStrategy,
                 this.arrayStrategy,
                 this.chunkingOptions,
                 this.excelSheetRanges,
                 this.excelSheetSelectionStrategy,
                 this.pageRanges,
-                this.reviewAgent);
+                this.reviewAgent,
+                this.currentDateEnabled);
     }
 
     @java.lang.Override
@@ -216,7 +235,7 @@ public final class ExtractAdvancedOptions {
 
         private Optional<Boolean> citationsEnabled = Optional.empty();
 
-        private Optional<Boolean> currentDateEnabled = Optional.empty();
+        private Optional<ExtractAdvancedOptionsCitationMode> citationMode = Optional.empty();
 
         private Optional<ExtractAdvancedOptionsArrayCitationStrategy> arrayCitationStrategy = Optional.empty();
 
@@ -233,6 +252,8 @@ public final class ExtractAdvancedOptions {
 
         private Optional<ExtractAdvancedOptionsReviewAgent> reviewAgent = Optional.empty();
 
+        private Optional<Boolean> currentDateEnabled = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -242,7 +263,7 @@ public final class ExtractAdvancedOptions {
             modelReasoningInsightsEnabled(other.getModelReasoningInsightsEnabled());
             advancedMultimodalEnabled(other.getAdvancedMultimodalEnabled());
             citationsEnabled(other.getCitationsEnabled());
-            currentDateEnabled(other.getCurrentDateEnabled());
+            citationMode(other.getCitationMode());
             arrayCitationStrategy(other.getArrayCitationStrategy());
             arrayStrategy(other.getArrayStrategy());
             chunkingOptions(other.getChunkingOptions());
@@ -250,6 +271,7 @@ public final class ExtractAdvancedOptions {
             excelSheetSelectionStrategy(other.getExcelSheetSelectionStrategy());
             pageRanges(other.getPageRanges());
             reviewAgent(other.getReviewAgent());
+            currentDateEnabled(other.getCurrentDateEnabled());
             return this;
         }
 
@@ -296,16 +318,21 @@ public final class ExtractAdvancedOptions {
         }
 
         /**
-         * <p>Whether to include the current date as context for the model during extraction. Defaults to <code>false</code>.</p>
+         * <p>Controls the granularity of citations returned alongside extracted values. Requires <code>citationsEnabled=true</code> and a base processor version that supports bounding box citations.</p>
+         * <ul>
+         * <li><code>line</code>: Use OCR lines for citations. This can return one or more relevant OCR lines for each citation. This is the default mode.</li>
+         * <li><code>word</code>: Narrow each matched citation down to the relevant OCR word span when possible. Note: this might still return line citations in cases where the citation model is unable to reliably narrow down to a word-level citation. Typically, this only makes sense when you are doing array extraction and want precise word citations from a given cell in a table to match an array property, e.g. <code>line_items.total</code>.</li>
+         * <li><code>block</code>: Use parser blocks (e.g. full paragraphs, key-val regions, tables, lists, etc.) and return block-level polygons for each citation. Will have highest recall in terms of overlap with the extracted value source, but least granularity.</li>
+         * </ul>
          */
-        @JsonSetter(value = "currentDateEnabled", nulls = Nulls.SKIP)
-        public Builder currentDateEnabled(Optional<Boolean> currentDateEnabled) {
-            this.currentDateEnabled = currentDateEnabled;
+        @JsonSetter(value = "citationMode", nulls = Nulls.SKIP)
+        public Builder citationMode(Optional<ExtractAdvancedOptionsCitationMode> citationMode) {
+            this.citationMode = citationMode;
             return this;
         }
 
-        public Builder currentDateEnabled(Boolean currentDateEnabled) {
-            this.currentDateEnabled = Optional.ofNullable(currentDateEnabled);
+        public Builder citationMode(ExtractAdvancedOptionsCitationMode citationMode) {
+            this.citationMode = Optional.ofNullable(citationMode);
             return this;
         }
 
@@ -408,12 +435,26 @@ public final class ExtractAdvancedOptions {
             return this;
         }
 
+        /**
+         * <p>Whether to include the current date as context for the model during extraction. Defaults to <code>false</code>.</p>
+         */
+        @JsonSetter(value = "currentDateEnabled", nulls = Nulls.SKIP)
+        public Builder currentDateEnabled(Optional<Boolean> currentDateEnabled) {
+            this.currentDateEnabled = currentDateEnabled;
+            return this;
+        }
+
+        public Builder currentDateEnabled(Boolean currentDateEnabled) {
+            this.currentDateEnabled = Optional.ofNullable(currentDateEnabled);
+            return this;
+        }
+
         public ExtractAdvancedOptions build() {
             return new ExtractAdvancedOptions(
                     modelReasoningInsightsEnabled,
                     advancedMultimodalEnabled,
                     citationsEnabled,
-                    currentDateEnabled,
+                    citationMode,
                     arrayCitationStrategy,
                     arrayStrategy,
                     chunkingOptions,
@@ -421,6 +462,7 @@ public final class ExtractAdvancedOptions {
                     excelSheetSelectionStrategy,
                     pageRanges,
                     reviewAgent,
+                    currentDateEnabled,
                     additionalProperties);
         }
     }

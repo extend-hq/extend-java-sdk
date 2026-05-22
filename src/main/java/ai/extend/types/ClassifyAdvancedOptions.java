@@ -25,6 +25,8 @@ public final class ClassifyAdvancedOptions {
 
     private final Optional<Boolean> advancedMultimodalEnabled;
 
+    private final Optional<Boolean> memoryEnabled;
+
     private final Optional<List<PageRangesItem>> pageRanges;
 
     private final Map<String, Object> additionalProperties;
@@ -32,10 +34,12 @@ public final class ClassifyAdvancedOptions {
     private ClassifyAdvancedOptions(
             Optional<ClassifyAdvancedOptionsContext> context,
             Optional<Boolean> advancedMultimodalEnabled,
+            Optional<Boolean> memoryEnabled,
             Optional<List<PageRangesItem>> pageRanges,
             Map<String, Object> additionalProperties) {
         this.context = context;
         this.advancedMultimodalEnabled = advancedMultimodalEnabled;
+        this.memoryEnabled = memoryEnabled;
         this.pageRanges = pageRanges;
         this.additionalProperties = additionalProperties;
     }
@@ -54,6 +58,14 @@ public final class ClassifyAdvancedOptions {
     @JsonProperty("advancedMultimodalEnabled")
     public Optional<Boolean> getAdvancedMultimodalEnabled() {
         return advancedMultimodalEnabled;
+    }
+
+    /**
+     * @return Enable memory for enhanced processing by learning from past successful classifications.
+     */
+    @JsonProperty("memoryEnabled")
+    public Optional<Boolean> getMemoryEnabled() {
+        return memoryEnabled;
     }
 
     @JsonProperty("pageRanges")
@@ -75,12 +87,13 @@ public final class ClassifyAdvancedOptions {
     private boolean equalTo(ClassifyAdvancedOptions other) {
         return context.equals(other.context)
                 && advancedMultimodalEnabled.equals(other.advancedMultimodalEnabled)
+                && memoryEnabled.equals(other.memoryEnabled)
                 && pageRanges.equals(other.pageRanges);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.context, this.advancedMultimodalEnabled, this.pageRanges);
+        return Objects.hash(this.context, this.advancedMultimodalEnabled, this.memoryEnabled, this.pageRanges);
     }
 
     @java.lang.Override
@@ -98,6 +111,8 @@ public final class ClassifyAdvancedOptions {
 
         private Optional<Boolean> advancedMultimodalEnabled = Optional.empty();
 
+        private Optional<Boolean> memoryEnabled = Optional.empty();
+
         private Optional<List<PageRangesItem>> pageRanges = Optional.empty();
 
         @JsonAnySetter
@@ -108,6 +123,7 @@ public final class ClassifyAdvancedOptions {
         public Builder from(ClassifyAdvancedOptions other) {
             context(other.getContext());
             advancedMultimodalEnabled(other.getAdvancedMultimodalEnabled());
+            memoryEnabled(other.getMemoryEnabled());
             pageRanges(other.getPageRanges());
             return this;
         }
@@ -140,6 +156,20 @@ public final class ClassifyAdvancedOptions {
             return this;
         }
 
+        /**
+         * <p>Enable memory for enhanced processing by learning from past successful classifications.</p>
+         */
+        @JsonSetter(value = "memoryEnabled", nulls = Nulls.SKIP)
+        public Builder memoryEnabled(Optional<Boolean> memoryEnabled) {
+            this.memoryEnabled = memoryEnabled;
+            return this;
+        }
+
+        public Builder memoryEnabled(Boolean memoryEnabled) {
+            this.memoryEnabled = Optional.ofNullable(memoryEnabled);
+            return this;
+        }
+
         @JsonSetter(value = "pageRanges", nulls = Nulls.SKIP)
         public Builder pageRanges(Optional<List<PageRangesItem>> pageRanges) {
             this.pageRanges = pageRanges;
@@ -152,7 +182,8 @@ public final class ClassifyAdvancedOptions {
         }
 
         public ClassifyAdvancedOptions build() {
-            return new ClassifyAdvancedOptions(context, advancedMultimodalEnabled, pageRanges, additionalProperties);
+            return new ClassifyAdvancedOptions(
+                    context, advancedMultimodalEnabled, memoryEnabled, pageRanges, additionalProperties);
         }
     }
 }
