@@ -3,17 +3,22 @@
  */
 package ai.extend.types;
 
+import ai.extend.core.Nullable;
+import ai.extend.core.NullableNonemptyFilter;
 import ai.extend.core.ObjectMappers;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
@@ -21,10 +26,20 @@ import org.jetbrains.annotations.NotNull;
 public final class ChunkMetadata {
     private final ChunkMetadataPageRange pageRange;
 
+    private final Optional<Double> minOcrConfidence;
+
+    private final Optional<Double> avgOcrConfidence;
+
     private final Map<String, Object> additionalProperties;
 
-    private ChunkMetadata(ChunkMetadataPageRange pageRange, Map<String, Object> additionalProperties) {
+    private ChunkMetadata(
+            ChunkMetadataPageRange pageRange,
+            Optional<Double> minOcrConfidence,
+            Optional<Double> avgOcrConfidence,
+            Map<String, Object> additionalProperties) {
         this.pageRange = pageRange;
+        this.minOcrConfidence = minOcrConfidence;
+        this.avgOcrConfidence = avgOcrConfidence;
         this.additionalProperties = additionalProperties;
     }
 
@@ -34,6 +49,40 @@ public final class ChunkMetadata {
     @JsonProperty("pageRange")
     public ChunkMetadataPageRange getPageRange() {
         return pageRange;
+    }
+
+    /**
+     * @return Lowest per-word OCR confidence across words in this chunk, or <code>null</code> when word-level confidence is unavailable.
+     */
+    @JsonIgnore
+    public Optional<Double> getMinOcrConfidence() {
+        if (minOcrConfidence == null) {
+            return Optional.empty();
+        }
+        return minOcrConfidence;
+    }
+
+    /**
+     * @return Average per-word OCR confidence across words in this chunk, or <code>null</code> when word-level confidence is unavailable.
+     */
+    @JsonIgnore
+    public Optional<Double> getAvgOcrConfidence() {
+        if (avgOcrConfidence == null) {
+            return Optional.empty();
+        }
+        return avgOcrConfidence;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("minOcrConfidence")
+    private Optional<Double> _getMinOcrConfidence() {
+        return minOcrConfidence;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("avgOcrConfidence")
+    private Optional<Double> _getAvgOcrConfidence() {
+        return avgOcrConfidence;
     }
 
     @java.lang.Override
@@ -48,12 +97,14 @@ public final class ChunkMetadata {
     }
 
     private boolean equalTo(ChunkMetadata other) {
-        return pageRange.equals(other.pageRange);
+        return pageRange.equals(other.pageRange)
+                && minOcrConfidence.equals(other.minOcrConfidence)
+                && avgOcrConfidence.equals(other.avgOcrConfidence);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.pageRange);
+        return Objects.hash(this.pageRange, this.minOcrConfidence, this.avgOcrConfidence);
     }
 
     @java.lang.Override
@@ -76,11 +127,33 @@ public final class ChunkMetadata {
 
     public interface _FinalStage {
         ChunkMetadata build();
+
+        /**
+         * <p>Lowest per-word OCR confidence across words in this chunk, or <code>null</code> when word-level confidence is unavailable.</p>
+         */
+        _FinalStage minOcrConfidence(Optional<Double> minOcrConfidence);
+
+        _FinalStage minOcrConfidence(Double minOcrConfidence);
+
+        _FinalStage minOcrConfidence(Nullable<Double> minOcrConfidence);
+
+        /**
+         * <p>Average per-word OCR confidence across words in this chunk, or <code>null</code> when word-level confidence is unavailable.</p>
+         */
+        _FinalStage avgOcrConfidence(Optional<Double> avgOcrConfidence);
+
+        _FinalStage avgOcrConfidence(Double avgOcrConfidence);
+
+        _FinalStage avgOcrConfidence(Nullable<Double> avgOcrConfidence);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements PageRangeStage, _FinalStage {
         private ChunkMetadataPageRange pageRange;
+
+        private Optional<Double> avgOcrConfidence = Optional.empty();
+
+        private Optional<Double> minOcrConfidence = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -90,6 +163,8 @@ public final class ChunkMetadata {
         @java.lang.Override
         public Builder from(ChunkMetadata other) {
             pageRange(other.getPageRange());
+            minOcrConfidence(other.getMinOcrConfidence());
+            avgOcrConfidence(other.getAvgOcrConfidence());
             return this;
         }
 
@@ -105,9 +180,81 @@ public final class ChunkMetadata {
             return this;
         }
 
+        /**
+         * <p>Average per-word OCR confidence across words in this chunk, or <code>null</code> when word-level confidence is unavailable.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage avgOcrConfidence(Nullable<Double> avgOcrConfidence) {
+            if (avgOcrConfidence.isNull()) {
+                this.avgOcrConfidence = null;
+            } else if (avgOcrConfidence.isEmpty()) {
+                this.avgOcrConfidence = Optional.empty();
+            } else {
+                this.avgOcrConfidence = Optional.of(avgOcrConfidence.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>Average per-word OCR confidence across words in this chunk, or <code>null</code> when word-level confidence is unavailable.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage avgOcrConfidence(Double avgOcrConfidence) {
+            this.avgOcrConfidence = Optional.ofNullable(avgOcrConfidence);
+            return this;
+        }
+
+        /**
+         * <p>Average per-word OCR confidence across words in this chunk, or <code>null</code> when word-level confidence is unavailable.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "avgOcrConfidence", nulls = Nulls.SKIP)
+        public _FinalStage avgOcrConfidence(Optional<Double> avgOcrConfidence) {
+            this.avgOcrConfidence = avgOcrConfidence;
+            return this;
+        }
+
+        /**
+         * <p>Lowest per-word OCR confidence across words in this chunk, or <code>null</code> when word-level confidence is unavailable.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage minOcrConfidence(Nullable<Double> minOcrConfidence) {
+            if (minOcrConfidence.isNull()) {
+                this.minOcrConfidence = null;
+            } else if (minOcrConfidence.isEmpty()) {
+                this.minOcrConfidence = Optional.empty();
+            } else {
+                this.minOcrConfidence = Optional.of(minOcrConfidence.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>Lowest per-word OCR confidence across words in this chunk, or <code>null</code> when word-level confidence is unavailable.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage minOcrConfidence(Double minOcrConfidence) {
+            this.minOcrConfidence = Optional.ofNullable(minOcrConfidence);
+            return this;
+        }
+
+        /**
+         * <p>Lowest per-word OCR confidence across words in this chunk, or <code>null</code> when word-level confidence is unavailable.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "minOcrConfidence", nulls = Nulls.SKIP)
+        public _FinalStage minOcrConfidence(Optional<Double> minOcrConfidence) {
+            this.minOcrConfidence = minOcrConfidence;
+            return this;
+        }
+
         @java.lang.Override
         public ChunkMetadata build() {
-            return new ChunkMetadata(pageRange, additionalProperties);
+            return new ChunkMetadata(pageRange, minOcrConfidence, avgOcrConfidence, additionalProperties);
         }
     }
 }

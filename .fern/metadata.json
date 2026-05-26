@@ -15,6 +15,6 @@
       "testImplementation org.mockito:mockito-inline:4.11.0"
     ]
   },
-  "originGitCommit": "c1a9a9709720f1c83c2262c27db9686248051fef",
-  "sdkVersion": "1.11.0"
+  "originGitCommit": "5523230b1ff60e8776d29efed2b40395b8c47d55",
+  "sdkVersion": "1.12.0"
 }
