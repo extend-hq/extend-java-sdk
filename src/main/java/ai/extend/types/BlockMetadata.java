@@ -3,9 +3,12 @@
  */
 package ai.extend.types;
 
+import ai.extend.core.Nullable;
+import ai.extend.core.NullableNonemptyFilter;
 import ai.extend.core.ObjectMappers;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,14 +27,22 @@ public final class BlockMetadata {
 
     private final Optional<BlockMetadataTextDirection> textDirection;
 
+    private final Optional<Double> minOcrConfidence;
+
+    private final Optional<Double> avgOcrConfidence;
+
     private final Map<String, Object> additionalProperties;
 
     private BlockMetadata(
             Optional<BlockMetadataPage> page,
             Optional<BlockMetadataTextDirection> textDirection,
+            Optional<Double> minOcrConfidence,
+            Optional<Double> avgOcrConfidence,
             Map<String, Object> additionalProperties) {
         this.page = page;
         this.textDirection = textDirection;
+        this.minOcrConfidence = minOcrConfidence;
+        this.avgOcrConfidence = avgOcrConfidence;
         this.additionalProperties = additionalProperties;
     }
 
@@ -51,6 +62,40 @@ public final class BlockMetadata {
         return textDirection;
     }
 
+    /**
+     * @return Lowest per-word OCR confidence across words in this block, or <code>null</code> when word-level confidence is unavailable.
+     */
+    @JsonIgnore
+    public Optional<Double> getMinOcrConfidence() {
+        if (minOcrConfidence == null) {
+            return Optional.empty();
+        }
+        return minOcrConfidence;
+    }
+
+    /**
+     * @return Average per-word OCR confidence across words in this block, or <code>null</code> when word-level confidence is unavailable.
+     */
+    @JsonIgnore
+    public Optional<Double> getAvgOcrConfidence() {
+        if (avgOcrConfidence == null) {
+            return Optional.empty();
+        }
+        return avgOcrConfidence;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("minOcrConfidence")
+    private Optional<Double> _getMinOcrConfidence() {
+        return minOcrConfidence;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("avgOcrConfidence")
+    private Optional<Double> _getAvgOcrConfidence() {
+        return avgOcrConfidence;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -63,12 +108,15 @@ public final class BlockMetadata {
     }
 
     private boolean equalTo(BlockMetadata other) {
-        return page.equals(other.page) && textDirection.equals(other.textDirection);
+        return page.equals(other.page)
+                && textDirection.equals(other.textDirection)
+                && minOcrConfidence.equals(other.minOcrConfidence)
+                && avgOcrConfidence.equals(other.avgOcrConfidence);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.page, this.textDirection);
+        return Objects.hash(this.page, this.textDirection, this.minOcrConfidence, this.avgOcrConfidence);
     }
 
     @java.lang.Override
@@ -86,6 +134,10 @@ public final class BlockMetadata {
 
         private Optional<BlockMetadataTextDirection> textDirection = Optional.empty();
 
+        private Optional<Double> minOcrConfidence = Optional.empty();
+
+        private Optional<Double> avgOcrConfidence = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -94,6 +146,8 @@ public final class BlockMetadata {
         public Builder from(BlockMetadata other) {
             page(other.getPage());
             textDirection(other.getTextDirection());
+            minOcrConfidence(other.getMinOcrConfidence());
+            avgOcrConfidence(other.getAvgOcrConfidence());
             return this;
         }
 
@@ -125,8 +179,58 @@ public final class BlockMetadata {
             return this;
         }
 
+        /**
+         * <p>Lowest per-word OCR confidence across words in this block, or <code>null</code> when word-level confidence is unavailable.</p>
+         */
+        @JsonSetter(value = "minOcrConfidence", nulls = Nulls.SKIP)
+        public Builder minOcrConfidence(Optional<Double> minOcrConfidence) {
+            this.minOcrConfidence = minOcrConfidence;
+            return this;
+        }
+
+        public Builder minOcrConfidence(Double minOcrConfidence) {
+            this.minOcrConfidence = Optional.ofNullable(minOcrConfidence);
+            return this;
+        }
+
+        public Builder minOcrConfidence(Nullable<Double> minOcrConfidence) {
+            if (minOcrConfidence.isNull()) {
+                this.minOcrConfidence = null;
+            } else if (minOcrConfidence.isEmpty()) {
+                this.minOcrConfidence = Optional.empty();
+            } else {
+                this.minOcrConfidence = Optional.of(minOcrConfidence.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>Average per-word OCR confidence across words in this block, or <code>null</code> when word-level confidence is unavailable.</p>
+         */
+        @JsonSetter(value = "avgOcrConfidence", nulls = Nulls.SKIP)
+        public Builder avgOcrConfidence(Optional<Double> avgOcrConfidence) {
+            this.avgOcrConfidence = avgOcrConfidence;
+            return this;
+        }
+
+        public Builder avgOcrConfidence(Double avgOcrConfidence) {
+            this.avgOcrConfidence = Optional.ofNullable(avgOcrConfidence);
+            return this;
+        }
+
+        public Builder avgOcrConfidence(Nullable<Double> avgOcrConfidence) {
+            if (avgOcrConfidence.isNull()) {
+                this.avgOcrConfidence = null;
+            } else if (avgOcrConfidence.isEmpty()) {
+                this.avgOcrConfidence = Optional.empty();
+            } else {
+                this.avgOcrConfidence = Optional.of(avgOcrConfidence.get());
+            }
+            return this;
+        }
+
         public BlockMetadata build() {
-            return new BlockMetadata(page, textDirection, additionalProperties);
+            return new BlockMetadata(page, textDirection, minOcrConfidence, avgOcrConfidence, additionalProperties);
         }
     }
 }
