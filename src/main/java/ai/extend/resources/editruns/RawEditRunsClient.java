@@ -129,7 +129,7 @@ public class RawEditRunsClient {
 
     /**
      * Retrieve the status and results of an edit run.
-     * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
+     * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
      */
     public ExtendClientHttpResponse<EditRun> retrieve(String id) {
         return retrieve(id, EditRunsRetrieveRequest.builder().build());
@@ -137,7 +137,7 @@ public class RawEditRunsClient {
 
     /**
      * Retrieve the status and results of an edit run.
-     * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
+     * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
      */
     public ExtendClientHttpResponse<EditRun> retrieve(String id, RequestOptions requestOptions) {
         return retrieve(id, EditRunsRetrieveRequest.builder().build(), requestOptions);
@@ -145,7 +145,7 @@ public class RawEditRunsClient {
 
     /**
      * Retrieve the status and results of an edit run.
-     * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
+     * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
      */
     public ExtendClientHttpResponse<EditRun> retrieve(String id, EditRunsRetrieveRequest request) {
         return retrieve(id, request, null);
@@ -153,7 +153,7 @@ public class RawEditRunsClient {
 
     /**
      * Retrieve the status and results of an edit run.
-     * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
+     * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
      */
     public ExtendClientHttpResponse<EditRun> retrieve(
             String id, EditRunsRetrieveRequest request, RequestOptions requestOptions) {

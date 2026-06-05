@@ -44,7 +44,7 @@ public final class ConditionalExtractStepDefinitionConfigRulesItem {
 
     /**
      * @return The formula that determines when this extractor runs.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-extract-step">Conditional Extract step docs</a> and <a href="https://docs.extend.ai/2026-02-09/product/workflows/formulas">Formulas</a>.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional-extract">Conditional Extract step docs</a> and <a href="https://docs.extend.ai/2026-02-09/workflows/formulas">Formulas</a>.</p>
      */
     @JsonProperty("formula")
     public String getFormula() {
@@ -89,7 +89,7 @@ public final class ConditionalExtractStepDefinitionConfigRulesItem {
     public interface FormulaStage {
         /**
          * <p>The formula that determines when this extractor runs.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-extract-step">Conditional Extract step docs</a> and <a href="https://docs.extend.ai/2026-02-09/product/workflows/formulas">Formulas</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional-extract">Conditional Extract step docs</a> and <a href="https://docs.extend.ai/2026-02-09/workflows/formulas">Formulas</a>.</p>
          */
         ExtractorStage formula(@NotNull String formula);
 
@@ -131,9 +131,9 @@ public final class ConditionalExtractStepDefinitionConfigRulesItem {
 
         /**
          * <p>The formula that determines when this extractor runs.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-extract-step">Conditional Extract step docs</a> and <a href="https://docs.extend.ai/2026-02-09/product/workflows/formulas">Formulas</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional-extract">Conditional Extract step docs</a> and <a href="https://docs.extend.ai/2026-02-09/workflows/formulas">Formulas</a>.</p>
          * <p>The formula that determines when this extractor runs.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-extract-step">Conditional Extract step docs</a> and <a href="https://docs.extend.ai/2026-02-09/product/workflows/formulas">Formulas</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional-extract">Conditional Extract step docs</a> and <a href="https://docs.extend.ai/2026-02-09/workflows/formulas">Formulas</a>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override

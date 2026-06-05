@@ -33,7 +33,7 @@ public final class FileConversionStepDefinitionConfig {
 
     /**
      * @return Whether to continue or exit the workflow if file conversion fails. Defaults to <code>EXIT</code>.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#file-conversion-step">File Conversion step docs</a>.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#file-conversion">File Conversion step docs</a>.</p>
      */
     @JsonProperty("failureBehavior")
     public Optional<FileConversionStepDefinitionConfigFailureBehavior> getFailureBehavior() {
@@ -86,7 +86,7 @@ public final class FileConversionStepDefinitionConfig {
 
         /**
          * <p>Whether to continue or exit the workflow if file conversion fails. Defaults to <code>EXIT</code>.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#file-conversion-step">File Conversion step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#file-conversion">File Conversion step docs</a>.</p>
          */
         @JsonSetter(value = "failureBehavior", nulls = Nulls.SKIP)
         public Builder failureBehavior(Optional<FileConversionStepDefinitionConfigFailureBehavior> failureBehavior) {

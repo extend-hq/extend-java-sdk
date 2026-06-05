@@ -64,8 +64,8 @@ public class AsyncWebhookEndpointsClient {
 
     /**
      * Create a new webhook endpoint. The response includes a <code>signingSecret</code> that is only returned once — store it securely for verifying webhook signatures.
-     * <p>The <code>enabledEvents</code> array specifies which global event types this endpoint should receive. Use the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/webhook-events">Webhook Events</a> reference to see available event types.</p>
-     * <p>To subscribe to events scoped to a specific resource (e.g., a single extractor or workflow), use <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/webhook/create-webhook-subscription">Create Webhook Subscription</a> after creating the endpoint.</p>
+     * <p>The <code>enabledEvents</code> array specifies which global event types this endpoint should receive. Use the <a href="https://docs.extend.ai/2026-02-09/api-reference/webhook-events">Webhook Events</a> reference to see available event types.</p>
+     * <p>To subscribe to events scoped to a specific resource (e.g., a single extractor or workflow), use <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/webhook/create-webhook-subscription">Create Webhook Subscription</a> after creating the endpoint.</p>
      */
     public CompletableFuture<WebhookEndpointCreate> create(WebhookEndpointsCreateRequest request) {
         return this.rawClient.create(request).thenApply(response -> response.body());
@@ -73,8 +73,8 @@ public class AsyncWebhookEndpointsClient {
 
     /**
      * Create a new webhook endpoint. The response includes a <code>signingSecret</code> that is only returned once — store it securely for verifying webhook signatures.
-     * <p>The <code>enabledEvents</code> array specifies which global event types this endpoint should receive. Use the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/webhook-events">Webhook Events</a> reference to see available event types.</p>
-     * <p>To subscribe to events scoped to a specific resource (e.g., a single extractor or workflow), use <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/webhook/create-webhook-subscription">Create Webhook Subscription</a> after creating the endpoint.</p>
+     * <p>The <code>enabledEvents</code> array specifies which global event types this endpoint should receive. Use the <a href="https://docs.extend.ai/2026-02-09/api-reference/webhook-events">Webhook Events</a> reference to see available event types.</p>
+     * <p>To subscribe to events scoped to a specific resource (e.g., a single extractor or workflow), use <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/webhook/create-webhook-subscription">Create Webhook Subscription</a> after creating the endpoint.</p>
      */
     public CompletableFuture<WebhookEndpointCreate> create(
             WebhookEndpointsCreateRequest request, RequestOptions requestOptions) {

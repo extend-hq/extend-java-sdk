@@ -47,7 +47,7 @@ public final class WorkflowsCreateRequest {
     /**
      * @return The steps that define the workflow's processing graph. Each step has a <code>type</code>, a unique <code>name</code>, and optional <code>next</code> entries that define routing to downstream steps.
      * <p>When omitted, the workflow is created with default steps (<code>TRIGGER</code> → <code>PARSE</code>). The default steps may change in the future.</p>
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
      */
     @JsonProperty("steps")
     public Optional<List<WorkflowStepDefinition>> getSteps() {
@@ -98,7 +98,7 @@ public final class WorkflowsCreateRequest {
         /**
          * <p>The steps that define the workflow's processing graph. Each step has a <code>type</code>, a unique <code>name</code>, and optional <code>next</code> entries that define routing to downstream steps.</p>
          * <p>When omitted, the workflow is created with default steps (<code>TRIGGER</code> → <code>PARSE</code>). The default steps may change in the future.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
          */
         _FinalStage steps(Optional<List<WorkflowStepDefinition>> steps);
 
@@ -138,7 +138,7 @@ public final class WorkflowsCreateRequest {
         /**
          * <p>The steps that define the workflow's processing graph. Each step has a <code>type</code>, a unique <code>name</code>, and optional <code>next</code> entries that define routing to downstream steps.</p>
          * <p>When omitted, the workflow is created with default steps (<code>TRIGGER</code> → <code>PARSE</code>). The default steps may change in the future.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -150,7 +150,7 @@ public final class WorkflowsCreateRequest {
         /**
          * <p>The steps that define the workflow's processing graph. Each step has a <code>type</code>, a unique <code>name</code>, and optional <code>next</code> entries that define routing to downstream steps.</p>
          * <p>When omitted, the workflow is created with default steps (<code>TRIGGER</code> → <code>PARSE</code>). The default steps may change in the future.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "steps", nulls = Nulls.SKIP)

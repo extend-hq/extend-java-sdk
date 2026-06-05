@@ -53,7 +53,7 @@ public final class ConditionalStepDefinition {
 
     /**
      * @return Each entry should include a <code>conditionId</code> matching a <code>config.conditions[].id</code> value.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-step">Conditional step docs</a>.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional">Conditional step docs</a>.</p>
      */
     @JsonProperty("next")
     public Optional<List<ConditionalNextEntry>> getNext() {
@@ -104,7 +104,7 @@ public final class ConditionalStepDefinition {
 
         /**
          * <p>Each entry should include a <code>conditionId</code> matching a <code>config.conditions[].id</code> value.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-step">Conditional step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional">Conditional step docs</a>.</p>
          */
         _FinalStage next(Optional<List<ConditionalNextEntry>> next);
 
@@ -148,7 +148,7 @@ public final class ConditionalStepDefinition {
 
         /**
          * <p>Each entry should include a <code>conditionId</code> matching a <code>config.conditions[].id</code> value.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-step">Conditional step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional">Conditional step docs</a>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -159,7 +159,7 @@ public final class ConditionalStepDefinition {
 
         /**
          * <p>Each entry should include a <code>conditionId</code> matching a <code>config.conditions[].id</code> value.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-step">Conditional step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional">Conditional step docs</a>.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "next", nulls = Nulls.SKIP)

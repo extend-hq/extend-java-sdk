@@ -44,7 +44,7 @@ public final class RuleValidationStepDefinitionConfigRulesItem {
 
     /**
      * @return Boolean formula used to validate the workflow data for this rule.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#rule-validation-step">Rule Validation step docs</a> and <a href="https://docs.extend.ai/2026-02-09/product/workflows/formulas">Formulas</a>.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#rule-validation">Rule Validation step docs</a> and <a href="https://docs.extend.ai/2026-02-09/workflows/formulas">Formulas</a>.</p>
      */
     @JsonProperty("formula")
     public String getFormula() {
@@ -95,7 +95,7 @@ public final class RuleValidationStepDefinitionConfigRulesItem {
     public interface FormulaStage {
         /**
          * <p>Boolean formula used to validate the workflow data for this rule.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#rule-validation-step">Rule Validation step docs</a> and <a href="https://docs.extend.ai/2026-02-09/product/workflows/formulas">Formulas</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#rule-validation">Rule Validation step docs</a> and <a href="https://docs.extend.ai/2026-02-09/workflows/formulas">Formulas</a>.</p>
          */
         _FinalStage formula(@NotNull String formula);
     }
@@ -138,9 +138,9 @@ public final class RuleValidationStepDefinitionConfigRulesItem {
 
         /**
          * <p>Boolean formula used to validate the workflow data for this rule.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#rule-validation-step">Rule Validation step docs</a> and <a href="https://docs.extend.ai/2026-02-09/product/workflows/formulas">Formulas</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#rule-validation">Rule Validation step docs</a> and <a href="https://docs.extend.ai/2026-02-09/workflows/formulas">Formulas</a>.</p>
          * <p>Boolean formula used to validate the workflow data for this rule.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#rule-validation-step">Rule Validation step docs</a> and <a href="https://docs.extend.ai/2026-02-09/product/workflows/formulas">Formulas</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#rule-validation">Rule Validation step docs</a> and <a href="https://docs.extend.ai/2026-02-09/workflows/formulas">Formulas</a>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override

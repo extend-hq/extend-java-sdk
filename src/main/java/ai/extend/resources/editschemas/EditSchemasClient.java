@@ -29,7 +29,7 @@ public class EditSchemasClient {
      * Detect fields in a PDF form and synchronously return an edit schema payload.
      * <p>Use this endpoint when you want Extend to bootstrap an <code>EditRootJSON</code> schema from an existing form, optionally mapping an existing schema onto the detected fields.</p>
      * <p>This endpoint returns the generated schema directly. There are no schema generation run resources to poll or delete.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/editing/generate-edit-schema">Generate Edit Schema guide</a> and the <a href="https://docs.extend.ai/2026-02-09/product/editing/edit">Edit File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/generate-edit-schema">Generate Edit Schema guide</a> and the <a href="https://docs.extend.ai/2026-02-09/editing/edit">Edit File guide</a>.</p>
      */
     public EditSchemaGenerationResponse generate(EditSchemasGenerateRequest request) {
         return this.rawClient.generate(request).body();
@@ -39,7 +39,7 @@ public class EditSchemasClient {
      * Detect fields in a PDF form and synchronously return an edit schema payload.
      * <p>Use this endpoint when you want Extend to bootstrap an <code>EditRootJSON</code> schema from an existing form, optionally mapping an existing schema onto the detected fields.</p>
      * <p>This endpoint returns the generated schema directly. There are no schema generation run resources to poll or delete.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/product/editing/generate-edit-schema">Generate Edit Schema guide</a> and the <a href="https://docs.extend.ai/2026-02-09/product/editing/edit">Edit File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/generate-edit-schema">Generate Edit Schema guide</a> and the <a href="https://docs.extend.ai/2026-02-09/editing/edit">Edit File guide</a>.</p>
      */
     public EditSchemaGenerationResponse generate(EditSchemasGenerateRequest request, RequestOptions requestOptions) {
         return this.rawClient.generate(request, requestOptions).body();

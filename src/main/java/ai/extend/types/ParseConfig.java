@@ -63,7 +63,7 @@ public final class ParseConfig {
      * <li>Prefer <code>markdown</code> for most documents, multi-column reading order, and retrieval use cases</li>
      * <li>Prefer <code>spatial</code> for messy/scanned/handwritten or skewed documents, when you need near 1:1 layout fidelity, or for BOL-like logistics docs</li>
      * </ul>
-     * <p>See “Markdown vs Spatial” in the <a href="https://docs.extend.ai/2026-02-09/product/parsing/configuration-options#target-format">Parse guide</a> for details.</p>
+     * <p>See “Markdown vs Spatial” in the <a href="https://docs.extend.ai/2026-02-09/parsing/configuration#target-format">Parse guide</a> for details.</p>
      */
     @JsonProperty("target")
     public Optional<ParseConfigTarget> getTarget() {
@@ -82,7 +82,7 @@ public final class ParseConfig {
      * @return The parsing engine to use. Supported values:
      * <ul>
      * <li><code>parse_performance</code>: Full-featured parsing engine with highest accuracy (default)</li>
-     * <li><code>parse_light</code>: Lightweight parsing engine optimized for speed. This does not have robust layout support and does not support markdown layout target.</li>
+     * <li><code>parse_light</code>: Lightweight parsing engine optimized for high-volume, cost-sensitive ingestion. Uses the new layout model with full layout support and the markdown target at lower cost and latency, but performs worse than <code>parse_performance</code> on lower-quality scans, harder handwriting, larger tables, non-Latin-based languages, and dense checkbox regions.</li>
      * </ul>
      */
     @JsonProperty("engine")
@@ -192,7 +192,7 @@ public final class ParseConfig {
          * <li>Prefer <code>markdown</code> for most documents, multi-column reading order, and retrieval use cases</li>
          * <li>Prefer <code>spatial</code> for messy/scanned/handwritten or skewed documents, when you need near 1:1 layout fidelity, or for BOL-like logistics docs</li>
          * </ul>
-         * <p>See “Markdown vs Spatial” in the <a href="https://docs.extend.ai/2026-02-09/product/parsing/configuration-options#target-format">Parse guide</a> for details.</p>
+         * <p>See “Markdown vs Spatial” in the <a href="https://docs.extend.ai/2026-02-09/parsing/configuration#target-format">Parse guide</a> for details.</p>
          */
         @JsonSetter(value = "target", nulls = Nulls.SKIP)
         public Builder target(Optional<ParseConfigTarget> target) {
@@ -223,7 +223,7 @@ public final class ParseConfig {
          * <p>The parsing engine to use. Supported values:</p>
          * <ul>
          * <li><code>parse_performance</code>: Full-featured parsing engine with highest accuracy (default)</li>
-         * <li><code>parse_light</code>: Lightweight parsing engine optimized for speed. This does not have robust layout support and does not support markdown layout target.</li>
+         * <li><code>parse_light</code>: Lightweight parsing engine optimized for high-volume, cost-sensitive ingestion. Uses the new layout model with full layout support and the markdown target at lower cost and latency, but performs worse than <code>parse_performance</code> on lower-quality scans, harder handwriting, larger tables, non-Latin-based languages, and dense checkbox regions.</li>
          * </ul>
          */
         @JsonSetter(value = "engine", nulls = Nulls.SKIP)

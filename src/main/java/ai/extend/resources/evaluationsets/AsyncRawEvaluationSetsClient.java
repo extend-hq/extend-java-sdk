@@ -192,16 +192,16 @@ public class AsyncRawEvaluationSetsClient {
     }
 
     /**
-     * Evaluation sets are collections of files and expected outputs that are used to evaluate the performance of a given extractor, classifier, or splitter. This endpoint will create a new evaluation set, which items can be added to using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/create-evaluation-set-item">Create Evaluation Set Item</a> endpoint.
-     * <p>Note: It is not necessary to create an evaluation set via API. You can also create an evaluation set via the Extend dashboard and take the ID from there. To learn more about how to create evaluation sets, see the <a href="https://docs.extend.ai/2026-02-09/product/evaluation/overview">Evaluation Sets</a> product page.</p>
+     * Evaluation sets are collections of files and expected outputs that are used to evaluate the performance of a given extractor, classifier, or splitter. This endpoint will create a new evaluation set, which items can be added to using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/create-evaluation-set-item">Create Evaluation Set Item</a> endpoint.
+     * <p>Note: It is not necessary to create an evaluation set via API. You can also create an evaluation set via the Extend dashboard and take the ID from there. To learn more about how to create evaluation sets, see the <a href="https://docs.extend.ai/2026-02-09/evaluation/overview">Evaluation Sets</a> product page.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> create(EvaluationSetsCreateRequest request) {
         return create(request, null);
     }
 
     /**
-     * Evaluation sets are collections of files and expected outputs that are used to evaluate the performance of a given extractor, classifier, or splitter. This endpoint will create a new evaluation set, which items can be added to using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/create-evaluation-set-item">Create Evaluation Set Item</a> endpoint.
-     * <p>Note: It is not necessary to create an evaluation set via API. You can also create an evaluation set via the Extend dashboard and take the ID from there. To learn more about how to create evaluation sets, see the <a href="https://docs.extend.ai/2026-02-09/product/evaluation/overview">Evaluation Sets</a> product page.</p>
+     * Evaluation sets are collections of files and expected outputs that are used to evaluate the performance of a given extractor, classifier, or splitter. This endpoint will create a new evaluation set, which items can be added to using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/create-evaluation-set-item">Create Evaluation Set Item</a> endpoint.
+     * <p>Note: It is not necessary to create an evaluation set via API. You can also create an evaluation set via the Extend dashboard and take the ID from there. To learn more about how to create evaluation sets, see the <a href="https://docs.extend.ai/2026-02-09/evaluation/overview">Evaluation Sets</a> product page.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> create(
             EvaluationSetsCreateRequest request, RequestOptions requestOptions) {
@@ -307,14 +307,14 @@ public class AsyncRawEvaluationSetsClient {
     }
 
     /**
-     * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
+     * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
      */
     public CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> retrieve(String id) {
         return retrieve(id, EvaluationSetsRetrieveRequest.builder().build());
     }
 
     /**
-     * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
+     * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
      */
     public CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> retrieve(
             String id, RequestOptions requestOptions) {
@@ -322,7 +322,7 @@ public class AsyncRawEvaluationSetsClient {
     }
 
     /**
-     * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
+     * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
      */
     public CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> retrieve(
             String id, EvaluationSetsRetrieveRequest request) {
@@ -330,7 +330,7 @@ public class AsyncRawEvaluationSetsClient {
     }
 
     /**
-     * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/evaluation/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
+     * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
      */
     public CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> retrieve(
             String id, EvaluationSetsRetrieveRequest request, RequestOptions requestOptions) {

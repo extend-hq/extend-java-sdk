@@ -56,7 +56,7 @@ public final class RuleValidationStepDefinition {
 
     /**
      * @return Can only be set when <code>config</code> is present. Each entry must include a <code>result</code> of <code>&quot;pass&quot;</code> or <code>&quot;fail&quot;</code> to route based on whether all validation rules passed.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#rule-validation-step">Rule Validation step docs</a>.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#rule-validation">Rule Validation step docs</a>.</p>
      */
     @JsonProperty("next")
     public Optional<List<RuleValidationNextEntry>> getNext() {
@@ -110,7 +110,7 @@ public final class RuleValidationStepDefinition {
 
         /**
          * <p>Can only be set when <code>config</code> is present. Each entry must include a <code>result</code> of <code>&quot;pass&quot;</code> or <code>&quot;fail&quot;</code> to route based on whether all validation rules passed.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#rule-validation-step">Rule Validation step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#rule-validation">Rule Validation step docs</a>.</p>
          */
         _FinalStage next(Optional<List<RuleValidationNextEntry>> next);
 
@@ -147,7 +147,7 @@ public final class RuleValidationStepDefinition {
 
         /**
          * <p>Can only be set when <code>config</code> is present. Each entry must include a <code>result</code> of <code>&quot;pass&quot;</code> or <code>&quot;fail&quot;</code> to route based on whether all validation rules passed.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#rule-validation-step">Rule Validation step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#rule-validation">Rule Validation step docs</a>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -158,7 +158,7 @@ public final class RuleValidationStepDefinition {
 
         /**
          * <p>Can only be set when <code>config</code> is present. Each entry must include a <code>result</code> of <code>&quot;pass&quot;</code> or <code>&quot;fail&quot;</code> to route based on whether all validation rules passed.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#rule-validation-step">Rule Validation step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#rule-validation">Rule Validation step docs</a>.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "next", nulls = Nulls.SKIP)

@@ -33,7 +33,7 @@ public final class ConditionalExtractStepDefinitionConfig {
 
     /**
      * @return Formula-based extractor rules for this step. Each rule pairs a formula with an extractor reference. The last rule must have <code>formula: &quot;TRUE&quot;</code> as a default catch-all.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-extract-step">Conditional Extract step docs</a>.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional-extract">Conditional Extract step docs</a>.</p>
      */
     @JsonProperty("rules")
     public List<ConditionalExtractStepDefinitionConfigRulesItem> getRules() {
@@ -86,7 +86,7 @@ public final class ConditionalExtractStepDefinitionConfig {
 
         /**
          * <p>Formula-based extractor rules for this step. Each rule pairs a formula with an extractor reference. The last rule must have <code>formula: &quot;TRUE&quot;</code> as a default catch-all.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-extract-step">Conditional Extract step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional-extract">Conditional Extract step docs</a>.</p>
          */
         @JsonSetter(value = "rules", nulls = Nulls.SKIP)
         public Builder rules(List<ConditionalExtractStepDefinitionConfigRulesItem> rules) {

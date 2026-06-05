@@ -85,7 +85,7 @@ public class AsyncParseRunsClient {
 
     /**
      * Retrieve the status and results of a parse run.
-     * <p>Use this endpoint to get results for a parse run that has already completed, or to check on the status of a parse run initiated by the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/parse/create-parse-run">Create Parse Run</a> endpoint.</p>
+     * <p>Use this endpoint to get results for a parse run that has already completed, or to check on the status of a parse run initiated by the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/parse/create-parse-run">Create Parse Run</a> endpoint.</p>
      */
     public CompletableFuture<ParseRun> retrieve(String id) {
         return this.rawClient.retrieve(id).thenApply(response -> response.body());
@@ -93,7 +93,7 @@ public class AsyncParseRunsClient {
 
     /**
      * Retrieve the status and results of a parse run.
-     * <p>Use this endpoint to get results for a parse run that has already completed, or to check on the status of a parse run initiated by the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/parse/create-parse-run">Create Parse Run</a> endpoint.</p>
+     * <p>Use this endpoint to get results for a parse run that has already completed, or to check on the status of a parse run initiated by the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/parse/create-parse-run">Create Parse Run</a> endpoint.</p>
      */
     public CompletableFuture<ParseRun> retrieve(String id, RequestOptions requestOptions) {
         return this.rawClient.retrieve(id, requestOptions).thenApply(response -> response.body());
@@ -101,7 +101,7 @@ public class AsyncParseRunsClient {
 
     /**
      * Retrieve the status and results of a parse run.
-     * <p>Use this endpoint to get results for a parse run that has already completed, or to check on the status of a parse run initiated by the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/parse/create-parse-run">Create Parse Run</a> endpoint.</p>
+     * <p>Use this endpoint to get results for a parse run that has already completed, or to check on the status of a parse run initiated by the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/parse/create-parse-run">Create Parse Run</a> endpoint.</p>
      */
     public CompletableFuture<ParseRun> retrieve(String id, ParseRunsRetrieveRequest request) {
         return this.rawClient.retrieve(id, request).thenApply(response -> response.body());
@@ -109,7 +109,7 @@ public class AsyncParseRunsClient {
 
     /**
      * Retrieve the status and results of a parse run.
-     * <p>Use this endpoint to get results for a parse run that has already completed, or to check on the status of a parse run initiated by the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/parse/create-parse-run">Create Parse Run</a> endpoint.</p>
+     * <p>Use this endpoint to get results for a parse run that has already completed, or to check on the status of a parse run initiated by the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/parse/create-parse-run">Create Parse Run</a> endpoint.</p>
      */
     public CompletableFuture<ParseRun> retrieve(
             String id, ParseRunsRetrieveRequest request, RequestOptions requestOptions) {
@@ -151,7 +151,7 @@ public class AsyncParseRunsClient {
 
     /**
      * Submit up to <strong>1,000 files</strong> for parsing in a single request. Each file is processed as an independent parse run using the same configuration.
-     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/parse/create-parse-run">Parse File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
+     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/parse/create-parse-run">Parse File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
      * <p><strong>Monitoring results:</strong></p>
      * <ul>
      * <li><strong>Webhooks (recommended):</strong> Subscribe to <code>batch_parse_run.processed</code> and <code>batch_parse_run.failed</code> events. The webhook payload indicates the batch has finished — fetch individual run results using <code>GET /parse_runs?batchId={id}</code>.</li>
@@ -169,7 +169,7 @@ public class AsyncParseRunsClient {
 
     /**
      * Submit up to <strong>1,000 files</strong> for parsing in a single request. Each file is processed as an independent parse run using the same configuration.
-     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/parse/create-parse-run">Parse File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
+     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/parse/create-parse-run">Parse File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
      * <p><strong>Monitoring results:</strong></p>
      * <ul>
      * <li><strong>Webhooks (recommended):</strong> Subscribe to <code>batch_parse_run.processed</code> and <code>batch_parse_run.failed</code> events. The webhook payload indicates the batch has finished — fetch individual run results using <code>GET /parse_runs?batchId={id}</code>.</li>

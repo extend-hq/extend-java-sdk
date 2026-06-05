@@ -25,6 +25,8 @@ import java.util.Optional;
 public final class BlockMetadata {
     private final Optional<BlockMetadataPage> page;
 
+    private final Optional<BlockMetadataSheet> sheet;
+
     private final Optional<BlockMetadataTextDirection> textDirection;
 
     private final Optional<Double> minOcrConfidence;
@@ -35,11 +37,13 @@ public final class BlockMetadata {
 
     private BlockMetadata(
             Optional<BlockMetadataPage> page,
+            Optional<BlockMetadataSheet> sheet,
             Optional<BlockMetadataTextDirection> textDirection,
             Optional<Double> minOcrConfidence,
             Optional<Double> avgOcrConfidence,
             Map<String, Object> additionalProperties) {
         this.page = page;
+        this.sheet = sheet;
         this.textDirection = textDirection;
         this.minOcrConfidence = minOcrConfidence;
         this.avgOcrConfidence = avgOcrConfidence;
@@ -52,6 +56,14 @@ public final class BlockMetadata {
     @JsonProperty("page")
     public Optional<BlockMetadataPage> getPage() {
         return page;
+    }
+
+    /**
+     * @return Spreadsheet sheet metadata. Present for blocks parsed from spreadsheet files, such as Excel workbooks.
+     */
+    @JsonProperty("sheet")
+    public Optional<BlockMetadataSheet> getSheet() {
+        return sheet;
     }
 
     /**
@@ -109,6 +121,7 @@ public final class BlockMetadata {
 
     private boolean equalTo(BlockMetadata other) {
         return page.equals(other.page)
+                && sheet.equals(other.sheet)
                 && textDirection.equals(other.textDirection)
                 && minOcrConfidence.equals(other.minOcrConfidence)
                 && avgOcrConfidence.equals(other.avgOcrConfidence);
@@ -116,7 +129,7 @@ public final class BlockMetadata {
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.page, this.textDirection, this.minOcrConfidence, this.avgOcrConfidence);
+        return Objects.hash(this.page, this.sheet, this.textDirection, this.minOcrConfidence, this.avgOcrConfidence);
     }
 
     @java.lang.Override
@@ -132,6 +145,8 @@ public final class BlockMetadata {
     public static final class Builder {
         private Optional<BlockMetadataPage> page = Optional.empty();
 
+        private Optional<BlockMetadataSheet> sheet = Optional.empty();
+
         private Optional<BlockMetadataTextDirection> textDirection = Optional.empty();
 
         private Optional<Double> minOcrConfidence = Optional.empty();
@@ -145,6 +160,7 @@ public final class BlockMetadata {
 
         public Builder from(BlockMetadata other) {
             page(other.getPage());
+            sheet(other.getSheet());
             textDirection(other.getTextDirection());
             minOcrConfidence(other.getMinOcrConfidence());
             avgOcrConfidence(other.getAvgOcrConfidence());
@@ -162,6 +178,20 @@ public final class BlockMetadata {
 
         public Builder page(BlockMetadataPage page) {
             this.page = Optional.ofNullable(page);
+            return this;
+        }
+
+        /**
+         * <p>Spreadsheet sheet metadata. Present for blocks parsed from spreadsheet files, such as Excel workbooks.</p>
+         */
+        @JsonSetter(value = "sheet", nulls = Nulls.SKIP)
+        public Builder sheet(Optional<BlockMetadataSheet> sheet) {
+            this.sheet = sheet;
+            return this;
+        }
+
+        public Builder sheet(BlockMetadataSheet sheet) {
+            this.sheet = Optional.ofNullable(sheet);
             return this;
         }
 
@@ -230,7 +260,8 @@ public final class BlockMetadata {
         }
 
         public BlockMetadata build() {
-            return new BlockMetadata(page, textDirection, minOcrConfidence, avgOcrConfidence, additionalProperties);
+            return new BlockMetadata(
+                    page, sheet, textDirection, minOcrConfidence, avgOcrConfidence, additionalProperties);
         }
     }
 }
