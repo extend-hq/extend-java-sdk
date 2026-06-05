@@ -85,7 +85,7 @@ public class AsyncClassifyRunsClient {
 
     /**
      * Retrieve details about a specific classify run, including its status and outputs.
-     * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
     public CompletableFuture<ClassifyRun> retrieve(String id) {
         return this.rawClient.retrieve(id).thenApply(response -> response.body());
@@ -93,7 +93,7 @@ public class AsyncClassifyRunsClient {
 
     /**
      * Retrieve details about a specific classify run, including its status and outputs.
-     * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
     public CompletableFuture<ClassifyRun> retrieve(String id, RequestOptions requestOptions) {
         return this.rawClient.retrieve(id, requestOptions).thenApply(response -> response.body());
@@ -101,7 +101,7 @@ public class AsyncClassifyRunsClient {
 
     /**
      * Retrieve details about a specific classify run, including its status and outputs.
-     * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
     public CompletableFuture<ClassifyRun> retrieve(String id, ClassifyRunsRetrieveRequest request) {
         return this.rawClient.retrieve(id, request).thenApply(response -> response.body());
@@ -109,7 +109,7 @@ public class AsyncClassifyRunsClient {
 
     /**
      * Retrieve details about a specific classify run, including its status and outputs.
-     * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
     public CompletableFuture<ClassifyRun> retrieve(
             String id, ClassifyRunsRetrieveRequest request, RequestOptions requestOptions) {
@@ -184,7 +184,7 @@ public class AsyncClassifyRunsClient {
 
     /**
      * Submit up to <strong>1,000 files</strong> for classification in a single request. Each file is processed as an independent classify run using the same classifier and configuration.
-     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/create-classify-run">Classify File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
+     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/classify/create-classify-run">Classify File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
      * <p><strong>Monitoring results:</strong></p>
      * <ul>
      * <li><strong>Webhooks (recommended):</strong> Subscribe to <code>batch_processor_run.processed</code> and <code>batch_processor_run.failed</code> events. The webhook payload indicates the batch has finished — fetch individual run results using <code>GET /classify_runs?batchId={id}</code>.</li>
@@ -203,7 +203,7 @@ public class AsyncClassifyRunsClient {
 
     /**
      * Submit up to <strong>1,000 files</strong> for classification in a single request. Each file is processed as an independent classify run using the same classifier and configuration.
-     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/classify/create-classify-run">Classify File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
+     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/classify/create-classify-run">Classify File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
      * <p><strong>Monitoring results:</strong></p>
      * <ul>
      * <li><strong>Webhooks (recommended):</strong> Subscribe to <code>batch_processor_run.processed</code> and <code>batch_processor_run.failed</code> events. The webhook payload indicates the batch has finished — fetch individual run results using <code>GET /classify_runs?batchId={id}</code>.</li>

@@ -33,7 +33,7 @@ public final class ConditionalStepDefinitionConfig {
 
     /**
      * @return Ordered conditional branches for this step. Use <code>IF</code> for the first branch, <code>ELSE_IF</code> for additional branches, and <code>ELSE</code> for the fallback branch.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-step">Conditional step docs</a>.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional">Conditional step docs</a>.</p>
      */
     @JsonProperty("conditions")
     public List<ConditionalStepDefinitionConfigConditionsItem> getConditions() {
@@ -85,7 +85,7 @@ public final class ConditionalStepDefinitionConfig {
 
         /**
          * <p>Ordered conditional branches for this step. Use <code>IF</code> for the first branch, <code>ELSE_IF</code> for additional branches, and <code>ELSE</code> for the fallback branch.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-step">Conditional step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional">Conditional step docs</a>.</p>
          */
         @JsonSetter(value = "conditions", nulls = Nulls.SKIP)
         public Builder conditions(List<ConditionalStepDefinitionConfigConditionsItem> conditions) {

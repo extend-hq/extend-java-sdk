@@ -48,7 +48,7 @@ public final class WorkflowVersionsCreateRequest {
     /**
      * @return Optional step definitions. When provided, these steps are deployed directly without modifying the draft. When omitted, the current draft is deployed.
      * <p>All configurable steps (<code>EXTRACT</code>, <code>CLASSIFY</code>, <code>SPLIT</code>, <code>CONDITIONAL_EXTRACT</code>, <code>RULE_VALIDATION</code>, <code>EXTERNAL_DATA_VALIDATION</code>) must include <code>config</code> when deploying. Unconfigured steps are rejected with a 400.</p>
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
      */
     @JsonProperty("steps")
     public Optional<List<WorkflowStepDefinition>> getSteps() {
@@ -118,7 +118,7 @@ public final class WorkflowVersionsCreateRequest {
         /**
          * <p>Optional step definitions. When provided, these steps are deployed directly without modifying the draft. When omitted, the current draft is deployed.</p>
          * <p>All configurable steps (<code>EXTRACT</code>, <code>CLASSIFY</code>, <code>SPLIT</code>, <code>CONDITIONAL_EXTRACT</code>, <code>RULE_VALIDATION</code>, <code>EXTERNAL_DATA_VALIDATION</code>) must include <code>config</code> when deploying. Unconfigured steps are rejected with a 400.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
          */
         @JsonSetter(value = "steps", nulls = Nulls.SKIP)
         public Builder steps(Optional<List<WorkflowStepDefinition>> steps) {

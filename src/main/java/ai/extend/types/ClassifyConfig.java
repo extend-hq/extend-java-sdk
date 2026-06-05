@@ -59,7 +59,7 @@ public final class ClassifyConfig {
     }
 
     /**
-     * @return The version of the <code>&quot;classification_performance&quot;</code> or <code>&quot;classification_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/changelog/classification/classification-performance">Classification Changelog</a> for more details.
+     * @return The version of the <code>&quot;classification_performance&quot;</code> or <code>&quot;classification_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/model-versioning/classification/classification-performance">Classification Changelog</a> for more details.
      */
     @JsonProperty("baseVersion")
     public Optional<String> getBaseVersion() {
@@ -176,7 +176,7 @@ public final class ClassifyConfig {
         }
 
         /**
-         * <p>The version of the <code>&quot;classification_performance&quot;</code> or <code>&quot;classification_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/changelog/classification/classification-performance">Classification Changelog</a> for more details.</p>
+         * <p>The version of the <code>&quot;classification_performance&quot;</code> or <code>&quot;classification_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/model-versioning/classification/classification-performance">Classification Changelog</a> for more details.</p>
          */
         @JsonSetter(value = "baseVersion", nulls = Nulls.SKIP)
         public Builder baseVersion(Optional<String> baseVersion) {

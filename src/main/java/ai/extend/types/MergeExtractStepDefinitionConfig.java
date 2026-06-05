@@ -32,7 +32,7 @@ public final class MergeExtractStepDefinitionConfig {
 
     /**
      * @return How to order fields when merging. Defaults to confidence.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#merge-extract-step">Merge Extract step docs</a>.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#merge-extract">Merge Extract step docs</a>.</p>
      */
     @JsonProperty("mergeOrder")
     public Optional<MergeExtractStepDefinitionConfigMergeOrder> getMergeOrder() {
@@ -84,7 +84,7 @@ public final class MergeExtractStepDefinitionConfig {
 
         /**
          * <p>How to order fields when merging. Defaults to confidence.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#merge-extract-step">Merge Extract step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#merge-extract">Merge Extract step docs</a>.</p>
          */
         @JsonSetter(value = "mergeOrder", nulls = Nulls.SKIP)
         public Builder mergeOrder(Optional<MergeExtractStepDefinitionConfigMergeOrder> mergeOrder) {

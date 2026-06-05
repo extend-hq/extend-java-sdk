@@ -68,7 +68,7 @@ public final class WorkflowRunsListRequest {
     }
 
     /**
-     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/api-reference/authentication">Authentication</a> for details on API key scopes.
      */
     @JsonIgnore
     public Optional<String> getExtendWorkspaceId() {
@@ -90,7 +90,7 @@ public final class WorkflowRunsListRequest {
     }
 
     /**
-     * @return Filters workflow runs by the batch ID. This is useful for fetching all runs for a given batch created via the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/batch-create-workflow-runs">Batch Run Workflow</a> endpoint.
+     * @return Filters workflow runs by the batch ID. This is useful for fetching all runs for a given batch created via the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/workflow/batch-create-workflow-runs">Batch Run Workflow</a> endpoint.
      * <p>Example: <code>&quot;batch_7Ws31-F5&quot;</code></p>
      */
     @JsonProperty("batchId")
@@ -212,7 +212,7 @@ public final class WorkflowRunsListRequest {
         }
 
         /**
-         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/api-reference/authentication">Authentication</a> for details on API key scopes.</p>
          */
         public Builder extendWorkspaceId(Optional<String> extendWorkspaceId) {
             this.extendWorkspaceId = extendWorkspaceId;
@@ -251,7 +251,7 @@ public final class WorkflowRunsListRequest {
         }
 
         /**
-         * <p>Filters workflow runs by the batch ID. This is useful for fetching all runs for a given batch created via the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/workflow/batch-create-workflow-runs">Batch Run Workflow</a> endpoint.</p>
+         * <p>Filters workflow runs by the batch ID. This is useful for fetching all runs for a given batch created via the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/workflow/batch-create-workflow-runs">Batch Run Workflow</a> endpoint.</p>
          * <p>Example: <code>&quot;batch_7Ws31-F5&quot;</code></p>
          */
         @JsonSetter(value = "batchId", nulls = Nulls.SKIP)

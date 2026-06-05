@@ -43,7 +43,7 @@ public final class ClassifyRunSummary {
 
     private final boolean edited;
 
-    private final FileSummary file;
+    private final Optional<FileSummary> file;
 
     private final Optional<String> parseRunId;
 
@@ -67,7 +67,7 @@ public final class ClassifyRunSummary {
             Optional<Map<String, Object>> metadata,
             boolean reviewed,
             boolean edited,
-            FileSummary file,
+            Optional<FileSummary> file,
             Optional<String> parseRunId,
             String dashboardUrl,
             Optional<RunUsageSummary> usage,
@@ -190,10 +190,13 @@ public final class ClassifyRunSummary {
     }
 
     /**
-     * @return The file that was processed.
+     * @return The file that was processed. <code>null</code> when the file could not be accessed or processed (for example a run that failed during file ingestion, or a multi-file batch run).
      */
-    @JsonProperty("file")
-    public FileSummary getFile() {
+    @JsonIgnore
+    public Optional<FileSummary> getFile() {
+        if (file == null) {
+            return Optional.empty();
+        }
         return file;
     }
 
@@ -267,6 +270,12 @@ public final class ClassifyRunSummary {
     @JsonProperty("metadata")
     private Optional<Map<String, Object>> _getMetadata() {
         return metadata;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("file")
+    private Optional<FileSummary> _getFile() {
+        return file;
     }
 
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
@@ -363,14 +372,7 @@ public final class ClassifyRunSummary {
         /**
          * <p>Indicates whether the run results have been edited during review.</p>
          */
-        FileStage edited(boolean edited);
-    }
-
-    public interface FileStage {
-        /**
-         * <p>The file that was processed.</p>
-         */
-        DashboardUrlStage file(@NotNull FileSummary file);
+        DashboardUrlStage edited(boolean edited);
     }
 
     public interface DashboardUrlStage {
@@ -442,6 +444,15 @@ public final class ClassifyRunSummary {
         _FinalStage metadata(Nullable<Map<String, Object>> metadata);
 
         /**
+         * <p>The file that was processed. <code>null</code> when the file could not be accessed or processed (for example a run that failed during file ingestion, or a multi-file batch run).</p>
+         */
+        _FinalStage file(Optional<FileSummary> file);
+
+        _FinalStage file(FileSummary file);
+
+        _FinalStage file(Nullable<FileSummary> file);
+
+        /**
          * <p>The ID of the parse run that was used for this classify run.</p>
          * <p><strong>Availability:</strong> Present when a parse run was created.</p>
          */
@@ -468,7 +479,6 @@ public final class ClassifyRunSummary {
                     StatusStage,
                     ReviewedStage,
                     EditedStage,
-                    FileStage,
                     DashboardUrlStage,
                     CreatedAtStage,
                     UpdatedAtStage,
@@ -481,8 +491,6 @@ public final class ClassifyRunSummary {
 
         private boolean edited;
 
-        private FileSummary file;
-
         private String dashboardUrl;
 
         private OffsetDateTime createdAt;
@@ -492,6 +500,8 @@ public final class ClassifyRunSummary {
         private Optional<RunUsageSummary> usage = Optional.empty();
 
         private Optional<String> parseRunId = Optional.empty();
+
+        private Optional<FileSummary> file = Optional.empty();
 
         private Optional<Map<String, Object>> metadata = Optional.empty();
 
@@ -566,20 +576,8 @@ public final class ClassifyRunSummary {
          */
         @java.lang.Override
         @JsonSetter("edited")
-        public FileStage edited(boolean edited) {
+        public DashboardUrlStage edited(boolean edited) {
             this.edited = edited;
-            return this;
-        }
-
-        /**
-         * <p>The file that was processed.</p>
-         * <p>The file that was processed.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("file")
-        public DashboardUrlStage file(@NotNull FileSummary file) {
-            this.file = Objects.requireNonNull(file, "file must not be null");
             return this;
         }
 
@@ -684,6 +682,42 @@ public final class ClassifyRunSummary {
         @JsonSetter(value = "parseRunId", nulls = Nulls.SKIP)
         public _FinalStage parseRunId(Optional<String> parseRunId) {
             this.parseRunId = parseRunId;
+            return this;
+        }
+
+        /**
+         * <p>The file that was processed. <code>null</code> when the file could not be accessed or processed (for example a run that failed during file ingestion, or a multi-file batch run).</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage file(Nullable<FileSummary> file) {
+            if (file.isNull()) {
+                this.file = null;
+            } else if (file.isEmpty()) {
+                this.file = Optional.empty();
+            } else {
+                this.file = Optional.of(file.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>The file that was processed. <code>null</code> when the file could not be accessed or processed (for example a run that failed during file ingestion, or a multi-file batch run).</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage file(FileSummary file) {
+            this.file = Optional.ofNullable(file);
+            return this;
+        }
+
+        /**
+         * <p>The file that was processed. <code>null</code> when the file could not be accessed or processed (for example a run that failed during file ingestion, or a multi-file batch run).</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "file", nulls = Nulls.SKIP)
+        public _FinalStage file(Optional<FileSummary> file) {
+            this.file = file;
             return this;
         }
 

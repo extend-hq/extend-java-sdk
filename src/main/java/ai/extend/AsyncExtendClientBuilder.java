@@ -17,7 +17,7 @@ public class AsyncExtendClientBuilder {
 
     private final Map<String, String> customHeaders = new HashMap<>();
 
-    private String token = null;
+    private String token = System.getenv("EXTEND_API_KEY");
 
     private String extendApiVersion = "2026-02-09";
 
@@ -26,7 +26,8 @@ public class AsyncExtendClientBuilder {
     private OkHttpClient httpClient;
 
     /**
-     * Sets token
+     * Sets token.
+     * Defaults to the EXTEND_API_KEY environment variable.
      */
     public AsyncExtendClientBuilder token(String token) {
         this.token = token;
@@ -227,7 +228,7 @@ public class AsyncExtendClientBuilder {
 
     public AsyncExtendClient build() {
         if (token == null) {
-            throw new RuntimeException("Please provide token");
+            throw new RuntimeException("Please provide token or set the EXTEND_API_KEY environment variable.");
         }
         validateConfiguration();
         return new AsyncExtendClient(buildClientOptions());

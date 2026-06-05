@@ -47,7 +47,7 @@ public final class WorkflowsUpdateRequest {
 
     /**
      * @return The new step definitions for the draft version. Replaces all existing draft steps.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
      */
     @JsonProperty("steps")
     public Optional<List<WorkflowStepDefinition>> getSteps() {
@@ -116,7 +116,7 @@ public final class WorkflowsUpdateRequest {
 
         /**
          * <p>The new step definitions for the draft version. Replaces all existing draft steps.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows">Configuring Workflows via API guide</a> for step definitions, branching patterns, and examples.</p>
          */
         @JsonSetter(value = "steps", nulls = Nulls.SKIP)
         public Builder steps(Optional<List<WorkflowStepDefinition>> steps) {

@@ -57,7 +57,7 @@ public final class ExtractOverrideConfigJson {
     }
 
     /**
-     * @return The version of the <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/changelog/extraction/extraction-performance">Extraction Changelog</a> for more details.
+     * @return The version of the <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/model-versioning/extraction/extraction-performance">Extraction Changelog</a> for more details.
      */
     @JsonProperty("baseVersion")
     public Optional<String> getBaseVersion() {
@@ -74,7 +74,7 @@ public final class ExtractOverrideConfigJson {
 
     /**
      * @return JSON Schema definition of the data to extract.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/extraction/schema">JSON Schema guide</a> for details and examples of schema configuration.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/extraction/schema">JSON Schema guide</a> for details and examples of schema configuration.</p>
      */
     @JsonProperty("schema")
     public Optional<Map<String, Object>> getSchema() {
@@ -178,7 +178,7 @@ public final class ExtractOverrideConfigJson {
         }
 
         /**
-         * <p>The version of the <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/changelog/extraction/extraction-performance">Extraction Changelog</a> for more details.</p>
+         * <p>The version of the <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/model-versioning/extraction/extraction-performance">Extraction Changelog</a> for more details.</p>
          */
         @JsonSetter(value = "baseVersion", nulls = Nulls.SKIP)
         public Builder baseVersion(Optional<String> baseVersion) {
@@ -207,7 +207,7 @@ public final class ExtractOverrideConfigJson {
 
         /**
          * <p>JSON Schema definition of the data to extract.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/extraction/schema">JSON Schema guide</a> for details and examples of schema configuration.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/extraction/schema">JSON Schema guide</a> for details and examples of schema configuration.</p>
          */
         @JsonSetter(value = "schema", nulls = Nulls.SKIP)
         public Builder schema(Optional<Map<String, Object>> schema) {

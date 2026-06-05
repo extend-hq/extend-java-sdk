@@ -59,7 +59,7 @@ public final class ExternalDataValidationStepDefinitionConfigRequestOptions {
 
     /**
      * @return Optional HTTP headers to include on the external validation request.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#external-data-validation-step">External Data Validation step docs</a>.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#external-data-validation">External Data Validation step docs</a>.</p>
      */
     @JsonProperty("headers")
     public Optional<Map<String, String>> getHeaders() {
@@ -68,7 +68,7 @@ public final class ExternalDataValidationStepDefinitionConfigRequestOptions {
 
     /**
      * @return Content type of the request body sent to the external endpoint.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#external-data-validation-step">External Data Validation step docs</a>.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#external-data-validation">External Data Validation step docs</a>.</p>
      */
     @JsonProperty("contentType")
     public Optional<ExternalDataValidationStepDefinitionConfigRequestOptionsContentType> getContentType() {
@@ -126,7 +126,7 @@ public final class ExternalDataValidationStepDefinitionConfigRequestOptions {
 
         /**
          * <p>Optional HTTP headers to include on the external validation request.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#external-data-validation-step">External Data Validation step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#external-data-validation">External Data Validation step docs</a>.</p>
          */
         _FinalStage headers(Optional<Map<String, String>> headers);
 
@@ -134,7 +134,7 @@ public final class ExternalDataValidationStepDefinitionConfigRequestOptions {
 
         /**
          * <p>Content type of the request body sent to the external endpoint.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#external-data-validation-step">External Data Validation step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#external-data-validation">External Data Validation step docs</a>.</p>
          */
         _FinalStage contentType(
                 Optional<ExternalDataValidationStepDefinitionConfigRequestOptionsContentType> contentType);
@@ -188,7 +188,7 @@ public final class ExternalDataValidationStepDefinitionConfigRequestOptions {
 
         /**
          * <p>Content type of the request body sent to the external endpoint.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#external-data-validation-step">External Data Validation step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#external-data-validation">External Data Validation step docs</a>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -200,7 +200,7 @@ public final class ExternalDataValidationStepDefinitionConfigRequestOptions {
 
         /**
          * <p>Content type of the request body sent to the external endpoint.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#external-data-validation-step">External Data Validation step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#external-data-validation">External Data Validation step docs</a>.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "contentType", nulls = Nulls.SKIP)
@@ -212,7 +212,7 @@ public final class ExternalDataValidationStepDefinitionConfigRequestOptions {
 
         /**
          * <p>Optional HTTP headers to include on the external validation request.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#external-data-validation-step">External Data Validation step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#external-data-validation">External Data Validation step docs</a>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -223,7 +223,7 @@ public final class ExternalDataValidationStepDefinitionConfigRequestOptions {
 
         /**
          * <p>Optional HTTP headers to include on the external validation request.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#external-data-validation-step">External Data Validation step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#external-data-validation">External Data Validation step docs</a>.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "headers", nulls = Nulls.SKIP)

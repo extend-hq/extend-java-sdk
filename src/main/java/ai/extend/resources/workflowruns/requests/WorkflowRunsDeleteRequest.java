@@ -28,7 +28,7 @@ public final class WorkflowRunsDeleteRequest {
     }
 
     /**
-     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.
+     * @return The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/api-reference/authentication">Authentication</a> for details on API key scopes.
      */
     @JsonIgnore
     public Optional<String> getExtendWorkspaceId() {
@@ -79,7 +79,7 @@ public final class WorkflowRunsDeleteRequest {
         }
 
         /**
-         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/developers/authentication">Authentication</a> for details on API key scopes.</p>
+         * <p>The workspace ID to target. <strong>Required</strong> when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See <a href="https://docs.extend.ai/2026-02-09/api-reference/authentication">Authentication</a> for details on API key scopes.</p>
          */
         public Builder extendWorkspaceId(Optional<String> extendWorkspaceId) {
             this.extendWorkspaceId = extendWorkspaceId;

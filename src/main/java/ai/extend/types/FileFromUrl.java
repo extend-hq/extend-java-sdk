@@ -42,7 +42,7 @@ public final class FileFromUrl {
 
     /**
      * @return A URL to download the file. For production use cases, we recommend using presigned URLs with a 5-15 minute expiration time.
-     * <p>Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/product/general/supported-file-types">here</a>.</p>
+     * <p>Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/general/supported-file-types">here</a>.</p>
      */
     @JsonProperty("url")
     public String getUrl() {
@@ -97,7 +97,7 @@ public final class FileFromUrl {
     public interface UrlStage {
         /**
          * <p>A URL to download the file. For production use cases, we recommend using presigned URLs with a 5-15 minute expiration time.</p>
-         * <p>Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/product/general/supported-file-types">here</a>.</p>
+         * <p>Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/general/supported-file-types">here</a>.</p>
          */
         _FinalStage url(@NotNull String url);
 
@@ -145,9 +145,9 @@ public final class FileFromUrl {
 
         /**
          * <p>A URL to download the file. For production use cases, we recommend using presigned URLs with a 5-15 minute expiration time.</p>
-         * <p>Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/product/general/supported-file-types">here</a>.</p>
+         * <p>Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/general/supported-file-types">here</a>.</p>
          * <p>A URL to download the file. For production use cases, we recommend using presigned URLs with a 5-15 minute expiration time.</p>
-         * <p>Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/product/general/supported-file-types">here</a>.</p>
+         * <p>Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/general/supported-file-types">here</a>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override

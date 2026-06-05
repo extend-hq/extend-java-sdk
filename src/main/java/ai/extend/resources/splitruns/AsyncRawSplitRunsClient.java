@@ -334,7 +334,7 @@ public class AsyncRawSplitRunsClient {
 
     /**
      * Retrieve details about a specific split run, including its status and outputs.
-     * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<SplitRun>> retrieve(String id) {
         return retrieve(id, SplitRunsRetrieveRequest.builder().build());
@@ -342,7 +342,7 @@ public class AsyncRawSplitRunsClient {
 
     /**
      * Retrieve details about a specific split run, including its status and outputs.
-     * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<SplitRun>> retrieve(String id, RequestOptions requestOptions) {
         return retrieve(id, SplitRunsRetrieveRequest.builder().build(), requestOptions);
@@ -350,7 +350,7 @@ public class AsyncRawSplitRunsClient {
 
     /**
      * Retrieve details about a specific split run, including its status and outputs.
-     * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<SplitRun>> retrieve(String id, SplitRunsRetrieveRequest request) {
         return retrieve(id, request, null);
@@ -358,7 +358,7 @@ public class AsyncRawSplitRunsClient {
 
     /**
      * Retrieve details about a specific split run, including its status and outputs.
-     * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
+     * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
     public CompletableFuture<ExtendClientHttpResponse<SplitRun>> retrieve(
             String id, SplitRunsRetrieveRequest request, RequestOptions requestOptions) {
@@ -719,7 +719,7 @@ public class AsyncRawSplitRunsClient {
 
     /**
      * Submit up to <strong>1,000 files</strong> for splitting in a single request. Each file is processed as an independent split run using the same splitter and configuration.
-     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/split/create-split-run">Split File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
+     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/split/create-split-run">Split File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
      * <p><strong>Monitoring results:</strong></p>
      * <ul>
      * <li><strong>Webhooks (recommended):</strong> Subscribe to <code>batch_processor_run.processed</code> and <code>batch_processor_run.failed</code> events. The webhook payload indicates the batch has finished — fetch individual run results using <code>GET /split_runs?batchId={id}</code>.</li>
@@ -739,7 +739,7 @@ public class AsyncRawSplitRunsClient {
 
     /**
      * Submit up to <strong>1,000 files</strong> for splitting in a single request. Each file is processed as an independent split run using the same splitter and configuration.
-     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/developers/api-reference/endpoints/split/create-split-run">Split File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
+     * <p>Unlike the single <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/split/create-split-run">Split File (Async)</a> endpoint, this batch endpoint accepts an <code>inputs</code> array and immediately returns a <code>BatchRun</code> object containing a batch <code>id</code> and a <code>PENDING</code> status. The individual runs are then queued and processed asynchronously.</p>
      * <p><strong>Monitoring results:</strong></p>
      * <ul>
      * <li><strong>Webhooks (recommended):</strong> Subscribe to <code>batch_processor_run.processed</code> and <code>batch_processor_run.failed</code> events. The webhook payload indicates the batch has finished — fetch individual run results using <code>GET /split_runs?batchId={id}</code>.</li>

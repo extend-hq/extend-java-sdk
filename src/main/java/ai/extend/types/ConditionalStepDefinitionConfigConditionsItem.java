@@ -63,7 +63,7 @@ public final class ConditionalStepDefinitionConfigConditionsItem {
 
     /**
      * @return The comparison operation for this branch.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-step">Conditional step docs</a>.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional">Conditional step docs</a>.</p>
      */
     @JsonProperty("operation")
     public Optional<ConditionalStepDefinitionConfigConditionsItemOperation> getOperation() {
@@ -72,7 +72,7 @@ public final class ConditionalStepDefinitionConfigConditionsItem {
 
     /**
      * @return The left operand expression. This is typically a workflow variable or dynamic expression.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-step">Conditional step docs</a>.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional">Conditional step docs</a>.</p>
      */
     @JsonProperty("leftOperand")
     public Optional<String> getLeftOperand() {
@@ -81,7 +81,7 @@ public final class ConditionalStepDefinitionConfigConditionsItem {
 
     /**
      * @return The right operand value. This is typically a literal comparison value and is omitted for fallback branches like <code>ELSE</code>.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-step">Conditional step docs</a>.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional">Conditional step docs</a>.</p>
      */
     @JsonProperty("rightOperand")
     public Optional<String> getRightOperand() {
@@ -140,7 +140,7 @@ public final class ConditionalStepDefinitionConfigConditionsItem {
 
         /**
          * <p>The comparison operation for this branch.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-step">Conditional step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional">Conditional step docs</a>.</p>
          */
         _FinalStage operation(Optional<ConditionalStepDefinitionConfigConditionsItemOperation> operation);
 
@@ -148,7 +148,7 @@ public final class ConditionalStepDefinitionConfigConditionsItem {
 
         /**
          * <p>The left operand expression. This is typically a workflow variable or dynamic expression.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-step">Conditional step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional">Conditional step docs</a>.</p>
          */
         _FinalStage leftOperand(Optional<String> leftOperand);
 
@@ -156,7 +156,7 @@ public final class ConditionalStepDefinitionConfigConditionsItem {
 
         /**
          * <p>The right operand value. This is typically a literal comparison value and is omitted for fallback branches like <code>ELSE</code>.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-step">Conditional step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional">Conditional step docs</a>.</p>
          */
         _FinalStage rightOperand(Optional<String> rightOperand);
 
@@ -211,7 +211,7 @@ public final class ConditionalStepDefinitionConfigConditionsItem {
 
         /**
          * <p>The right operand value. This is typically a literal comparison value and is omitted for fallback branches like <code>ELSE</code>.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-step">Conditional step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional">Conditional step docs</a>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -222,7 +222,7 @@ public final class ConditionalStepDefinitionConfigConditionsItem {
 
         /**
          * <p>The right operand value. This is typically a literal comparison value and is omitted for fallback branches like <code>ELSE</code>.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-step">Conditional step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional">Conditional step docs</a>.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "rightOperand", nulls = Nulls.SKIP)
@@ -233,7 +233,7 @@ public final class ConditionalStepDefinitionConfigConditionsItem {
 
         /**
          * <p>The left operand expression. This is typically a workflow variable or dynamic expression.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-step">Conditional step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional">Conditional step docs</a>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -244,7 +244,7 @@ public final class ConditionalStepDefinitionConfigConditionsItem {
 
         /**
          * <p>The left operand expression. This is typically a workflow variable or dynamic expression.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-step">Conditional step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional">Conditional step docs</a>.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "leftOperand", nulls = Nulls.SKIP)
@@ -255,7 +255,7 @@ public final class ConditionalStepDefinitionConfigConditionsItem {
 
         /**
          * <p>The comparison operation for this branch.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-step">Conditional step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional">Conditional step docs</a>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -266,7 +266,7 @@ public final class ConditionalStepDefinitionConfigConditionsItem {
 
         /**
          * <p>The comparison operation for this branch.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#conditional-step">Conditional step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#conditional">Conditional step docs</a>.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "operation", nulls = Nulls.SKIP)

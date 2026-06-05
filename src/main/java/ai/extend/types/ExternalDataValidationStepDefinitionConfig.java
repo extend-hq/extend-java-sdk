@@ -38,7 +38,7 @@ public final class ExternalDataValidationStepDefinitionConfig {
 
     /**
      * @return HTTP request configuration for the external validation call.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#external-data-validation-step">External Data Validation step docs</a>.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#external-data-validation">External Data Validation step docs</a>.</p>
      */
     @JsonProperty("requestOptions")
     public ExternalDataValidationStepDefinitionConfigRequestOptions getRequestOptions() {
@@ -47,7 +47,7 @@ public final class ExternalDataValidationStepDefinitionConfig {
 
     /**
      * @return Whether to continue or exit the workflow on validation failure. Defaults to <code>CONTINUE</code>.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#external-data-validation-step">External Data Validation step docs</a>.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#external-data-validation">External Data Validation step docs</a>.</p>
      */
     @JsonProperty("failureBehavior")
     public Optional<ExternalDataValidationStepDefinitionConfigFailureBehavior> getFailureBehavior() {
@@ -87,7 +87,7 @@ public final class ExternalDataValidationStepDefinitionConfig {
     public interface RequestOptionsStage {
         /**
          * <p>HTTP request configuration for the external validation call.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#external-data-validation-step">External Data Validation step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#external-data-validation">External Data Validation step docs</a>.</p>
          */
         _FinalStage requestOptions(@NotNull ExternalDataValidationStepDefinitionConfigRequestOptions requestOptions);
 
@@ -99,7 +99,7 @@ public final class ExternalDataValidationStepDefinitionConfig {
 
         /**
          * <p>Whether to continue or exit the workflow on validation failure. Defaults to <code>CONTINUE</code>.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#external-data-validation-step">External Data Validation step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#external-data-validation">External Data Validation step docs</a>.</p>
          */
         _FinalStage failureBehavior(
                 Optional<ExternalDataValidationStepDefinitionConfigFailureBehavior> failureBehavior);
@@ -127,9 +127,9 @@ public final class ExternalDataValidationStepDefinitionConfig {
 
         /**
          * <p>HTTP request configuration for the external validation call.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#external-data-validation-step">External Data Validation step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#external-data-validation">External Data Validation step docs</a>.</p>
          * <p>HTTP request configuration for the external validation call.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#external-data-validation-step">External Data Validation step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#external-data-validation">External Data Validation step docs</a>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -142,7 +142,7 @@ public final class ExternalDataValidationStepDefinitionConfig {
 
         /**
          * <p>Whether to continue or exit the workflow on validation failure. Defaults to <code>CONTINUE</code>.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#external-data-validation-step">External Data Validation step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#external-data-validation">External Data Validation step docs</a>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -153,7 +153,7 @@ public final class ExternalDataValidationStepDefinitionConfig {
 
         /**
          * <p>Whether to continue or exit the workflow on validation failure. Defaults to <code>CONTINUE</code>.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#external-data-validation-step">External Data Validation step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#external-data-validation">External Data Validation step docs</a>.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "failureBehavior", nulls = Nulls.SKIP)

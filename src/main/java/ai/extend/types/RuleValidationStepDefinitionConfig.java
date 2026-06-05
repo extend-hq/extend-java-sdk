@@ -33,7 +33,7 @@ public final class RuleValidationStepDefinitionConfig {
 
     /**
      * @return Validation rules for this step. Each rule defines a name and a boolean formula.
-     * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#rule-validation-step">Rule Validation step docs</a>.</p>
+     * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#rule-validation">Rule Validation step docs</a>.</p>
      */
     @JsonProperty("rules")
     public List<RuleValidationStepDefinitionConfigRulesItem> getRules() {
@@ -86,7 +86,7 @@ public final class RuleValidationStepDefinitionConfig {
 
         /**
          * <p>Validation rules for this step. Each rule defines a name and a boolean formula.</p>
-         * <p>See the <a href="https://docs.extend.ai/2026-02-09/product/workflows/configuring-workflows-via-api#rule-validation-step">Rule Validation step docs</a>.</p>
+         * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#rule-validation">Rule Validation step docs</a>.</p>
          */
         @JsonSetter(value = "rules", nulls = Nulls.SKIP)
         public Builder rules(List<RuleValidationStepDefinitionConfigRulesItem> rules) {

@@ -73,7 +73,7 @@ public final class EvaluationSetRun {
 
     /**
      * @return The unique identifier for this evaluation set run.
-     * <p>Example: <code>&quot;eval_set_run_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+     * <p>Example: <code>&quot;bpr_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
      */
     @JsonProperty("id")
     public String getId() {
@@ -182,7 +182,7 @@ public final class EvaluationSetRun {
     public interface IdStage {
         /**
          * <p>The unique identifier for this evaluation set run.</p>
-         * <p>Example: <code>&quot;eval_set_run_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         * <p>Example: <code>&quot;bpr_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
          */
         EvaluationSetIdStage id(@NotNull String id);
 
@@ -289,9 +289,9 @@ public final class EvaluationSetRun {
 
         /**
          * <p>The unique identifier for this evaluation set run.</p>
-         * <p>Example: <code>&quot;eval_set_run_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         * <p>Example: <code>&quot;bpr_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
          * <p>The unique identifier for this evaluation set run.</p>
-         * <p>Example: <code>&quot;eval_set_run_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
+         * <p>Example: <code>&quot;bpr_Xj8mK2pL9nR4vT7qY5wZ&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
