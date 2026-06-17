@@ -5,6 +5,7 @@ package ai.extend.resources.parseruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
+import ai.extend.resources.parseruns.requests.ParseRunsCancelRequest;
 import ai.extend.resources.parseruns.requests.ParseRunsCreateBatchRequest;
 import ai.extend.resources.parseruns.requests.ParseRunsCreateRequest;
 import ai.extend.resources.parseruns.requests.ParseRunsDeleteRequest;
@@ -144,6 +145,38 @@ public class ParseRunsClient {
      */
     public ParseRunsDeleteResponse delete(String id, ParseRunsDeleteRequest request, RequestOptions requestOptions) {
         return this.rawClient.delete(id, request, requestOptions).body();
+    }
+
+    /**
+     * Cancel an in-progress parse run.
+     * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public ParseRun cancel(String id) {
+        return this.rawClient.cancel(id).body();
+    }
+
+    /**
+     * Cancel an in-progress parse run.
+     * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public ParseRun cancel(String id, RequestOptions requestOptions) {
+        return this.rawClient.cancel(id, requestOptions).body();
+    }
+
+    /**
+     * Cancel an in-progress parse run.
+     * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public ParseRun cancel(String id, ParseRunsCancelRequest request) {
+        return this.rawClient.cancel(id, request).body();
+    }
+
+    /**
+     * Cancel an in-progress parse run.
+     * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public ParseRun cancel(String id, ParseRunsCancelRequest request, RequestOptions requestOptions) {
+        return this.rawClient.cancel(id, request, requestOptions).body();
     }
 
     /**

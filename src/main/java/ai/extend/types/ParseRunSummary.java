@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -22,15 +23,15 @@ import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-@JsonDeserialize(builder = ParseRun.Builder.class)
-public final class ParseRun {
+@JsonDeserialize(builder = ParseRunSummary.Builder.class)
+public final class ParseRunSummary {
     private final String id;
 
     private final Optional<String> batchId;
 
     private final FileSummary file;
 
-    private final ParseRunStatusEnum status;
+    private final ParseRunSummaryStatus status;
 
     private final Optional<String> failureReason;
 
@@ -38,31 +39,28 @@ public final class ParseRun {
 
     private final Optional<Map<String, Object>> metadata;
 
-    private final Optional<ParseRunOutput> output;
+    private final Optional<ParseRunSummaryMetrics> metrics;
 
-    private final Optional<String> outputUrl;
+    private final Optional<RunUsageSummary> usage;
 
-    private final Optional<ParseRunMetrics> metrics;
+    private final OffsetDateTime createdAt;
 
-    private final ParseConfig config;
-
-    private final Optional<RunUsage> usage;
+    private final OffsetDateTime updatedAt;
 
     private final Map<String, Object> additionalProperties;
 
-    private ParseRun(
+    private ParseRunSummary(
             String id,
             Optional<String> batchId,
             FileSummary file,
-            ParseRunStatusEnum status,
+            ParseRunSummaryStatus status,
             Optional<String> failureReason,
             Optional<String> failureMessage,
             Optional<Map<String, Object>> metadata,
-            Optional<ParseRunOutput> output,
-            Optional<String> outputUrl,
-            Optional<ParseRunMetrics> metrics,
-            ParseConfig config,
-            Optional<RunUsage> usage,
+            Optional<ParseRunSummaryMetrics> metrics,
+            Optional<RunUsageSummary> usage,
+            OffsetDateTime createdAt,
+            OffsetDateTime updatedAt,
             Map<String, Object> additionalProperties) {
         this.id = id;
         this.batchId = batchId;
@@ -71,11 +69,10 @@ public final class ParseRun {
         this.failureReason = failureReason;
         this.failureMessage = failureMessage;
         this.metadata = metadata;
-        this.output = output;
-        this.outputUrl = outputUrl;
         this.metrics = metrics;
-        this.config = config;
         this.usage = usage;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
         this.additionalProperties = additionalProperties;
     }
 
@@ -127,7 +124,7 @@ public final class ParseRun {
      * </ul>
      */
     @JsonProperty("status")
-    public ParseRunStatusEnum getStatus() {
+    public ParseRunSummaryStatus getStatus() {
         return status;
     }
 
@@ -185,35 +182,11 @@ public final class ParseRun {
     }
 
     /**
-     * @return The parse run output.
-     * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code> and the request was made without the <code>responseType=url</code> query parameter. Contains the parsed chunks.</p>
-     */
-    @JsonIgnore
-    public Optional<ParseRunOutput> getOutput() {
-        if (output == null) {
-            return Optional.empty();
-        }
-        return output;
-    }
-
-    /**
-     * @return A presigned URL to download the parse run output as a JSON file. The object shape is the same as the <code>output</code> field. Expires after 15 minutes.
-     * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code> and the request was made with <code>responseType=url</code> query parameter.</p>
-     */
-    @JsonIgnore
-    public Optional<String> getOutputUrl() {
-        if (outputUrl == null) {
-            return Optional.empty();
-        }
-        return outputUrl;
-    }
-
-    /**
      * @return Metrics about the parsing process.
      * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
      */
     @JsonIgnore
-    public Optional<ParseRunMetrics> getMetrics() {
+    public Optional<ParseRunSummaryMetrics> getMetrics() {
         if (metrics == null) {
             return Optional.empty();
         }
@@ -221,23 +194,25 @@ public final class ParseRun {
     }
 
     /**
-     * @return The configuration used for the parsing process, including any default values that were applied.
-     */
-    @JsonProperty("config")
-    public ParseConfig getConfig() {
-        return config;
-    }
-
-    /**
-     * @return Usage credits consumed by this parse run.
+     * @return Usage credits consumed by this parse run. Omits <code>breakdown</code> — fetch the full parse run by id to see the per-line items.
      * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
      */
     @JsonIgnore
-    public Optional<RunUsage> getUsage() {
+    public Optional<RunUsageSummary> getUsage() {
         if (usage == null) {
             return Optional.empty();
         }
         return usage;
+    }
+
+    @JsonProperty("createdAt")
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    @JsonProperty("updatedAt")
+    public OffsetDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
@@ -265,33 +240,21 @@ public final class ParseRun {
     }
 
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
-    @JsonProperty("output")
-    private Optional<ParseRunOutput> _getOutput() {
-        return output;
-    }
-
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
-    @JsonProperty("outputUrl")
-    private Optional<String> _getOutputUrl() {
-        return outputUrl;
-    }
-
-    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
     @JsonProperty("metrics")
-    private Optional<ParseRunMetrics> _getMetrics() {
+    private Optional<ParseRunSummaryMetrics> _getMetrics() {
         return metrics;
     }
 
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
     @JsonProperty("usage")
-    private Optional<RunUsage> _getUsage() {
+    private Optional<RunUsageSummary> _getUsage() {
         return usage;
     }
 
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        return other instanceof ParseRun && equalTo((ParseRun) other);
+        return other instanceof ParseRunSummary && equalTo((ParseRunSummary) other);
     }
 
     @JsonAnyGetter
@@ -299,7 +262,7 @@ public final class ParseRun {
         return this.additionalProperties;
     }
 
-    private boolean equalTo(ParseRun other) {
+    private boolean equalTo(ParseRunSummary other) {
         return id.equals(other.id)
                 && batchId.equals(other.batchId)
                 && file.equals(other.file)
@@ -307,11 +270,10 @@ public final class ParseRun {
                 && failureReason.equals(other.failureReason)
                 && failureMessage.equals(other.failureMessage)
                 && metadata.equals(other.metadata)
-                && output.equals(other.output)
-                && outputUrl.equals(other.outputUrl)
                 && metrics.equals(other.metrics)
-                && config.equals(other.config)
-                && usage.equals(other.usage);
+                && usage.equals(other.usage)
+                && createdAt.equals(other.createdAt)
+                && updatedAt.equals(other.updatedAt);
     }
 
     @java.lang.Override
@@ -324,11 +286,10 @@ public final class ParseRun {
                 this.failureReason,
                 this.failureMessage,
                 this.metadata,
-                this.output,
-                this.outputUrl,
                 this.metrics,
-                this.config,
-                this.usage);
+                this.usage,
+                this.createdAt,
+                this.updatedAt);
     }
 
     @java.lang.Override
@@ -347,7 +308,7 @@ public final class ParseRun {
          */
         FileStage id(@NotNull String id);
 
-        Builder from(ParseRun other);
+        Builder from(ParseRunSummary other);
     }
 
     public interface FileStage {
@@ -367,18 +328,19 @@ public final class ParseRun {
          * <li><code>&quot;FAILED&quot;</code> - The processing failed (see <code>failureReason</code> for details)</li>
          * </ul>
          */
-        ConfigStage status(@NotNull ParseRunStatusEnum status);
+        CreatedAtStage status(@NotNull ParseRunSummaryStatus status);
     }
 
-    public interface ConfigStage {
-        /**
-         * <p>The configuration used for the parsing process, including any default values that were applied.</p>
-         */
-        _FinalStage config(@NotNull ParseConfig config);
+    public interface CreatedAtStage {
+        UpdatedAtStage createdAt(@NotNull OffsetDateTime createdAt);
+    }
+
+    public interface UpdatedAtStage {
+        _FinalStage updatedAt(@NotNull OffsetDateTime updatedAt);
     }
 
     public interface _FinalStage {
-        ParseRun build();
+        ParseRunSummary build();
 
         /**
          * <p>The ID of the batch this run belongs to, if created via <code>POST /parse_runs/batch</code>.</p>
@@ -439,63 +401,42 @@ public final class ParseRun {
         _FinalStage metadata(Nullable<Map<String, Object>> metadata);
 
         /**
-         * <p>The parse run output.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code> and the request was made without the <code>responseType=url</code> query parameter. Contains the parsed chunks.</p>
-         */
-        _FinalStage output(Optional<ParseRunOutput> output);
-
-        _FinalStage output(ParseRunOutput output);
-
-        _FinalStage output(Nullable<ParseRunOutput> output);
-
-        /**
-         * <p>A presigned URL to download the parse run output as a JSON file. The object shape is the same as the <code>output</code> field. Expires after 15 minutes.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code> and the request was made with <code>responseType=url</code> query parameter.</p>
-         */
-        _FinalStage outputUrl(Optional<String> outputUrl);
-
-        _FinalStage outputUrl(String outputUrl);
-
-        _FinalStage outputUrl(Nullable<String> outputUrl);
-
-        /**
          * <p>Metrics about the parsing process.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
          */
-        _FinalStage metrics(Optional<ParseRunMetrics> metrics);
+        _FinalStage metrics(Optional<ParseRunSummaryMetrics> metrics);
 
-        _FinalStage metrics(ParseRunMetrics metrics);
+        _FinalStage metrics(ParseRunSummaryMetrics metrics);
 
-        _FinalStage metrics(Nullable<ParseRunMetrics> metrics);
+        _FinalStage metrics(Nullable<ParseRunSummaryMetrics> metrics);
 
         /**
-         * <p>Usage credits consumed by this parse run.</p>
+         * <p>Usage credits consumed by this parse run. Omits <code>breakdown</code> — fetch the full parse run by id to see the per-line items.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
          */
-        _FinalStage usage(Optional<RunUsage> usage);
+        _FinalStage usage(Optional<RunUsageSummary> usage);
 
-        _FinalStage usage(RunUsage usage);
+        _FinalStage usage(RunUsageSummary usage);
 
-        _FinalStage usage(Nullable<RunUsage> usage);
+        _FinalStage usage(Nullable<RunUsageSummary> usage);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements IdStage, FileStage, StatusStage, ConfigStage, _FinalStage {
+    public static final class Builder
+            implements IdStage, FileStage, StatusStage, CreatedAtStage, UpdatedAtStage, _FinalStage {
         private String id;
 
         private FileSummary file;
 
-        private ParseRunStatusEnum status;
+        private ParseRunSummaryStatus status;
 
-        private ParseConfig config;
+        private OffsetDateTime createdAt;
 
-        private Optional<RunUsage> usage = Optional.empty();
+        private OffsetDateTime updatedAt;
 
-        private Optional<ParseRunMetrics> metrics = Optional.empty();
+        private Optional<RunUsageSummary> usage = Optional.empty();
 
-        private Optional<String> outputUrl = Optional.empty();
-
-        private Optional<ParseRunOutput> output = Optional.empty();
+        private Optional<ParseRunSummaryMetrics> metrics = Optional.empty();
 
         private Optional<Map<String, Object>> metadata = Optional.empty();
 
@@ -511,7 +452,7 @@ public final class ParseRun {
         private Builder() {}
 
         @java.lang.Override
-        public Builder from(ParseRun other) {
+        public Builder from(ParseRunSummary other) {
             id(other.getId());
             batchId(other.getBatchId());
             file(other.getFile());
@@ -519,11 +460,10 @@ public final class ParseRun {
             failureReason(other.getFailureReason());
             failureMessage(other.getFailureMessage());
             metadata(other.getMetadata());
-            output(other.getOutput());
-            outputUrl(other.getOutputUrl());
             metrics(other.getMetrics());
-            config(other.getConfig());
             usage(other.getUsage());
+            createdAt(other.getCreatedAt());
+            updatedAt(other.getUpdatedAt());
             return this;
         }
 
@@ -572,30 +512,32 @@ public final class ParseRun {
          */
         @java.lang.Override
         @JsonSetter("status")
-        public ConfigStage status(@NotNull ParseRunStatusEnum status) {
+        public CreatedAtStage status(@NotNull ParseRunSummaryStatus status) {
             this.status = Objects.requireNonNull(status, "status must not be null");
             return this;
         }
 
-        /**
-         * <p>The configuration used for the parsing process, including any default values that were applied.</p>
-         * <p>The configuration used for the parsing process, including any default values that were applied.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
         @java.lang.Override
-        @JsonSetter("config")
-        public _FinalStage config(@NotNull ParseConfig config) {
-            this.config = Objects.requireNonNull(config, "config must not be null");
+        @JsonSetter("createdAt")
+        public UpdatedAtStage createdAt(@NotNull OffsetDateTime createdAt) {
+            this.createdAt = Objects.requireNonNull(createdAt, "createdAt must not be null");
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter("updatedAt")
+        public _FinalStage updatedAt(@NotNull OffsetDateTime updatedAt) {
+            this.updatedAt = Objects.requireNonNull(updatedAt, "updatedAt must not be null");
             return this;
         }
 
         /**
-         * <p>Usage credits consumed by this parse run.</p>
+         * <p>Usage credits consumed by this parse run. Omits <code>breakdown</code> — fetch the full parse run by id to see the per-line items.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage usage(Nullable<RunUsage> usage) {
+        public _FinalStage usage(Nullable<RunUsageSummary> usage) {
             if (usage.isNull()) {
                 this.usage = null;
             } else if (usage.isEmpty()) {
@@ -607,23 +549,23 @@ public final class ParseRun {
         }
 
         /**
-         * <p>Usage credits consumed by this parse run.</p>
+         * <p>Usage credits consumed by this parse run. Omits <code>breakdown</code> — fetch the full parse run by id to see the per-line items.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage usage(RunUsage usage) {
+        public _FinalStage usage(RunUsageSummary usage) {
             this.usage = Optional.ofNullable(usage);
             return this;
         }
 
         /**
-         * <p>Usage credits consumed by this parse run.</p>
+         * <p>Usage credits consumed by this parse run. Omits <code>breakdown</code> — fetch the full parse run by id to see the per-line items.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "usage", nulls = Nulls.SKIP)
-        public _FinalStage usage(Optional<RunUsage> usage) {
+        public _FinalStage usage(Optional<RunUsageSummary> usage) {
             this.usage = usage;
             return this;
         }
@@ -634,7 +576,7 @@ public final class ParseRun {
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage metrics(Nullable<ParseRunMetrics> metrics) {
+        public _FinalStage metrics(Nullable<ParseRunSummaryMetrics> metrics) {
             if (metrics.isNull()) {
                 this.metrics = null;
             } else if (metrics.isEmpty()) {
@@ -651,7 +593,7 @@ public final class ParseRun {
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage metrics(ParseRunMetrics metrics) {
+        public _FinalStage metrics(ParseRunSummaryMetrics metrics) {
             this.metrics = Optional.ofNullable(metrics);
             return this;
         }
@@ -662,86 +604,8 @@ public final class ParseRun {
          */
         @java.lang.Override
         @JsonSetter(value = "metrics", nulls = Nulls.SKIP)
-        public _FinalStage metrics(Optional<ParseRunMetrics> metrics) {
+        public _FinalStage metrics(Optional<ParseRunSummaryMetrics> metrics) {
             this.metrics = metrics;
-            return this;
-        }
-
-        /**
-         * <p>A presigned URL to download the parse run output as a JSON file. The object shape is the same as the <code>output</code> field. Expires after 15 minutes.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code> and the request was made with <code>responseType=url</code> query parameter.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage outputUrl(Nullable<String> outputUrl) {
-            if (outputUrl.isNull()) {
-                this.outputUrl = null;
-            } else if (outputUrl.isEmpty()) {
-                this.outputUrl = Optional.empty();
-            } else {
-                this.outputUrl = Optional.of(outputUrl.get());
-            }
-            return this;
-        }
-
-        /**
-         * <p>A presigned URL to download the parse run output as a JSON file. The object shape is the same as the <code>output</code> field. Expires after 15 minutes.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code> and the request was made with <code>responseType=url</code> query parameter.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage outputUrl(String outputUrl) {
-            this.outputUrl = Optional.ofNullable(outputUrl);
-            return this;
-        }
-
-        /**
-         * <p>A presigned URL to download the parse run output as a JSON file. The object shape is the same as the <code>output</code> field. Expires after 15 minutes.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code> and the request was made with <code>responseType=url</code> query parameter.</p>
-         */
-        @java.lang.Override
-        @JsonSetter(value = "outputUrl", nulls = Nulls.SKIP)
-        public _FinalStage outputUrl(Optional<String> outputUrl) {
-            this.outputUrl = outputUrl;
-            return this;
-        }
-
-        /**
-         * <p>The parse run output.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code> and the request was made without the <code>responseType=url</code> query parameter. Contains the parsed chunks.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage output(Nullable<ParseRunOutput> output) {
-            if (output.isNull()) {
-                this.output = null;
-            } else if (output.isEmpty()) {
-                this.output = Optional.empty();
-            } else {
-                this.output = Optional.of(output.get());
-            }
-            return this;
-        }
-
-        /**
-         * <p>The parse run output.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code> and the request was made without the <code>responseType=url</code> query parameter. Contains the parsed chunks.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage output(ParseRunOutput output) {
-            this.output = Optional.ofNullable(output);
-            return this;
-        }
-
-        /**
-         * <p>The parse run output.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code> and the request was made without the <code>responseType=url</code> query parameter. Contains the parsed chunks.</p>
-         */
-        @java.lang.Override
-        @JsonSetter(value = "output", nulls = Nulls.SKIP)
-        public _FinalStage output(Optional<ParseRunOutput> output) {
-            this.output = output;
             return this;
         }
 
@@ -956,8 +820,8 @@ public final class ParseRun {
         }
 
         @java.lang.Override
-        public ParseRun build() {
-            return new ParseRun(
+        public ParseRunSummary build() {
+            return new ParseRunSummary(
                     id,
                     batchId,
                     file,
@@ -965,11 +829,10 @@ public final class ParseRun {
                     failureReason,
                     failureMessage,
                     metadata,
-                    output,
-                    outputUrl,
                     metrics,
-                    config,
                     usage,
+                    createdAt,
+                    updatedAt,
                     additionalProperties);
         }
     }

@@ -19,6 +19,7 @@ import ai.extend.errors.PaymentRequiredError;
 import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
+import ai.extend.resources.parseruns.requests.ParseRunsCancelRequest;
 import ai.extend.resources.parseruns.requests.ParseRunsCreateBatchRequest;
 import ai.extend.resources.parseruns.requests.ParseRunsCreateRequest;
 import ai.extend.resources.parseruns.requests.ParseRunsDeleteRequest;
@@ -517,6 +518,134 @@ public class AsyncRawParseRunsClient {
                         future.complete(new ExtendClientHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ParseRunsDeleteResponse.class),
                                 response));
+                        return;
+                    }
+                    try {
+                        switch (response.code()) {
+                            case 400:
+                                future.completeExceptionally(new BadRequestError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                            case 401:
+                                future.completeExceptionally(new UnauthorizedError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                            case 402:
+                                future.completeExceptionally(new PaymentRequiredError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
+                                        response));
+                                return;
+                            case 403:
+                                future.completeExceptionally(new ForbiddenError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
+                                        response));
+                                return;
+                            case 404:
+                                future.completeExceptionally(new NotFoundError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                            case 422:
+                                future.completeExceptionally(new UnprocessableEntityError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
+                                        response));
+                                return;
+                            case 429:
+                                future.completeExceptionally(new TooManyRequestsError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                            case 500:
+                                future.completeExceptionally(new InternalServerError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                        }
+                    } catch (JsonProcessingException ignored) {
+                        // unable to map error response, throwing generic error
+                    }
+                    Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
+                    future.completeExceptionally(new ExtendClientApiException(
+                            "Error with status code " + response.code(), response.code(), errorBody, response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
+    }
+
+    /**
+     * Cancel an in-progress parse run.
+     * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ParseRun>> cancel(String id) {
+        return cancel(id, ParseRunsCancelRequest.builder().build());
+    }
+
+    /**
+     * Cancel an in-progress parse run.
+     * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ParseRun>> cancel(String id, RequestOptions requestOptions) {
+        return cancel(id, ParseRunsCancelRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Cancel an in-progress parse run.
+     * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ParseRun>> cancel(String id, ParseRunsCancelRequest request) {
+        return cancel(id, request, null);
+    }
+
+    /**
+     * Cancel an in-progress parse run.
+     * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public CompletableFuture<ExtendClientHttpResponse<ParseRun>> cancel(
+            String id, ParseRunsCancelRequest request, RequestOptions requestOptions) {
+        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("parse_runs")
+                .addPathSegment(id)
+                .addPathSegments("cancel");
+        if (requestOptions != null) {
+            requestOptions.getQueryParameters().forEach((_key, _value) -> {
+                httpUrl.addQueryParameter(_key, _value);
+            });
+        }
+        Request.Builder _requestBuilder = new Request.Builder()
+                .url(httpUrl.build())
+                .method("POST", RequestBody.create("", null))
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<ExtendClientHttpResponse<ParseRun>> future = new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    if (response.isSuccessful()) {
+                        future.complete(new ExtendClientHttpResponse<>(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ParseRun.class), response));
                         return;
                     }
                     try {

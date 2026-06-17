@@ -26,16 +26,20 @@ public final class ParseConfigBlockOptionsFigures {
 
     private final Optional<Boolean> advancedChartExtractionEnabled;
 
+    private final Optional<String> customInstructions;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseConfigBlockOptionsFigures(
             Optional<Boolean> enabled,
             Optional<Boolean> figureImageClippingEnabled,
             Optional<Boolean> advancedChartExtractionEnabled,
+            Optional<String> customInstructions,
             Map<String, Object> additionalProperties) {
         this.enabled = enabled;
         this.figureImageClippingEnabled = figureImageClippingEnabled;
         this.advancedChartExtractionEnabled = advancedChartExtractionEnabled;
+        this.customInstructions = customInstructions;
         this.additionalProperties = additionalProperties;
     }
 
@@ -63,6 +67,14 @@ public final class ParseConfigBlockOptionsFigures {
         return advancedChartExtractionEnabled;
     }
 
+    /**
+     * @return Custom instructions injected into the vision model prompt used to analyze and summarize figures. Use to steer figure descriptions toward your use case (e.g. domain terminology, details to always capture). Requires <code>enabled: true</code>. Available on <code>parse_performance</code> &gt;= <code>2.0.0</code> and <code>parse_light</code> &gt;= <code>1.0.0</code>.
+     */
+    @JsonProperty("customInstructions")
+    public Optional<String> getCustomInstructions() {
+        return customInstructions;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -77,12 +89,17 @@ public final class ParseConfigBlockOptionsFigures {
     private boolean equalTo(ParseConfigBlockOptionsFigures other) {
         return enabled.equals(other.enabled)
                 && figureImageClippingEnabled.equals(other.figureImageClippingEnabled)
-                && advancedChartExtractionEnabled.equals(other.advancedChartExtractionEnabled);
+                && advancedChartExtractionEnabled.equals(other.advancedChartExtractionEnabled)
+                && customInstructions.equals(other.customInstructions);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.enabled, this.figureImageClippingEnabled, this.advancedChartExtractionEnabled);
+        return Objects.hash(
+                this.enabled,
+                this.figureImageClippingEnabled,
+                this.advancedChartExtractionEnabled,
+                this.customInstructions);
     }
 
     @java.lang.Override
@@ -102,6 +119,8 @@ public final class ParseConfigBlockOptionsFigures {
 
         private Optional<Boolean> advancedChartExtractionEnabled = Optional.empty();
 
+        private Optional<String> customInstructions = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -111,6 +130,7 @@ public final class ParseConfigBlockOptionsFigures {
             enabled(other.getEnabled());
             figureImageClippingEnabled(other.getFigureImageClippingEnabled());
             advancedChartExtractionEnabled(other.getAdvancedChartExtractionEnabled());
+            customInstructions(other.getCustomInstructions());
             return this;
         }
 
@@ -156,9 +176,27 @@ public final class ParseConfigBlockOptionsFigures {
             return this;
         }
 
+        /**
+         * <p>Custom instructions injected into the vision model prompt used to analyze and summarize figures. Use to steer figure descriptions toward your use case (e.g. domain terminology, details to always capture). Requires <code>enabled: true</code>. Available on <code>parse_performance</code> &gt;= <code>2.0.0</code> and <code>parse_light</code> &gt;= <code>1.0.0</code>.</p>
+         */
+        @JsonSetter(value = "customInstructions", nulls = Nulls.SKIP)
+        public Builder customInstructions(Optional<String> customInstructions) {
+            this.customInstructions = customInstructions;
+            return this;
+        }
+
+        public Builder customInstructions(String customInstructions) {
+            this.customInstructions = Optional.ofNullable(customInstructions);
+            return this;
+        }
+
         public ParseConfigBlockOptionsFigures build() {
             return new ParseConfigBlockOptionsFigures(
-                    enabled, figureImageClippingEnabled, advancedChartExtractionEnabled, additionalProperties);
+                    enabled,
+                    figureImageClippingEnabled,
+                    advancedChartExtractionEnabled,
+                    customInstructions,
+                    additionalProperties);
         }
     }
 }

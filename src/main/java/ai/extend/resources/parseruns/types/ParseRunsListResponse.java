@@ -4,7 +4,7 @@
 package ai.extend.resources.parseruns.types;
 
 import ai.extend.core.ObjectMappers;
-import ai.extend.types.ParseRun;
+import ai.extend.types.ParseRunSummary;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -23,14 +23,14 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ParseRunsListResponse.Builder.class)
 public final class ParseRunsListResponse {
-    private final List<ParseRun> data;
+    private final List<ParseRunSummary> data;
 
     private final Optional<String> nextPageToken;
 
     private final Map<String, Object> additionalProperties;
 
     private ParseRunsListResponse(
-            List<ParseRun> data, Optional<String> nextPageToken, Map<String, Object> additionalProperties) {
+            List<ParseRunSummary> data, Optional<String> nextPageToken, Map<String, Object> additionalProperties) {
         this.data = data;
         this.nextPageToken = nextPageToken;
         this.additionalProperties = additionalProperties;
@@ -42,7 +42,7 @@ public final class ParseRunsListResponse {
     }
 
     @JsonProperty("data")
-    public List<ParseRun> getData() {
+    public List<ParseRunSummary> getData() {
         return data;
     }
 
@@ -82,7 +82,7 @@ public final class ParseRunsListResponse {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
-        private List<ParseRun> data = new ArrayList<>();
+        private List<ParseRunSummary> data = new ArrayList<>();
 
         private Optional<String> nextPageToken = Optional.empty();
 
@@ -98,7 +98,7 @@ public final class ParseRunsListResponse {
         }
 
         @JsonSetter(value = "data", nulls = Nulls.SKIP)
-        public Builder data(List<ParseRun> data) {
+        public Builder data(List<ParseRunSummary> data) {
             this.data.clear();
             if (data != null) {
                 this.data.addAll(data);
@@ -106,12 +106,12 @@ public final class ParseRunsListResponse {
             return this;
         }
 
-        public Builder addData(ParseRun data) {
+        public Builder addData(ParseRunSummary data) {
             this.data.add(data);
             return this;
         }
 
-        public Builder addAllData(List<ParseRun> data) {
+        public Builder addAllData(List<ParseRunSummary> data) {
             if (data != null) {
                 this.data.addAll(data);
             }

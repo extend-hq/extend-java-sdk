@@ -216,7 +216,7 @@ Extract structured data from a file synchronously, waiting for the result before
 
 **Note:** This endpoint is intended for onboarding and testing only. For production workloads, use `POST /extract_runs` with [polling or webhooks](https://docs.extend.ai/2026-02-09/general/async-processing) instead, as it provides better reliability for large files and avoids timeout issues.
 
-The Extract endpoint allows you to extract structured data from files using an existing extractor or an inline configuration.
+The Extract endpoint allows you to extract structured data from files using an existing extractor, an inline configuration, or no configuration at all. When neither is provided, Extend automatically infers a schema from the document before extraction — no extractor or schema is required.
 
 For more details, see the [Extract File guide](https://docs.extend.ai/2026-02-09/extraction/overview).
 </dd>
@@ -294,7 +294,7 @@ client.extract(
 <dl>
 <dd>
 
-**extractor:** `Optional<ExtractRequestExtractor>` — Reference to an existing extractor. One of `extractor` or `config` must be provided.
+**extractor:** `Optional<ExtractRequestExtractor>` — Reference to an existing extractor. Mutually exclusive with `config` — provide one or the other, or omit both to have Extend infer a schema from the document.
     
 </dd>
 </dl>
@@ -302,7 +302,7 @@ client.extract(
 <dl>
 <dd>
 
-**config:** `Optional<ExtractConfigJson>` — Inline extract configuration. One of `extractor` or `config` must be provided.
+**config:** `Optional<ExtractConfigJson>` — Inline extract configuration. Mutually exclusive with `extractor` — provide one or the other, or omit both to have Extend infer a schema from the document.
     
 </dd>
 </dl>
@@ -1307,6 +1307,79 @@ Example: `"pr_xK9mLPqRtN3vS8wF5hB2cQ"`
 </dl>
 </details>
 
+<details><summary><code>client.parseRuns.cancel(id) -> ParseRun</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Cancel an in-progress parse run.
+
+Note: Only parse runs with a status of `"PROCESSING"` can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.parseRuns().cancel(
+    "parse_run_id_here",
+    ParseRunsCancelRequest
+        .builder()
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `String` 
+
+The ID of the parse run to cancel.
+
+Example: `"pr_xK9mLPqRtN3vS8wF5hB2cQ"`
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**extendWorkspaceId:** `Optional<String>` — The workspace ID to target. **Required** when using an organization-scoped API key; optional for workspace-scoped keys (the key is already tied to a workspace). See [Authentication](https://docs.extend.ai/2026-02-09/api-reference/authentication) for details on API key scopes.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.parseRuns.createBatch(request) -> BatchRun</code></summary>
 <dl>
 <dd>
@@ -2062,7 +2135,7 @@ client.extractRuns().create(
 <dl>
 <dd>
 
-**extractor:** `Optional<ExtractRunsCreateRequestExtractor>` — Reference to an existing extractor. One of `extractor` or `config` must be provided.
+**extractor:** `Optional<ExtractRunsCreateRequestExtractor>` — Reference to an existing extractor. Mutually exclusive with `config` — provide one or the other, or omit both to have Extend infer a schema from the document.
     
 </dd>
 </dl>
@@ -2070,7 +2143,7 @@ client.extractRuns().create(
 <dl>
 <dd>
 
-**config:** `Optional<ExtractConfigJson>` — Inline extract configuration. One of `extractor` or `config` must be provided.
+**config:** `Optional<ExtractConfigJson>` — Inline extract configuration. Mutually exclusive with `extractor` — provide one or the other, or omit both to have Extend infer a schema from the document.
     
 </dd>
 </dl>
@@ -6775,7 +6848,7 @@ Unlike the single [Run Workflow](https://docs.extend.ai/2026-02-09/api-reference
 
 Our recommended usage pattern is to integrate with [Webhooks](https://docs.extend.ai/2026-02-09/webhooks/configuration) for consuming results, using the `metadata` and `batchId` to match up results to the original inputs in your downstream systems. However, you can integrate in a polling mechanism by using a combination of the [List Workflow Runs](https://docs.extend.ai/2026-02-09/api-reference/endpoints/workflow/list-workflow-runs) endpoint to fetch all runs via a batch, and then [Get Workflow Run](https://docs.extend.ai/2026-02-09/api-reference/endpoints/workflow/get-workflow-run) to fetch the full outputs each run.
 
-**Priority:** All workflow runs created through this batch endpoint are automatically assigned a priority of 90.
+**Priority:** By default, workflow runs created through this batch endpoint are assigned a priority of 90. You can override this by passing an optional `priority` value (1–100) in the request body — lower values run first.
 
 **Processing and Monitoring:**
 Upon successful submission, the endpoint returns a `batchId`. The individual workflow runs are then queued for processing.
@@ -6866,6 +6939,14 @@ client.workflowRuns().createBatch(
 <dd>
 
 **inputs:** `List<WorkflowRunsCreateBatchRequestInputsItem>` — An array of input objects to be processed by the workflow. Each object represents a single workflow run to be created. The array must contain at least 1 input and at most 1000 inputs.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**priority:** `Optional<Integer>` — An optional value used to determine the relative order of runs when rate limiting is in effect. Lower values will be prioritized before higher values. Defaults to 90 if not specified.
     
 </dd>
 </dl>

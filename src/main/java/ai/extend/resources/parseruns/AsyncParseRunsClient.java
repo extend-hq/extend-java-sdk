@@ -5,6 +5,7 @@ package ai.extend.resources.parseruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
+import ai.extend.resources.parseruns.requests.ParseRunsCancelRequest;
 import ai.extend.resources.parseruns.requests.ParseRunsCreateBatchRequest;
 import ai.extend.resources.parseruns.requests.ParseRunsCreateRequest;
 import ai.extend.resources.parseruns.requests.ParseRunsDeleteRequest;
@@ -147,6 +148,39 @@ public class AsyncParseRunsClient {
     public CompletableFuture<ParseRunsDeleteResponse> delete(
             String id, ParseRunsDeleteRequest request, RequestOptions requestOptions) {
         return this.rawClient.delete(id, request, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Cancel an in-progress parse run.
+     * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public CompletableFuture<ParseRun> cancel(String id) {
+        return this.rawClient.cancel(id).thenApply(response -> response.body());
+    }
+
+    /**
+     * Cancel an in-progress parse run.
+     * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public CompletableFuture<ParseRun> cancel(String id, RequestOptions requestOptions) {
+        return this.rawClient.cancel(id, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Cancel an in-progress parse run.
+     * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public CompletableFuture<ParseRun> cancel(String id, ParseRunsCancelRequest request) {
+        return this.rawClient.cancel(id, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Cancel an in-progress parse run.
+     * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public CompletableFuture<ParseRun> cancel(
+            String id, ParseRunsCancelRequest request, RequestOptions requestOptions) {
+        return this.rawClient.cancel(id, request, requestOptions).thenApply(response -> response.body());
     }
 
     /**

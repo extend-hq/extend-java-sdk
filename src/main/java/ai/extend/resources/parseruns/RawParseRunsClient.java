@@ -19,6 +19,7 @@ import ai.extend.errors.PaymentRequiredError;
 import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
+import ai.extend.resources.parseruns.requests.ParseRunsCancelRequest;
 import ai.extend.resources.parseruns.requests.ParseRunsCreateBatchRequest;
 import ai.extend.resources.parseruns.requests.ParseRunsCreateRequest;
 import ai.extend.resources.parseruns.requests.ParseRunsDeleteRequest;
@@ -419,6 +420,105 @@ public class RawParseRunsClient {
                 return new ExtendClientHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ParseRunsDeleteResponse.class),
                         response);
+            }
+            try {
+                switch (response.code()) {
+                    case 400:
+                        throw new BadRequestError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 401:
+                        throw new UnauthorizedError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 402:
+                        throw new PaymentRequiredError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 403:
+                        throw new ForbiddenError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 404:
+                        throw new NotFoundError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 422:
+                        throw new UnprocessableEntityError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 429:
+                        throw new TooManyRequestsError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 500:
+                        throw new InternalServerError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                }
+            } catch (JsonProcessingException ignored) {
+                // unable to map error response, throwing generic error
+            }
+            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
+            throw new ExtendClientApiException(
+                    "Error with status code " + response.code(), response.code(), errorBody, response);
+        } catch (IOException e) {
+            throw new ExtendClientException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
+     * Cancel an in-progress parse run.
+     * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public ExtendClientHttpResponse<ParseRun> cancel(String id) {
+        return cancel(id, ParseRunsCancelRequest.builder().build());
+    }
+
+    /**
+     * Cancel an in-progress parse run.
+     * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public ExtendClientHttpResponse<ParseRun> cancel(String id, RequestOptions requestOptions) {
+        return cancel(id, ParseRunsCancelRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Cancel an in-progress parse run.
+     * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public ExtendClientHttpResponse<ParseRun> cancel(String id, ParseRunsCancelRequest request) {
+        return cancel(id, request, null);
+    }
+
+    /**
+     * Cancel an in-progress parse run.
+     * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
+     */
+    public ExtendClientHttpResponse<ParseRun> cancel(
+            String id, ParseRunsCancelRequest request, RequestOptions requestOptions) {
+        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("parse_runs")
+                .addPathSegment(id)
+                .addPathSegments("cancel");
+        if (requestOptions != null) {
+            requestOptions.getQueryParameters().forEach((_key, _value) -> {
+                httpUrl.addQueryParameter(_key, _value);
+            });
+        }
+        Request.Builder _requestBuilder = new Request.Builder()
+                .url(httpUrl.build())
+                .method("POST", RequestBody.create("", null))
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            if (response.isSuccessful()) {
+                return new ExtendClientHttpResponse<>(
+                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ParseRun.class), response);
             }
             try {
                 switch (response.code()) {
