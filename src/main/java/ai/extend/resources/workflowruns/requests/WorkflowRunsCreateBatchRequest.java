@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
@@ -28,14 +29,18 @@ public final class WorkflowRunsCreateBatchRequest {
 
     private final List<WorkflowRunsCreateBatchRequestInputsItem> inputs;
 
+    private final Optional<Integer> priority;
+
     private final Map<String, Object> additionalProperties;
 
     private WorkflowRunsCreateBatchRequest(
             WorkflowReference workflow,
             List<WorkflowRunsCreateBatchRequestInputsItem> inputs,
+            Optional<Integer> priority,
             Map<String, Object> additionalProperties) {
         this.workflow = workflow;
         this.inputs = inputs;
+        this.priority = priority;
         this.additionalProperties = additionalProperties;
     }
 
@@ -52,6 +57,14 @@ public final class WorkflowRunsCreateBatchRequest {
         return inputs;
     }
 
+    /**
+     * @return An optional value used to determine the relative order of runs when rate limiting is in effect. Lower values will be prioritized before higher values. Defaults to 90 if not specified.
+     */
+    @JsonProperty("priority")
+    public Optional<Integer> getPriority() {
+        return priority;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -64,12 +77,12 @@ public final class WorkflowRunsCreateBatchRequest {
     }
 
     private boolean equalTo(WorkflowRunsCreateBatchRequest other) {
-        return workflow.equals(other.workflow) && inputs.equals(other.inputs);
+        return workflow.equals(other.workflow) && inputs.equals(other.inputs) && priority.equals(other.priority);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.workflow, this.inputs);
+        return Objects.hash(this.workflow, this.inputs, this.priority);
     }
 
     @java.lang.Override
@@ -98,11 +111,20 @@ public final class WorkflowRunsCreateBatchRequest {
         _FinalStage addInputs(WorkflowRunsCreateBatchRequestInputsItem inputs);
 
         _FinalStage addAllInputs(List<WorkflowRunsCreateBatchRequestInputsItem> inputs);
+
+        /**
+         * <p>An optional value used to determine the relative order of runs when rate limiting is in effect. Lower values will be prioritized before higher values. Defaults to 90 if not specified.</p>
+         */
+        _FinalStage priority(Optional<Integer> priority);
+
+        _FinalStage priority(Integer priority);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements WorkflowStage, _FinalStage {
         private WorkflowReference workflow;
+
+        private Optional<Integer> priority = Optional.empty();
 
         private List<WorkflowRunsCreateBatchRequestInputsItem> inputs = new ArrayList<>();
 
@@ -115,6 +137,7 @@ public final class WorkflowRunsCreateBatchRequest {
         public Builder from(WorkflowRunsCreateBatchRequest other) {
             workflow(other.getWorkflow());
             inputs(other.getInputs());
+            priority(other.getPriority());
             return this;
         }
 
@@ -122,6 +145,26 @@ public final class WorkflowRunsCreateBatchRequest {
         @JsonSetter("workflow")
         public _FinalStage workflow(@NotNull WorkflowReference workflow) {
             this.workflow = Objects.requireNonNull(workflow, "workflow must not be null");
+            return this;
+        }
+
+        /**
+         * <p>An optional value used to determine the relative order of runs when rate limiting is in effect. Lower values will be prioritized before higher values. Defaults to 90 if not specified.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage priority(Integer priority) {
+            this.priority = Optional.ofNullable(priority);
+            return this;
+        }
+
+        /**
+         * <p>An optional value used to determine the relative order of runs when rate limiting is in effect. Lower values will be prioritized before higher values. Defaults to 90 if not specified.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "priority", nulls = Nulls.SKIP)
+        public _FinalStage priority(Optional<Integer> priority) {
+            this.priority = priority;
             return this;
         }
 
@@ -162,7 +205,7 @@ public final class WorkflowRunsCreateBatchRequest {
 
         @java.lang.Override
         public WorkflowRunsCreateBatchRequest build() {
-            return new WorkflowRunsCreateBatchRequest(workflow, inputs, additionalProperties);
+            return new WorkflowRunsCreateBatchRequest(workflow, inputs, priority, additionalProperties);
         }
     }
 }

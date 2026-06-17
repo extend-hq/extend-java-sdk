@@ -186,7 +186,7 @@ public class ExtendClient {
     /**
      * Extract structured data from a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /extract_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor or an inline configuration.</p>
+     * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor, an inline configuration, or no configuration at all. When neither is provided, Extend automatically infers a schema from the document before extraction — no extractor or schema is required.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/extraction/overview">Extract File guide</a>.</p>
      */
     public ExtractRun extract(ExtractRequest request) {
@@ -196,7 +196,7 @@ public class ExtendClient {
     /**
      * Extract structured data from a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /extract_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
-     * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor or an inline configuration.</p>
+     * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor, an inline configuration, or no configuration at all. When neither is provided, Extend automatically infers a schema from the document before extraction — no extractor or schema is required.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/extraction/overview">Extract File guide</a>.</p>
      */
     public ExtractRun extract(ExtractRequest request, RequestOptions requestOptions) {

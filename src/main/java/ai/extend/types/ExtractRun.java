@@ -188,6 +188,7 @@ public final class ExtractRun {
      * <li><code>PRE_PROCESSING_FAILURE</code> - An error occurred during preprocessing (e.g., chunking)</li>
      * <li><code>POST_PROCESSING_FAILURE</code> - An error occurred during postprocessing</li>
      * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to run the extraction</li>
+     * <li><code>SCHEMA_GENERATION_FAILED</code> - Automatic schema inference failed (only applies when <code>schema</code> is omitted). The file could not be parsed or a schema could not be generated from it.</li>
      * </ul>
      * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
      */
@@ -585,6 +586,7 @@ public final class ExtractRun {
          * <li><code>PRE_PROCESSING_FAILURE</code> - An error occurred during preprocessing (e.g., chunking)</li>
          * <li><code>POST_PROCESSING_FAILURE</code> - An error occurred during postprocessing</li>
          * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to run the extraction</li>
+         * <li><code>SCHEMA_GENERATION_FAILED</code> - Automatic schema inference failed (only applies when <code>schema</code> is omitted). The file could not be parsed or a schema could not be generated from it.</li>
          * </ul>
          * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
          */
@@ -1169,6 +1171,7 @@ public final class ExtractRun {
          * <li><code>PRE_PROCESSING_FAILURE</code> - An error occurred during preprocessing (e.g., chunking)</li>
          * <li><code>POST_PROCESSING_FAILURE</code> - An error occurred during postprocessing</li>
          * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to run the extraction</li>
+         * <li><code>SCHEMA_GENERATION_FAILED</code> - Automatic schema inference failed (only applies when <code>schema</code> is omitted). The file could not be parsed or a schema could not be generated from it.</li>
          * </ul>
          * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
@@ -1199,6 +1202,7 @@ public final class ExtractRun {
          * <li><code>PRE_PROCESSING_FAILURE</code> - An error occurred during preprocessing (e.g., chunking)</li>
          * <li><code>POST_PROCESSING_FAILURE</code> - An error occurred during postprocessing</li>
          * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to run the extraction</li>
+         * <li><code>SCHEMA_GENERATION_FAILED</code> - Automatic schema inference failed (only applies when <code>schema</code> is omitted). The file could not be parsed or a schema could not be generated from it.</li>
          * </ul>
          * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
@@ -1223,6 +1227,7 @@ public final class ExtractRun {
          * <li><code>PRE_PROCESSING_FAILURE</code> - An error occurred during preprocessing (e.g., chunking)</li>
          * <li><code>POST_PROCESSING_FAILURE</code> - An error occurred during postprocessing</li>
          * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to run the extraction</li>
+         * <li><code>SCHEMA_GENERATION_FAILED</code> - Automatic schema inference failed (only applies when <code>schema</code> is omitted). The file could not be parsed or a schema could not be generated from it.</li>
          * </ul>
          * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
          */

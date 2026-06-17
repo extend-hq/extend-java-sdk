@@ -140,6 +140,20 @@ public final class ExtractRunSummary {
     /**
      * @return The reason for failure.
      * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
+     * <p>Possible values include:</p>
+     * <ul>
+     * <li><code>ABORTED</code> - The run was aborted by the user</li>
+     * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
+     * <li><code>FAILED_TO_PROCESS_FILE</code> - Failed to process the file (e.g., OCR failure, file access issues)</li>
+     * <li><code>INVALID_PROCESSOR</code> - The processor configuration is invalid</li>
+     * <li><code>INVALID_CONFIGURATION</code> - The provided configuration is incompatible with the selected model</li>
+     * <li><code>PARSING_ERROR</code> - Failed to parse the extraction output</li>
+     * <li><code>PRE_PROCESSING_FAILURE</code> - An error occurred during preprocessing (e.g., chunking)</li>
+     * <li><code>POST_PROCESSING_FAILURE</code> - An error occurred during postprocessing</li>
+     * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to run the extraction</li>
+     * <li><code>SCHEMA_GENERATION_FAILED</code> - Automatic schema inference failed (only applies when <code>schema</code> is omitted). The file could not be parsed or a schema could not be generated from it.</li>
+     * </ul>
+     * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
      */
     @JsonIgnore
     public Optional<String> getFailureReason() {
@@ -416,6 +430,20 @@ public final class ExtractRunSummary {
         /**
          * <p>The reason for failure.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
+         * <p>Possible values include:</p>
+         * <ul>
+         * <li><code>ABORTED</code> - The run was aborted by the user</li>
+         * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
+         * <li><code>FAILED_TO_PROCESS_FILE</code> - Failed to process the file (e.g., OCR failure, file access issues)</li>
+         * <li><code>INVALID_PROCESSOR</code> - The processor configuration is invalid</li>
+         * <li><code>INVALID_CONFIGURATION</code> - The provided configuration is incompatible with the selected model</li>
+         * <li><code>PARSING_ERROR</code> - Failed to parse the extraction output</li>
+         * <li><code>PRE_PROCESSING_FAILURE</code> - An error occurred during preprocessing (e.g., chunking)</li>
+         * <li><code>POST_PROCESSING_FAILURE</code> - An error occurred during postprocessing</li>
+         * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to run the extraction</li>
+         * <li><code>SCHEMA_GENERATION_FAILED</code> - Automatic schema inference failed (only applies when <code>schema</code> is omitted). The file could not be parsed or a schema could not be generated from it.</li>
+         * </ul>
+         * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
          */
         _FinalStage failureReason(Optional<String> failureReason);
 
@@ -802,6 +830,20 @@ public final class ExtractRunSummary {
         /**
          * <p>The reason for failure.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
+         * <p>Possible values include:</p>
+         * <ul>
+         * <li><code>ABORTED</code> - The run was aborted by the user</li>
+         * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
+         * <li><code>FAILED_TO_PROCESS_FILE</code> - Failed to process the file (e.g., OCR failure, file access issues)</li>
+         * <li><code>INVALID_PROCESSOR</code> - The processor configuration is invalid</li>
+         * <li><code>INVALID_CONFIGURATION</code> - The provided configuration is incompatible with the selected model</li>
+         * <li><code>PARSING_ERROR</code> - Failed to parse the extraction output</li>
+         * <li><code>PRE_PROCESSING_FAILURE</code> - An error occurred during preprocessing (e.g., chunking)</li>
+         * <li><code>POST_PROCESSING_FAILURE</code> - An error occurred during postprocessing</li>
+         * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to run the extraction</li>
+         * <li><code>SCHEMA_GENERATION_FAILED</code> - Automatic schema inference failed (only applies when <code>schema</code> is omitted). The file could not be parsed or a schema could not be generated from it.</li>
+         * </ul>
+         * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -819,6 +861,20 @@ public final class ExtractRunSummary {
         /**
          * <p>The reason for failure.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
+         * <p>Possible values include:</p>
+         * <ul>
+         * <li><code>ABORTED</code> - The run was aborted by the user</li>
+         * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
+         * <li><code>FAILED_TO_PROCESS_FILE</code> - Failed to process the file (e.g., OCR failure, file access issues)</li>
+         * <li><code>INVALID_PROCESSOR</code> - The processor configuration is invalid</li>
+         * <li><code>INVALID_CONFIGURATION</code> - The provided configuration is incompatible with the selected model</li>
+         * <li><code>PARSING_ERROR</code> - Failed to parse the extraction output</li>
+         * <li><code>PRE_PROCESSING_FAILURE</code> - An error occurred during preprocessing (e.g., chunking)</li>
+         * <li><code>POST_PROCESSING_FAILURE</code> - An error occurred during postprocessing</li>
+         * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to run the extraction</li>
+         * <li><code>SCHEMA_GENERATION_FAILED</code> - Automatic schema inference failed (only applies when <code>schema</code> is omitted). The file could not be parsed or a schema could not be generated from it.</li>
+         * </ul>
+         * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -830,6 +886,20 @@ public final class ExtractRunSummary {
         /**
          * <p>The reason for failure.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
+         * <p>Possible values include:</p>
+         * <ul>
+         * <li><code>ABORTED</code> - The run was aborted by the user</li>
+         * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
+         * <li><code>FAILED_TO_PROCESS_FILE</code> - Failed to process the file (e.g., OCR failure, file access issues)</li>
+         * <li><code>INVALID_PROCESSOR</code> - The processor configuration is invalid</li>
+         * <li><code>INVALID_CONFIGURATION</code> - The provided configuration is incompatible with the selected model</li>
+         * <li><code>PARSING_ERROR</code> - Failed to parse the extraction output</li>
+         * <li><code>PRE_PROCESSING_FAILURE</code> - An error occurred during preprocessing (e.g., chunking)</li>
+         * <li><code>POST_PROCESSING_FAILURE</code> - An error occurred during postprocessing</li>
+         * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to run the extraction</li>
+         * <li><code>SCHEMA_GENERATION_FAILED</code> - Automatic schema inference failed (only applies when <code>schema</code> is omitted). The file could not be parsed or a schema could not be generated from it.</li>
+         * </ul>
+         * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "failureReason", nulls = Nulls.SKIP)

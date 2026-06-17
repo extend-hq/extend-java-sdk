@@ -48,7 +48,7 @@ public final class ExtractRequest {
     }
 
     /**
-     * @return Reference to an existing extractor. One of <code>extractor</code> or <code>config</code> must be provided.
+     * @return Reference to an existing extractor. Mutually exclusive with <code>config</code> — provide one or the other, or omit both to have Extend infer a schema from the document.
      */
     @JsonProperty("extractor")
     public Optional<ExtractRequestExtractor> getExtractor() {
@@ -56,7 +56,7 @@ public final class ExtractRequest {
     }
 
     /**
-     * @return Inline extract configuration. One of <code>extractor</code> or <code>config</code> must be provided.
+     * @return Inline extract configuration. Mutually exclusive with <code>extractor</code> — provide one or the other, or omit both to have Extend infer a schema from the document.
      */
     @JsonProperty("config")
     public Optional<ExtractConfigJson> getConfig() {
@@ -121,14 +121,14 @@ public final class ExtractRequest {
         ExtractRequest build();
 
         /**
-         * <p>Reference to an existing extractor. One of <code>extractor</code> or <code>config</code> must be provided.</p>
+         * <p>Reference to an existing extractor. Mutually exclusive with <code>config</code> — provide one or the other, or omit both to have Extend infer a schema from the document.</p>
          */
         _FinalStage extractor(Optional<ExtractRequestExtractor> extractor);
 
         _FinalStage extractor(ExtractRequestExtractor extractor);
 
         /**
-         * <p>Inline extract configuration. One of <code>extractor</code> or <code>config</code> must be provided.</p>
+         * <p>Inline extract configuration. Mutually exclusive with <code>extractor</code> — provide one or the other, or omit both to have Extend infer a schema from the document.</p>
          */
         _FinalStage config(Optional<ExtractConfigJson> config);
 
@@ -189,7 +189,7 @@ public final class ExtractRequest {
         }
 
         /**
-         * <p>Inline extract configuration. One of <code>extractor</code> or <code>config</code> must be provided.</p>
+         * <p>Inline extract configuration. Mutually exclusive with <code>extractor</code> — provide one or the other, or omit both to have Extend infer a schema from the document.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -199,7 +199,7 @@ public final class ExtractRequest {
         }
 
         /**
-         * <p>Inline extract configuration. One of <code>extractor</code> or <code>config</code> must be provided.</p>
+         * <p>Inline extract configuration. Mutually exclusive with <code>extractor</code> — provide one or the other, or omit both to have Extend infer a schema from the document.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "config", nulls = Nulls.SKIP)
@@ -209,7 +209,7 @@ public final class ExtractRequest {
         }
 
         /**
-         * <p>Reference to an existing extractor. One of <code>extractor</code> or <code>config</code> must be provided.</p>
+         * <p>Reference to an existing extractor. Mutually exclusive with <code>config</code> — provide one or the other, or omit both to have Extend infer a schema from the document.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -219,7 +219,7 @@ public final class ExtractRequest {
         }
 
         /**
-         * <p>Reference to an existing extractor. One of <code>extractor</code> or <code>config</code> must be provided.</p>
+         * <p>Reference to an existing extractor. Mutually exclusive with <code>config</code> — provide one or the other, or omit both to have Extend infer a schema from the document.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "extractor", nulls = Nulls.SKIP)

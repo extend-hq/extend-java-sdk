@@ -10,10 +10,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
@@ -25,13 +28,20 @@ public final class RunUsageBreakdownEntry {
 
     private final double credits;
 
+    private final Optional<List<RunUsageBreakdownCharge>> charges;
+
     private final Map<String, Object> additionalProperties;
 
     private RunUsageBreakdownEntry(
-            RunUsageBreakdownEntryObject object, String id, double credits, Map<String, Object> additionalProperties) {
+            RunUsageBreakdownEntryObject object,
+            String id,
+            double credits,
+            Optional<List<RunUsageBreakdownCharge>> charges,
+            Map<String, Object> additionalProperties) {
         this.object = object;
         this.id = id;
         this.credits = credits;
+        this.charges = charges;
         this.additionalProperties = additionalProperties;
     }
 
@@ -59,6 +69,15 @@ public final class RunUsageBreakdownEntry {
         return credits;
     }
 
+    /**
+     * @return Itemized cost drivers that make up this entry's <code>credits</code>. When present, <code>sum(charges[].credits) === credits</code>.
+     * <p><strong>Availability:</strong> Present on runs persisted on or after June 10, 2026. Runs persisted before that date will omit this field.</p>
+     */
+    @JsonProperty("charges")
+    public Optional<List<RunUsageBreakdownCharge>> getCharges() {
+        return charges;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -71,12 +90,15 @@ public final class RunUsageBreakdownEntry {
     }
 
     private boolean equalTo(RunUsageBreakdownEntry other) {
-        return object.equals(other.object) && id.equals(other.id) && credits == other.credits;
+        return object.equals(other.object)
+                && id.equals(other.id)
+                && credits == other.credits
+                && charges.equals(other.charges);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.object, this.id, this.credits);
+        return Objects.hash(this.object, this.id, this.credits, this.charges);
     }
 
     @java.lang.Override
@@ -113,6 +135,14 @@ public final class RunUsageBreakdownEntry {
 
     public interface _FinalStage {
         RunUsageBreakdownEntry build();
+
+        /**
+         * <p>Itemized cost drivers that make up this entry's <code>credits</code>. When present, <code>sum(charges[].credits) === credits</code>.</p>
+         * <p><strong>Availability:</strong> Present on runs persisted on or after June 10, 2026. Runs persisted before that date will omit this field.</p>
+         */
+        _FinalStage charges(Optional<List<RunUsageBreakdownCharge>> charges);
+
+        _FinalStage charges(List<RunUsageBreakdownCharge> charges);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -122,6 +152,8 @@ public final class RunUsageBreakdownEntry {
         private String id;
 
         private double credits;
+
+        private Optional<List<RunUsageBreakdownCharge>> charges = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -133,6 +165,7 @@ public final class RunUsageBreakdownEntry {
             object(other.getObject());
             id(other.getId());
             credits(other.getCredits());
+            charges(other.getCharges());
             return this;
         }
 
@@ -172,9 +205,31 @@ public final class RunUsageBreakdownEntry {
             return this;
         }
 
+        /**
+         * <p>Itemized cost drivers that make up this entry's <code>credits</code>. When present, <code>sum(charges[].credits) === credits</code>.</p>
+         * <p><strong>Availability:</strong> Present on runs persisted on or after June 10, 2026. Runs persisted before that date will omit this field.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage charges(List<RunUsageBreakdownCharge> charges) {
+            this.charges = Optional.ofNullable(charges);
+            return this;
+        }
+
+        /**
+         * <p>Itemized cost drivers that make up this entry's <code>credits</code>. When present, <code>sum(charges[].credits) === credits</code>.</p>
+         * <p><strong>Availability:</strong> Present on runs persisted on or after June 10, 2026. Runs persisted before that date will omit this field.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "charges", nulls = Nulls.SKIP)
+        public _FinalStage charges(Optional<List<RunUsageBreakdownCharge>> charges) {
+            this.charges = charges;
+            return this;
+        }
+
         @java.lang.Override
         public RunUsageBreakdownEntry build() {
-            return new RunUsageBreakdownEntry(object, id, credits, additionalProperties);
+            return new RunUsageBreakdownEntry(object, id, credits, charges, additionalProperties);
         }
     }
 }
