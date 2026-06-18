@@ -8,7 +8,6 @@
 package ai.extend;
 
 import ai.extend.core.ClientOptions;
-import ai.extend.core.Environment;
 import ai.extend.core.Suppliers;
 import ai.extend.wrapper.resources.ClassifyRunsClient;
 import ai.extend.wrapper.resources.EditRunsClient;
@@ -18,7 +17,6 @@ import ai.extend.wrapper.resources.SplitRunsClient;
 import ai.extend.wrapper.resources.WorkflowRunsClient;
 import ai.extend.wrapper.webhooks.Webhooks;
 import java.util.function.Supplier;
-import okhttp3.OkHttpClient;
 
 /**
  * The Extend API client, with additional polling and webhook utilities.
@@ -76,6 +74,7 @@ public class ExtendClient extends ExtendClientBase {
     private final Supplier<ParseRunsClient> parseRunsClient;
     private final Supplier<EditRunsClient> editRunsClient;
     private final Supplier<WorkflowRunsClient> workflowRunsClient;
+    private final Supplier<RawExtendClient> rawClient;
 
     public ExtendClient(ClientOptions clientOptions) {
         super(clientOptions);
@@ -88,6 +87,7 @@ public class ExtendClient extends ExtendClientBase {
         this.parseRunsClient = Suppliers.memoize(() -> new ParseRunsClient(clientOptions));
         this.editRunsClient = Suppliers.memoize(() -> new EditRunsClient(clientOptions));
         this.workflowRunsClient = Suppliers.memoize(() -> new WorkflowRunsClient(clientOptions));
+        this.rawClient = Suppliers.memoize(() -> new RawExtendClient(clientOptions));
     }
 
     /**
@@ -159,7 +159,7 @@ public class ExtendClient extends ExtendClientBase {
      */
     @Override
     public RawExtendClient withRawResponse() {
-        return new RawExtendClient(this.clientOptions);
+        return rawClient.get();
     }
 
     /**

@@ -7,14 +7,19 @@
 package ai.extend;
 
 import ai.extend.core.ClientOptions;
+import ai.extend.core.Suppliers;
+import java.util.function.Supplier;
 
 /**
  * Asynchronous (CompletableFuture-based) Extend API client.
  */
 public class AsyncExtendClient extends AsyncExtendClientBase {
 
+    private final Supplier<AsyncRawExtendClient> rawClient;
+
     public AsyncExtendClient(ClientOptions clientOptions) {
         super(clientOptions);
+        this.rawClient = Suppliers.memoize(() -> new AsyncRawExtendClient(clientOptions));
     }
 
     /**
@@ -23,7 +28,7 @@ public class AsyncExtendClient extends AsyncExtendClientBase {
      */
     @Override
     public AsyncRawExtendClient withRawResponse() {
-        return new AsyncRawExtendClient(this.clientOptions);
+        return rawClient.get();
     }
 
     /**

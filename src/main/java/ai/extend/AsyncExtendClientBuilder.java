@@ -16,10 +16,15 @@ import okhttp3.OkHttpClient;
  */
 public class AsyncExtendClientBuilder extends AsyncExtendClientBaseBuilder {
 
+    // Shadows the (private) token in AsyncExtendClientBaseBuilder so the overridden build()
+    // below can re-run the same fail-fast check the base builder performs.
+    private String token = System.getenv("EXTEND_API_KEY");
+
     /**
      * Sets the API key (convenience alias for {@link #token(String)}).
      */
     public AsyncExtendClientBuilder apiKey(String apiKey) {
+        this.token = apiKey;
         super.token(apiKey);
         return this;
     }
@@ -34,6 +39,7 @@ public class AsyncExtendClientBuilder extends AsyncExtendClientBaseBuilder {
 
     @Override
     public AsyncExtendClientBuilder token(String token) {
+        this.token = token;
         super.token(token);
         return this;
     }
@@ -82,6 +88,10 @@ public class AsyncExtendClientBuilder extends AsyncExtendClientBaseBuilder {
 
     @Override
     public AsyncExtendClient build() {
+        if (token == null) {
+            throw new RuntimeException("Please provide token or set the EXTEND_API_KEY environment variable.");
+        }
+        validateConfiguration();
         return new AsyncExtendClient(buildClientOptions());
     }
 }
