@@ -31,13 +31,13 @@ dependencies {
 Parse any document in a few lines:
 
 ```java
-import ai.extend.wrapper.ExtendClientWrapper;
+import ai.extend.ExtendClient;
 import ai.extend.requests.ParseRequest;
 import ai.extend.types.FileFromUrl;
 import ai.extend.types.ParseRequestFile;
 import ai.extend.types.ParseRun;
 
-ExtendClientWrapper client = ExtendClientWrapper.builder()
+ExtendClient client = ExtendClient.builder()
     .apiKey("YOUR_API_KEY")
     .build();
 
@@ -299,24 +299,24 @@ The SDK defaults to the US production environment. Other regions are available:
 import ai.extend.core.Environment;
 
 // US (default)
-ExtendClientWrapper client = ExtendClientWrapper.builder()
+ExtendClient client = ExtendClient.builder()
     .apiKey("YOUR_API_KEY")
     .build();
 
 // US2 (HIPAA)
-ExtendClientWrapper client = ExtendClientWrapper.builder()
+ExtendClient client = ExtendClient.builder()
     .apiKey("YOUR_API_KEY")
     .environment(Environment.PRODUCTION_US_2)
     .build();
 
 // EU
-ExtendClientWrapper client = ExtendClientWrapper.builder()
+ExtendClient client = ExtendClient.builder()
     .apiKey("YOUR_API_KEY")
     .environment(Environment.PRODUCTION_EU_1)
     .build();
 
 // Custom base URL
-ExtendClientWrapper client = ExtendClientWrapper.builder()
+ExtendClient client = ExtendClient.builder()
     .apiKey("YOUR_API_KEY")
     .url("https://custom-api.example.com")
     .build();
@@ -334,7 +334,7 @@ The SDK automatically retries failed requests with exponential backoff. Retries 
 
 ```java
 // Configure max retries at client level
-ExtendClientWrapper client = ExtendClientWrapper.builder()
+ExtendClient client = ExtendClient.builder()
     .apiKey("YOUR_API_KEY")
     .maxRetries(1)
     .build();
@@ -348,7 +348,7 @@ The default timeout is 60 seconds. Override globally or per-request:
 import ai.extend.core.RequestOptions;
 
 // Global timeout
-ExtendClientWrapper client = ExtendClientWrapper.builder()
+ExtendClient client = ExtendClient.builder()
     .apiKey("YOUR_API_KEY")
     .timeout(30)
     .build();
@@ -362,7 +362,7 @@ client.extractRuns().create(request,
 
 ```java
 // Client-level headers
-ExtendClientWrapper client = ExtendClientWrapper.builder()
+ExtendClient client = ExtendClient.builder()
     .apiKey("YOUR_API_KEY")
     .addHeader("X-Custom-Header", "value")
     .build();
@@ -385,7 +385,7 @@ OkHttpClient customClient = new OkHttpClient.Builder()
     .connectTimeout(10, TimeUnit.SECONDS)
     .build();
 
-ExtendClientWrapper client = ExtendClientWrapper.builder()
+ExtendClient client = ExtendClient.builder()
     .apiKey("YOUR_API_KEY")
     .httpClient(customClient)
     .build();
@@ -396,9 +396,9 @@ ExtendClientWrapper client = ExtendClientWrapper.builder()
 Access underlying HTTP response metadata through `withRawResponse()`:
 
 ```java
-import ai.extend.core.ExtendClientHttpResponse;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 
-ExtendClientHttpResponse<ParseRun> response = client.withRawResponse()
+ExtendClientBaseHttpResponse<ParseRun> response = client.withRawResponse()
     .parse(request);
 
 System.out.println(response.statusCode());
