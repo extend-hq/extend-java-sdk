@@ -5,8 +5,8 @@ package ai.extend.resources.extractorversions;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -46,7 +46,7 @@ public class RawExtractorVersionsClient {
      * This endpoint allows you to fetch all versions of a given extractor, including the current <code>draft</code> version.
      * <p>Versions are returned in descending order of creation (newest first) with the <code>draft</code> version first. The <code>draft</code> version is the latest unpublished version of the extractor, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public ExtendClientHttpResponse<ExtractorVersionsListResponse> list(String extractorId) {
+    public ExtendClientBaseHttpResponse<ExtractorVersionsListResponse> list(String extractorId) {
         return list(extractorId, ExtractorVersionsListRequest.builder().build());
     }
 
@@ -54,7 +54,7 @@ public class RawExtractorVersionsClient {
      * This endpoint allows you to fetch all versions of a given extractor, including the current <code>draft</code> version.
      * <p>Versions are returned in descending order of creation (newest first) with the <code>draft</code> version first. The <code>draft</code> version is the latest unpublished version of the extractor, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public ExtendClientHttpResponse<ExtractorVersionsListResponse> list(
+    public ExtendClientBaseHttpResponse<ExtractorVersionsListResponse> list(
             String extractorId, RequestOptions requestOptions) {
         return list(extractorId, ExtractorVersionsListRequest.builder().build(), requestOptions);
     }
@@ -63,7 +63,7 @@ public class RawExtractorVersionsClient {
      * This endpoint allows you to fetch all versions of a given extractor, including the current <code>draft</code> version.
      * <p>Versions are returned in descending order of creation (newest first) with the <code>draft</code> version first. The <code>draft</code> version is the latest unpublished version of the extractor, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public ExtendClientHttpResponse<ExtractorVersionsListResponse> list(
+    public ExtendClientBaseHttpResponse<ExtractorVersionsListResponse> list(
             String extractorId, ExtractorVersionsListRequest request) {
         return list(extractorId, request, null);
     }
@@ -72,7 +72,7 @@ public class RawExtractorVersionsClient {
      * This endpoint allows you to fetch all versions of a given extractor, including the current <code>draft</code> version.
      * <p>Versions are returned in descending order of creation (newest first) with the <code>draft</code> version first. The <code>draft</code> version is the latest unpublished version of the extractor, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public ExtendClientHttpResponse<ExtractorVersionsListResponse> list(
+    public ExtendClientBaseHttpResponse<ExtractorVersionsListResponse> list(
             String extractorId, ExtractorVersionsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -114,7 +114,7 @@ public class RawExtractorVersionsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtractorVersionsListResponse.class),
                         response);
             }
@@ -160,7 +160,7 @@ public class RawExtractorVersionsClient {
      * This endpoint allows you to publish a new version of an existing extractor. Publishing a new version creates a snapshot of the extractor's current configuration and makes it available for use in workflows.
      * <p>Publishing a new version does not automatically update existing workflows using this extractor. You may need to manually update workflows to use the new version if desired.</p>
      */
-    public ExtendClientHttpResponse<ExtractorVersion> create(
+    public ExtendClientBaseHttpResponse<ExtractorVersion> create(
             String extractorId, ExtractorVersionsCreateRequest request) {
         return create(extractorId, request, null);
     }
@@ -169,7 +169,7 @@ public class RawExtractorVersionsClient {
      * This endpoint allows you to publish a new version of an existing extractor. Publishing a new version creates a snapshot of the extractor's current configuration and makes it available for use in workflows.
      * <p>Publishing a new version does not automatically update existing workflows using this extractor. You may need to manually update workflows to use the new version if desired.</p>
      */
-    public ExtendClientHttpResponse<ExtractorVersion> create(
+    public ExtendClientBaseHttpResponse<ExtractorVersion> create(
             String extractorId, ExtractorVersionsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -207,7 +207,7 @@ public class RawExtractorVersionsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtractorVersion.class), response);
             }
             try {
@@ -251,7 +251,7 @@ public class RawExtractorVersionsClient {
     /**
      * Retrieve a specific version of an extractor in Extend
      */
-    public ExtendClientHttpResponse<ExtractorVersion> retrieve(String extractorId, String versionId) {
+    public ExtendClientBaseHttpResponse<ExtractorVersion> retrieve(String extractorId, String versionId) {
         return retrieve(
                 extractorId,
                 versionId,
@@ -261,7 +261,7 @@ public class RawExtractorVersionsClient {
     /**
      * Retrieve a specific version of an extractor in Extend
      */
-    public ExtendClientHttpResponse<ExtractorVersion> retrieve(
+    public ExtendClientBaseHttpResponse<ExtractorVersion> retrieve(
             String extractorId, String versionId, RequestOptions requestOptions) {
         return retrieve(
                 extractorId,
@@ -273,7 +273,7 @@ public class RawExtractorVersionsClient {
     /**
      * Retrieve a specific version of an extractor in Extend
      */
-    public ExtendClientHttpResponse<ExtractorVersion> retrieve(
+    public ExtendClientBaseHttpResponse<ExtractorVersion> retrieve(
             String extractorId, String versionId, ExtractorVersionsRetrieveRequest request) {
         return retrieve(extractorId, versionId, request, null);
     }
@@ -281,7 +281,7 @@ public class RawExtractorVersionsClient {
     /**
      * Retrieve a specific version of an extractor in Extend
      */
-    public ExtendClientHttpResponse<ExtractorVersion> retrieve(
+    public ExtendClientBaseHttpResponse<ExtractorVersion> retrieve(
             String extractorId,
             String versionId,
             ExtractorVersionsRetrieveRequest request,
@@ -315,7 +315,7 @@ public class RawExtractorVersionsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtractorVersion.class), response);
             }
             try {

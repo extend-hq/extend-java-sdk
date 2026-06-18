@@ -5,8 +5,8 @@ package ai.extend.resources.classifiers;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -47,7 +47,7 @@ public class RawClassifiersClient {
      * List all classifiers.
      * <p>Returns a summary of each classifier. Use <code>GET /classifiers/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public ExtendClientHttpResponse<ClassifiersListResponse> list() {
+    public ExtendClientBaseHttpResponse<ClassifiersListResponse> list() {
         return list(ClassifiersListRequest.builder().build());
     }
 
@@ -55,7 +55,7 @@ public class RawClassifiersClient {
      * List all classifiers.
      * <p>Returns a summary of each classifier. Use <code>GET /classifiers/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public ExtendClientHttpResponse<ClassifiersListResponse> list(RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<ClassifiersListResponse> list(RequestOptions requestOptions) {
         return list(ClassifiersListRequest.builder().build(), requestOptions);
     }
 
@@ -63,7 +63,7 @@ public class RawClassifiersClient {
      * List all classifiers.
      * <p>Returns a summary of each classifier. Use <code>GET /classifiers/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public ExtendClientHttpResponse<ClassifiersListResponse> list(ClassifiersListRequest request) {
+    public ExtendClientBaseHttpResponse<ClassifiersListResponse> list(ClassifiersListRequest request) {
         return list(request, null);
     }
 
@@ -71,7 +71,7 @@ public class RawClassifiersClient {
      * List all classifiers.
      * <p>Returns a summary of each classifier. Use <code>GET /classifiers/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public ExtendClientHttpResponse<ClassifiersListResponse> list(
+    public ExtendClientBaseHttpResponse<ClassifiersListResponse> list(
             ClassifiersListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -115,7 +115,7 @@ public class RawClassifiersClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ClassifiersListResponse.class),
                         response);
             }
@@ -160,14 +160,14 @@ public class RawClassifiersClient {
     /**
      * Create a new classifier.
      */
-    public ExtendClientHttpResponse<Classifier> create(ClassifiersCreateRequest request) {
+    public ExtendClientBaseHttpResponse<Classifier> create(ClassifiersCreateRequest request) {
         return create(request, null);
     }
 
     /**
      * Create a new classifier.
      */
-    public ExtendClientHttpResponse<Classifier> create(
+    public ExtendClientBaseHttpResponse<Classifier> create(
             ClassifiersCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -199,7 +199,7 @@ public class RawClassifiersClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Classifier.class), response);
             }
             try {
@@ -243,28 +243,28 @@ public class RawClassifiersClient {
     /**
      * Get details of a classifier.
      */
-    public ExtendClientHttpResponse<Classifier> retrieve(String id) {
+    public ExtendClientBaseHttpResponse<Classifier> retrieve(String id) {
         return retrieve(id, ClassifiersRetrieveRequest.builder().build());
     }
 
     /**
      * Get details of a classifier.
      */
-    public ExtendClientHttpResponse<Classifier> retrieve(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<Classifier> retrieve(String id, RequestOptions requestOptions) {
         return retrieve(id, ClassifiersRetrieveRequest.builder().build(), requestOptions);
     }
 
     /**
      * Get details of a classifier.
      */
-    public ExtendClientHttpResponse<Classifier> retrieve(String id, ClassifiersRetrieveRequest request) {
+    public ExtendClientBaseHttpResponse<Classifier> retrieve(String id, ClassifiersRetrieveRequest request) {
         return retrieve(id, request, null);
     }
 
     /**
      * Get details of a classifier.
      */
-    public ExtendClientHttpResponse<Classifier> retrieve(
+    public ExtendClientBaseHttpResponse<Classifier> retrieve(
             String id, ClassifiersRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -293,7 +293,7 @@ public class RawClassifiersClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Classifier.class), response);
             }
             try {
@@ -337,28 +337,28 @@ public class RawClassifiersClient {
     /**
      * Update an existing classifier.
      */
-    public ExtendClientHttpResponse<Classifier> update(String id) {
+    public ExtendClientBaseHttpResponse<Classifier> update(String id) {
         return update(id, ClassifiersUpdateRequest.builder().build());
     }
 
     /**
      * Update an existing classifier.
      */
-    public ExtendClientHttpResponse<Classifier> update(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<Classifier> update(String id, RequestOptions requestOptions) {
         return update(id, ClassifiersUpdateRequest.builder().build(), requestOptions);
     }
 
     /**
      * Update an existing classifier.
      */
-    public ExtendClientHttpResponse<Classifier> update(String id, ClassifiersUpdateRequest request) {
+    public ExtendClientBaseHttpResponse<Classifier> update(String id, ClassifiersUpdateRequest request) {
         return update(id, request, null);
     }
 
     /**
      * Update an existing classifier.
      */
-    public ExtendClientHttpResponse<Classifier> update(
+    public ExtendClientBaseHttpResponse<Classifier> update(
             String id, ClassifiersUpdateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -395,7 +395,7 @@ public class RawClassifiersClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Classifier.class), response);
             }
             try {

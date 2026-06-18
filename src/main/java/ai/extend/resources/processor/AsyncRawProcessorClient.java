@@ -5,8 +5,8 @@ package ai.extend.resources.processor;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -46,14 +46,14 @@ public class AsyncRawProcessorClient {
     /**
      * List all processors in your organization
      */
-    public CompletableFuture<ExtendClientHttpResponse<LegacyListProcessorsResponse>> list() {
+    public CompletableFuture<ExtendClientBaseHttpResponse<LegacyListProcessorsResponse>> list() {
         return list(ProcessorListRequest.builder().build());
     }
 
     /**
      * List all processors in your organization
      */
-    public CompletableFuture<ExtendClientHttpResponse<LegacyListProcessorsResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<LegacyListProcessorsResponse>> list(
             RequestOptions requestOptions) {
         return list(ProcessorListRequest.builder().build(), requestOptions);
     }
@@ -61,7 +61,7 @@ public class AsyncRawProcessorClient {
     /**
      * List all processors in your organization
      */
-    public CompletableFuture<ExtendClientHttpResponse<LegacyListProcessorsResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<LegacyListProcessorsResponse>> list(
             ProcessorListRequest request) {
         return list(request, null);
     }
@@ -69,7 +69,7 @@ public class AsyncRawProcessorClient {
     /**
      * List all processors in your organization
      */
-    public CompletableFuture<ExtendClientHttpResponse<LegacyListProcessorsResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<LegacyListProcessorsResponse>> list(
             ProcessorListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -113,14 +113,15 @@ public class AsyncRawProcessorClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<LegacyListProcessorsResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<LegacyListProcessorsResponse>> future =
+                new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, LegacyListProcessorsResponse.class),
                                 response));
@@ -172,14 +173,15 @@ public class AsyncRawProcessorClient {
     /**
      * Create a new processor in Extend, optionally cloning from an existing processor
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorCreateResponse>> create(ProcessorCreateRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorCreateResponse>> create(
+            ProcessorCreateRequest request) {
         return create(request, null);
     }
 
     /**
      * Create a new processor in Extend, optionally cloning from an existing processor
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorCreateResponse>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorCreateResponse>> create(
             ProcessorCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -207,14 +209,14 @@ public class AsyncRawProcessorClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ProcessorCreateResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ProcessorCreateResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ProcessorCreateResponse.class),
                                 response));
                         return;
@@ -260,14 +262,14 @@ public class AsyncRawProcessorClient {
     /**
      * Update an existing processor in Extend
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorUpdateResponse>> update(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorUpdateResponse>> update(String id) {
         return update(id, ProcessorUpdateRequest.builder().build());
     }
 
     /**
      * Update an existing processor in Extend
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorUpdateResponse>> update(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorUpdateResponse>> update(
             String id, RequestOptions requestOptions) {
         return update(id, ProcessorUpdateRequest.builder().build(), requestOptions);
     }
@@ -275,7 +277,7 @@ public class AsyncRawProcessorClient {
     /**
      * Update an existing processor in Extend
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorUpdateResponse>> update(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorUpdateResponse>> update(
             String id, ProcessorUpdateRequest request) {
         return update(id, request, null);
     }
@@ -283,7 +285,7 @@ public class AsyncRawProcessorClient {
     /**
      * Update an existing processor in Extend
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorUpdateResponse>> update(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorUpdateResponse>> update(
             String id, ProcessorUpdateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -316,14 +318,14 @@ public class AsyncRawProcessorClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ProcessorUpdateResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ProcessorUpdateResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ProcessorUpdateResponse.class),
                                 response));
                         return;

@@ -5,8 +5,8 @@ package ai.extend.resources.webhookendpoints;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -49,28 +49,28 @@ public class RawWebhookEndpointsClient {
     /**
      * List all webhook endpoints.
      */
-    public ExtendClientHttpResponse<WebhookEndpointsListResponse> list() {
+    public ExtendClientBaseHttpResponse<WebhookEndpointsListResponse> list() {
         return list(WebhookEndpointsListRequest.builder().build());
     }
 
     /**
      * List all webhook endpoints.
      */
-    public ExtendClientHttpResponse<WebhookEndpointsListResponse> list(RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<WebhookEndpointsListResponse> list(RequestOptions requestOptions) {
         return list(WebhookEndpointsListRequest.builder().build(), requestOptions);
     }
 
     /**
      * List all webhook endpoints.
      */
-    public ExtendClientHttpResponse<WebhookEndpointsListResponse> list(WebhookEndpointsListRequest request) {
+    public ExtendClientBaseHttpResponse<WebhookEndpointsListResponse> list(WebhookEndpointsListRequest request) {
         return list(request, null);
     }
 
     /**
      * List all webhook endpoints.
      */
-    public ExtendClientHttpResponse<WebhookEndpointsListResponse> list(
+    public ExtendClientBaseHttpResponse<WebhookEndpointsListResponse> list(
             WebhookEndpointsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -114,7 +114,7 @@ public class RawWebhookEndpointsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WebhookEndpointsListResponse.class),
                         response);
             }
@@ -161,7 +161,7 @@ public class RawWebhookEndpointsClient {
      * <p>The <code>enabledEvents</code> array specifies which global event types this endpoint should receive. Use the <a href="https://docs.extend.ai/2026-02-09/api-reference/webhook-events">Webhook Events</a> reference to see available event types.</p>
      * <p>To subscribe to events scoped to a specific resource (e.g., a single extractor or workflow), use <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/webhook/create-webhook-subscription">Create Webhook Subscription</a> after creating the endpoint.</p>
      */
-    public ExtendClientHttpResponse<WebhookEndpointCreate> create(WebhookEndpointsCreateRequest request) {
+    public ExtendClientBaseHttpResponse<WebhookEndpointCreate> create(WebhookEndpointsCreateRequest request) {
         return create(request, null);
     }
 
@@ -170,7 +170,7 @@ public class RawWebhookEndpointsClient {
      * <p>The <code>enabledEvents</code> array specifies which global event types this endpoint should receive. Use the <a href="https://docs.extend.ai/2026-02-09/api-reference/webhook-events">Webhook Events</a> reference to see available event types.</p>
      * <p>To subscribe to events scoped to a specific resource (e.g., a single extractor or workflow), use <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/webhook/create-webhook-subscription">Create Webhook Subscription</a> after creating the endpoint.</p>
      */
-    public ExtendClientHttpResponse<WebhookEndpointCreate> create(
+    public ExtendClientBaseHttpResponse<WebhookEndpointCreate> create(
             WebhookEndpointsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -202,7 +202,7 @@ public class RawWebhookEndpointsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WebhookEndpointCreate.class), response);
             }
             try {
@@ -246,28 +246,28 @@ public class RawWebhookEndpointsClient {
     /**
      * Retrieve a webhook endpoint by ID.
      */
-    public ExtendClientHttpResponse<WebhookEndpoint> retrieve(String id) {
+    public ExtendClientBaseHttpResponse<WebhookEndpoint> retrieve(String id) {
         return retrieve(id, WebhookEndpointsRetrieveRequest.builder().build());
     }
 
     /**
      * Retrieve a webhook endpoint by ID.
      */
-    public ExtendClientHttpResponse<WebhookEndpoint> retrieve(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<WebhookEndpoint> retrieve(String id, RequestOptions requestOptions) {
         return retrieve(id, WebhookEndpointsRetrieveRequest.builder().build(), requestOptions);
     }
 
     /**
      * Retrieve a webhook endpoint by ID.
      */
-    public ExtendClientHttpResponse<WebhookEndpoint> retrieve(String id, WebhookEndpointsRetrieveRequest request) {
+    public ExtendClientBaseHttpResponse<WebhookEndpoint> retrieve(String id, WebhookEndpointsRetrieveRequest request) {
         return retrieve(id, request, null);
     }
 
     /**
      * Retrieve a webhook endpoint by ID.
      */
-    public ExtendClientHttpResponse<WebhookEndpoint> retrieve(
+    public ExtendClientBaseHttpResponse<WebhookEndpoint> retrieve(
             String id, WebhookEndpointsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -296,7 +296,7 @@ public class RawWebhookEndpointsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WebhookEndpoint.class), response);
             }
             try {
@@ -341,7 +341,7 @@ public class RawWebhookEndpointsClient {
      * Update a webhook endpoint. Only the fields you include in the request body will be updated; omitted fields remain unchanged.
      * <p>The <code>apiVersion</code> of a webhook endpoint cannot be changed after creation.</p>
      */
-    public ExtendClientHttpResponse<WebhookEndpoint> update(String id) {
+    public ExtendClientBaseHttpResponse<WebhookEndpoint> update(String id) {
         return update(id, WebhookEndpointsUpdateRequest.builder().build());
     }
 
@@ -349,7 +349,7 @@ public class RawWebhookEndpointsClient {
      * Update a webhook endpoint. Only the fields you include in the request body will be updated; omitted fields remain unchanged.
      * <p>The <code>apiVersion</code> of a webhook endpoint cannot be changed after creation.</p>
      */
-    public ExtendClientHttpResponse<WebhookEndpoint> update(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<WebhookEndpoint> update(String id, RequestOptions requestOptions) {
         return update(id, WebhookEndpointsUpdateRequest.builder().build(), requestOptions);
     }
 
@@ -357,7 +357,7 @@ public class RawWebhookEndpointsClient {
      * Update a webhook endpoint. Only the fields you include in the request body will be updated; omitted fields remain unchanged.
      * <p>The <code>apiVersion</code> of a webhook endpoint cannot be changed after creation.</p>
      */
-    public ExtendClientHttpResponse<WebhookEndpoint> update(String id, WebhookEndpointsUpdateRequest request) {
+    public ExtendClientBaseHttpResponse<WebhookEndpoint> update(String id, WebhookEndpointsUpdateRequest request) {
         return update(id, request, null);
     }
 
@@ -365,7 +365,7 @@ public class RawWebhookEndpointsClient {
      * Update a webhook endpoint. Only the fields you include in the request body will be updated; omitted fields remain unchanged.
      * <p>The <code>apiVersion</code> of a webhook endpoint cannot be changed after creation.</p>
      */
-    public ExtendClientHttpResponse<WebhookEndpoint> update(
+    public ExtendClientBaseHttpResponse<WebhookEndpoint> update(
             String id, WebhookEndpointsUpdateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -402,7 +402,7 @@ public class RawWebhookEndpointsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WebhookEndpoint.class), response);
             }
             try {
@@ -446,21 +446,22 @@ public class RawWebhookEndpointsClient {
     /**
      * Delete a webhook endpoint and all of its subscriptions. This operation is permanent and cannot be undone.
      */
-    public ExtendClientHttpResponse<WebhookEndpointsDeleteResponse> delete(String id) {
+    public ExtendClientBaseHttpResponse<WebhookEndpointsDeleteResponse> delete(String id) {
         return delete(id, WebhookEndpointsDeleteRequest.builder().build());
     }
 
     /**
      * Delete a webhook endpoint and all of its subscriptions. This operation is permanent and cannot be undone.
      */
-    public ExtendClientHttpResponse<WebhookEndpointsDeleteResponse> delete(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<WebhookEndpointsDeleteResponse> delete(
+            String id, RequestOptions requestOptions) {
         return delete(id, WebhookEndpointsDeleteRequest.builder().build(), requestOptions);
     }
 
     /**
      * Delete a webhook endpoint and all of its subscriptions. This operation is permanent and cannot be undone.
      */
-    public ExtendClientHttpResponse<WebhookEndpointsDeleteResponse> delete(
+    public ExtendClientBaseHttpResponse<WebhookEndpointsDeleteResponse> delete(
             String id, WebhookEndpointsDeleteRequest request) {
         return delete(id, request, null);
     }
@@ -468,7 +469,7 @@ public class RawWebhookEndpointsClient {
     /**
      * Delete a webhook endpoint and all of its subscriptions. This operation is permanent and cannot be undone.
      */
-    public ExtendClientHttpResponse<WebhookEndpointsDeleteResponse> delete(
+    public ExtendClientBaseHttpResponse<WebhookEndpointsDeleteResponse> delete(
             String id, WebhookEndpointsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -497,7 +498,7 @@ public class RawWebhookEndpointsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WebhookEndpointsDeleteResponse.class),
                         response);
             }

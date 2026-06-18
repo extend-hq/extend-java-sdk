@@ -5,8 +5,8 @@ package ai.extend.resources.splitruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -55,7 +55,7 @@ public class AsyncRawSplitRunsClient {
      * List all split runs.
      * <p>Returns a summary of each run. Use <code>GET /split_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRunsListResponse>> list() {
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRunsListResponse>> list() {
         return list(SplitRunsListRequest.builder().build());
     }
 
@@ -63,7 +63,7 @@ public class AsyncRawSplitRunsClient {
      * List all split runs.
      * <p>Returns a summary of each run. Use <code>GET /split_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRunsListResponse>> list(RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRunsListResponse>> list(RequestOptions requestOptions) {
         return list(SplitRunsListRequest.builder().build(), requestOptions);
     }
 
@@ -71,7 +71,7 @@ public class AsyncRawSplitRunsClient {
      * List all split runs.
      * <p>Returns a summary of each run. Use <code>GET /split_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRunsListResponse>> list(SplitRunsListRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRunsListResponse>> list(SplitRunsListRequest request) {
         return list(request, null);
     }
 
@@ -79,7 +79,7 @@ public class AsyncRawSplitRunsClient {
      * List all split runs.
      * <p>Returns a summary of each run. Use <code>GET /split_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRunsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRunsListResponse>> list(
             SplitRunsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -143,14 +143,14 @@ public class AsyncRawSplitRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<SplitRunsListResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<SplitRunsListResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, SplitRunsListResponse.class),
                                 response));
                         return;
@@ -222,7 +222,7 @@ public class AsyncRawSplitRunsClient {
      * Split a document into multiple parts using an existing splitter or an inline configuration.
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Split Run endpoint for results.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRun>> create(SplitRunsCreateRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRun>> create(SplitRunsCreateRequest request) {
         return create(request, null);
     }
 
@@ -230,7 +230,7 @@ public class AsyncRawSplitRunsClient {
      * Split a document into multiple parts using an existing splitter or an inline configuration.
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Split Run endpoint for results.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRun>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRun>> create(
             SplitRunsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -258,14 +258,14 @@ public class AsyncRawSplitRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<SplitRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<SplitRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, SplitRun.class), response));
                         return;
                     }
@@ -336,7 +336,7 @@ public class AsyncRawSplitRunsClient {
      * Retrieve details about a specific split run, including its status and outputs.
      * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRun>> retrieve(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRun>> retrieve(String id) {
         return retrieve(id, SplitRunsRetrieveRequest.builder().build());
     }
 
@@ -344,7 +344,8 @@ public class AsyncRawSplitRunsClient {
      * Retrieve details about a specific split run, including its status and outputs.
      * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRun>> retrieve(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRun>> retrieve(
+            String id, RequestOptions requestOptions) {
         return retrieve(id, SplitRunsRetrieveRequest.builder().build(), requestOptions);
     }
 
@@ -352,7 +353,8 @@ public class AsyncRawSplitRunsClient {
      * Retrieve details about a specific split run, including its status and outputs.
      * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRun>> retrieve(String id, SplitRunsRetrieveRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRun>> retrieve(
+            String id, SplitRunsRetrieveRequest request) {
         return retrieve(id, request, null);
     }
 
@@ -360,7 +362,7 @@ public class AsyncRawSplitRunsClient {
      * Retrieve details about a specific split run, including its status and outputs.
      * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRun>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRun>> retrieve(
             String id, SplitRunsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -385,14 +387,14 @@ public class AsyncRawSplitRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<SplitRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<SplitRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, SplitRun.class), response));
                         return;
                     }
@@ -463,7 +465,7 @@ public class AsyncRawSplitRunsClient {
      * Delete a split run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRunsDeleteResponse>> delete(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRunsDeleteResponse>> delete(String id) {
         return delete(id, SplitRunsDeleteRequest.builder().build());
     }
 
@@ -471,7 +473,7 @@ public class AsyncRawSplitRunsClient {
      * Delete a split run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRunsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRunsDeleteResponse>> delete(
             String id, RequestOptions requestOptions) {
         return delete(id, SplitRunsDeleteRequest.builder().build(), requestOptions);
     }
@@ -480,7 +482,7 @@ public class AsyncRawSplitRunsClient {
      * Delete a split run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRunsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRunsDeleteResponse>> delete(
             String id, SplitRunsDeleteRequest request) {
         return delete(id, request, null);
     }
@@ -489,7 +491,7 @@ public class AsyncRawSplitRunsClient {
      * Delete a split run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRunsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRunsDeleteResponse>> delete(
             String id, SplitRunsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -514,14 +516,14 @@ public class AsyncRawSplitRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<SplitRunsDeleteResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<SplitRunsDeleteResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, SplitRunsDeleteResponse.class),
                                 response));
                         return;
@@ -593,7 +595,7 @@ public class AsyncRawSplitRunsClient {
      * Cancel an in-progress split run.
      * <p>Note: Only split runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Splitter runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRun>> cancel(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRun>> cancel(String id) {
         return cancel(id, SplitRunsCancelRequest.builder().build());
     }
 
@@ -601,7 +603,7 @@ public class AsyncRawSplitRunsClient {
      * Cancel an in-progress split run.
      * <p>Note: Only split runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Splitter runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRun>> cancel(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRun>> cancel(String id, RequestOptions requestOptions) {
         return cancel(id, SplitRunsCancelRequest.builder().build(), requestOptions);
     }
 
@@ -609,7 +611,7 @@ public class AsyncRawSplitRunsClient {
      * Cancel an in-progress split run.
      * <p>Note: Only split runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Splitter runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRun>> cancel(String id, SplitRunsCancelRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRun>> cancel(String id, SplitRunsCancelRequest request) {
         return cancel(id, request, null);
     }
 
@@ -617,7 +619,7 @@ public class AsyncRawSplitRunsClient {
      * Cancel an in-progress split run.
      * <p>Note: Only split runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Splitter runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRun>> cancel(
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRun>> cancel(
             String id, SplitRunsCancelRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -643,14 +645,14 @@ public class AsyncRawSplitRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<SplitRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<SplitRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, SplitRun.class), response));
                         return;
                     }
@@ -733,7 +735,7 @@ public class AsyncRawSplitRunsClient {
      * <li>Raw text input (<code>FileFromText</code>) is not supported for split runs. Use a URL or file ID.</li>
      * </ul>
      */
-    public CompletableFuture<ExtendClientHttpResponse<BatchRun>> createBatch(SplitRunsCreateBatchRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<BatchRun>> createBatch(SplitRunsCreateBatchRequest request) {
         return createBatch(request, null);
     }
 
@@ -753,7 +755,7 @@ public class AsyncRawSplitRunsClient {
      * <li>Raw text input (<code>FileFromText</code>) is not supported for split runs. Use a URL or file ID.</li>
      * </ul>
      */
-    public CompletableFuture<ExtendClientHttpResponse<BatchRun>> createBatch(
+    public CompletableFuture<ExtendClientBaseHttpResponse<BatchRun>> createBatch(
             SplitRunsCreateBatchRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -781,14 +783,14 @@ public class AsyncRawSplitRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<BatchRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<BatchRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, BatchRun.class), response));
                         return;
                     }

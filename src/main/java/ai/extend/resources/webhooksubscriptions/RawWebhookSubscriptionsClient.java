@@ -5,8 +5,8 @@ package ai.extend.resources.webhooksubscriptions;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -48,28 +48,29 @@ public class RawWebhookSubscriptionsClient {
     /**
      * List webhook subscriptions. You can filter by <code>webhookEndpointId</code> to see all subscriptions for a given endpoint, or by <code>resourceId</code> to see all subscriptions for a given resource.
      */
-    public ExtendClientHttpResponse<WebhookSubscriptionsListResponse> list() {
+    public ExtendClientBaseHttpResponse<WebhookSubscriptionsListResponse> list() {
         return list(WebhookSubscriptionsListRequest.builder().build());
     }
 
     /**
      * List webhook subscriptions. You can filter by <code>webhookEndpointId</code> to see all subscriptions for a given endpoint, or by <code>resourceId</code> to see all subscriptions for a given resource.
      */
-    public ExtendClientHttpResponse<WebhookSubscriptionsListResponse> list(RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<WebhookSubscriptionsListResponse> list(RequestOptions requestOptions) {
         return list(WebhookSubscriptionsListRequest.builder().build(), requestOptions);
     }
 
     /**
      * List webhook subscriptions. You can filter by <code>webhookEndpointId</code> to see all subscriptions for a given endpoint, or by <code>resourceId</code> to see all subscriptions for a given resource.
      */
-    public ExtendClientHttpResponse<WebhookSubscriptionsListResponse> list(WebhookSubscriptionsListRequest request) {
+    public ExtendClientBaseHttpResponse<WebhookSubscriptionsListResponse> list(
+            WebhookSubscriptionsListRequest request) {
         return list(request, null);
     }
 
     /**
      * List webhook subscriptions. You can filter by <code>webhookEndpointId</code> to see all subscriptions for a given endpoint, or by <code>resourceId</code> to see all subscriptions for a given resource.
      */
-    public ExtendClientHttpResponse<WebhookSubscriptionsListResponse> list(
+    public ExtendClientBaseHttpResponse<WebhookSubscriptionsListResponse> list(
             WebhookSubscriptionsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -117,7 +118,7 @@ public class RawWebhookSubscriptionsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WebhookSubscriptionsListResponse.class),
                         response);
             }
@@ -164,7 +165,7 @@ public class RawWebhookSubscriptionsClient {
      * <p>Subscriptions let you receive events for a specific resource (e.g., a single extractor or workflow) rather than all resources of that type. The <code>enabledEvents</code> must be valid for the given <code>resourceType</code> and the endpoint's <code>apiVersion</code>.</p>
      * <p>If a subscription already exists for the same endpoint and resource, it will be updated with the new <code>enabledEvents</code> instead of creating a duplicate.</p>
      */
-    public ExtendClientHttpResponse<WebhookSubscription> create(WebhookSubscriptionsCreateRequest request) {
+    public ExtendClientBaseHttpResponse<WebhookSubscription> create(WebhookSubscriptionsCreateRequest request) {
         return create(request, null);
     }
 
@@ -173,7 +174,7 @@ public class RawWebhookSubscriptionsClient {
      * <p>Subscriptions let you receive events for a specific resource (e.g., a single extractor or workflow) rather than all resources of that type. The <code>enabledEvents</code> must be valid for the given <code>resourceType</code> and the endpoint's <code>apiVersion</code>.</p>
      * <p>If a subscription already exists for the same endpoint and resource, it will be updated with the new <code>enabledEvents</code> instead of creating a duplicate.</p>
      */
-    public ExtendClientHttpResponse<WebhookSubscription> create(
+    public ExtendClientBaseHttpResponse<WebhookSubscription> create(
             WebhookSubscriptionsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -205,7 +206,7 @@ public class RawWebhookSubscriptionsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WebhookSubscription.class), response);
             }
             try {
@@ -249,21 +250,21 @@ public class RawWebhookSubscriptionsClient {
     /**
      * Retrieve a webhook subscription by ID.
      */
-    public ExtendClientHttpResponse<WebhookSubscription> retrieve(String id) {
+    public ExtendClientBaseHttpResponse<WebhookSubscription> retrieve(String id) {
         return retrieve(id, WebhookSubscriptionsRetrieveRequest.builder().build());
     }
 
     /**
      * Retrieve a webhook subscription by ID.
      */
-    public ExtendClientHttpResponse<WebhookSubscription> retrieve(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<WebhookSubscription> retrieve(String id, RequestOptions requestOptions) {
         return retrieve(id, WebhookSubscriptionsRetrieveRequest.builder().build(), requestOptions);
     }
 
     /**
      * Retrieve a webhook subscription by ID.
      */
-    public ExtendClientHttpResponse<WebhookSubscription> retrieve(
+    public ExtendClientBaseHttpResponse<WebhookSubscription> retrieve(
             String id, WebhookSubscriptionsRetrieveRequest request) {
         return retrieve(id, request, null);
     }
@@ -271,7 +272,7 @@ public class RawWebhookSubscriptionsClient {
     /**
      * Retrieve a webhook subscription by ID.
      */
-    public ExtendClientHttpResponse<WebhookSubscription> retrieve(
+    public ExtendClientBaseHttpResponse<WebhookSubscription> retrieve(
             String id, WebhookSubscriptionsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -300,7 +301,7 @@ public class RawWebhookSubscriptionsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WebhookSubscription.class), response);
             }
             try {
@@ -344,14 +345,15 @@ public class RawWebhookSubscriptionsClient {
     /**
      * Update the enabled events on a webhook subscription.
      */
-    public ExtendClientHttpResponse<WebhookSubscription> update(String id, WebhookSubscriptionsUpdateRequest request) {
+    public ExtendClientBaseHttpResponse<WebhookSubscription> update(
+            String id, WebhookSubscriptionsUpdateRequest request) {
         return update(id, request, null);
     }
 
     /**
      * Update the enabled events on a webhook subscription.
      */
-    public ExtendClientHttpResponse<WebhookSubscription> update(
+    public ExtendClientBaseHttpResponse<WebhookSubscription> update(
             String id, WebhookSubscriptionsUpdateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -388,7 +390,7 @@ public class RawWebhookSubscriptionsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WebhookSubscription.class), response);
             }
             try {
@@ -432,14 +434,14 @@ public class RawWebhookSubscriptionsClient {
     /**
      * Delete a webhook subscription. This operation is permanent and cannot be undone.
      */
-    public ExtendClientHttpResponse<WebhookSubscriptionsDeleteResponse> delete(String id) {
+    public ExtendClientBaseHttpResponse<WebhookSubscriptionsDeleteResponse> delete(String id) {
         return delete(id, WebhookSubscriptionsDeleteRequest.builder().build());
     }
 
     /**
      * Delete a webhook subscription. This operation is permanent and cannot be undone.
      */
-    public ExtendClientHttpResponse<WebhookSubscriptionsDeleteResponse> delete(
+    public ExtendClientBaseHttpResponse<WebhookSubscriptionsDeleteResponse> delete(
             String id, RequestOptions requestOptions) {
         return delete(id, WebhookSubscriptionsDeleteRequest.builder().build(), requestOptions);
     }
@@ -447,7 +449,7 @@ public class RawWebhookSubscriptionsClient {
     /**
      * Delete a webhook subscription. This operation is permanent and cannot be undone.
      */
-    public ExtendClientHttpResponse<WebhookSubscriptionsDeleteResponse> delete(
+    public ExtendClientBaseHttpResponse<WebhookSubscriptionsDeleteResponse> delete(
             String id, WebhookSubscriptionsDeleteRequest request) {
         return delete(id, request, null);
     }
@@ -455,7 +457,7 @@ public class RawWebhookSubscriptionsClient {
     /**
      * Delete a webhook subscription. This operation is permanent and cannot be undone.
      */
-    public ExtendClientHttpResponse<WebhookSubscriptionsDeleteResponse> delete(
+    public ExtendClientBaseHttpResponse<WebhookSubscriptionsDeleteResponse> delete(
             String id, WebhookSubscriptionsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -484,7 +486,7 @@ public class RawWebhookSubscriptionsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(
                                 responseBodyString, WebhookSubscriptionsDeleteResponse.class),
                         response);

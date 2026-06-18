@@ -5,8 +5,8 @@ package ai.extend.resources.evaluationsetitems;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -50,7 +50,7 @@ public class RawEvaluationSetItemsClient {
      * List items in a specific evaluation set.
      * <p>Returns a summary of each evaluation set item. Use the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/get-evaluation-set-item">Get Evaluation Set Item</a> endpoint to get the full details of an evaluation set item.</p>
      */
-    public ExtendClientHttpResponse<EvaluationSetItemsListResponse> list(String evaluationSetId) {
+    public ExtendClientBaseHttpResponse<EvaluationSetItemsListResponse> list(String evaluationSetId) {
         return list(evaluationSetId, EvaluationSetItemsListRequest.builder().build());
     }
 
@@ -58,7 +58,7 @@ public class RawEvaluationSetItemsClient {
      * List items in a specific evaluation set.
      * <p>Returns a summary of each evaluation set item. Use the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/get-evaluation-set-item">Get Evaluation Set Item</a> endpoint to get the full details of an evaluation set item.</p>
      */
-    public ExtendClientHttpResponse<EvaluationSetItemsListResponse> list(
+    public ExtendClientBaseHttpResponse<EvaluationSetItemsListResponse> list(
             String evaluationSetId, RequestOptions requestOptions) {
         return list(evaluationSetId, EvaluationSetItemsListRequest.builder().build(), requestOptions);
     }
@@ -67,7 +67,7 @@ public class RawEvaluationSetItemsClient {
      * List items in a specific evaluation set.
      * <p>Returns a summary of each evaluation set item. Use the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/get-evaluation-set-item">Get Evaluation Set Item</a> endpoint to get the full details of an evaluation set item.</p>
      */
-    public ExtendClientHttpResponse<EvaluationSetItemsListResponse> list(
+    public ExtendClientBaseHttpResponse<EvaluationSetItemsListResponse> list(
             String evaluationSetId, EvaluationSetItemsListRequest request) {
         return list(evaluationSetId, request, null);
     }
@@ -76,7 +76,7 @@ public class RawEvaluationSetItemsClient {
      * List items in a specific evaluation set.
      * <p>Returns a summary of each evaluation set item. Use the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/get-evaluation-set-item">Get Evaluation Set Item</a> endpoint to get the full details of an evaluation set item.</p>
      */
-    public ExtendClientHttpResponse<EvaluationSetItemsListResponse> list(
+    public ExtendClientBaseHttpResponse<EvaluationSetItemsListResponse> list(
             String evaluationSetId, EvaluationSetItemsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -122,7 +122,7 @@ public class RawEvaluationSetItemsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EvaluationSetItemsListResponse.class),
                         response);
             }
@@ -169,7 +169,7 @@ public class RawEvaluationSetItemsClient {
      * <p><strong>Limit:</strong> You can create up to 100 items at a time.</p>
      * <p>Learn more about how to create evaluation set items in the <a href="https://docs.extend.ai/2026-02-09/evaluation/overview">Evaluation Sets</a> product page.</p>
      */
-    public ExtendClientHttpResponse<EvaluationSetItemsCreateResponse> create(
+    public ExtendClientBaseHttpResponse<EvaluationSetItemsCreateResponse> create(
             String evaluationSetId, EvaluationSetItemsCreateRequest request) {
         return create(evaluationSetId, request, null);
     }
@@ -179,7 +179,7 @@ public class RawEvaluationSetItemsClient {
      * <p><strong>Limit:</strong> You can create up to 100 items at a time.</p>
      * <p>Learn more about how to create evaluation set items in the <a href="https://docs.extend.ai/2026-02-09/evaluation/overview">Evaluation Sets</a> product page.</p>
      */
-    public ExtendClientHttpResponse<EvaluationSetItemsCreateResponse> create(
+    public ExtendClientBaseHttpResponse<EvaluationSetItemsCreateResponse> create(
             String evaluationSetId, EvaluationSetItemsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -217,7 +217,7 @@ public class RawEvaluationSetItemsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EvaluationSetItemsCreateResponse.class),
                         response);
             }
@@ -262,7 +262,7 @@ public class RawEvaluationSetItemsClient {
     /**
      * Get details of an evaluation set item.
      */
-    public ExtendClientHttpResponse<EvaluationSetItem> retrieve(String evaluationSetId, String itemId) {
+    public ExtendClientBaseHttpResponse<EvaluationSetItem> retrieve(String evaluationSetId, String itemId) {
         return retrieve(
                 evaluationSetId,
                 itemId,
@@ -272,7 +272,7 @@ public class RawEvaluationSetItemsClient {
     /**
      * Get details of an evaluation set item.
      */
-    public ExtendClientHttpResponse<EvaluationSetItem> retrieve(
+    public ExtendClientBaseHttpResponse<EvaluationSetItem> retrieve(
             String evaluationSetId, String itemId, RequestOptions requestOptions) {
         return retrieve(
                 evaluationSetId,
@@ -284,7 +284,7 @@ public class RawEvaluationSetItemsClient {
     /**
      * Get details of an evaluation set item.
      */
-    public ExtendClientHttpResponse<EvaluationSetItem> retrieve(
+    public ExtendClientBaseHttpResponse<EvaluationSetItem> retrieve(
             String evaluationSetId, String itemId, EvaluationSetItemsRetrieveRequest request) {
         return retrieve(evaluationSetId, itemId, request, null);
     }
@@ -292,7 +292,7 @@ public class RawEvaluationSetItemsClient {
     /**
      * Get details of an evaluation set item.
      */
-    public ExtendClientHttpResponse<EvaluationSetItem> retrieve(
+    public ExtendClientBaseHttpResponse<EvaluationSetItem> retrieve(
             String evaluationSetId,
             String itemId,
             EvaluationSetItemsRetrieveRequest request,
@@ -326,7 +326,7 @@ public class RawEvaluationSetItemsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EvaluationSetItem.class), response);
             }
             try {
@@ -370,7 +370,7 @@ public class RawEvaluationSetItemsClient {
     /**
      * If you need to change the expected output for a given evaluation set item, you can use this endpoint to update the item. This can be useful if you need to correct an error in the expected output or if the output of the extractor, classifier, or splitter has changed.
      */
-    public ExtendClientHttpResponse<EvaluationSetItem> update(
+    public ExtendClientBaseHttpResponse<EvaluationSetItem> update(
             String evaluationSetId, String itemId, EvaluationSetItemsUpdateRequest request) {
         return update(evaluationSetId, itemId, request, null);
     }
@@ -378,7 +378,7 @@ public class RawEvaluationSetItemsClient {
     /**
      * If you need to change the expected output for a given evaluation set item, you can use this endpoint to update the item. This can be useful if you need to correct an error in the expected output or if the output of the extractor, classifier, or splitter has changed.
      */
-    public ExtendClientHttpResponse<EvaluationSetItem> update(
+    public ExtendClientBaseHttpResponse<EvaluationSetItem> update(
             String evaluationSetId,
             String itemId,
             EvaluationSetItemsUpdateRequest request,
@@ -420,7 +420,7 @@ public class RawEvaluationSetItemsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EvaluationSetItem.class), response);
             }
             try {
@@ -464,7 +464,8 @@ public class RawEvaluationSetItemsClient {
     /**
      * Delete an evaluation set item.
      */
-    public ExtendClientHttpResponse<EvaluationSetItemsDeleteResponse> delete(String evaluationSetId, String itemId) {
+    public ExtendClientBaseHttpResponse<EvaluationSetItemsDeleteResponse> delete(
+            String evaluationSetId, String itemId) {
         return delete(
                 evaluationSetId,
                 itemId,
@@ -474,7 +475,7 @@ public class RawEvaluationSetItemsClient {
     /**
      * Delete an evaluation set item.
      */
-    public ExtendClientHttpResponse<EvaluationSetItemsDeleteResponse> delete(
+    public ExtendClientBaseHttpResponse<EvaluationSetItemsDeleteResponse> delete(
             String evaluationSetId, String itemId, RequestOptions requestOptions) {
         return delete(
                 evaluationSetId,
@@ -486,7 +487,7 @@ public class RawEvaluationSetItemsClient {
     /**
      * Delete an evaluation set item.
      */
-    public ExtendClientHttpResponse<EvaluationSetItemsDeleteResponse> delete(
+    public ExtendClientBaseHttpResponse<EvaluationSetItemsDeleteResponse> delete(
             String evaluationSetId, String itemId, EvaluationSetItemsDeleteRequest request) {
         return delete(evaluationSetId, itemId, request, null);
     }
@@ -494,7 +495,7 @@ public class RawEvaluationSetItemsClient {
     /**
      * Delete an evaluation set item.
      */
-    public ExtendClientHttpResponse<EvaluationSetItemsDeleteResponse> delete(
+    public ExtendClientBaseHttpResponse<EvaluationSetItemsDeleteResponse> delete(
             String evaluationSetId,
             String itemId,
             EvaluationSetItemsDeleteRequest request,
@@ -528,7 +529,7 @@ public class RawEvaluationSetItemsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EvaluationSetItemsDeleteResponse.class),
                         response);
             }

@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import okhttp3.OkHttpClient;
 
-public class ExtendClientBuilder {
+public class AsyncExtendClientBaseBuilder {
     private Optional<Integer> timeout = Optional.empty();
 
     private Optional<Integer> maxRetries = Optional.empty();
@@ -29,7 +29,7 @@ public class ExtendClientBuilder {
      * Sets token.
      * Defaults to the EXTEND_API_KEY environment variable.
      */
-    public ExtendClientBuilder token(String token) {
+    public AsyncExtendClientBaseBuilder token(String token) {
         this.token = token;
         return this;
     }
@@ -37,17 +37,17 @@ public class ExtendClientBuilder {
     /**
      * Sets extendApiVersion
      */
-    public ExtendClientBuilder extendApiVersion(String extendApiVersion) {
+    public AsyncExtendClientBaseBuilder extendApiVersion(String extendApiVersion) {
         this.extendApiVersion = extendApiVersion;
         return this;
     }
 
-    public ExtendClientBuilder environment(Environment environment) {
+    public AsyncExtendClientBaseBuilder environment(Environment environment) {
         this.environment = environment;
         return this;
     }
 
-    public ExtendClientBuilder url(String url) {
+    public AsyncExtendClientBaseBuilder url(String url) {
         this.environment = Environment.custom(url);
         return this;
     }
@@ -55,7 +55,7 @@ public class ExtendClientBuilder {
     /**
      * Sets the timeout (in seconds) for the client. Defaults to 60 seconds.
      */
-    public ExtendClientBuilder timeout(int timeout) {
+    public AsyncExtendClientBaseBuilder timeout(int timeout) {
         this.timeout = Optional.of(timeout);
         return this;
     }
@@ -63,7 +63,7 @@ public class ExtendClientBuilder {
     /**
      * Sets the maximum number of retries for the client. Defaults to 2 retries.
      */
-    public ExtendClientBuilder maxRetries(int maxRetries) {
+    public AsyncExtendClientBaseBuilder maxRetries(int maxRetries) {
         this.maxRetries = Optional.of(maxRetries);
         return this;
     }
@@ -71,7 +71,7 @@ public class ExtendClientBuilder {
     /**
      * Sets the underlying OkHttp client
      */
-    public ExtendClientBuilder httpClient(OkHttpClient httpClient) {
+    public AsyncExtendClientBaseBuilder httpClient(OkHttpClient httpClient) {
         this.httpClient = httpClient;
         return this;
     }
@@ -84,7 +84,7 @@ public class ExtendClientBuilder {
      * @param value The header value
      * @return This builder for method chaining
      */
-    public ExtendClientBuilder addHeader(String name, String value) {
+    public AsyncExtendClientBaseBuilder addHeader(String name, String value) {
         this.customHeaders.put(name, value);
         return this;
     }
@@ -226,11 +226,11 @@ public class ExtendClientBuilder {
      */
     protected void validateConfiguration() {}
 
-    public ExtendClient build() {
+    public AsyncExtendClientBase build() {
         if (token == null) {
             throw new RuntimeException("Please provide token or set the EXTEND_API_KEY environment variable.");
         }
         validateConfiguration();
-        return new ExtendClient(buildClientOptions());
+        return new AsyncExtendClientBase(buildClientOptions());
     }
 }

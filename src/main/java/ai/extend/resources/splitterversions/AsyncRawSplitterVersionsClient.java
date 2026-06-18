@@ -5,8 +5,8 @@ package ai.extend.resources.splitterversions;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -50,7 +50,7 @@ public class AsyncRawSplitterVersionsClient {
      * This endpoint allows you to fetch all versions of a given splitter, including the current <code>draft</code> version.
      * <p>Versions are returned in descending order of creation (newest first) with the <code>draft</code> version first. The <code>draft</code> version is the latest unpublished version of the splitter, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitterVersionsListResponse>> list(String splitterId) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitterVersionsListResponse>> list(String splitterId) {
         return list(splitterId, SplitterVersionsListRequest.builder().build());
     }
 
@@ -58,7 +58,7 @@ public class AsyncRawSplitterVersionsClient {
      * This endpoint allows you to fetch all versions of a given splitter, including the current <code>draft</code> version.
      * <p>Versions are returned in descending order of creation (newest first) with the <code>draft</code> version first. The <code>draft</code> version is the latest unpublished version of the splitter, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitterVersionsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitterVersionsListResponse>> list(
             String splitterId, RequestOptions requestOptions) {
         return list(splitterId, SplitterVersionsListRequest.builder().build(), requestOptions);
     }
@@ -67,7 +67,7 @@ public class AsyncRawSplitterVersionsClient {
      * This endpoint allows you to fetch all versions of a given splitter, including the current <code>draft</code> version.
      * <p>Versions are returned in descending order of creation (newest first) with the <code>draft</code> version first. The <code>draft</code> version is the latest unpublished version of the splitter, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitterVersionsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitterVersionsListResponse>> list(
             String splitterId, SplitterVersionsListRequest request) {
         return list(splitterId, request, null);
     }
@@ -76,7 +76,7 @@ public class AsyncRawSplitterVersionsClient {
      * This endpoint allows you to fetch all versions of a given splitter, including the current <code>draft</code> version.
      * <p>Versions are returned in descending order of creation (newest first) with the <code>draft</code> version first. The <code>draft</code> version is the latest unpublished version of the splitter, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitterVersionsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitterVersionsListResponse>> list(
             String splitterId, SplitterVersionsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -114,14 +114,15 @@ public class AsyncRawSplitterVersionsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<SplitterVersionsListResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<SplitterVersionsListResponse>> future =
+                new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, SplitterVersionsListResponse.class),
                                 response));
@@ -194,7 +195,7 @@ public class AsyncRawSplitterVersionsClient {
      * This endpoint allows you to publish a new version of an existing splitter. Publishing a new version creates a snapshot of the splitter's current configuration and makes it available for use in workflows.
      * <p>Publishing a new version does not automatically update existing workflows using this splitter. You may need to manually update workflows to use the new version if desired.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitterVersion>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitterVersion>> create(
             String splitterId, SplitterVersionsCreateRequest request) {
         return create(splitterId, request, null);
     }
@@ -203,7 +204,7 @@ public class AsyncRawSplitterVersionsClient {
      * This endpoint allows you to publish a new version of an existing splitter. Publishing a new version creates a snapshot of the splitter's current configuration and makes it available for use in workflows.
      * <p>Publishing a new version does not automatically update existing workflows using this splitter. You may need to manually update workflows to use the new version if desired.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitterVersion>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitterVersion>> create(
             String splitterId, SplitterVersionsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -237,14 +238,14 @@ public class AsyncRawSplitterVersionsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<SplitterVersion>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<SplitterVersion>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, SplitterVersion.class),
                                 response));
                         return;
@@ -315,7 +316,8 @@ public class AsyncRawSplitterVersionsClient {
     /**
      * Retrieve a specific version of a splitter in Extend
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitterVersion>> retrieve(String splitterId, String versionId) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitterVersion>> retrieve(
+            String splitterId, String versionId) {
         return retrieve(
                 splitterId, versionId, SplitterVersionsRetrieveRequest.builder().build());
     }
@@ -323,7 +325,7 @@ public class AsyncRawSplitterVersionsClient {
     /**
      * Retrieve a specific version of a splitter in Extend
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitterVersion>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitterVersion>> retrieve(
             String splitterId, String versionId, RequestOptions requestOptions) {
         return retrieve(
                 splitterId, versionId, SplitterVersionsRetrieveRequest.builder().build(), requestOptions);
@@ -332,7 +334,7 @@ public class AsyncRawSplitterVersionsClient {
     /**
      * Retrieve a specific version of a splitter in Extend
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitterVersion>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitterVersion>> retrieve(
             String splitterId, String versionId, SplitterVersionsRetrieveRequest request) {
         return retrieve(splitterId, versionId, request, null);
     }
@@ -340,7 +342,7 @@ public class AsyncRawSplitterVersionsClient {
     /**
      * Retrieve a specific version of a splitter in Extend
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitterVersion>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitterVersion>> retrieve(
             String splitterId,
             String versionId,
             SplitterVersionsRetrieveRequest request,
@@ -370,14 +372,14 @@ public class AsyncRawSplitterVersionsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<SplitterVersion>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<SplitterVersion>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, SplitterVersion.class),
                                 response));
                         return;

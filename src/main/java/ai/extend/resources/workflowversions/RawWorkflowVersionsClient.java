@@ -5,8 +5,8 @@ package ai.extend.resources.workflowversions;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -44,28 +44,29 @@ public class RawWorkflowVersionsClient {
     /**
      * List all versions of a workflow, including the draft version. Returns a paginated list of version summaries.
      */
-    public ExtendClientHttpResponse<WorkflowVersionsListResponse> list(String id) {
+    public ExtendClientBaseHttpResponse<WorkflowVersionsListResponse> list(String id) {
         return list(id, WorkflowVersionsListRequest.builder().build());
     }
 
     /**
      * List all versions of a workflow, including the draft version. Returns a paginated list of version summaries.
      */
-    public ExtendClientHttpResponse<WorkflowVersionsListResponse> list(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<WorkflowVersionsListResponse> list(String id, RequestOptions requestOptions) {
         return list(id, WorkflowVersionsListRequest.builder().build(), requestOptions);
     }
 
     /**
      * List all versions of a workflow, including the draft version. Returns a paginated list of version summaries.
      */
-    public ExtendClientHttpResponse<WorkflowVersionsListResponse> list(String id, WorkflowVersionsListRequest request) {
+    public ExtendClientBaseHttpResponse<WorkflowVersionsListResponse> list(
+            String id, WorkflowVersionsListRequest request) {
         return list(id, request, null);
     }
 
     /**
      * List all versions of a workflow, including the draft version. Returns a paginated list of version summaries.
      */
-    public ExtendClientHttpResponse<WorkflowVersionsListResponse> list(
+    public ExtendClientBaseHttpResponse<WorkflowVersionsListResponse> list(
             String id, WorkflowVersionsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -103,7 +104,7 @@ public class RawWorkflowVersionsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WorkflowVersionsListResponse.class),
                         response);
             }
@@ -149,7 +150,7 @@ public class RawWorkflowVersionsClient {
      * Deploy a new version of a workflow. The deployed version becomes available for running workflow runs.
      * <p>When <code>steps</code> is omitted, the current draft is deployed as-is. When <code>steps</code> is provided, the given steps are deployed directly without modifying the draft.</p>
      */
-    public ExtendClientHttpResponse<WorkflowVersion> create(String id) {
+    public ExtendClientBaseHttpResponse<WorkflowVersion> create(String id) {
         return create(id, WorkflowVersionsCreateRequest.builder().build());
     }
 
@@ -157,7 +158,7 @@ public class RawWorkflowVersionsClient {
      * Deploy a new version of a workflow. The deployed version becomes available for running workflow runs.
      * <p>When <code>steps</code> is omitted, the current draft is deployed as-is. When <code>steps</code> is provided, the given steps are deployed directly without modifying the draft.</p>
      */
-    public ExtendClientHttpResponse<WorkflowVersion> create(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<WorkflowVersion> create(String id, RequestOptions requestOptions) {
         return create(id, WorkflowVersionsCreateRequest.builder().build(), requestOptions);
     }
 
@@ -165,7 +166,7 @@ public class RawWorkflowVersionsClient {
      * Deploy a new version of a workflow. The deployed version becomes available for running workflow runs.
      * <p>When <code>steps</code> is omitted, the current draft is deployed as-is. When <code>steps</code> is provided, the given steps are deployed directly without modifying the draft.</p>
      */
-    public ExtendClientHttpResponse<WorkflowVersion> create(String id, WorkflowVersionsCreateRequest request) {
+    public ExtendClientBaseHttpResponse<WorkflowVersion> create(String id, WorkflowVersionsCreateRequest request) {
         return create(id, request, null);
     }
 
@@ -173,7 +174,7 @@ public class RawWorkflowVersionsClient {
      * Deploy a new version of a workflow. The deployed version becomes available for running workflow runs.
      * <p>When <code>steps</code> is omitted, the current draft is deployed as-is. When <code>steps</code> is provided, the given steps are deployed directly without modifying the draft.</p>
      */
-    public ExtendClientHttpResponse<WorkflowVersion> create(
+    public ExtendClientBaseHttpResponse<WorkflowVersion> create(
             String id, WorkflowVersionsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -207,7 +208,7 @@ public class RawWorkflowVersionsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WorkflowVersion.class), response);
             }
             try {
@@ -251,14 +252,14 @@ public class RawWorkflowVersionsClient {
     /**
      * Get a specific version of a workflow, including its step definitions.
      */
-    public ExtendClientHttpResponse<WorkflowVersion> retrieve(String id, String versionId) {
+    public ExtendClientBaseHttpResponse<WorkflowVersion> retrieve(String id, String versionId) {
         return retrieve(id, versionId, null);
     }
 
     /**
      * Get a specific version of a workflow, including its step definitions.
      */
-    public ExtendClientHttpResponse<WorkflowVersion> retrieve(
+    public ExtendClientBaseHttpResponse<WorkflowVersion> retrieve(
             String id, String versionId, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -285,7 +286,7 @@ public class RawWorkflowVersionsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WorkflowVersion.class), response);
             }
             try {

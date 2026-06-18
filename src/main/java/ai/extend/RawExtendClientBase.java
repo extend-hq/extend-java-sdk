@@ -5,8 +5,8 @@ package ai.extend;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -40,10 +40,10 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-public class RawExtendClient {
+public class RawExtendClientBase {
     protected final ClientOptions clientOptions;
 
-    public RawExtendClient(ClientOptions clientOptions) {
+    public RawExtendClientBase(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
     }
 
@@ -53,7 +53,7 @@ public class RawExtendClient {
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/parsing/overview">Parse File guide</a>.</p>
      */
-    public ExtendClientHttpResponse<ParseRun> parse(ParseRequest request) {
+    public ExtendClientBaseHttpResponse<ParseRun> parse(ParseRequest request) {
         return parse(request, null);
     }
 
@@ -63,7 +63,7 @@ public class RawExtendClient {
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/parsing/overview">Parse File guide</a>.</p>
      */
-    public ExtendClientHttpResponse<ParseRun> parse(ParseRequest request, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<ParseRun> parse(ParseRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("parse");
@@ -102,7 +102,7 @@ public class RawExtendClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ParseRun.class), response);
             }
             try {
@@ -149,7 +149,7 @@ public class RawExtendClient {
      * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/edit">Edit File guide</a>.</p>
      */
-    public ExtendClientHttpResponse<EditRun> edit(EditRequest request) {
+    public ExtendClientBaseHttpResponse<EditRun> edit(EditRequest request) {
         return edit(request, null);
     }
 
@@ -159,7 +159,7 @@ public class RawExtendClient {
      * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/edit">Edit File guide</a>.</p>
      */
-    public ExtendClientHttpResponse<EditRun> edit(EditRequest request, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<EditRun> edit(EditRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("edit");
@@ -190,7 +190,7 @@ public class RawExtendClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EditRun.class), response);
             }
             try {
@@ -237,7 +237,7 @@ public class RawExtendClient {
      * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor, an inline configuration, or no configuration at all. When neither is provided, Extend automatically infers a schema from the document before extraction — no extractor or schema is required.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/extraction/overview">Extract File guide</a>.</p>
      */
-    public ExtendClientHttpResponse<ExtractRun> extract(ExtractRequest request) {
+    public ExtendClientBaseHttpResponse<ExtractRun> extract(ExtractRequest request) {
         return extract(request, null);
     }
 
@@ -247,7 +247,7 @@ public class RawExtendClient {
      * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor, an inline configuration, or no configuration at all. When neither is provided, Extend automatically infers a schema from the document before extraction — no extractor or schema is required.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/extraction/overview">Extract File guide</a>.</p>
      */
-    public ExtendClientHttpResponse<ExtractRun> extract(ExtractRequest request, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<ExtractRun> extract(ExtractRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("extract");
@@ -278,7 +278,7 @@ public class RawExtendClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtractRun.class), response);
             }
             try {
@@ -325,7 +325,7 @@ public class RawExtendClient {
      * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/classification/configuring-a-classifier">Classify File guide</a>.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRun> classify(ClassifyRequest request) {
+    public ExtendClientBaseHttpResponse<ClassifyRun> classify(ClassifyRequest request) {
         return classify(request, null);
     }
 
@@ -335,7 +335,7 @@ public class RawExtendClient {
      * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/classification/configuring-a-classifier">Classify File guide</a>.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRun> classify(ClassifyRequest request, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<ClassifyRun> classify(ClassifyRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("classify");
@@ -366,7 +366,7 @@ public class RawExtendClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ClassifyRun.class), response);
             }
             try {
@@ -413,7 +413,7 @@ public class RawExtendClient {
      * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/splitting/configuring-a-splitter">Split File guide</a>.</p>
      */
-    public ExtendClientHttpResponse<SplitRun> split(SplitRequest request) {
+    public ExtendClientBaseHttpResponse<SplitRun> split(SplitRequest request) {
         return split(request, null);
     }
 
@@ -423,7 +423,7 @@ public class RawExtendClient {
      * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/splitting/configuring-a-splitter">Split File guide</a>.</p>
      */
-    public ExtendClientHttpResponse<SplitRun> split(SplitRequest request, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<SplitRun> split(SplitRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("split");
@@ -454,7 +454,7 @@ public class RawExtendClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, SplitRun.class), response);
             }
             try {

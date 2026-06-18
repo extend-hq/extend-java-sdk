@@ -5,8 +5,8 @@ package ai.extend.resources.extractruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -55,7 +55,7 @@ public class AsyncRawExtractRunsClient {
      * List all extract runs.
      * <p>Returns a summary of each run. Use <code>GET /extract_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRunsListResponse>> list() {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRunsListResponse>> list() {
         return list(ExtractRunsListRequest.builder().build());
     }
 
@@ -63,7 +63,8 @@ public class AsyncRawExtractRunsClient {
      * List all extract runs.
      * <p>Returns a summary of each run. Use <code>GET /extract_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRunsListResponse>> list(RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRunsListResponse>> list(
+            RequestOptions requestOptions) {
         return list(ExtractRunsListRequest.builder().build(), requestOptions);
     }
 
@@ -71,7 +72,8 @@ public class AsyncRawExtractRunsClient {
      * List all extract runs.
      * <p>Returns a summary of each run. Use <code>GET /extract_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRunsListResponse>> list(ExtractRunsListRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRunsListResponse>> list(
+            ExtractRunsListRequest request) {
         return list(request, null);
     }
 
@@ -79,7 +81,7 @@ public class AsyncRawExtractRunsClient {
      * List all extract runs.
      * <p>Returns a summary of each run. Use <code>GET /extract_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRunsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRunsListResponse>> list(
             ExtractRunsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -143,14 +145,14 @@ public class AsyncRawExtractRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ExtractRunsListResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ExtractRunsListResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtractRunsListResponse.class),
                                 response));
                         return;
@@ -222,7 +224,7 @@ public class AsyncRawExtractRunsClient {
      * Extract structured data from a file using an existing extractor or an inline configuration.
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Extract Run endpoint for results.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRun>> create(ExtractRunsCreateRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRun>> create(ExtractRunsCreateRequest request) {
         return create(request, null);
     }
 
@@ -230,7 +232,7 @@ public class AsyncRawExtractRunsClient {
      * Extract structured data from a file using an existing extractor or an inline configuration.
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Extract Run endpoint for results.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRun>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRun>> create(
             ExtractRunsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -258,14 +260,14 @@ public class AsyncRawExtractRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ExtractRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ExtractRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtractRun.class), response));
                         return;
                     }
@@ -336,7 +338,7 @@ public class AsyncRawExtractRunsClient {
      * Retrieve details about a specific extract run, including its status, outputs, and any edits made during review.
      * <p>A common use case for this endpoint is to poll for the status and final output of an extract run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/extract/create-extract-run">Create Extract Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRun>> retrieve(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRun>> retrieve(String id) {
         return retrieve(id, ExtractRunsRetrieveRequest.builder().build());
     }
 
@@ -344,7 +346,8 @@ public class AsyncRawExtractRunsClient {
      * Retrieve details about a specific extract run, including its status, outputs, and any edits made during review.
      * <p>A common use case for this endpoint is to poll for the status and final output of an extract run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/extract/create-extract-run">Create Extract Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRun>> retrieve(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRun>> retrieve(
+            String id, RequestOptions requestOptions) {
         return retrieve(id, ExtractRunsRetrieveRequest.builder().build(), requestOptions);
     }
 
@@ -352,7 +355,7 @@ public class AsyncRawExtractRunsClient {
      * Retrieve details about a specific extract run, including its status, outputs, and any edits made during review.
      * <p>A common use case for this endpoint is to poll for the status and final output of an extract run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/extract/create-extract-run">Create Extract Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRun>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRun>> retrieve(
             String id, ExtractRunsRetrieveRequest request) {
         return retrieve(id, request, null);
     }
@@ -361,7 +364,7 @@ public class AsyncRawExtractRunsClient {
      * Retrieve details about a specific extract run, including its status, outputs, and any edits made during review.
      * <p>A common use case for this endpoint is to poll for the status and final output of an extract run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/extract/create-extract-run">Create Extract Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRun>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRun>> retrieve(
             String id, ExtractRunsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -386,14 +389,14 @@ public class AsyncRawExtractRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ExtractRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ExtractRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtractRun.class), response));
                         return;
                     }
@@ -464,7 +467,7 @@ public class AsyncRawExtractRunsClient {
      * Delete an extract run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRunsDeleteResponse>> delete(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRunsDeleteResponse>> delete(String id) {
         return delete(id, ExtractRunsDeleteRequest.builder().build());
     }
 
@@ -472,7 +475,7 @@ public class AsyncRawExtractRunsClient {
      * Delete an extract run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRunsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRunsDeleteResponse>> delete(
             String id, RequestOptions requestOptions) {
         return delete(id, ExtractRunsDeleteRequest.builder().build(), requestOptions);
     }
@@ -481,7 +484,7 @@ public class AsyncRawExtractRunsClient {
      * Delete an extract run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRunsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRunsDeleteResponse>> delete(
             String id, ExtractRunsDeleteRequest request) {
         return delete(id, request, null);
     }
@@ -490,7 +493,7 @@ public class AsyncRawExtractRunsClient {
      * Delete an extract run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRunsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRunsDeleteResponse>> delete(
             String id, ExtractRunsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -515,14 +518,14 @@ public class AsyncRawExtractRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ExtractRunsDeleteResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ExtractRunsDeleteResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, ExtractRunsDeleteResponse.class),
                                 response));
@@ -595,7 +598,7 @@ public class AsyncRawExtractRunsClient {
      * Cancel an in-progress extract run.
      * <p>Note: Only extract runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Extractor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRun>> cancel(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRun>> cancel(String id) {
         return cancel(id, ExtractRunsCancelRequest.builder().build());
     }
 
@@ -603,7 +606,8 @@ public class AsyncRawExtractRunsClient {
      * Cancel an in-progress extract run.
      * <p>Note: Only extract runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Extractor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRun>> cancel(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRun>> cancel(
+            String id, RequestOptions requestOptions) {
         return cancel(id, ExtractRunsCancelRequest.builder().build(), requestOptions);
     }
 
@@ -611,7 +615,8 @@ public class AsyncRawExtractRunsClient {
      * Cancel an in-progress extract run.
      * <p>Note: Only extract runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Extractor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRun>> cancel(String id, ExtractRunsCancelRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRun>> cancel(
+            String id, ExtractRunsCancelRequest request) {
         return cancel(id, request, null);
     }
 
@@ -619,7 +624,7 @@ public class AsyncRawExtractRunsClient {
      * Cancel an in-progress extract run.
      * <p>Note: Only extract runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Extractor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRun>> cancel(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRun>> cancel(
             String id, ExtractRunsCancelRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -645,14 +650,14 @@ public class AsyncRawExtractRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ExtractRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ExtractRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtractRun.class), response));
                         return;
                     }
@@ -734,7 +739,8 @@ public class AsyncRawExtractRunsClient {
      * <li>All inputs in a batch use the same extractor version and override config.</li>
      * </ul>
      */
-    public CompletableFuture<ExtendClientHttpResponse<BatchRun>> createBatch(ExtractRunsCreateBatchRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<BatchRun>> createBatch(
+            ExtractRunsCreateBatchRequest request) {
         return createBatch(request, null);
     }
 
@@ -753,7 +759,7 @@ public class AsyncRawExtractRunsClient {
      * <li>All inputs in a batch use the same extractor version and override config.</li>
      * </ul>
      */
-    public CompletableFuture<ExtendClientHttpResponse<BatchRun>> createBatch(
+    public CompletableFuture<ExtendClientBaseHttpResponse<BatchRun>> createBatch(
             ExtractRunsCreateBatchRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -781,14 +787,14 @@ public class AsyncRawExtractRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<BatchRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<BatchRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, BatchRun.class), response));
                         return;
                     }

@@ -5,8 +5,8 @@ package ai.extend.resources.editschemas;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.RequestOptions;
@@ -44,7 +44,7 @@ public class RawEditSchemasClient {
      * <p>This endpoint returns the generated schema directly. There are no schema generation run resources to poll or delete.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/generate-edit-schema">Generate Edit Schema guide</a> and the <a href="https://docs.extend.ai/2026-02-09/editing/edit">Edit File guide</a>.</p>
      */
-    public ExtendClientHttpResponse<EditSchemaGenerationResponse> generate(EditSchemasGenerateRequest request) {
+    public ExtendClientBaseHttpResponse<EditSchemaGenerationResponse> generate(EditSchemasGenerateRequest request) {
         return generate(request, null);
     }
 
@@ -54,7 +54,7 @@ public class RawEditSchemasClient {
      * <p>This endpoint returns the generated schema directly. There are no schema generation run resources to poll or delete.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/generate-edit-schema">Generate Edit Schema guide</a> and the <a href="https://docs.extend.ai/2026-02-09/editing/edit">Edit File guide</a>.</p>
      */
-    public ExtendClientHttpResponse<EditSchemaGenerationResponse> generate(
+    public ExtendClientBaseHttpResponse<EditSchemaGenerationResponse> generate(
             EditSchemasGenerateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -86,7 +86,7 @@ public class RawEditSchemasClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EditSchemaGenerationResponse.class),
                         response);
             }

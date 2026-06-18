@@ -11,136 +11,135 @@ import ai.extend.requests.EditRequest;
 import ai.extend.requests.ExtractRequest;
 import ai.extend.requests.ParseRequest;
 import ai.extend.requests.SplitRequest;
-import ai.extend.resources.batchprocessorrun.AsyncBatchProcessorRunClient;
-import ai.extend.resources.batchruns.AsyncBatchRunsClient;
-import ai.extend.resources.classifiers.AsyncClassifiersClient;
-import ai.extend.resources.classifierversions.AsyncClassifierVersionsClient;
-import ai.extend.resources.classifyruns.AsyncClassifyRunsClient;
-import ai.extend.resources.editruns.AsyncEditRunsClient;
-import ai.extend.resources.editschemas.AsyncEditSchemasClient;
-import ai.extend.resources.edittemplates.AsyncEditTemplatesClient;
-import ai.extend.resources.evaluationsetitems.AsyncEvaluationSetItemsClient;
-import ai.extend.resources.evaluationsetruns.AsyncEvaluationSetRunsClient;
-import ai.extend.resources.evaluationsets.AsyncEvaluationSetsClient;
-import ai.extend.resources.extractors.AsyncExtractorsClient;
-import ai.extend.resources.extractorversions.AsyncExtractorVersionsClient;
-import ai.extend.resources.extractruns.AsyncExtractRunsClient;
-import ai.extend.resources.files.AsyncFilesClient;
-import ai.extend.resources.parseruns.AsyncParseRunsClient;
-import ai.extend.resources.processor.AsyncProcessorClient;
-import ai.extend.resources.processorrun.AsyncProcessorRunClient;
-import ai.extend.resources.processorversion.AsyncProcessorVersionClient;
-import ai.extend.resources.splitruns.AsyncSplitRunsClient;
-import ai.extend.resources.splitters.AsyncSplittersClient;
-import ai.extend.resources.splitterversions.AsyncSplitterVersionsClient;
-import ai.extend.resources.webhookendpoints.AsyncWebhookEndpointsClient;
-import ai.extend.resources.webhooksubscriptions.AsyncWebhookSubscriptionsClient;
-import ai.extend.resources.workflowruns.AsyncWorkflowRunsClient;
-import ai.extend.resources.workflows.AsyncWorkflowsClient;
-import ai.extend.resources.workflowversions.AsyncWorkflowVersionsClient;
+import ai.extend.resources.batchprocessorrun.BatchProcessorRunClient;
+import ai.extend.resources.batchruns.BatchRunsClient;
+import ai.extend.resources.classifiers.ClassifiersClient;
+import ai.extend.resources.classifierversions.ClassifierVersionsClient;
+import ai.extend.resources.classifyruns.ClassifyRunsClient;
+import ai.extend.resources.editruns.EditRunsClient;
+import ai.extend.resources.editschemas.EditSchemasClient;
+import ai.extend.resources.edittemplates.EditTemplatesClient;
+import ai.extend.resources.evaluationsetitems.EvaluationSetItemsClient;
+import ai.extend.resources.evaluationsetruns.EvaluationSetRunsClient;
+import ai.extend.resources.evaluationsets.EvaluationSetsClient;
+import ai.extend.resources.extractors.ExtractorsClient;
+import ai.extend.resources.extractorversions.ExtractorVersionsClient;
+import ai.extend.resources.extractruns.ExtractRunsClient;
+import ai.extend.resources.files.FilesClient;
+import ai.extend.resources.parseruns.ParseRunsClient;
+import ai.extend.resources.processor.ProcessorClient;
+import ai.extend.resources.processorrun.ProcessorRunClient;
+import ai.extend.resources.processorversion.ProcessorVersionClient;
+import ai.extend.resources.splitruns.SplitRunsClient;
+import ai.extend.resources.splitters.SplittersClient;
+import ai.extend.resources.splitterversions.SplitterVersionsClient;
+import ai.extend.resources.webhookendpoints.WebhookEndpointsClient;
+import ai.extend.resources.webhooksubscriptions.WebhookSubscriptionsClient;
+import ai.extend.resources.workflowruns.WorkflowRunsClient;
+import ai.extend.resources.workflows.WorkflowsClient;
+import ai.extend.resources.workflowversions.WorkflowVersionsClient;
 import ai.extend.types.ClassifyRun;
 import ai.extend.types.EditRun;
 import ai.extend.types.ExtractRun;
 import ai.extend.types.ParseRun;
 import ai.extend.types.SplitRun;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-public class AsyncExtendClient {
+public class ExtendClientBase {
     protected final ClientOptions clientOptions;
 
-    private final AsyncRawExtendClient rawClient;
+    private final RawExtendClientBase rawClient;
 
-    protected final Supplier<AsyncFilesClient> filesClient;
+    protected final Supplier<FilesClient> filesClient;
 
-    protected final Supplier<AsyncParseRunsClient> parseRunsClient;
+    protected final Supplier<ParseRunsClient> parseRunsClient;
 
-    protected final Supplier<AsyncEditRunsClient> editRunsClient;
+    protected final Supplier<EditRunsClient> editRunsClient;
 
-    protected final Supplier<AsyncEditTemplatesClient> editTemplatesClient;
+    protected final Supplier<EditTemplatesClient> editTemplatesClient;
 
-    protected final Supplier<AsyncEditSchemasClient> editSchemasClient;
+    protected final Supplier<EditSchemasClient> editSchemasClient;
 
-    protected final Supplier<AsyncExtractRunsClient> extractRunsClient;
+    protected final Supplier<ExtractRunsClient> extractRunsClient;
 
-    protected final Supplier<AsyncExtractorsClient> extractorsClient;
+    protected final Supplier<ExtractorsClient> extractorsClient;
 
-    protected final Supplier<AsyncExtractorVersionsClient> extractorVersionsClient;
+    protected final Supplier<ExtractorVersionsClient> extractorVersionsClient;
 
-    protected final Supplier<AsyncClassifyRunsClient> classifyRunsClient;
+    protected final Supplier<ClassifyRunsClient> classifyRunsClient;
 
-    protected final Supplier<AsyncClassifiersClient> classifiersClient;
+    protected final Supplier<ClassifiersClient> classifiersClient;
 
-    protected final Supplier<AsyncClassifierVersionsClient> classifierVersionsClient;
+    protected final Supplier<ClassifierVersionsClient> classifierVersionsClient;
 
-    protected final Supplier<AsyncSplitRunsClient> splitRunsClient;
+    protected final Supplier<SplitRunsClient> splitRunsClient;
 
-    protected final Supplier<AsyncSplittersClient> splittersClient;
+    protected final Supplier<SplittersClient> splittersClient;
 
-    protected final Supplier<AsyncSplitterVersionsClient> splitterVersionsClient;
+    protected final Supplier<SplitterVersionsClient> splitterVersionsClient;
 
-    protected final Supplier<AsyncWorkflowsClient> workflowsClient;
+    protected final Supplier<WorkflowsClient> workflowsClient;
 
-    protected final Supplier<AsyncWorkflowVersionsClient> workflowVersionsClient;
+    protected final Supplier<WorkflowVersionsClient> workflowVersionsClient;
 
-    protected final Supplier<AsyncWorkflowRunsClient> workflowRunsClient;
+    protected final Supplier<WorkflowRunsClient> workflowRunsClient;
 
-    protected final Supplier<AsyncProcessorRunClient> processorRunClient;
+    protected final Supplier<ProcessorRunClient> processorRunClient;
 
-    protected final Supplier<AsyncProcessorClient> processorClient;
+    protected final Supplier<ProcessorClient> processorClient;
 
-    protected final Supplier<AsyncProcessorVersionClient> processorVersionClient;
+    protected final Supplier<ProcessorVersionClient> processorVersionClient;
 
-    protected final Supplier<AsyncBatchProcessorRunClient> batchProcessorRunClient;
+    protected final Supplier<BatchProcessorRunClient> batchProcessorRunClient;
 
-    protected final Supplier<AsyncBatchRunsClient> batchRunsClient;
+    protected final Supplier<BatchRunsClient> batchRunsClient;
 
-    protected final Supplier<AsyncEvaluationSetsClient> evaluationSetsClient;
+    protected final Supplier<EvaluationSetsClient> evaluationSetsClient;
 
-    protected final Supplier<AsyncEvaluationSetItemsClient> evaluationSetItemsClient;
+    protected final Supplier<EvaluationSetItemsClient> evaluationSetItemsClient;
 
-    protected final Supplier<AsyncEvaluationSetRunsClient> evaluationSetRunsClient;
+    protected final Supplier<EvaluationSetRunsClient> evaluationSetRunsClient;
 
-    protected final Supplier<AsyncWebhookEndpointsClient> webhookEndpointsClient;
+    protected final Supplier<WebhookEndpointsClient> webhookEndpointsClient;
 
-    protected final Supplier<AsyncWebhookSubscriptionsClient> webhookSubscriptionsClient;
+    protected final Supplier<WebhookSubscriptionsClient> webhookSubscriptionsClient;
 
-    public AsyncExtendClient(ClientOptions clientOptions) {
+    public ExtendClientBase(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
-        this.rawClient = new AsyncRawExtendClient(clientOptions);
-        this.filesClient = Suppliers.memoize(() -> new AsyncFilesClient(clientOptions));
-        this.parseRunsClient = Suppliers.memoize(() -> new AsyncParseRunsClient(clientOptions));
-        this.editRunsClient = Suppliers.memoize(() -> new AsyncEditRunsClient(clientOptions));
-        this.editTemplatesClient = Suppliers.memoize(() -> new AsyncEditTemplatesClient(clientOptions));
-        this.editSchemasClient = Suppliers.memoize(() -> new AsyncEditSchemasClient(clientOptions));
-        this.extractRunsClient = Suppliers.memoize(() -> new AsyncExtractRunsClient(clientOptions));
-        this.extractorsClient = Suppliers.memoize(() -> new AsyncExtractorsClient(clientOptions));
-        this.extractorVersionsClient = Suppliers.memoize(() -> new AsyncExtractorVersionsClient(clientOptions));
-        this.classifyRunsClient = Suppliers.memoize(() -> new AsyncClassifyRunsClient(clientOptions));
-        this.classifiersClient = Suppliers.memoize(() -> new AsyncClassifiersClient(clientOptions));
-        this.classifierVersionsClient = Suppliers.memoize(() -> new AsyncClassifierVersionsClient(clientOptions));
-        this.splitRunsClient = Suppliers.memoize(() -> new AsyncSplitRunsClient(clientOptions));
-        this.splittersClient = Suppliers.memoize(() -> new AsyncSplittersClient(clientOptions));
-        this.splitterVersionsClient = Suppliers.memoize(() -> new AsyncSplitterVersionsClient(clientOptions));
-        this.workflowsClient = Suppliers.memoize(() -> new AsyncWorkflowsClient(clientOptions));
-        this.workflowVersionsClient = Suppliers.memoize(() -> new AsyncWorkflowVersionsClient(clientOptions));
-        this.workflowRunsClient = Suppliers.memoize(() -> new AsyncWorkflowRunsClient(clientOptions));
-        this.processorRunClient = Suppliers.memoize(() -> new AsyncProcessorRunClient(clientOptions));
-        this.processorClient = Suppliers.memoize(() -> new AsyncProcessorClient(clientOptions));
-        this.processorVersionClient = Suppliers.memoize(() -> new AsyncProcessorVersionClient(clientOptions));
-        this.batchProcessorRunClient = Suppliers.memoize(() -> new AsyncBatchProcessorRunClient(clientOptions));
-        this.batchRunsClient = Suppliers.memoize(() -> new AsyncBatchRunsClient(clientOptions));
-        this.evaluationSetsClient = Suppliers.memoize(() -> new AsyncEvaluationSetsClient(clientOptions));
-        this.evaluationSetItemsClient = Suppliers.memoize(() -> new AsyncEvaluationSetItemsClient(clientOptions));
-        this.evaluationSetRunsClient = Suppliers.memoize(() -> new AsyncEvaluationSetRunsClient(clientOptions));
-        this.webhookEndpointsClient = Suppliers.memoize(() -> new AsyncWebhookEndpointsClient(clientOptions));
-        this.webhookSubscriptionsClient = Suppliers.memoize(() -> new AsyncWebhookSubscriptionsClient(clientOptions));
+        this.rawClient = new RawExtendClientBase(clientOptions);
+        this.filesClient = Suppliers.memoize(() -> new FilesClient(clientOptions));
+        this.parseRunsClient = Suppliers.memoize(() -> new ParseRunsClient(clientOptions));
+        this.editRunsClient = Suppliers.memoize(() -> new EditRunsClient(clientOptions));
+        this.editTemplatesClient = Suppliers.memoize(() -> new EditTemplatesClient(clientOptions));
+        this.editSchemasClient = Suppliers.memoize(() -> new EditSchemasClient(clientOptions));
+        this.extractRunsClient = Suppliers.memoize(() -> new ExtractRunsClient(clientOptions));
+        this.extractorsClient = Suppliers.memoize(() -> new ExtractorsClient(clientOptions));
+        this.extractorVersionsClient = Suppliers.memoize(() -> new ExtractorVersionsClient(clientOptions));
+        this.classifyRunsClient = Suppliers.memoize(() -> new ClassifyRunsClient(clientOptions));
+        this.classifiersClient = Suppliers.memoize(() -> new ClassifiersClient(clientOptions));
+        this.classifierVersionsClient = Suppliers.memoize(() -> new ClassifierVersionsClient(clientOptions));
+        this.splitRunsClient = Suppliers.memoize(() -> new SplitRunsClient(clientOptions));
+        this.splittersClient = Suppliers.memoize(() -> new SplittersClient(clientOptions));
+        this.splitterVersionsClient = Suppliers.memoize(() -> new SplitterVersionsClient(clientOptions));
+        this.workflowsClient = Suppliers.memoize(() -> new WorkflowsClient(clientOptions));
+        this.workflowVersionsClient = Suppliers.memoize(() -> new WorkflowVersionsClient(clientOptions));
+        this.workflowRunsClient = Suppliers.memoize(() -> new WorkflowRunsClient(clientOptions));
+        this.processorRunClient = Suppliers.memoize(() -> new ProcessorRunClient(clientOptions));
+        this.processorClient = Suppliers.memoize(() -> new ProcessorClient(clientOptions));
+        this.processorVersionClient = Suppliers.memoize(() -> new ProcessorVersionClient(clientOptions));
+        this.batchProcessorRunClient = Suppliers.memoize(() -> new BatchProcessorRunClient(clientOptions));
+        this.batchRunsClient = Suppliers.memoize(() -> new BatchRunsClient(clientOptions));
+        this.evaluationSetsClient = Suppliers.memoize(() -> new EvaluationSetsClient(clientOptions));
+        this.evaluationSetItemsClient = Suppliers.memoize(() -> new EvaluationSetItemsClient(clientOptions));
+        this.evaluationSetRunsClient = Suppliers.memoize(() -> new EvaluationSetRunsClient(clientOptions));
+        this.webhookEndpointsClient = Suppliers.memoize(() -> new WebhookEndpointsClient(clientOptions));
+        this.webhookSubscriptionsClient = Suppliers.memoize(() -> new WebhookSubscriptionsClient(clientOptions));
     }
 
     /**
      * Get responses with HTTP metadata like headers
      */
-    public AsyncRawExtendClient withRawResponse() {
+    public RawExtendClientBase withRawResponse() {
         return this.rawClient;
     }
 
@@ -150,8 +149,8 @@ public class AsyncExtendClient {
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/parsing/overview">Parse File guide</a>.</p>
      */
-    public CompletableFuture<ParseRun> parse(ParseRequest request) {
-        return this.rawClient.parse(request).thenApply(response -> response.body());
+    public ParseRun parse(ParseRequest request) {
+        return this.rawClient.parse(request).body();
     }
 
     /**
@@ -160,8 +159,8 @@ public class AsyncExtendClient {
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/parsing/overview">Parse File guide</a>.</p>
      */
-    public CompletableFuture<ParseRun> parse(ParseRequest request, RequestOptions requestOptions) {
-        return this.rawClient.parse(request, requestOptions).thenApply(response -> response.body());
+    public ParseRun parse(ParseRequest request, RequestOptions requestOptions) {
+        return this.rawClient.parse(request, requestOptions).body();
     }
 
     /**
@@ -170,8 +169,8 @@ public class AsyncExtendClient {
      * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/edit">Edit File guide</a>.</p>
      */
-    public CompletableFuture<EditRun> edit(EditRequest request) {
-        return this.rawClient.edit(request).thenApply(response -> response.body());
+    public EditRun edit(EditRequest request) {
+        return this.rawClient.edit(request).body();
     }
 
     /**
@@ -180,8 +179,8 @@ public class AsyncExtendClient {
      * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/edit">Edit File guide</a>.</p>
      */
-    public CompletableFuture<EditRun> edit(EditRequest request, RequestOptions requestOptions) {
-        return this.rawClient.edit(request, requestOptions).thenApply(response -> response.body());
+    public EditRun edit(EditRequest request, RequestOptions requestOptions) {
+        return this.rawClient.edit(request, requestOptions).body();
     }
 
     /**
@@ -190,8 +189,8 @@ public class AsyncExtendClient {
      * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor, an inline configuration, or no configuration at all. When neither is provided, Extend automatically infers a schema from the document before extraction — no extractor or schema is required.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/extraction/overview">Extract File guide</a>.</p>
      */
-    public CompletableFuture<ExtractRun> extract(ExtractRequest request) {
-        return this.rawClient.extract(request).thenApply(response -> response.body());
+    public ExtractRun extract(ExtractRequest request) {
+        return this.rawClient.extract(request).body();
     }
 
     /**
@@ -200,8 +199,8 @@ public class AsyncExtendClient {
      * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor, an inline configuration, or no configuration at all. When neither is provided, Extend automatically infers a schema from the document before extraction — no extractor or schema is required.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/extraction/overview">Extract File guide</a>.</p>
      */
-    public CompletableFuture<ExtractRun> extract(ExtractRequest request, RequestOptions requestOptions) {
-        return this.rawClient.extract(request, requestOptions).thenApply(response -> response.body());
+    public ExtractRun extract(ExtractRequest request, RequestOptions requestOptions) {
+        return this.rawClient.extract(request, requestOptions).body();
     }
 
     /**
@@ -210,8 +209,8 @@ public class AsyncExtendClient {
      * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/classification/configuring-a-classifier">Classify File guide</a>.</p>
      */
-    public CompletableFuture<ClassifyRun> classify(ClassifyRequest request) {
-        return this.rawClient.classify(request).thenApply(response -> response.body());
+    public ClassifyRun classify(ClassifyRequest request) {
+        return this.rawClient.classify(request).body();
     }
 
     /**
@@ -220,8 +219,8 @@ public class AsyncExtendClient {
      * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/classification/configuring-a-classifier">Classify File guide</a>.</p>
      */
-    public CompletableFuture<ClassifyRun> classify(ClassifyRequest request, RequestOptions requestOptions) {
-        return this.rawClient.classify(request, requestOptions).thenApply(response -> response.body());
+    public ClassifyRun classify(ClassifyRequest request, RequestOptions requestOptions) {
+        return this.rawClient.classify(request, requestOptions).body();
     }
 
     /**
@@ -230,8 +229,8 @@ public class AsyncExtendClient {
      * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/splitting/configuring-a-splitter">Split File guide</a>.</p>
      */
-    public CompletableFuture<SplitRun> split(SplitRequest request) {
-        return this.rawClient.split(request).thenApply(response -> response.body());
+    public SplitRun split(SplitRequest request) {
+        return this.rawClient.split(request).body();
     }
 
     /**
@@ -240,119 +239,119 @@ public class AsyncExtendClient {
      * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/splitting/configuring-a-splitter">Split File guide</a>.</p>
      */
-    public CompletableFuture<SplitRun> split(SplitRequest request, RequestOptions requestOptions) {
-        return this.rawClient.split(request, requestOptions).thenApply(response -> response.body());
+    public SplitRun split(SplitRequest request, RequestOptions requestOptions) {
+        return this.rawClient.split(request, requestOptions).body();
     }
 
-    public AsyncFilesClient files() {
+    public FilesClient files() {
         return this.filesClient.get();
     }
 
-    public AsyncParseRunsClient parseRuns() {
+    public ParseRunsClient parseRuns() {
         return this.parseRunsClient.get();
     }
 
-    public AsyncEditRunsClient editRuns() {
+    public EditRunsClient editRuns() {
         return this.editRunsClient.get();
     }
 
-    public AsyncEditTemplatesClient editTemplates() {
+    public EditTemplatesClient editTemplates() {
         return this.editTemplatesClient.get();
     }
 
-    public AsyncEditSchemasClient editSchemas() {
+    public EditSchemasClient editSchemas() {
         return this.editSchemasClient.get();
     }
 
-    public AsyncExtractRunsClient extractRuns() {
+    public ExtractRunsClient extractRuns() {
         return this.extractRunsClient.get();
     }
 
-    public AsyncExtractorsClient extractors() {
+    public ExtractorsClient extractors() {
         return this.extractorsClient.get();
     }
 
-    public AsyncExtractorVersionsClient extractorVersions() {
+    public ExtractorVersionsClient extractorVersions() {
         return this.extractorVersionsClient.get();
     }
 
-    public AsyncClassifyRunsClient classifyRuns() {
+    public ClassifyRunsClient classifyRuns() {
         return this.classifyRunsClient.get();
     }
 
-    public AsyncClassifiersClient classifiers() {
+    public ClassifiersClient classifiers() {
         return this.classifiersClient.get();
     }
 
-    public AsyncClassifierVersionsClient classifierVersions() {
+    public ClassifierVersionsClient classifierVersions() {
         return this.classifierVersionsClient.get();
     }
 
-    public AsyncSplitRunsClient splitRuns() {
+    public SplitRunsClient splitRuns() {
         return this.splitRunsClient.get();
     }
 
-    public AsyncSplittersClient splitters() {
+    public SplittersClient splitters() {
         return this.splittersClient.get();
     }
 
-    public AsyncSplitterVersionsClient splitterVersions() {
+    public SplitterVersionsClient splitterVersions() {
         return this.splitterVersionsClient.get();
     }
 
-    public AsyncWorkflowsClient workflows() {
+    public WorkflowsClient workflows() {
         return this.workflowsClient.get();
     }
 
-    public AsyncWorkflowVersionsClient workflowVersions() {
+    public WorkflowVersionsClient workflowVersions() {
         return this.workflowVersionsClient.get();
     }
 
-    public AsyncWorkflowRunsClient workflowRuns() {
+    public WorkflowRunsClient workflowRuns() {
         return this.workflowRunsClient.get();
     }
 
-    public AsyncProcessorRunClient processorRun() {
+    public ProcessorRunClient processorRun() {
         return this.processorRunClient.get();
     }
 
-    public AsyncProcessorClient processor() {
+    public ProcessorClient processor() {
         return this.processorClient.get();
     }
 
-    public AsyncProcessorVersionClient processorVersion() {
+    public ProcessorVersionClient processorVersion() {
         return this.processorVersionClient.get();
     }
 
-    public AsyncBatchProcessorRunClient batchProcessorRun() {
+    public BatchProcessorRunClient batchProcessorRun() {
         return this.batchProcessorRunClient.get();
     }
 
-    public AsyncBatchRunsClient batchRuns() {
+    public BatchRunsClient batchRuns() {
         return this.batchRunsClient.get();
     }
 
-    public AsyncEvaluationSetsClient evaluationSets() {
+    public EvaluationSetsClient evaluationSets() {
         return this.evaluationSetsClient.get();
     }
 
-    public AsyncEvaluationSetItemsClient evaluationSetItems() {
+    public EvaluationSetItemsClient evaluationSetItems() {
         return this.evaluationSetItemsClient.get();
     }
 
-    public AsyncEvaluationSetRunsClient evaluationSetRuns() {
+    public EvaluationSetRunsClient evaluationSetRuns() {
         return this.evaluationSetRunsClient.get();
     }
 
-    public AsyncWebhookEndpointsClient webhookEndpoints() {
+    public WebhookEndpointsClient webhookEndpoints() {
         return this.webhookEndpointsClient.get();
     }
 
-    public AsyncWebhookSubscriptionsClient webhookSubscriptions() {
+    public WebhookSubscriptionsClient webhookSubscriptions() {
         return this.webhookSubscriptionsClient.get();
     }
 
-    public static AsyncExtendClientBuilder builder() {
-        return new AsyncExtendClientBuilder();
+    public static ExtendClientBaseBuilder builder() {
+        return new ExtendClientBaseBuilder();
     }
 }

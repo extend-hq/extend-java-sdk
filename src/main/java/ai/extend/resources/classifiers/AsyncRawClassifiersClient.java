@@ -5,8 +5,8 @@ package ai.extend.resources.classifiers;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -51,7 +51,7 @@ public class AsyncRawClassifiersClient {
      * List all classifiers.
      * <p>Returns a summary of each classifier. Use <code>GET /classifiers/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifiersListResponse>> list() {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifiersListResponse>> list() {
         return list(ClassifiersListRequest.builder().build());
     }
 
@@ -59,7 +59,8 @@ public class AsyncRawClassifiersClient {
      * List all classifiers.
      * <p>Returns a summary of each classifier. Use <code>GET /classifiers/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifiersListResponse>> list(RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifiersListResponse>> list(
+            RequestOptions requestOptions) {
         return list(ClassifiersListRequest.builder().build(), requestOptions);
     }
 
@@ -67,7 +68,8 @@ public class AsyncRawClassifiersClient {
      * List all classifiers.
      * <p>Returns a summary of each classifier. Use <code>GET /classifiers/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifiersListResponse>> list(ClassifiersListRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifiersListResponse>> list(
+            ClassifiersListRequest request) {
         return list(request, null);
     }
 
@@ -75,7 +77,7 @@ public class AsyncRawClassifiersClient {
      * List all classifiers.
      * <p>Returns a summary of each classifier. Use <code>GET /classifiers/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifiersListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifiersListResponse>> list(
             ClassifiersListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -115,14 +117,14 @@ public class AsyncRawClassifiersClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ClassifiersListResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ClassifiersListResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ClassifiersListResponse.class),
                                 response));
                         return;
@@ -193,14 +195,14 @@ public class AsyncRawClassifiersClient {
     /**
      * Create a new classifier.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Classifier>> create(ClassifiersCreateRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Classifier>> create(ClassifiersCreateRequest request) {
         return create(request, null);
     }
 
     /**
      * Create a new classifier.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Classifier>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<Classifier>> create(
             ClassifiersCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -228,14 +230,14 @@ public class AsyncRawClassifiersClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<Classifier>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<Classifier>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Classifier.class), response));
                         return;
                     }
@@ -305,21 +307,22 @@ public class AsyncRawClassifiersClient {
     /**
      * Get details of a classifier.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Classifier>> retrieve(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Classifier>> retrieve(String id) {
         return retrieve(id, ClassifiersRetrieveRequest.builder().build());
     }
 
     /**
      * Get details of a classifier.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Classifier>> retrieve(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Classifier>> retrieve(
+            String id, RequestOptions requestOptions) {
         return retrieve(id, ClassifiersRetrieveRequest.builder().build(), requestOptions);
     }
 
     /**
      * Get details of a classifier.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Classifier>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<Classifier>> retrieve(
             String id, ClassifiersRetrieveRequest request) {
         return retrieve(id, request, null);
     }
@@ -327,7 +330,7 @@ public class AsyncRawClassifiersClient {
     /**
      * Get details of a classifier.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Classifier>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<Classifier>> retrieve(
             String id, ClassifiersRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -352,14 +355,14 @@ public class AsyncRawClassifiersClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<Classifier>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<Classifier>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Classifier.class), response));
                         return;
                     }
@@ -429,28 +432,30 @@ public class AsyncRawClassifiersClient {
     /**
      * Update an existing classifier.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Classifier>> update(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Classifier>> update(String id) {
         return update(id, ClassifiersUpdateRequest.builder().build());
     }
 
     /**
      * Update an existing classifier.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Classifier>> update(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Classifier>> update(
+            String id, RequestOptions requestOptions) {
         return update(id, ClassifiersUpdateRequest.builder().build(), requestOptions);
     }
 
     /**
      * Update an existing classifier.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Classifier>> update(String id, ClassifiersUpdateRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Classifier>> update(
+            String id, ClassifiersUpdateRequest request) {
         return update(id, request, null);
     }
 
     /**
      * Update an existing classifier.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Classifier>> update(
+    public CompletableFuture<ExtendClientBaseHttpResponse<Classifier>> update(
             String id, ClassifiersUpdateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -483,14 +488,14 @@ public class AsyncRawClassifiersClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<Classifier>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<Classifier>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Classifier.class), response));
                         return;
                     }

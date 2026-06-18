@@ -5,8 +5,8 @@ package ai.extend.resources.webhookendpoints;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -53,14 +53,14 @@ public class AsyncRawWebhookEndpointsClient {
     /**
      * List all webhook endpoints.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookEndpointsListResponse>> list() {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpointsListResponse>> list() {
         return list(WebhookEndpointsListRequest.builder().build());
     }
 
     /**
      * List all webhook endpoints.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookEndpointsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpointsListResponse>> list(
             RequestOptions requestOptions) {
         return list(WebhookEndpointsListRequest.builder().build(), requestOptions);
     }
@@ -68,7 +68,7 @@ public class AsyncRawWebhookEndpointsClient {
     /**
      * List all webhook endpoints.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookEndpointsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpointsListResponse>> list(
             WebhookEndpointsListRequest request) {
         return list(request, null);
     }
@@ -76,7 +76,7 @@ public class AsyncRawWebhookEndpointsClient {
     /**
      * List all webhook endpoints.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookEndpointsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpointsListResponse>> list(
             WebhookEndpointsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -116,14 +116,15 @@ public class AsyncRawWebhookEndpointsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WebhookEndpointsListResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpointsListResponse>> future =
+                new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, WebhookEndpointsListResponse.class),
                                 response));
@@ -197,7 +198,7 @@ public class AsyncRawWebhookEndpointsClient {
      * <p>The <code>enabledEvents</code> array specifies which global event types this endpoint should receive. Use the <a href="https://docs.extend.ai/2026-02-09/api-reference/webhook-events">Webhook Events</a> reference to see available event types.</p>
      * <p>To subscribe to events scoped to a specific resource (e.g., a single extractor or workflow), use <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/webhook/create-webhook-subscription">Create Webhook Subscription</a> after creating the endpoint.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookEndpointCreate>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpointCreate>> create(
             WebhookEndpointsCreateRequest request) {
         return create(request, null);
     }
@@ -207,7 +208,7 @@ public class AsyncRawWebhookEndpointsClient {
      * <p>The <code>enabledEvents</code> array specifies which global event types this endpoint should receive. Use the <a href="https://docs.extend.ai/2026-02-09/api-reference/webhook-events">Webhook Events</a> reference to see available event types.</p>
      * <p>To subscribe to events scoped to a specific resource (e.g., a single extractor or workflow), use <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/webhook/create-webhook-subscription">Create Webhook Subscription</a> after creating the endpoint.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookEndpointCreate>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpointCreate>> create(
             WebhookEndpointsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -235,14 +236,14 @@ public class AsyncRawWebhookEndpointsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WebhookEndpointCreate>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpointCreate>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WebhookEndpointCreate.class),
                                 response));
                         return;
@@ -313,14 +314,14 @@ public class AsyncRawWebhookEndpointsClient {
     /**
      * Retrieve a webhook endpoint by ID.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookEndpoint>> retrieve(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpoint>> retrieve(String id) {
         return retrieve(id, WebhookEndpointsRetrieveRequest.builder().build());
     }
 
     /**
      * Retrieve a webhook endpoint by ID.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookEndpoint>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpoint>> retrieve(
             String id, RequestOptions requestOptions) {
         return retrieve(id, WebhookEndpointsRetrieveRequest.builder().build(), requestOptions);
     }
@@ -328,7 +329,7 @@ public class AsyncRawWebhookEndpointsClient {
     /**
      * Retrieve a webhook endpoint by ID.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookEndpoint>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpoint>> retrieve(
             String id, WebhookEndpointsRetrieveRequest request) {
         return retrieve(id, request, null);
     }
@@ -336,7 +337,7 @@ public class AsyncRawWebhookEndpointsClient {
     /**
      * Retrieve a webhook endpoint by ID.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookEndpoint>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpoint>> retrieve(
             String id, WebhookEndpointsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -361,14 +362,14 @@ public class AsyncRawWebhookEndpointsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WebhookEndpoint>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpoint>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WebhookEndpoint.class),
                                 response));
                         return;
@@ -440,7 +441,7 @@ public class AsyncRawWebhookEndpointsClient {
      * Update a webhook endpoint. Only the fields you include in the request body will be updated; omitted fields remain unchanged.
      * <p>The <code>apiVersion</code> of a webhook endpoint cannot be changed after creation.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookEndpoint>> update(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpoint>> update(String id) {
         return update(id, WebhookEndpointsUpdateRequest.builder().build());
     }
 
@@ -448,7 +449,7 @@ public class AsyncRawWebhookEndpointsClient {
      * Update a webhook endpoint. Only the fields you include in the request body will be updated; omitted fields remain unchanged.
      * <p>The <code>apiVersion</code> of a webhook endpoint cannot be changed after creation.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookEndpoint>> update(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpoint>> update(
             String id, RequestOptions requestOptions) {
         return update(id, WebhookEndpointsUpdateRequest.builder().build(), requestOptions);
     }
@@ -457,7 +458,7 @@ public class AsyncRawWebhookEndpointsClient {
      * Update a webhook endpoint. Only the fields you include in the request body will be updated; omitted fields remain unchanged.
      * <p>The <code>apiVersion</code> of a webhook endpoint cannot be changed after creation.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookEndpoint>> update(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpoint>> update(
             String id, WebhookEndpointsUpdateRequest request) {
         return update(id, request, null);
     }
@@ -466,7 +467,7 @@ public class AsyncRawWebhookEndpointsClient {
      * Update a webhook endpoint. Only the fields you include in the request body will be updated; omitted fields remain unchanged.
      * <p>The <code>apiVersion</code> of a webhook endpoint cannot be changed after creation.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookEndpoint>> update(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpoint>> update(
             String id, WebhookEndpointsUpdateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -499,14 +500,14 @@ public class AsyncRawWebhookEndpointsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WebhookEndpoint>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpoint>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WebhookEndpoint.class),
                                 response));
                         return;
@@ -577,14 +578,14 @@ public class AsyncRawWebhookEndpointsClient {
     /**
      * Delete a webhook endpoint and all of its subscriptions. This operation is permanent and cannot be undone.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookEndpointsDeleteResponse>> delete(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpointsDeleteResponse>> delete(String id) {
         return delete(id, WebhookEndpointsDeleteRequest.builder().build());
     }
 
     /**
      * Delete a webhook endpoint and all of its subscriptions. This operation is permanent and cannot be undone.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookEndpointsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpointsDeleteResponse>> delete(
             String id, RequestOptions requestOptions) {
         return delete(id, WebhookEndpointsDeleteRequest.builder().build(), requestOptions);
     }
@@ -592,7 +593,7 @@ public class AsyncRawWebhookEndpointsClient {
     /**
      * Delete a webhook endpoint and all of its subscriptions. This operation is permanent and cannot be undone.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookEndpointsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpointsDeleteResponse>> delete(
             String id, WebhookEndpointsDeleteRequest request) {
         return delete(id, request, null);
     }
@@ -600,7 +601,7 @@ public class AsyncRawWebhookEndpointsClient {
     /**
      * Delete a webhook endpoint and all of its subscriptions. This operation is permanent and cannot be undone.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookEndpointsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpointsDeleteResponse>> delete(
             String id, WebhookEndpointsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -625,14 +626,15 @@ public class AsyncRawWebhookEndpointsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WebhookEndpointsDeleteResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<WebhookEndpointsDeleteResponse>> future =
+                new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, WebhookEndpointsDeleteResponse.class),
                                 response));

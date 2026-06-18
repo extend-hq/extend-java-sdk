@@ -5,8 +5,8 @@ package ai.extend.resources.workflows;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -45,28 +45,28 @@ public class RawWorkflowsClient {
     /**
      * List all workflows. Returns a paginated list of workflow summaries.
      */
-    public ExtendClientHttpResponse<WorkflowsListResponse> list() {
+    public ExtendClientBaseHttpResponse<WorkflowsListResponse> list() {
         return list(WorkflowsListRequest.builder().build());
     }
 
     /**
      * List all workflows. Returns a paginated list of workflow summaries.
      */
-    public ExtendClientHttpResponse<WorkflowsListResponse> list(RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<WorkflowsListResponse> list(RequestOptions requestOptions) {
         return list(WorkflowsListRequest.builder().build(), requestOptions);
     }
 
     /**
      * List all workflows. Returns a paginated list of workflow summaries.
      */
-    public ExtendClientHttpResponse<WorkflowsListResponse> list(WorkflowsListRequest request) {
+    public ExtendClientBaseHttpResponse<WorkflowsListResponse> list(WorkflowsListRequest request) {
         return list(request, null);
     }
 
     /**
      * List all workflows. Returns a paginated list of workflow summaries.
      */
-    public ExtendClientHttpResponse<WorkflowsListResponse> list(
+    public ExtendClientBaseHttpResponse<WorkflowsListResponse> list(
             WorkflowsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -106,7 +106,7 @@ public class RawWorkflowsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WorkflowsListResponse.class), response);
             }
             try {
@@ -152,7 +152,7 @@ public class RawWorkflowsClient {
      * <p>When <code>steps</code> is omitted, the workflow is created with default steps (<code>TRIGGER</code> → <code>PARSE</code>). When <code>steps</code> is provided, the step graph is validated and the draft version is populated with the given steps.</p>
      * <p><strong>Note:</strong> The default steps may change in the future. If your integration depends on a specific step graph, provide <code>steps</code> explicitly.</p>
      */
-    public ExtendClientHttpResponse<Workflow> create(WorkflowsCreateRequest request) {
+    public ExtendClientBaseHttpResponse<Workflow> create(WorkflowsCreateRequest request) {
         return create(request, null);
     }
 
@@ -161,7 +161,8 @@ public class RawWorkflowsClient {
      * <p>When <code>steps</code> is omitted, the workflow is created with default steps (<code>TRIGGER</code> → <code>PARSE</code>). When <code>steps</code> is provided, the step graph is validated and the draft version is populated with the given steps.</p>
      * <p><strong>Note:</strong> The default steps may change in the future. If your integration depends on a specific step graph, provide <code>steps</code> explicitly.</p>
      */
-    public ExtendClientHttpResponse<Workflow> create(WorkflowsCreateRequest request, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<Workflow> create(
+            WorkflowsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("workflows");
@@ -192,7 +193,7 @@ public class RawWorkflowsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Workflow.class), response);
             }
             try {
@@ -236,14 +237,14 @@ public class RawWorkflowsClient {
     /**
      * Get details of a workflow, including its draft version and steps.
      */
-    public ExtendClientHttpResponse<Workflow> retrieve(String id) {
+    public ExtendClientBaseHttpResponse<Workflow> retrieve(String id) {
         return retrieve(id, null);
     }
 
     /**
      * Get details of a workflow, including its draft version and steps.
      */
-    public ExtendClientHttpResponse<Workflow> retrieve(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<Workflow> retrieve(String id, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("workflows")
@@ -267,7 +268,7 @@ public class RawWorkflowsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Workflow.class), response);
             }
             try {
@@ -312,7 +313,7 @@ public class RawWorkflowsClient {
      * Update a workflow's draft. You can update the name, the steps, or both.
      * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
      */
-    public ExtendClientHttpResponse<Workflow> update(String id) {
+    public ExtendClientBaseHttpResponse<Workflow> update(String id) {
         return update(id, WorkflowsUpdateRequest.builder().build());
     }
 
@@ -320,7 +321,7 @@ public class RawWorkflowsClient {
      * Update a workflow's draft. You can update the name, the steps, or both.
      * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
      */
-    public ExtendClientHttpResponse<Workflow> update(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<Workflow> update(String id, RequestOptions requestOptions) {
         return update(id, WorkflowsUpdateRequest.builder().build(), requestOptions);
     }
 
@@ -328,7 +329,7 @@ public class RawWorkflowsClient {
      * Update a workflow's draft. You can update the name, the steps, or both.
      * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
      */
-    public ExtendClientHttpResponse<Workflow> update(String id, WorkflowsUpdateRequest request) {
+    public ExtendClientBaseHttpResponse<Workflow> update(String id, WorkflowsUpdateRequest request) {
         return update(id, request, null);
     }
 
@@ -336,7 +337,7 @@ public class RawWorkflowsClient {
      * Update a workflow's draft. You can update the name, the steps, or both.
      * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
      */
-    public ExtendClientHttpResponse<Workflow> update(
+    public ExtendClientBaseHttpResponse<Workflow> update(
             String id, WorkflowsUpdateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -369,7 +370,7 @@ public class RawWorkflowsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Workflow.class), response);
             }
             try {

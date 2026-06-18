@@ -5,8 +5,8 @@ package ai.extend.resources.workflows;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -49,28 +49,28 @@ public class AsyncRawWorkflowsClient {
     /**
      * List all workflows. Returns a paginated list of workflow summaries.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowsListResponse>> list() {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowsListResponse>> list() {
         return list(WorkflowsListRequest.builder().build());
     }
 
     /**
      * List all workflows. Returns a paginated list of workflow summaries.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowsListResponse>> list(RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowsListResponse>> list(RequestOptions requestOptions) {
         return list(WorkflowsListRequest.builder().build(), requestOptions);
     }
 
     /**
      * List all workflows. Returns a paginated list of workflow summaries.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowsListResponse>> list(WorkflowsListRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowsListResponse>> list(WorkflowsListRequest request) {
         return list(request, null);
     }
 
     /**
      * List all workflows. Returns a paginated list of workflow summaries.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowsListResponse>> list(
             WorkflowsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -106,14 +106,14 @@ public class AsyncRawWorkflowsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WorkflowsListResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<WorkflowsListResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WorkflowsListResponse.class),
                                 response));
                         return;
@@ -186,7 +186,7 @@ public class AsyncRawWorkflowsClient {
      * <p>When <code>steps</code> is omitted, the workflow is created with default steps (<code>TRIGGER</code> → <code>PARSE</code>). When <code>steps</code> is provided, the step graph is validated and the draft version is populated with the given steps.</p>
      * <p><strong>Note:</strong> The default steps may change in the future. If your integration depends on a specific step graph, provide <code>steps</code> explicitly.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<Workflow>> create(WorkflowsCreateRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Workflow>> create(WorkflowsCreateRequest request) {
         return create(request, null);
     }
 
@@ -195,7 +195,7 @@ public class AsyncRawWorkflowsClient {
      * <p>When <code>steps</code> is omitted, the workflow is created with default steps (<code>TRIGGER</code> → <code>PARSE</code>). When <code>steps</code> is provided, the step graph is validated and the draft version is populated with the given steps.</p>
      * <p><strong>Note:</strong> The default steps may change in the future. If your integration depends on a specific step graph, provide <code>steps</code> explicitly.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<Workflow>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<Workflow>> create(
             WorkflowsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -223,14 +223,14 @@ public class AsyncRawWorkflowsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<Workflow>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<Workflow>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Workflow.class), response));
                         return;
                     }
@@ -300,14 +300,15 @@ public class AsyncRawWorkflowsClient {
     /**
      * Get details of a workflow, including its draft version and steps.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Workflow>> retrieve(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Workflow>> retrieve(String id) {
         return retrieve(id, null);
     }
 
     /**
      * Get details of a workflow, including its draft version and steps.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Workflow>> retrieve(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Workflow>> retrieve(
+            String id, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("workflows")
@@ -327,14 +328,14 @@ public class AsyncRawWorkflowsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<Workflow>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<Workflow>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Workflow.class), response));
                         return;
                     }
@@ -405,7 +406,7 @@ public class AsyncRawWorkflowsClient {
      * Update a workflow's draft. You can update the name, the steps, or both.
      * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<Workflow>> update(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Workflow>> update(String id) {
         return update(id, WorkflowsUpdateRequest.builder().build());
     }
 
@@ -413,7 +414,7 @@ public class AsyncRawWorkflowsClient {
      * Update a workflow's draft. You can update the name, the steps, or both.
      * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<Workflow>> update(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Workflow>> update(String id, RequestOptions requestOptions) {
         return update(id, WorkflowsUpdateRequest.builder().build(), requestOptions);
     }
 
@@ -421,7 +422,7 @@ public class AsyncRawWorkflowsClient {
      * Update a workflow's draft. You can update the name, the steps, or both.
      * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<Workflow>> update(String id, WorkflowsUpdateRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Workflow>> update(String id, WorkflowsUpdateRequest request) {
         return update(id, request, null);
     }
 
@@ -429,7 +430,7 @@ public class AsyncRawWorkflowsClient {
      * Update a workflow's draft. You can update the name, the steps, or both.
      * <p>When <code>steps</code> is provided, the draft version's steps are replaced with the new set. Steps with matching names from the previous draft preserve their internal identity.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<Workflow>> update(
+    public CompletableFuture<ExtendClientBaseHttpResponse<Workflow>> update(
             String id, WorkflowsUpdateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -458,14 +459,14 @@ public class AsyncRawWorkflowsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<Workflow>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<Workflow>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Workflow.class), response));
                         return;
                     }

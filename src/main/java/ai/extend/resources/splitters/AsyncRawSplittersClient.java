@@ -5,8 +5,8 @@ package ai.extend.resources.splitters;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -51,7 +51,7 @@ public class AsyncRawSplittersClient {
      * List all splitters.
      * <p>Returns a summary of each splitter. Use <code>GET /splitters/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplittersListResponse>> list() {
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplittersListResponse>> list() {
         return list(SplittersListRequest.builder().build());
     }
 
@@ -59,7 +59,7 @@ public class AsyncRawSplittersClient {
      * List all splitters.
      * <p>Returns a summary of each splitter. Use <code>GET /splitters/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplittersListResponse>> list(RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplittersListResponse>> list(RequestOptions requestOptions) {
         return list(SplittersListRequest.builder().build(), requestOptions);
     }
 
@@ -67,7 +67,7 @@ public class AsyncRawSplittersClient {
      * List all splitters.
      * <p>Returns a summary of each splitter. Use <code>GET /splitters/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplittersListResponse>> list(SplittersListRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplittersListResponse>> list(SplittersListRequest request) {
         return list(request, null);
     }
 
@@ -75,7 +75,7 @@ public class AsyncRawSplittersClient {
      * List all splitters.
      * <p>Returns a summary of each splitter. Use <code>GET /splitters/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplittersListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplittersListResponse>> list(
             SplittersListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -115,14 +115,14 @@ public class AsyncRawSplittersClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<SplittersListResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<SplittersListResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, SplittersListResponse.class),
                                 response));
                         return;
@@ -193,14 +193,14 @@ public class AsyncRawSplittersClient {
     /**
      * Create a new splitter.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Splitter>> create(SplittersCreateRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Splitter>> create(SplittersCreateRequest request) {
         return create(request, null);
     }
 
     /**
      * Create a new splitter.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Splitter>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<Splitter>> create(
             SplittersCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -228,14 +228,14 @@ public class AsyncRawSplittersClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<Splitter>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<Splitter>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Splitter.class), response));
                         return;
                     }
@@ -305,28 +305,30 @@ public class AsyncRawSplittersClient {
     /**
      * Get details of a splitter.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Splitter>> retrieve(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Splitter>> retrieve(String id) {
         return retrieve(id, SplittersRetrieveRequest.builder().build());
     }
 
     /**
      * Get details of a splitter.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Splitter>> retrieve(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Splitter>> retrieve(
+            String id, RequestOptions requestOptions) {
         return retrieve(id, SplittersRetrieveRequest.builder().build(), requestOptions);
     }
 
     /**
      * Get details of a splitter.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Splitter>> retrieve(String id, SplittersRetrieveRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Splitter>> retrieve(
+            String id, SplittersRetrieveRequest request) {
         return retrieve(id, request, null);
     }
 
     /**
      * Get details of a splitter.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Splitter>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<Splitter>> retrieve(
             String id, SplittersRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -351,14 +353,14 @@ public class AsyncRawSplittersClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<Splitter>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<Splitter>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Splitter.class), response));
                         return;
                     }
@@ -428,28 +430,28 @@ public class AsyncRawSplittersClient {
     /**
      * Update an existing splitter.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Splitter>> update(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Splitter>> update(String id) {
         return update(id, SplittersUpdateRequest.builder().build());
     }
 
     /**
      * Update an existing splitter.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Splitter>> update(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Splitter>> update(String id, RequestOptions requestOptions) {
         return update(id, SplittersUpdateRequest.builder().build(), requestOptions);
     }
 
     /**
      * Update an existing splitter.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Splitter>> update(String id, SplittersUpdateRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Splitter>> update(String id, SplittersUpdateRequest request) {
         return update(id, request, null);
     }
 
     /**
      * Update an existing splitter.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Splitter>> update(
+    public CompletableFuture<ExtendClientBaseHttpResponse<Splitter>> update(
             String id, SplittersUpdateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -482,14 +484,14 @@ public class AsyncRawSplittersClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<Splitter>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<Splitter>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Splitter.class), response));
                         return;
                     }

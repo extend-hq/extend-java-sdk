@@ -5,8 +5,8 @@ package ai.extend.resources.files;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
 import ai.extend.core.RequestOptions;
@@ -53,28 +53,28 @@ public class AsyncRawFilesClient {
     /**
      * List files.
      */
-    public CompletableFuture<ExtendClientHttpResponse<FilesListResponse>> list() {
+    public CompletableFuture<ExtendClientBaseHttpResponse<FilesListResponse>> list() {
         return list(FilesListRequest.builder().build());
     }
 
     /**
      * List files.
      */
-    public CompletableFuture<ExtendClientHttpResponse<FilesListResponse>> list(RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<FilesListResponse>> list(RequestOptions requestOptions) {
         return list(FilesListRequest.builder().build(), requestOptions);
     }
 
     /**
      * List files.
      */
-    public CompletableFuture<ExtendClientHttpResponse<FilesListResponse>> list(FilesListRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<FilesListResponse>> list(FilesListRequest request) {
         return list(request, null);
     }
 
     /**
      * List files.
      */
-    public CompletableFuture<ExtendClientHttpResponse<FilesListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<FilesListResponse>> list(
             FilesListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -114,14 +114,14 @@ public class AsyncRawFilesClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<FilesListResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<FilesListResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, FilesListResponse.class),
                                 response));
                         return;
@@ -192,28 +192,28 @@ public class AsyncRawFilesClient {
     /**
      * Fetch a file by its ID.
      */
-    public CompletableFuture<ExtendClientHttpResponse<File>> retrieve(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<File>> retrieve(String id) {
         return retrieve(id, FilesRetrieveRequest.builder().build());
     }
 
     /**
      * Fetch a file by its ID.
      */
-    public CompletableFuture<ExtendClientHttpResponse<File>> retrieve(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<File>> retrieve(String id, RequestOptions requestOptions) {
         return retrieve(id, FilesRetrieveRequest.builder().build(), requestOptions);
     }
 
     /**
      * Fetch a file by its ID.
      */
-    public CompletableFuture<ExtendClientHttpResponse<File>> retrieve(String id, FilesRetrieveRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<File>> retrieve(String id, FilesRetrieveRequest request) {
         return retrieve(id, request, null);
     }
 
     /**
      * Fetch a file by its ID.
      */
-    public CompletableFuture<ExtendClientHttpResponse<File>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<File>> retrieve(
             String id, FilesRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -250,14 +250,14 @@ public class AsyncRawFilesClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<File>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<File>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, File.class), response));
                         return;
                     }
@@ -328,7 +328,7 @@ public class AsyncRawFilesClient {
      * Delete a file and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<FilesDeleteResponse>> delete(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<FilesDeleteResponse>> delete(String id) {
         return delete(id, FilesDeleteRequest.builder().build());
     }
 
@@ -336,7 +336,7 @@ public class AsyncRawFilesClient {
      * Delete a file and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<FilesDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<FilesDeleteResponse>> delete(
             String id, RequestOptions requestOptions) {
         return delete(id, FilesDeleteRequest.builder().build(), requestOptions);
     }
@@ -345,7 +345,7 @@ public class AsyncRawFilesClient {
      * Delete a file and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<FilesDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<FilesDeleteResponse>> delete(
             String id, FilesDeleteRequest request) {
         return delete(id, request, null);
     }
@@ -354,7 +354,7 @@ public class AsyncRawFilesClient {
      * Delete a file and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<FilesDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<FilesDeleteResponse>> delete(
             String id, FilesDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -379,14 +379,14 @@ public class AsyncRawFilesClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<FilesDeleteResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<FilesDeleteResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, FilesDeleteResponse.class),
                                 response));
                         return;
@@ -461,7 +461,7 @@ public class AsyncRawFilesClient {
      * <p>Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/general/supported-file-types">here</a>.</p>
      * <p>This endpoint requires multipart form encoding. Most HTTP clients will handle this encoding automatically (see the examples).</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<File>> upload(java.io.File file, FilesUploadRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<File>> upload(java.io.File file, FilesUploadRequest request) {
         return upload(file, request, null);
     }
 
@@ -472,7 +472,7 @@ public class AsyncRawFilesClient {
      * <p>Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/general/supported-file-types">here</a>.</p>
      * <p>This endpoint requires multipart form encoding. Most HTTP clients will handle this encoding automatically (see the examples).</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<File>> upload(
+    public CompletableFuture<ExtendClientBaseHttpResponse<File>> upload(
             java.io.File file, FilesUploadRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -515,14 +515,14 @@ public class AsyncRawFilesClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<File>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<File>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, File.class), response));
                         return;
                     }

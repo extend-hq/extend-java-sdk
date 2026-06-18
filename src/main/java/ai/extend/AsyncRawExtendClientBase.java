@@ -5,8 +5,8 @@ package ai.extend;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -44,10 +44,10 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.jetbrains.annotations.NotNull;
 
-public class AsyncRawExtendClient {
+public class AsyncRawExtendClientBase {
     protected final ClientOptions clientOptions;
 
-    public AsyncRawExtendClient(ClientOptions clientOptions) {
+    public AsyncRawExtendClientBase(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
     }
 
@@ -57,7 +57,7 @@ public class AsyncRawExtendClient {
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/parsing/overview">Parse File guide</a>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRun>> parse(ParseRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRun>> parse(ParseRequest request) {
         return parse(request, null);
     }
 
@@ -67,7 +67,7 @@ public class AsyncRawExtendClient {
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/parsing/overview">Parse File guide</a>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRun>> parse(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRun>> parse(
             ParseRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -103,14 +103,14 @@ public class AsyncRawExtendClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ParseRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ParseRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ParseRun.class), response));
                         return;
                     }
@@ -183,7 +183,7 @@ public class AsyncRawExtendClient {
      * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/edit">Edit File guide</a>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EditRun>> edit(EditRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<EditRun>> edit(EditRequest request) {
         return edit(request, null);
     }
 
@@ -193,7 +193,7 @@ public class AsyncRawExtendClient {
      * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/edit">Edit File guide</a>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EditRun>> edit(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EditRun>> edit(
             EditRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -221,14 +221,14 @@ public class AsyncRawExtendClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<EditRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<EditRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EditRun.class), response));
                         return;
                     }
@@ -301,7 +301,7 @@ public class AsyncRawExtendClient {
      * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor, an inline configuration, or no configuration at all. When neither is provided, Extend automatically infers a schema from the document before extraction — no extractor or schema is required.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/extraction/overview">Extract File guide</a>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRun>> extract(ExtractRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRun>> extract(ExtractRequest request) {
         return extract(request, null);
     }
 
@@ -311,7 +311,7 @@ public class AsyncRawExtendClient {
      * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor, an inline configuration, or no configuration at all. When neither is provided, Extend automatically infers a schema from the document before extraction — no extractor or schema is required.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/extraction/overview">Extract File guide</a>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractRun>> extract(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractRun>> extract(
             ExtractRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -339,14 +339,14 @@ public class AsyncRawExtendClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ExtractRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ExtractRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtractRun.class), response));
                         return;
                     }
@@ -419,7 +419,7 @@ public class AsyncRawExtendClient {
      * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/classification/configuring-a-classifier">Classify File guide</a>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> classify(ClassifyRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRun>> classify(ClassifyRequest request) {
         return classify(request, null);
     }
 
@@ -429,7 +429,7 @@ public class AsyncRawExtendClient {
      * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/classification/configuring-a-classifier">Classify File guide</a>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> classify(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRun>> classify(
             ClassifyRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -457,14 +457,14 @@ public class AsyncRawExtendClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ClassifyRun.class), response));
                         return;
                     }
@@ -537,7 +537,7 @@ public class AsyncRawExtendClient {
      * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/splitting/configuring-a-splitter">Split File guide</a>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRun>> split(SplitRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRun>> split(SplitRequest request) {
         return split(request, null);
     }
 
@@ -547,7 +547,7 @@ public class AsyncRawExtendClient {
      * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/splitting/configuring-a-splitter">Split File guide</a>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<SplitRun>> split(
+    public CompletableFuture<ExtendClientBaseHttpResponse<SplitRun>> split(
             SplitRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -575,14 +575,14 @@ public class AsyncRawExtendClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<SplitRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<SplitRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, SplitRun.class), response));
                         return;
                     }

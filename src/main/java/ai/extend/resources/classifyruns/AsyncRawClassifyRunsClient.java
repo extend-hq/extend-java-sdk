@@ -5,8 +5,8 @@ package ai.extend.resources.classifyruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -55,7 +55,7 @@ public class AsyncRawClassifyRunsClient {
      * List all classify runs.
      * <p>Returns a summary of each run. Use <code>GET /classify_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRunsListResponse>> list() {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRunsListResponse>> list() {
         return list(ClassifyRunsListRequest.builder().build());
     }
 
@@ -63,7 +63,8 @@ public class AsyncRawClassifyRunsClient {
      * List all classify runs.
      * <p>Returns a summary of each run. Use <code>GET /classify_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRunsListResponse>> list(RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRunsListResponse>> list(
+            RequestOptions requestOptions) {
         return list(ClassifyRunsListRequest.builder().build(), requestOptions);
     }
 
@@ -71,7 +72,8 @@ public class AsyncRawClassifyRunsClient {
      * List all classify runs.
      * <p>Returns a summary of each run. Use <code>GET /classify_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRunsListResponse>> list(ClassifyRunsListRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRunsListResponse>> list(
+            ClassifyRunsListRequest request) {
         return list(request, null);
     }
 
@@ -79,7 +81,7 @@ public class AsyncRawClassifyRunsClient {
      * List all classify runs.
      * <p>Returns a summary of each run. Use <code>GET /classify_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRunsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRunsListResponse>> list(
             ClassifyRunsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -143,14 +145,14 @@ public class AsyncRawClassifyRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ClassifyRunsListResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRunsListResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ClassifyRunsListResponse.class),
                                 response));
                         return;
@@ -222,7 +224,7 @@ public class AsyncRawClassifyRunsClient {
      * Classify a document using an existing classifier or an inline configuration.
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Classify Run endpoint for results.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> create(ClassifyRunsCreateRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRun>> create(ClassifyRunsCreateRequest request) {
         return create(request, null);
     }
 
@@ -230,7 +232,7 @@ public class AsyncRawClassifyRunsClient {
      * Classify a document using an existing classifier or an inline configuration.
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Classify Run endpoint for results.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRun>> create(
             ClassifyRunsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -258,14 +260,14 @@ public class AsyncRawClassifyRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ClassifyRun.class), response));
                         return;
                     }
@@ -336,7 +338,7 @@ public class AsyncRawClassifyRunsClient {
      * Retrieve details about a specific classify run, including its status and outputs.
      * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> retrieve(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRun>> retrieve(String id) {
         return retrieve(id, ClassifyRunsRetrieveRequest.builder().build());
     }
 
@@ -344,7 +346,8 @@ public class AsyncRawClassifyRunsClient {
      * Retrieve details about a specific classify run, including its status and outputs.
      * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> retrieve(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRun>> retrieve(
+            String id, RequestOptions requestOptions) {
         return retrieve(id, ClassifyRunsRetrieveRequest.builder().build(), requestOptions);
     }
 
@@ -352,7 +355,7 @@ public class AsyncRawClassifyRunsClient {
      * Retrieve details about a specific classify run, including its status and outputs.
      * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRun>> retrieve(
             String id, ClassifyRunsRetrieveRequest request) {
         return retrieve(id, request, null);
     }
@@ -361,7 +364,7 @@ public class AsyncRawClassifyRunsClient {
      * Retrieve details about a specific classify run, including its status and outputs.
      * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRun>> retrieve(
             String id, ClassifyRunsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -386,14 +389,14 @@ public class AsyncRawClassifyRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ClassifyRun.class), response));
                         return;
                     }
@@ -464,7 +467,7 @@ public class AsyncRawClassifyRunsClient {
      * Delete a classify run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRunsDeleteResponse>> delete(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRunsDeleteResponse>> delete(String id) {
         return delete(id, ClassifyRunsDeleteRequest.builder().build());
     }
 
@@ -472,7 +475,7 @@ public class AsyncRawClassifyRunsClient {
      * Delete a classify run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRunsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRunsDeleteResponse>> delete(
             String id, RequestOptions requestOptions) {
         return delete(id, ClassifyRunsDeleteRequest.builder().build(), requestOptions);
     }
@@ -481,7 +484,7 @@ public class AsyncRawClassifyRunsClient {
      * Delete a classify run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRunsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRunsDeleteResponse>> delete(
             String id, ClassifyRunsDeleteRequest request) {
         return delete(id, request, null);
     }
@@ -490,7 +493,7 @@ public class AsyncRawClassifyRunsClient {
      * Delete a classify run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRunsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRunsDeleteResponse>> delete(
             String id, ClassifyRunsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -515,14 +518,14 @@ public class AsyncRawClassifyRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ClassifyRunsDeleteResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRunsDeleteResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, ClassifyRunsDeleteResponse.class),
                                 response));
@@ -595,7 +598,7 @@ public class AsyncRawClassifyRunsClient {
      * Cancel an in-progress classify run.
      * <p>Note: Only classify runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Classifier runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> cancel(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRun>> cancel(String id) {
         return cancel(id, ClassifyRunsCancelRequest.builder().build());
     }
 
@@ -603,7 +606,8 @@ public class AsyncRawClassifyRunsClient {
      * Cancel an in-progress classify run.
      * <p>Note: Only classify runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Classifier runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> cancel(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRun>> cancel(
+            String id, RequestOptions requestOptions) {
         return cancel(id, ClassifyRunsCancelRequest.builder().build(), requestOptions);
     }
 
@@ -611,7 +615,7 @@ public class AsyncRawClassifyRunsClient {
      * Cancel an in-progress classify run.
      * <p>Note: Only classify runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Classifier runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> cancel(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRun>> cancel(
             String id, ClassifyRunsCancelRequest request) {
         return cancel(id, request, null);
     }
@@ -620,7 +624,7 @@ public class AsyncRawClassifyRunsClient {
      * Cancel an in-progress classify run.
      * <p>Note: Only classify runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Classifier runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> cancel(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRun>> cancel(
             String id, ClassifyRunsCancelRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -646,14 +650,14 @@ public class AsyncRawClassifyRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ClassifyRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ClassifyRun.class), response));
                         return;
                     }
@@ -735,7 +739,8 @@ public class AsyncRawClassifyRunsClient {
      * <li>All inputs in a batch use the same classifier version and override config.</li>
      * </ul>
      */
-    public CompletableFuture<ExtendClientHttpResponse<BatchRun>> createBatch(ClassifyRunsCreateBatchRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<BatchRun>> createBatch(
+            ClassifyRunsCreateBatchRequest request) {
         return createBatch(request, null);
     }
 
@@ -754,7 +759,7 @@ public class AsyncRawClassifyRunsClient {
      * <li>All inputs in a batch use the same classifier version and override config.</li>
      * </ul>
      */
-    public CompletableFuture<ExtendClientHttpResponse<BatchRun>> createBatch(
+    public CompletableFuture<ExtendClientBaseHttpResponse<BatchRun>> createBatch(
             ClassifyRunsCreateBatchRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -782,14 +787,14 @@ public class AsyncRawClassifyRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<BatchRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<BatchRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, BatchRun.class), response));
                         return;
                     }

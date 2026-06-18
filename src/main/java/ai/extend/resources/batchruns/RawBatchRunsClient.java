@@ -5,8 +5,8 @@ package ai.extend.resources.batchruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.RequestOptions;
 import ai.extend.errors.BadRequestError;
@@ -52,7 +52,7 @@ public class RawBatchRunsClient {
      * <li><code>GET /split_runs?batchId={id}</code></li>
      * </ul>
      */
-    public ExtendClientHttpResponse<BatchRun> get(String id) {
+    public ExtendClientBaseHttpResponse<BatchRun> get(String id) {
         return get(id, null);
     }
 
@@ -74,7 +74,7 @@ public class RawBatchRunsClient {
      * <li><code>GET /split_runs?batchId={id}</code></li>
      * </ul>
      */
-    public ExtendClientHttpResponse<BatchRun> get(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<BatchRun> get(String id, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("batch_runs")
@@ -98,7 +98,7 @@ public class RawBatchRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, BatchRun.class), response);
             }
             try {
