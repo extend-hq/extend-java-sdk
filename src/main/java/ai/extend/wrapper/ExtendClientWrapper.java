@@ -6,172 +6,105 @@ package ai.extend.wrapper;
 import ai.extend.ExtendClient;
 import ai.extend.ExtendClientBuilder;
 import ai.extend.core.ClientOptions;
-import ai.extend.core.Suppliers;
-import ai.extend.wrapper.resources.ClassifyRunsClient;
-import ai.extend.wrapper.resources.EditRunsClient;
-import ai.extend.wrapper.resources.ExtractRunsClient;
-import ai.extend.wrapper.resources.ParseRunsClient;
-import ai.extend.wrapper.resources.SplitRunsClient;
-import ai.extend.wrapper.resources.WorkflowRunsClient;
-import ai.extend.wrapper.webhooks.Webhooks;
-import java.util.function.Supplier;
+import ai.extend.core.Environment;
+import okhttp3.OkHttpClient;
 
 /**
- * Wrapper for the Extend API client with additional polling and webhook utilities.
+ * @deprecated Renamed to {@link ai.extend.ExtendClient}. This class is now a thin,
+ *     fully backwards-compatible alias and will be removed in a future major release.
+ *     Replace {@code import ai.extend.wrapper.ExtendClientWrapper;} with
+ *     {@code import ai.extend.ExtendClient;} and {@code ExtendClientWrapper} with
+ *     {@code ExtendClient}. All methods, builder options, and behavior are identical.
  *
- * <p>Extends the generated {@link ExtendClient}, so all generated methods (parse, edit,
- * extract, classify, split, files, extractors, classifiers, splitters, workflows,
- * evaluation sets, etc.) are available directly.</p>
- *
- * <p>Additionally provides:</p>
- * <ul>
- *   <li>{@code createAndPoll} on all run resources (extractRuns, classifyRuns, etc.)</li>
- *   <li>{@code webhooks()} for signature verification</li>
- * </ul>
- *
- * <h3>Basic Usage</h3>
  * <pre>{@code
- * ExtendClientWrapper client = ExtendClientWrapper.builder()
- *     .token("your-api-key")
- *     .build();
+ * // Before
+ * ExtendClientWrapper client = ExtendClientWrapper.builder().apiKey("...").build();
  *
- * // Synchronous convenience methods (inherited from ExtendClient)
- * ParseRun parseResult = client.parse(ParseRequest.builder().file(...).build());
- * ExtractRun extractResult = client.extract(ExtractRequest.builder().file(...).build());
- *
- * // Create and poll an extract run
- * ExtractRun response = client.extractRuns().createAndPoll(
- *     ExtractRunsCreateRequest.builder()
- *         .file(...)
- *         .extractor(...)
- *         .build()
- * );
- * }</pre>
- *
- * <h3>Webhook Verification</h3>
- * <pre>{@code
- * Map<String, Object> event = client.webhooks().verifyAndParse(
- *     requestBody,
- *     requestHeaders,
- *     signingSecret
- * );
+ * // After
+ * ExtendClient client = ExtendClient.builder().apiKey("...").build();
  * }</pre>
  */
+@Deprecated
 public class ExtendClientWrapper extends ExtendClient {
-
-    private final Webhooks webhooks;
-
-    // Lazy-initialized run clients that override the generated client accessors
-    private final Supplier<ExtractRunsClient> extractRunsClient;
-    private final Supplier<ClassifyRunsClient> classifyRunsClient;
-    private final Supplier<SplitRunsClient> splitRunsClient;
-    private final Supplier<ParseRunsClient> parseRunsClient;
-    private final Supplier<EditRunsClient> editRunsClient;
-    private final Supplier<WorkflowRunsClient> workflowRunsClient;
 
     public ExtendClientWrapper(ClientOptions clientOptions) {
         super(clientOptions);
-        this.webhooks = new Webhooks();
-
-        // Lazy initialization of clients
-        this.extractRunsClient = Suppliers.memoize(() -> new ExtractRunsClient(clientOptions));
-        this.classifyRunsClient = Suppliers.memoize(() -> new ClassifyRunsClient(clientOptions));
-        this.splitRunsClient = Suppliers.memoize(() -> new SplitRunsClient(clientOptions));
-        this.parseRunsClient = Suppliers.memoize(() -> new ParseRunsClient(clientOptions));
-        this.editRunsClient = Suppliers.memoize(() -> new EditRunsClient(clientOptions));
-        this.workflowRunsClient = Suppliers.memoize(() -> new WorkflowRunsClient(clientOptions));
-    }
-
-    /**
-     * Returns the webhook utilities for signature verification.
-     */
-    public Webhooks webhooks() {
-        return webhooks;
-    }
-
-    // ========== Override run accessors to return clients with createAndPoll ==========
-
-    /**
-     * Returns the extract runs client with createAndPoll support.
-     * All standard methods (create, list, retrieve, delete, cancel) are also available.
-     */
-    @Override
-    public ExtractRunsClient extractRuns() {
-        return extractRunsClient.get();
-    }
-
-    /**
-     * Returns the classify runs client with createAndPoll support.
-     * All standard methods (create, list, retrieve, delete, cancel) are also available.
-     */
-    @Override
-    public ClassifyRunsClient classifyRuns() {
-        return classifyRunsClient.get();
-    }
-
-    /**
-     * Returns the split runs client with createAndPoll support.
-     * All standard methods (create, list, retrieve, delete, cancel) are also available.
-     */
-    @Override
-    public SplitRunsClient splitRuns() {
-        return splitRunsClient.get();
-    }
-
-    /**
-     * Returns the parse runs client with createAndPoll support.
-     * All standard methods (create, retrieve, delete) are also available.
-     */
-    @Override
-    public ParseRunsClient parseRuns() {
-        return parseRunsClient.get();
-    }
-
-    /**
-     * Returns the edit runs client with createAndPoll support.
-     * All standard methods (create, retrieve, delete) are also available.
-     */
-    @Override
-    public EditRunsClient editRuns() {
-        return editRunsClient.get();
-    }
-
-    /**
-     * Returns the workflow runs client with createAndPoll support.
-     * All standard methods (create, list, retrieve, update, delete, cancel, createBatch) are also available.
-     */
-    @Override
-    public WorkflowRunsClient workflowRuns() {
-        return workflowRunsClient.get();
     }
 
     /**
      * Creates a new builder for ExtendClientWrapper.
+     *
+     * @deprecated Use {@link ExtendClient#builder()} instead.
      */
+    @Deprecated
     public static Builder builder() {
         return new Builder();
     }
 
     /**
-     * Builder for {@link ExtendClientWrapper}.
-     * Extends the generated {@link ExtendClientBuilder} so all standard options
-     * (token, environment, url, timeout, maxRetries, etc.) are available.
+     * @deprecated Use {@link ExtendClientBuilder} (via {@link ExtendClient#builder()}) instead.
+     *     Retained so existing {@code ExtendClientWrapper.Builder} references keep compiling.
      */
+    @Deprecated
     public static class Builder extends ExtendClientBuilder {
 
-        /**
-         * Sets the API key (convenience alias for {@link #token(String)}).
-         */
+        @Override
         public Builder apiKey(String apiKey) {
-            super.token(apiKey);
+            super.apiKey(apiKey);
             return this;
         }
 
-        /**
-         * Sets a custom base URL (convenience alias for {@link #url(String)}).
-         */
+        @Override
         public Builder baseUrl(String baseUrl) {
-            super.url(baseUrl);
+            super.baseUrl(baseUrl);
+            return this;
+        }
+
+        @Override
+        public Builder token(String token) {
+            super.token(token);
+            return this;
+        }
+
+        @Override
+        public Builder extendApiVersion(String extendApiVersion) {
+            super.extendApiVersion(extendApiVersion);
+            return this;
+        }
+
+        @Override
+        public Builder environment(Environment environment) {
+            super.environment(environment);
+            return this;
+        }
+
+        @Override
+        public Builder url(String url) {
+            super.url(url);
+            return this;
+        }
+
+        @Override
+        public Builder timeout(int timeout) {
+            super.timeout(timeout);
+            return this;
+        }
+
+        @Override
+        public Builder maxRetries(int maxRetries) {
+            super.maxRetries(maxRetries);
+            return this;
+        }
+
+        @Override
+        public Builder httpClient(OkHttpClient httpClient) {
+            super.httpClient(httpClient);
+            return this;
+        }
+
+        @Override
+        public Builder addHeader(String name, String value) {
+            super.addHeader(name, value);
             return this;
         }
 
