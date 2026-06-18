@@ -5,8 +5,8 @@ package ai.extend.resources.classifyruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -51,7 +51,7 @@ public class RawClassifyRunsClient {
      * List all classify runs.
      * <p>Returns a summary of each run. Use <code>GET /classify_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRunsListResponse> list() {
+    public ExtendClientBaseHttpResponse<ClassifyRunsListResponse> list() {
         return list(ClassifyRunsListRequest.builder().build());
     }
 
@@ -59,7 +59,7 @@ public class RawClassifyRunsClient {
      * List all classify runs.
      * <p>Returns a summary of each run. Use <code>GET /classify_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRunsListResponse> list(RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<ClassifyRunsListResponse> list(RequestOptions requestOptions) {
         return list(ClassifyRunsListRequest.builder().build(), requestOptions);
     }
 
@@ -67,7 +67,7 @@ public class RawClassifyRunsClient {
      * List all classify runs.
      * <p>Returns a summary of each run. Use <code>GET /classify_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRunsListResponse> list(ClassifyRunsListRequest request) {
+    public ExtendClientBaseHttpResponse<ClassifyRunsListResponse> list(ClassifyRunsListRequest request) {
         return list(request, null);
     }
 
@@ -75,7 +75,7 @@ public class RawClassifyRunsClient {
      * List all classify runs.
      * <p>Returns a summary of each run. Use <code>GET /classify_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRunsListResponse> list(
+    public ExtendClientBaseHttpResponse<ClassifyRunsListResponse> list(
             ClassifyRunsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -143,7 +143,7 @@ public class RawClassifyRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ClassifyRunsListResponse.class),
                         response);
             }
@@ -189,7 +189,7 @@ public class RawClassifyRunsClient {
      * Classify a document using an existing classifier or an inline configuration.
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Classify Run endpoint for results.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRun> create(ClassifyRunsCreateRequest request) {
+    public ExtendClientBaseHttpResponse<ClassifyRun> create(ClassifyRunsCreateRequest request) {
         return create(request, null);
     }
 
@@ -197,7 +197,7 @@ public class RawClassifyRunsClient {
      * Classify a document using an existing classifier or an inline configuration.
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Classify Run endpoint for results.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRun> create(
+    public ExtendClientBaseHttpResponse<ClassifyRun> create(
             ClassifyRunsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -229,7 +229,7 @@ public class RawClassifyRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ClassifyRun.class), response);
             }
             try {
@@ -274,7 +274,7 @@ public class RawClassifyRunsClient {
      * Retrieve details about a specific classify run, including its status and outputs.
      * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRun> retrieve(String id) {
+    public ExtendClientBaseHttpResponse<ClassifyRun> retrieve(String id) {
         return retrieve(id, ClassifyRunsRetrieveRequest.builder().build());
     }
 
@@ -282,7 +282,7 @@ public class RawClassifyRunsClient {
      * Retrieve details about a specific classify run, including its status and outputs.
      * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRun> retrieve(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<ClassifyRun> retrieve(String id, RequestOptions requestOptions) {
         return retrieve(id, ClassifyRunsRetrieveRequest.builder().build(), requestOptions);
     }
 
@@ -290,7 +290,7 @@ public class RawClassifyRunsClient {
      * Retrieve details about a specific classify run, including its status and outputs.
      * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRun> retrieve(String id, ClassifyRunsRetrieveRequest request) {
+    public ExtendClientBaseHttpResponse<ClassifyRun> retrieve(String id, ClassifyRunsRetrieveRequest request) {
         return retrieve(id, request, null);
     }
 
@@ -298,7 +298,7 @@ public class RawClassifyRunsClient {
      * Retrieve details about a specific classify run, including its status and outputs.
      * <p>A common use case for this endpoint is to poll for the status and final output of a classify run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRun> retrieve(
+    public ExtendClientBaseHttpResponse<ClassifyRun> retrieve(
             String id, ClassifyRunsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -327,7 +327,7 @@ public class RawClassifyRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ClassifyRun.class), response);
             }
             try {
@@ -372,7 +372,7 @@ public class RawClassifyRunsClient {
      * Delete a classify run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRunsDeleteResponse> delete(String id) {
+    public ExtendClientBaseHttpResponse<ClassifyRunsDeleteResponse> delete(String id) {
         return delete(id, ClassifyRunsDeleteRequest.builder().build());
     }
 
@@ -380,7 +380,7 @@ public class RawClassifyRunsClient {
      * Delete a classify run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRunsDeleteResponse> delete(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<ClassifyRunsDeleteResponse> delete(String id, RequestOptions requestOptions) {
         return delete(id, ClassifyRunsDeleteRequest.builder().build(), requestOptions);
     }
 
@@ -388,7 +388,8 @@ public class RawClassifyRunsClient {
      * Delete a classify run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRunsDeleteResponse> delete(String id, ClassifyRunsDeleteRequest request) {
+    public ExtendClientBaseHttpResponse<ClassifyRunsDeleteResponse> delete(
+            String id, ClassifyRunsDeleteRequest request) {
         return delete(id, request, null);
     }
 
@@ -396,7 +397,7 @@ public class RawClassifyRunsClient {
      * Delete a classify run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRunsDeleteResponse> delete(
+    public ExtendClientBaseHttpResponse<ClassifyRunsDeleteResponse> delete(
             String id, ClassifyRunsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -425,7 +426,7 @@ public class RawClassifyRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ClassifyRunsDeleteResponse.class),
                         response);
             }
@@ -471,7 +472,7 @@ public class RawClassifyRunsClient {
      * Cancel an in-progress classify run.
      * <p>Note: Only classify runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Classifier runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRun> cancel(String id) {
+    public ExtendClientBaseHttpResponse<ClassifyRun> cancel(String id) {
         return cancel(id, ClassifyRunsCancelRequest.builder().build());
     }
 
@@ -479,7 +480,7 @@ public class RawClassifyRunsClient {
      * Cancel an in-progress classify run.
      * <p>Note: Only classify runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Classifier runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRun> cancel(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<ClassifyRun> cancel(String id, RequestOptions requestOptions) {
         return cancel(id, ClassifyRunsCancelRequest.builder().build(), requestOptions);
     }
 
@@ -487,7 +488,7 @@ public class RawClassifyRunsClient {
      * Cancel an in-progress classify run.
      * <p>Note: Only classify runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Classifier runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRun> cancel(String id, ClassifyRunsCancelRequest request) {
+    public ExtendClientBaseHttpResponse<ClassifyRun> cancel(String id, ClassifyRunsCancelRequest request) {
         return cancel(id, request, null);
     }
 
@@ -495,7 +496,7 @@ public class RawClassifyRunsClient {
      * Cancel an in-progress classify run.
      * <p>Note: Only classify runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Classifier runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public ExtendClientHttpResponse<ClassifyRun> cancel(
+    public ExtendClientBaseHttpResponse<ClassifyRun> cancel(
             String id, ClassifyRunsCancelRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -525,7 +526,7 @@ public class RawClassifyRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ClassifyRun.class), response);
             }
             try {
@@ -581,7 +582,7 @@ public class RawClassifyRunsClient {
      * <li>All inputs in a batch use the same classifier version and override config.</li>
      * </ul>
      */
-    public ExtendClientHttpResponse<BatchRun> createBatch(ClassifyRunsCreateBatchRequest request) {
+    public ExtendClientBaseHttpResponse<BatchRun> createBatch(ClassifyRunsCreateBatchRequest request) {
         return createBatch(request, null);
     }
 
@@ -600,7 +601,7 @@ public class RawClassifyRunsClient {
      * <li>All inputs in a batch use the same classifier version and override config.</li>
      * </ul>
      */
-    public ExtendClientHttpResponse<BatchRun> createBatch(
+    public ExtendClientBaseHttpResponse<BatchRun> createBatch(
             ClassifyRunsCreateBatchRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -632,7 +633,7 @@ public class RawClassifyRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, BatchRun.class), response);
             }
             try {

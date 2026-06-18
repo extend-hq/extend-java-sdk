@@ -5,8 +5,8 @@ package ai.extend.resources.workflowversions;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -48,14 +48,14 @@ public class AsyncRawWorkflowVersionsClient {
     /**
      * List all versions of a workflow, including the draft version. Returns a paginated list of version summaries.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowVersionsListResponse>> list(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowVersionsListResponse>> list(String id) {
         return list(id, WorkflowVersionsListRequest.builder().build());
     }
 
     /**
      * List all versions of a workflow, including the draft version. Returns a paginated list of version summaries.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowVersionsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowVersionsListResponse>> list(
             String id, RequestOptions requestOptions) {
         return list(id, WorkflowVersionsListRequest.builder().build(), requestOptions);
     }
@@ -63,7 +63,7 @@ public class AsyncRawWorkflowVersionsClient {
     /**
      * List all versions of a workflow, including the draft version. Returns a paginated list of version summaries.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowVersionsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowVersionsListResponse>> list(
             String id, WorkflowVersionsListRequest request) {
         return list(id, request, null);
     }
@@ -71,7 +71,7 @@ public class AsyncRawWorkflowVersionsClient {
     /**
      * List all versions of a workflow, including the draft version. Returns a paginated list of version summaries.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowVersionsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowVersionsListResponse>> list(
             String id, WorkflowVersionsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -105,14 +105,15 @@ public class AsyncRawWorkflowVersionsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WorkflowVersionsListResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<WorkflowVersionsListResponse>> future =
+                new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, WorkflowVersionsListResponse.class),
                                 response));
@@ -185,7 +186,7 @@ public class AsyncRawWorkflowVersionsClient {
      * Deploy a new version of a workflow. The deployed version becomes available for running workflow runs.
      * <p>When <code>steps</code> is omitted, the current draft is deployed as-is. When <code>steps</code> is provided, the given steps are deployed directly without modifying the draft.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowVersion>> create(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowVersion>> create(String id) {
         return create(id, WorkflowVersionsCreateRequest.builder().build());
     }
 
@@ -193,7 +194,7 @@ public class AsyncRawWorkflowVersionsClient {
      * Deploy a new version of a workflow. The deployed version becomes available for running workflow runs.
      * <p>When <code>steps</code> is omitted, the current draft is deployed as-is. When <code>steps</code> is provided, the given steps are deployed directly without modifying the draft.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowVersion>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowVersion>> create(
             String id, RequestOptions requestOptions) {
         return create(id, WorkflowVersionsCreateRequest.builder().build(), requestOptions);
     }
@@ -202,7 +203,7 @@ public class AsyncRawWorkflowVersionsClient {
      * Deploy a new version of a workflow. The deployed version becomes available for running workflow runs.
      * <p>When <code>steps</code> is omitted, the current draft is deployed as-is. When <code>steps</code> is provided, the given steps are deployed directly without modifying the draft.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowVersion>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowVersion>> create(
             String id, WorkflowVersionsCreateRequest request) {
         return create(id, request, null);
     }
@@ -211,7 +212,7 @@ public class AsyncRawWorkflowVersionsClient {
      * Deploy a new version of a workflow. The deployed version becomes available for running workflow runs.
      * <p>When <code>steps</code> is omitted, the current draft is deployed as-is. When <code>steps</code> is provided, the given steps are deployed directly without modifying the draft.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowVersion>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowVersion>> create(
             String id, WorkflowVersionsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -241,14 +242,14 @@ public class AsyncRawWorkflowVersionsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WorkflowVersion>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<WorkflowVersion>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WorkflowVersion.class),
                                 response));
                         return;
@@ -319,14 +320,14 @@ public class AsyncRawWorkflowVersionsClient {
     /**
      * Get a specific version of a workflow, including its step definitions.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowVersion>> retrieve(String id, String versionId) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowVersion>> retrieve(String id, String versionId) {
         return retrieve(id, versionId, null);
     }
 
     /**
      * Get a specific version of a workflow, including its step definitions.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowVersion>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowVersion>> retrieve(
             String id, String versionId, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -349,14 +350,14 @@ public class AsyncRawWorkflowVersionsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WorkflowVersion>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<WorkflowVersion>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WorkflowVersion.class),
                                 response));
                         return;

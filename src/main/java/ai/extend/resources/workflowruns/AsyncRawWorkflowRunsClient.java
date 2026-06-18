@@ -5,8 +5,8 @@ package ai.extend.resources.workflowruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -55,28 +55,30 @@ public class AsyncRawWorkflowRunsClient {
     /**
      * List runs of a Workflow. Workflows are sequences of steps that process files and data in a specific order to achieve a desired outcome. A WorkflowRun represents a single execution of a workflow against a file.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRunsListResponse>> list() {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRunsListResponse>> list() {
         return list(WorkflowRunsListRequest.builder().build());
     }
 
     /**
      * List runs of a Workflow. Workflows are sequences of steps that process files and data in a specific order to achieve a desired outcome. A WorkflowRun represents a single execution of a workflow against a file.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRunsListResponse>> list(RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRunsListResponse>> list(
+            RequestOptions requestOptions) {
         return list(WorkflowRunsListRequest.builder().build(), requestOptions);
     }
 
     /**
      * List runs of a Workflow. Workflows are sequences of steps that process files and data in a specific order to achieve a desired outcome. A WorkflowRun represents a single execution of a workflow against a file.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRunsListResponse>> list(WorkflowRunsListRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRunsListResponse>> list(
+            WorkflowRunsListRequest request) {
         return list(request, null);
     }
 
     /**
      * List runs of a Workflow. Workflows are sequences of steps that process files and data in a specific order to achieve a desired outcome. A WorkflowRun represents a single execution of a workflow against a file.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRunsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRunsListResponse>> list(
             WorkflowRunsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -132,14 +134,14 @@ public class AsyncRawWorkflowRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WorkflowRunsListResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRunsListResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WorkflowRunsListResponse.class),
                                 response));
                         return;
@@ -211,7 +213,7 @@ public class AsyncRawWorkflowRunsClient {
      * Run a workflow with a file. A workflow is a sequence of steps that process files and data in a specific order to achieve a desired outcome.
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Workflow Run endpoint for results.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> create(WorkflowRunsCreateRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> create(WorkflowRunsCreateRequest request) {
         return create(request, null);
     }
 
@@ -219,7 +221,7 @@ public class AsyncRawWorkflowRunsClient {
      * Run a workflow with a file. A workflow is a sequence of steps that process files and data in a specific order to achieve a desired outcome.
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Workflow Run endpoint for results.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> create(
             WorkflowRunsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -247,14 +249,14 @@ public class AsyncRawWorkflowRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WorkflowRun.class), response));
                         return;
                     }
@@ -324,21 +326,22 @@ public class AsyncRawWorkflowRunsClient {
     /**
      * Once a workflow has been run, you can check the status and output of a specific WorkflowRun.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> retrieve(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> retrieve(String id) {
         return retrieve(id, WorkflowRunsRetrieveRequest.builder().build());
     }
 
     /**
      * Once a workflow has been run, you can check the status and output of a specific WorkflowRun.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> retrieve(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> retrieve(
+            String id, RequestOptions requestOptions) {
         return retrieve(id, WorkflowRunsRetrieveRequest.builder().build(), requestOptions);
     }
 
     /**
      * Once a workflow has been run, you can check the status and output of a specific WorkflowRun.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> retrieve(
             String id, WorkflowRunsRetrieveRequest request) {
         return retrieve(id, request, null);
     }
@@ -346,7 +349,7 @@ public class AsyncRawWorkflowRunsClient {
     /**
      * Once a workflow has been run, you can check the status and output of a specific WorkflowRun.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> retrieve(
             String id, WorkflowRunsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -371,14 +374,14 @@ public class AsyncRawWorkflowRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WorkflowRun.class), response));
                         return;
                     }
@@ -448,21 +451,22 @@ public class AsyncRawWorkflowRunsClient {
     /**
      * You can update the name and metadata of an in progress WorkflowRun at any time using this endpoint.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> update(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> update(String id) {
         return update(id, WorkflowRunsUpdateRequest.builder().build());
     }
 
     /**
      * You can update the name and metadata of an in progress WorkflowRun at any time using this endpoint.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> update(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> update(
+            String id, RequestOptions requestOptions) {
         return update(id, WorkflowRunsUpdateRequest.builder().build(), requestOptions);
     }
 
     /**
      * You can update the name and metadata of an in progress WorkflowRun at any time using this endpoint.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> update(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> update(
             String id, WorkflowRunsUpdateRequest request) {
         return update(id, request, null);
     }
@@ -470,7 +474,7 @@ public class AsyncRawWorkflowRunsClient {
     /**
      * You can update the name and metadata of an in progress WorkflowRun at any time using this endpoint.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> update(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> update(
             String id, WorkflowRunsUpdateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -503,14 +507,14 @@ public class AsyncRawWorkflowRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WorkflowRun.class), response));
                         return;
                     }
@@ -581,7 +585,7 @@ public class AsyncRawWorkflowRunsClient {
      * Delete a workflow run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRunsDeleteResponse>> delete(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRunsDeleteResponse>> delete(String id) {
         return delete(id, WorkflowRunsDeleteRequest.builder().build());
     }
 
@@ -589,7 +593,7 @@ public class AsyncRawWorkflowRunsClient {
      * Delete a workflow run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRunsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRunsDeleteResponse>> delete(
             String id, RequestOptions requestOptions) {
         return delete(id, WorkflowRunsDeleteRequest.builder().build(), requestOptions);
     }
@@ -598,7 +602,7 @@ public class AsyncRawWorkflowRunsClient {
      * Delete a workflow run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRunsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRunsDeleteResponse>> delete(
             String id, WorkflowRunsDeleteRequest request) {
         return delete(id, request, null);
     }
@@ -607,7 +611,7 @@ public class AsyncRawWorkflowRunsClient {
      * Delete a workflow run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRunsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRunsDeleteResponse>> delete(
             String id, WorkflowRunsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -632,14 +636,14 @@ public class AsyncRawWorkflowRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WorkflowRunsDeleteResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRunsDeleteResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, WorkflowRunsDeleteResponse.class),
                                 response));
@@ -712,7 +716,7 @@ public class AsyncRawWorkflowRunsClient {
      * Cancel a running workflow run by its ID. This endpoint allows you to stop a workflow run that is currently in progress.
      * <p>Note: Only workflow runs with a status of <code>PROCESSING</code> or <code>PENDING</code> can be cancelled. Workflow runs that are completed, failed, in review, rejected, or already cancelled cannot be cancelled.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> cancel(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> cancel(String id) {
         return cancel(id, WorkflowRunsCancelRequest.builder().build());
     }
 
@@ -720,7 +724,8 @@ public class AsyncRawWorkflowRunsClient {
      * Cancel a running workflow run by its ID. This endpoint allows you to stop a workflow run that is currently in progress.
      * <p>Note: Only workflow runs with a status of <code>PROCESSING</code> or <code>PENDING</code> can be cancelled. Workflow runs that are completed, failed, in review, rejected, or already cancelled cannot be cancelled.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> cancel(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> cancel(
+            String id, RequestOptions requestOptions) {
         return cancel(id, WorkflowRunsCancelRequest.builder().build(), requestOptions);
     }
 
@@ -728,7 +733,7 @@ public class AsyncRawWorkflowRunsClient {
      * Cancel a running workflow run by its ID. This endpoint allows you to stop a workflow run that is currently in progress.
      * <p>Note: Only workflow runs with a status of <code>PROCESSING</code> or <code>PENDING</code> can be cancelled. Workflow runs that are completed, failed, in review, rejected, or already cancelled cannot be cancelled.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> cancel(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> cancel(
             String id, WorkflowRunsCancelRequest request) {
         return cancel(id, request, null);
     }
@@ -737,7 +742,7 @@ public class AsyncRawWorkflowRunsClient {
      * Cancel a running workflow run by its ID. This endpoint allows you to stop a workflow run that is currently in progress.
      * <p>Note: Only workflow runs with a status of <code>PROCESSING</code> or <code>PENDING</code> can be cancelled. Workflow runs that are completed, failed, in review, rejected, or already cancelled cannot be cancelled.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> cancel(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> cancel(
             String id, WorkflowRunsCancelRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -763,14 +768,14 @@ public class AsyncRawWorkflowRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WorkflowRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WorkflowRun.class), response));
                         return;
                     }
@@ -849,7 +854,7 @@ public class AsyncRawWorkflowRunsClient {
      * <li><strong>Fetching Results:</strong> You can also use the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/workflow/list-workflow-runs">List Workflow Runs</a> endpoint and filter using the <code>batchId</code> query param.</li>
      * </ul>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRunsCreateBatchResponse>> createBatch(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRunsCreateBatchResponse>> createBatch(
             WorkflowRunsCreateBatchRequest request) {
         return createBatch(request, null);
     }
@@ -866,7 +871,7 @@ public class AsyncRawWorkflowRunsClient {
      * <li><strong>Fetching Results:</strong> You can also use the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/workflow/list-workflow-runs">List Workflow Runs</a> endpoint and filter using the <code>batchId</code> query param.</li>
      * </ul>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WorkflowRunsCreateBatchResponse>> createBatch(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRunsCreateBatchResponse>> createBatch(
             WorkflowRunsCreateBatchRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -894,14 +899,15 @@ public class AsyncRawWorkflowRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WorkflowRunsCreateBatchResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRunsCreateBatchResponse>> future =
+                new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, WorkflowRunsCreateBatchResponse.class),
                                 response));

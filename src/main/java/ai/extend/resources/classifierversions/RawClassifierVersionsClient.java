@@ -5,8 +5,8 @@ package ai.extend.resources.classifierversions;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -46,7 +46,7 @@ public class RawClassifierVersionsClient {
      * This endpoint allows you to fetch all versions of a given classifier, including the current <code>draft</code> version.
      * <p>Versions are returned in descending order of creation (newest first) with the <code>draft</code> version first. The <code>draft</code> version is the latest unpublished version of the classifier, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public ExtendClientHttpResponse<ClassifierVersionsListResponse> list(String classifierId) {
+    public ExtendClientBaseHttpResponse<ClassifierVersionsListResponse> list(String classifierId) {
         return list(classifierId, ClassifierVersionsListRequest.builder().build());
     }
 
@@ -54,7 +54,7 @@ public class RawClassifierVersionsClient {
      * This endpoint allows you to fetch all versions of a given classifier, including the current <code>draft</code> version.
      * <p>Versions are returned in descending order of creation (newest first) with the <code>draft</code> version first. The <code>draft</code> version is the latest unpublished version of the classifier, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public ExtendClientHttpResponse<ClassifierVersionsListResponse> list(
+    public ExtendClientBaseHttpResponse<ClassifierVersionsListResponse> list(
             String classifierId, RequestOptions requestOptions) {
         return list(classifierId, ClassifierVersionsListRequest.builder().build(), requestOptions);
     }
@@ -63,7 +63,7 @@ public class RawClassifierVersionsClient {
      * This endpoint allows you to fetch all versions of a given classifier, including the current <code>draft</code> version.
      * <p>Versions are returned in descending order of creation (newest first) with the <code>draft</code> version first. The <code>draft</code> version is the latest unpublished version of the classifier, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public ExtendClientHttpResponse<ClassifierVersionsListResponse> list(
+    public ExtendClientBaseHttpResponse<ClassifierVersionsListResponse> list(
             String classifierId, ClassifierVersionsListRequest request) {
         return list(classifierId, request, null);
     }
@@ -72,7 +72,7 @@ public class RawClassifierVersionsClient {
      * This endpoint allows you to fetch all versions of a given classifier, including the current <code>draft</code> version.
      * <p>Versions are returned in descending order of creation (newest first) with the <code>draft</code> version first. The <code>draft</code> version is the latest unpublished version of the classifier, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public ExtendClientHttpResponse<ClassifierVersionsListResponse> list(
+    public ExtendClientBaseHttpResponse<ClassifierVersionsListResponse> list(
             String classifierId, ClassifierVersionsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -114,7 +114,7 @@ public class RawClassifierVersionsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ClassifierVersionsListResponse.class),
                         response);
             }
@@ -160,7 +160,7 @@ public class RawClassifierVersionsClient {
      * This endpoint allows you to publish a new version of an existing classifier. Publishing a new version creates a snapshot of the classifier's current configuration and makes it available for use in workflows.
      * <p>Publishing a new version does not automatically update existing workflows using this classifier. You may need to manually update workflows to use the new version if desired.</p>
      */
-    public ExtendClientHttpResponse<ClassifierVersion> create(
+    public ExtendClientBaseHttpResponse<ClassifierVersion> create(
             String classifierId, ClassifierVersionsCreateRequest request) {
         return create(classifierId, request, null);
     }
@@ -169,7 +169,7 @@ public class RawClassifierVersionsClient {
      * This endpoint allows you to publish a new version of an existing classifier. Publishing a new version creates a snapshot of the classifier's current configuration and makes it available for use in workflows.
      * <p>Publishing a new version does not automatically update existing workflows using this classifier. You may need to manually update workflows to use the new version if desired.</p>
      */
-    public ExtendClientHttpResponse<ClassifierVersion> create(
+    public ExtendClientBaseHttpResponse<ClassifierVersion> create(
             String classifierId, ClassifierVersionsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -207,7 +207,7 @@ public class RawClassifierVersionsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ClassifierVersion.class), response);
             }
             try {
@@ -251,7 +251,7 @@ public class RawClassifierVersionsClient {
     /**
      * Retrieve a specific version of a classifier in Extend
      */
-    public ExtendClientHttpResponse<ClassifierVersion> retrieve(String classifierId, String versionId) {
+    public ExtendClientBaseHttpResponse<ClassifierVersion> retrieve(String classifierId, String versionId) {
         return retrieve(
                 classifierId,
                 versionId,
@@ -261,7 +261,7 @@ public class RawClassifierVersionsClient {
     /**
      * Retrieve a specific version of a classifier in Extend
      */
-    public ExtendClientHttpResponse<ClassifierVersion> retrieve(
+    public ExtendClientBaseHttpResponse<ClassifierVersion> retrieve(
             String classifierId, String versionId, RequestOptions requestOptions) {
         return retrieve(
                 classifierId,
@@ -273,7 +273,7 @@ public class RawClassifierVersionsClient {
     /**
      * Retrieve a specific version of a classifier in Extend
      */
-    public ExtendClientHttpResponse<ClassifierVersion> retrieve(
+    public ExtendClientBaseHttpResponse<ClassifierVersion> retrieve(
             String classifierId, String versionId, ClassifierVersionsRetrieveRequest request) {
         return retrieve(classifierId, versionId, request, null);
     }
@@ -281,7 +281,7 @@ public class RawClassifierVersionsClient {
     /**
      * Retrieve a specific version of a classifier in Extend
      */
-    public ExtendClientHttpResponse<ClassifierVersion> retrieve(
+    public ExtendClientBaseHttpResponse<ClassifierVersion> retrieve(
             String classifierId,
             String versionId,
             ClassifierVersionsRetrieveRequest request,
@@ -315,7 +315,7 @@ public class RawClassifierVersionsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ClassifierVersion.class), response);
             }
             try {

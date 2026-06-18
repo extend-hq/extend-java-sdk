@@ -9,6 +9,17 @@ README.md
 # Protect custom wrapper code
 src/main/java/ai/extend/wrapper/
 
+# Protect hand-written client classes (the customer-facing ExtendClient and its
+# builder, plus the async/raw aliases). Fern generates the *Base versions of these
+# (ExtendClientBase, AsyncExtendClientBase, etc.); these subclasses keep the
+# historical public type names so upgrades don't break customer code.
+src/main/java/ai/extend/ExtendClient.java
+src/main/java/ai/extend/ExtendClientBuilder.java
+src/main/java/ai/extend/AsyncExtendClient.java
+src/main/java/ai/extend/AsyncExtendClientBuilder.java
+src/main/java/ai/extend/RawExtendClient.java
+src/main/java/ai/extend/AsyncRawExtendClient.java
+
 # Protect custom tests
 src/test/java/ai/extend/wrapper/
 .fern/replay.lock

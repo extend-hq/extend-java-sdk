@@ -5,8 +5,8 @@ package ai.extend.resources.files;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
 import ai.extend.core.RequestOptions;
@@ -49,28 +49,29 @@ public class RawFilesClient {
     /**
      * List files.
      */
-    public ExtendClientHttpResponse<FilesListResponse> list() {
+    public ExtendClientBaseHttpResponse<FilesListResponse> list() {
         return list(FilesListRequest.builder().build());
     }
 
     /**
      * List files.
      */
-    public ExtendClientHttpResponse<FilesListResponse> list(RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<FilesListResponse> list(RequestOptions requestOptions) {
         return list(FilesListRequest.builder().build(), requestOptions);
     }
 
     /**
      * List files.
      */
-    public ExtendClientHttpResponse<FilesListResponse> list(FilesListRequest request) {
+    public ExtendClientBaseHttpResponse<FilesListResponse> list(FilesListRequest request) {
         return list(request, null);
     }
 
     /**
      * List files.
      */
-    public ExtendClientHttpResponse<FilesListResponse> list(FilesListRequest request, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<FilesListResponse> list(
+            FilesListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("files");
@@ -113,7 +114,7 @@ public class RawFilesClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, FilesListResponse.class), response);
             }
             try {
@@ -157,28 +158,28 @@ public class RawFilesClient {
     /**
      * Fetch a file by its ID.
      */
-    public ExtendClientHttpResponse<File> retrieve(String id) {
+    public ExtendClientBaseHttpResponse<File> retrieve(String id) {
         return retrieve(id, FilesRetrieveRequest.builder().build());
     }
 
     /**
      * Fetch a file by its ID.
      */
-    public ExtendClientHttpResponse<File> retrieve(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<File> retrieve(String id, RequestOptions requestOptions) {
         return retrieve(id, FilesRetrieveRequest.builder().build(), requestOptions);
     }
 
     /**
      * Fetch a file by its ID.
      */
-    public ExtendClientHttpResponse<File> retrieve(String id, FilesRetrieveRequest request) {
+    public ExtendClientBaseHttpResponse<File> retrieve(String id, FilesRetrieveRequest request) {
         return retrieve(id, request, null);
     }
 
     /**
      * Fetch a file by its ID.
      */
-    public ExtendClientHttpResponse<File> retrieve(
+    public ExtendClientBaseHttpResponse<File> retrieve(
             String id, FilesRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -219,7 +220,7 @@ public class RawFilesClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, File.class), response);
             }
             try {
@@ -264,7 +265,7 @@ public class RawFilesClient {
      * Delete a file and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<FilesDeleteResponse> delete(String id) {
+    public ExtendClientBaseHttpResponse<FilesDeleteResponse> delete(String id) {
         return delete(id, FilesDeleteRequest.builder().build());
     }
 
@@ -272,7 +273,7 @@ public class RawFilesClient {
      * Delete a file and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<FilesDeleteResponse> delete(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<FilesDeleteResponse> delete(String id, RequestOptions requestOptions) {
         return delete(id, FilesDeleteRequest.builder().build(), requestOptions);
     }
 
@@ -280,7 +281,7 @@ public class RawFilesClient {
      * Delete a file and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<FilesDeleteResponse> delete(String id, FilesDeleteRequest request) {
+    public ExtendClientBaseHttpResponse<FilesDeleteResponse> delete(String id, FilesDeleteRequest request) {
         return delete(id, request, null);
     }
 
@@ -288,7 +289,7 @@ public class RawFilesClient {
      * Delete a file and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<FilesDeleteResponse> delete(
+    public ExtendClientBaseHttpResponse<FilesDeleteResponse> delete(
             String id, FilesDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -317,7 +318,7 @@ public class RawFilesClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, FilesDeleteResponse.class), response);
             }
             try {
@@ -365,7 +366,7 @@ public class RawFilesClient {
      * <p>Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/general/supported-file-types">here</a>.</p>
      * <p>This endpoint requires multipart form encoding. Most HTTP clients will handle this encoding automatically (see the examples).</p>
      */
-    public ExtendClientHttpResponse<File> upload(java.io.File file, FilesUploadRequest request) {
+    public ExtendClientBaseHttpResponse<File> upload(java.io.File file, FilesUploadRequest request) {
         return upload(file, request, null);
     }
 
@@ -376,7 +377,7 @@ public class RawFilesClient {
      * <p>Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/general/supported-file-types">here</a>.</p>
      * <p>This endpoint requires multipart form encoding. Most HTTP clients will handle this encoding automatically (see the examples).</p>
      */
-    public ExtendClientHttpResponse<File> upload(
+    public ExtendClientBaseHttpResponse<File> upload(
             java.io.File file, FilesUploadRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -423,7 +424,7 @@ public class RawFilesClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, File.class), response);
             }
             try {

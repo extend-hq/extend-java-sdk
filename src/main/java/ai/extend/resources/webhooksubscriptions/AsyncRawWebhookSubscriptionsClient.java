@@ -5,8 +5,8 @@ package ai.extend.resources.webhooksubscriptions;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -52,14 +52,14 @@ public class AsyncRawWebhookSubscriptionsClient {
     /**
      * List webhook subscriptions. You can filter by <code>webhookEndpointId</code> to see all subscriptions for a given endpoint, or by <code>resourceId</code> to see all subscriptions for a given resource.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscriptionsListResponse>> list() {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscriptionsListResponse>> list() {
         return list(WebhookSubscriptionsListRequest.builder().build());
     }
 
     /**
      * List webhook subscriptions. You can filter by <code>webhookEndpointId</code> to see all subscriptions for a given endpoint, or by <code>resourceId</code> to see all subscriptions for a given resource.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscriptionsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscriptionsListResponse>> list(
             RequestOptions requestOptions) {
         return list(WebhookSubscriptionsListRequest.builder().build(), requestOptions);
     }
@@ -67,7 +67,7 @@ public class AsyncRawWebhookSubscriptionsClient {
     /**
      * List webhook subscriptions. You can filter by <code>webhookEndpointId</code> to see all subscriptions for a given endpoint, or by <code>resourceId</code> to see all subscriptions for a given resource.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscriptionsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscriptionsListResponse>> list(
             WebhookSubscriptionsListRequest request) {
         return list(request, null);
     }
@@ -75,7 +75,7 @@ public class AsyncRawWebhookSubscriptionsClient {
     /**
      * List webhook subscriptions. You can filter by <code>webhookEndpointId</code> to see all subscriptions for a given endpoint, or by <code>resourceId</code> to see all subscriptions for a given resource.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscriptionsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscriptionsListResponse>> list(
             WebhookSubscriptionsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -119,7 +119,7 @@ public class AsyncRawWebhookSubscriptionsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WebhookSubscriptionsListResponse>> future =
+        CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscriptionsListResponse>> future =
                 new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
@@ -127,7 +127,7 @@ public class AsyncRawWebhookSubscriptionsClient {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, WebhookSubscriptionsListResponse.class),
                                 response));
@@ -201,7 +201,7 @@ public class AsyncRawWebhookSubscriptionsClient {
      * <p>Subscriptions let you receive events for a specific resource (e.g., a single extractor or workflow) rather than all resources of that type. The <code>enabledEvents</code> must be valid for the given <code>resourceType</code> and the endpoint's <code>apiVersion</code>.</p>
      * <p>If a subscription already exists for the same endpoint and resource, it will be updated with the new <code>enabledEvents</code> instead of creating a duplicate.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscription>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscription>> create(
             WebhookSubscriptionsCreateRequest request) {
         return create(request, null);
     }
@@ -211,7 +211,7 @@ public class AsyncRawWebhookSubscriptionsClient {
      * <p>Subscriptions let you receive events for a specific resource (e.g., a single extractor or workflow) rather than all resources of that type. The <code>enabledEvents</code> must be valid for the given <code>resourceType</code> and the endpoint's <code>apiVersion</code>.</p>
      * <p>If a subscription already exists for the same endpoint and resource, it will be updated with the new <code>enabledEvents</code> instead of creating a duplicate.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscription>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscription>> create(
             WebhookSubscriptionsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -239,14 +239,14 @@ public class AsyncRawWebhookSubscriptionsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WebhookSubscription>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscription>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WebhookSubscription.class),
                                 response));
                         return;
@@ -317,14 +317,14 @@ public class AsyncRawWebhookSubscriptionsClient {
     /**
      * Retrieve a webhook subscription by ID.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscription>> retrieve(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscription>> retrieve(String id) {
         return retrieve(id, WebhookSubscriptionsRetrieveRequest.builder().build());
     }
 
     /**
      * Retrieve a webhook subscription by ID.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscription>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscription>> retrieve(
             String id, RequestOptions requestOptions) {
         return retrieve(id, WebhookSubscriptionsRetrieveRequest.builder().build(), requestOptions);
     }
@@ -332,7 +332,7 @@ public class AsyncRawWebhookSubscriptionsClient {
     /**
      * Retrieve a webhook subscription by ID.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscription>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscription>> retrieve(
             String id, WebhookSubscriptionsRetrieveRequest request) {
         return retrieve(id, request, null);
     }
@@ -340,7 +340,7 @@ public class AsyncRawWebhookSubscriptionsClient {
     /**
      * Retrieve a webhook subscription by ID.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscription>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscription>> retrieve(
             String id, WebhookSubscriptionsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -365,14 +365,14 @@ public class AsyncRawWebhookSubscriptionsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WebhookSubscription>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscription>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WebhookSubscription.class),
                                 response));
                         return;
@@ -443,7 +443,7 @@ public class AsyncRawWebhookSubscriptionsClient {
     /**
      * Update the enabled events on a webhook subscription.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscription>> update(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscription>> update(
             String id, WebhookSubscriptionsUpdateRequest request) {
         return update(id, request, null);
     }
@@ -451,7 +451,7 @@ public class AsyncRawWebhookSubscriptionsClient {
     /**
      * Update the enabled events on a webhook subscription.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscription>> update(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscription>> update(
             String id, WebhookSubscriptionsUpdateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -484,14 +484,14 @@ public class AsyncRawWebhookSubscriptionsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WebhookSubscription>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscription>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, WebhookSubscription.class),
                                 response));
                         return;
@@ -562,14 +562,14 @@ public class AsyncRawWebhookSubscriptionsClient {
     /**
      * Delete a webhook subscription. This operation is permanent and cannot be undone.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscriptionsDeleteResponse>> delete(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscriptionsDeleteResponse>> delete(String id) {
         return delete(id, WebhookSubscriptionsDeleteRequest.builder().build());
     }
 
     /**
      * Delete a webhook subscription. This operation is permanent and cannot be undone.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscriptionsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscriptionsDeleteResponse>> delete(
             String id, RequestOptions requestOptions) {
         return delete(id, WebhookSubscriptionsDeleteRequest.builder().build(), requestOptions);
     }
@@ -577,7 +577,7 @@ public class AsyncRawWebhookSubscriptionsClient {
     /**
      * Delete a webhook subscription. This operation is permanent and cannot be undone.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscriptionsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscriptionsDeleteResponse>> delete(
             String id, WebhookSubscriptionsDeleteRequest request) {
         return delete(id, request, null);
     }
@@ -585,7 +585,7 @@ public class AsyncRawWebhookSubscriptionsClient {
     /**
      * Delete a webhook subscription. This operation is permanent and cannot be undone.
      */
-    public CompletableFuture<ExtendClientHttpResponse<WebhookSubscriptionsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscriptionsDeleteResponse>> delete(
             String id, WebhookSubscriptionsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -610,7 +610,7 @@ public class AsyncRawWebhookSubscriptionsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<WebhookSubscriptionsDeleteResponse>> future =
+        CompletableFuture<ExtendClientBaseHttpResponse<WebhookSubscriptionsDeleteResponse>> future =
                 new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
@@ -618,7 +618,7 @@ public class AsyncRawWebhookSubscriptionsClient {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, WebhookSubscriptionsDeleteResponse.class),
                                 response));

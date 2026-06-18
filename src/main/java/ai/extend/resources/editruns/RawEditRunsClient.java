@@ -5,8 +5,8 @@ package ai.extend.resources.editruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.RequestOptions;
@@ -46,7 +46,7 @@ public class RawEditRunsClient {
      * <p>The Edit Runs endpoint allows you to convert and edit documents and get an edit run ID that can be used to check status and retrieve results with the Get Edit Run endpoint.</p>
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Edit Run endpoint for results.</p>
      */
-    public ExtendClientHttpResponse<EditRun> create(EditRunsCreateRequest request) {
+    public ExtendClientBaseHttpResponse<EditRun> create(EditRunsCreateRequest request) {
         return create(request, null);
     }
 
@@ -55,7 +55,7 @@ public class RawEditRunsClient {
      * <p>The Edit Runs endpoint allows you to convert and edit documents and get an edit run ID that can be used to check status and retrieve results with the Get Edit Run endpoint.</p>
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Edit Run endpoint for results.</p>
      */
-    public ExtendClientHttpResponse<EditRun> create(EditRunsCreateRequest request, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<EditRun> create(EditRunsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("edit_runs");
@@ -86,7 +86,7 @@ public class RawEditRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EditRun.class), response);
             }
             try {
@@ -131,7 +131,7 @@ public class RawEditRunsClient {
      * Retrieve the status and results of an edit run.
      * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
      */
-    public ExtendClientHttpResponse<EditRun> retrieve(String id) {
+    public ExtendClientBaseHttpResponse<EditRun> retrieve(String id) {
         return retrieve(id, EditRunsRetrieveRequest.builder().build());
     }
 
@@ -139,7 +139,7 @@ public class RawEditRunsClient {
      * Retrieve the status and results of an edit run.
      * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
      */
-    public ExtendClientHttpResponse<EditRun> retrieve(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<EditRun> retrieve(String id, RequestOptions requestOptions) {
         return retrieve(id, EditRunsRetrieveRequest.builder().build(), requestOptions);
     }
 
@@ -147,7 +147,7 @@ public class RawEditRunsClient {
      * Retrieve the status and results of an edit run.
      * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
      */
-    public ExtendClientHttpResponse<EditRun> retrieve(String id, EditRunsRetrieveRequest request) {
+    public ExtendClientBaseHttpResponse<EditRun> retrieve(String id, EditRunsRetrieveRequest request) {
         return retrieve(id, request, null);
     }
 
@@ -155,7 +155,7 @@ public class RawEditRunsClient {
      * Retrieve the status and results of an edit run.
      * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
      */
-    public ExtendClientHttpResponse<EditRun> retrieve(
+    public ExtendClientBaseHttpResponse<EditRun> retrieve(
             String id, EditRunsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -184,7 +184,7 @@ public class RawEditRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EditRun.class), response);
             }
             try {
@@ -229,7 +229,7 @@ public class RawEditRunsClient {
      * Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<EditRunsDeleteResponse> delete(String id) {
+    public ExtendClientBaseHttpResponse<EditRunsDeleteResponse> delete(String id) {
         return delete(id, EditRunsDeleteRequest.builder().build());
     }
 
@@ -237,7 +237,7 @@ public class RawEditRunsClient {
      * Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<EditRunsDeleteResponse> delete(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<EditRunsDeleteResponse> delete(String id, RequestOptions requestOptions) {
         return delete(id, EditRunsDeleteRequest.builder().build(), requestOptions);
     }
 
@@ -245,7 +245,7 @@ public class RawEditRunsClient {
      * Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<EditRunsDeleteResponse> delete(String id, EditRunsDeleteRequest request) {
+    public ExtendClientBaseHttpResponse<EditRunsDeleteResponse> delete(String id, EditRunsDeleteRequest request) {
         return delete(id, request, null);
     }
 
@@ -253,7 +253,7 @@ public class RawEditRunsClient {
      * Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<EditRunsDeleteResponse> delete(
+    public ExtendClientBaseHttpResponse<EditRunsDeleteResponse> delete(
             String id, EditRunsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -282,7 +282,7 @@ public class RawEditRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EditRunsDeleteResponse.class),
                         response);
             }

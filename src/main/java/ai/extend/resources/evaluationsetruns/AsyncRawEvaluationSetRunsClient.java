@@ -5,8 +5,8 @@ package ai.extend.resources.evaluationsetruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.RequestOptions;
@@ -47,7 +47,7 @@ public class AsyncRawEvaluationSetRunsClient {
      * Create and start an async evaluation set run. The response returns the evaluation set run object with its initial status; use <code>GET /evaluation_set_runs/{id}</code> to poll for completion.
      * <p>Evaluation set runs are currently supported for document processor evaluation sets.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetRun>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetRun>> create(
             EvaluationSetRunsCreateRequest request) {
         return create(request, null);
     }
@@ -56,7 +56,7 @@ public class AsyncRawEvaluationSetRunsClient {
      * Create and start an async evaluation set run. The response returns the evaluation set run object with its initial status; use <code>GET /evaluation_set_runs/{id}</code> to poll for completion.
      * <p>Evaluation set runs are currently supported for document processor evaluation sets.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetRun>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetRun>> create(
             EvaluationSetRunsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -88,14 +88,14 @@ public class AsyncRawEvaluationSetRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<EvaluationSetRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EvaluationSetRun.class),
                                 response));
                         return;
@@ -166,14 +166,14 @@ public class AsyncRawEvaluationSetRunsClient {
     /**
      * Get details of an evaluation set run.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetRun>> retrieve(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetRun>> retrieve(String id) {
         return retrieve(id, EvaluationSetRunsRetrieveRequest.builder().build());
     }
 
     /**
      * Get details of an evaluation set run.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetRun>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetRun>> retrieve(
             String id, RequestOptions requestOptions) {
         return retrieve(id, EvaluationSetRunsRetrieveRequest.builder().build(), requestOptions);
     }
@@ -181,7 +181,7 @@ public class AsyncRawEvaluationSetRunsClient {
     /**
      * Get details of an evaluation set run.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetRun>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetRun>> retrieve(
             String id, EvaluationSetRunsRetrieveRequest request) {
         return retrieve(id, request, null);
     }
@@ -189,7 +189,7 @@ public class AsyncRawEvaluationSetRunsClient {
     /**
      * Get details of an evaluation set run.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetRun>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetRun>> retrieve(
             String id, EvaluationSetRunsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -214,14 +214,14 @@ public class AsyncRawEvaluationSetRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<EvaluationSetRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EvaluationSetRun.class),
                                 response));
                         return;

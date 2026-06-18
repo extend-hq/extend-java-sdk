@@ -5,8 +5,8 @@ package ai.extend.resources.batchprocessorrun;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.RequestOptions;
 import ai.extend.errors.BadRequestError;
@@ -34,7 +34,7 @@ public class RawBatchProcessorRunClient {
      * Retrieve details about a batch processor run, including evaluation runs.
      * <p><strong>Deprecated:</strong> This endpoint is maintained for backwards compatibility only and will be replaced in a future API version. Use <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/get-evaluation-set-run">Get Evaluation Set Run</a> for interacting with evaluation set runs.</p>
      */
-    public ExtendClientHttpResponse<BatchProcessorRunGetResponse> get(String id) {
+    public ExtendClientBaseHttpResponse<BatchProcessorRunGetResponse> get(String id) {
         return get(id, BatchProcessorRunGetRequest.builder().build());
     }
 
@@ -42,7 +42,7 @@ public class RawBatchProcessorRunClient {
      * Retrieve details about a batch processor run, including evaluation runs.
      * <p><strong>Deprecated:</strong> This endpoint is maintained for backwards compatibility only and will be replaced in a future API version. Use <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/get-evaluation-set-run">Get Evaluation Set Run</a> for interacting with evaluation set runs.</p>
      */
-    public ExtendClientHttpResponse<BatchProcessorRunGetResponse> get(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<BatchProcessorRunGetResponse> get(String id, RequestOptions requestOptions) {
         return get(id, BatchProcessorRunGetRequest.builder().build(), requestOptions);
     }
 
@@ -50,7 +50,8 @@ public class RawBatchProcessorRunClient {
      * Retrieve details about a batch processor run, including evaluation runs.
      * <p><strong>Deprecated:</strong> This endpoint is maintained for backwards compatibility only and will be replaced in a future API version. Use <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/get-evaluation-set-run">Get Evaluation Set Run</a> for interacting with evaluation set runs.</p>
      */
-    public ExtendClientHttpResponse<BatchProcessorRunGetResponse> get(String id, BatchProcessorRunGetRequest request) {
+    public ExtendClientBaseHttpResponse<BatchProcessorRunGetResponse> get(
+            String id, BatchProcessorRunGetRequest request) {
         return get(id, request, null);
     }
 
@@ -58,7 +59,7 @@ public class RawBatchProcessorRunClient {
      * Retrieve details about a batch processor run, including evaluation runs.
      * <p><strong>Deprecated:</strong> This endpoint is maintained for backwards compatibility only and will be replaced in a future API version. Use <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/get-evaluation-set-run">Get Evaluation Set Run</a> for interacting with evaluation set runs.</p>
      */
-    public ExtendClientHttpResponse<BatchProcessorRunGetResponse> get(
+    public ExtendClientBaseHttpResponse<BatchProcessorRunGetResponse> get(
             String id, BatchProcessorRunGetRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -87,7 +88,7 @@ public class RawBatchProcessorRunClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, BatchProcessorRunGetResponse.class),
                         response);
             }

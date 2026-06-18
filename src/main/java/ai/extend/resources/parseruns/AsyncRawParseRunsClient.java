@@ -5,8 +5,8 @@ package ai.extend.resources.parseruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -55,7 +55,7 @@ public class AsyncRawParseRunsClient {
      * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRunsListResponse>> list() {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRunsListResponse>> list() {
         return list(ParseRunsListRequest.builder().build());
     }
 
@@ -63,7 +63,7 @@ public class AsyncRawParseRunsClient {
      * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRunsListResponse>> list(RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRunsListResponse>> list(RequestOptions requestOptions) {
         return list(ParseRunsListRequest.builder().build(), requestOptions);
     }
 
@@ -71,7 +71,7 @@ public class AsyncRawParseRunsClient {
      * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRunsListResponse>> list(ParseRunsListRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRunsListResponse>> list(ParseRunsListRequest request) {
         return list(request, null);
     }
 
@@ -79,7 +79,7 @@ public class AsyncRawParseRunsClient {
      * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRunsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRunsListResponse>> list(
             ParseRunsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -131,14 +131,14 @@ public class AsyncRawParseRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ParseRunsListResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ParseRunsListResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ParseRunsListResponse.class),
                                 response));
                         return;
@@ -211,7 +211,7 @@ public class AsyncRawParseRunsClient {
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Parse Run endpoint for results.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRun>> create(ParseRunsCreateRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRun>> create(ParseRunsCreateRequest request) {
         return create(request, null);
     }
 
@@ -220,7 +220,7 @@ public class AsyncRawParseRunsClient {
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Parse Run endpoint for results.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRun>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRun>> create(
             ParseRunsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -248,14 +248,14 @@ public class AsyncRawParseRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ParseRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ParseRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ParseRun.class), response));
                         return;
                     }
@@ -326,7 +326,7 @@ public class AsyncRawParseRunsClient {
      * Retrieve the status and results of a parse run.
      * <p>Use this endpoint to get results for a parse run that has already completed, or to check on the status of a parse run initiated by the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/parse/create-parse-run">Create Parse Run</a> endpoint.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRun>> retrieve(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRun>> retrieve(String id) {
         return retrieve(id, ParseRunsRetrieveRequest.builder().build());
     }
 
@@ -334,7 +334,8 @@ public class AsyncRawParseRunsClient {
      * Retrieve the status and results of a parse run.
      * <p>Use this endpoint to get results for a parse run that has already completed, or to check on the status of a parse run initiated by the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/parse/create-parse-run">Create Parse Run</a> endpoint.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRun>> retrieve(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRun>> retrieve(
+            String id, RequestOptions requestOptions) {
         return retrieve(id, ParseRunsRetrieveRequest.builder().build(), requestOptions);
     }
 
@@ -342,7 +343,8 @@ public class AsyncRawParseRunsClient {
      * Retrieve the status and results of a parse run.
      * <p>Use this endpoint to get results for a parse run that has already completed, or to check on the status of a parse run initiated by the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/parse/create-parse-run">Create Parse Run</a> endpoint.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRun>> retrieve(String id, ParseRunsRetrieveRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRun>> retrieve(
+            String id, ParseRunsRetrieveRequest request) {
         return retrieve(id, request, null);
     }
 
@@ -350,7 +352,7 @@ public class AsyncRawParseRunsClient {
      * Retrieve the status and results of a parse run.
      * <p>Use this endpoint to get results for a parse run that has already completed, or to check on the status of a parse run initiated by the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/parse/create-parse-run">Create Parse Run</a> endpoint.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRun>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRun>> retrieve(
             String id, ParseRunsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -379,14 +381,14 @@ public class AsyncRawParseRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ParseRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ParseRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ParseRun.class), response));
                         return;
                     }
@@ -457,7 +459,7 @@ public class AsyncRawParseRunsClient {
      * Delete a parse run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRunsDeleteResponse>> delete(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRunsDeleteResponse>> delete(String id) {
         return delete(id, ParseRunsDeleteRequest.builder().build());
     }
 
@@ -465,7 +467,7 @@ public class AsyncRawParseRunsClient {
      * Delete a parse run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRunsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRunsDeleteResponse>> delete(
             String id, RequestOptions requestOptions) {
         return delete(id, ParseRunsDeleteRequest.builder().build(), requestOptions);
     }
@@ -474,7 +476,7 @@ public class AsyncRawParseRunsClient {
      * Delete a parse run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRunsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRunsDeleteResponse>> delete(
             String id, ParseRunsDeleteRequest request) {
         return delete(id, request, null);
     }
@@ -483,7 +485,7 @@ public class AsyncRawParseRunsClient {
      * Delete a parse run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRunsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRunsDeleteResponse>> delete(
             String id, ParseRunsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -508,14 +510,14 @@ public class AsyncRawParseRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ParseRunsDeleteResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ParseRunsDeleteResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ParseRunsDeleteResponse.class),
                                 response));
                         return;
@@ -587,7 +589,7 @@ public class AsyncRawParseRunsClient {
      * Cancel an in-progress parse run.
      * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRun>> cancel(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRun>> cancel(String id) {
         return cancel(id, ParseRunsCancelRequest.builder().build());
     }
 
@@ -595,7 +597,7 @@ public class AsyncRawParseRunsClient {
      * Cancel an in-progress parse run.
      * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRun>> cancel(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRun>> cancel(String id, RequestOptions requestOptions) {
         return cancel(id, ParseRunsCancelRequest.builder().build(), requestOptions);
     }
 
@@ -603,7 +605,7 @@ public class AsyncRawParseRunsClient {
      * Cancel an in-progress parse run.
      * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRun>> cancel(String id, ParseRunsCancelRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRun>> cancel(String id, ParseRunsCancelRequest request) {
         return cancel(id, request, null);
     }
 
@@ -611,7 +613,7 @@ public class AsyncRawParseRunsClient {
      * Cancel an in-progress parse run.
      * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ParseRun>> cancel(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ParseRun>> cancel(
             String id, ParseRunsCancelRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -637,14 +639,14 @@ public class AsyncRawParseRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ParseRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ParseRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ParseRun.class), response));
                         return;
                     }
@@ -725,7 +727,7 @@ public class AsyncRawParseRunsClient {
      * <li>File input supports URLs, Extend file IDs, and raw text strings.</li>
      * </ul>
      */
-    public CompletableFuture<ExtendClientHttpResponse<BatchRun>> createBatch(ParseRunsCreateBatchRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<BatchRun>> createBatch(ParseRunsCreateBatchRequest request) {
         return createBatch(request, null);
     }
 
@@ -743,7 +745,7 @@ public class AsyncRawParseRunsClient {
      * <li>File input supports URLs, Extend file IDs, and raw text strings.</li>
      * </ul>
      */
-    public CompletableFuture<ExtendClientHttpResponse<BatchRun>> createBatch(
+    public CompletableFuture<ExtendClientBaseHttpResponse<BatchRun>> createBatch(
             ParseRunsCreateBatchRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -771,14 +773,14 @@ public class AsyncRawParseRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<BatchRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<BatchRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, BatchRun.class), response));
                         return;
                     }

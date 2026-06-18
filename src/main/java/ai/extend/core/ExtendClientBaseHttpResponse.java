@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Map;
 import okhttp3.Response;
 
-public final class ExtendClientHttpResponse<T> {
+public final class ExtendClientBaseHttpResponse<T> {
 
     private final T body;
 
     private final Map<String, List<String>> headers;
 
-    public ExtendClientHttpResponse(T body, Response rawResponse) {
+    public ExtendClientBaseHttpResponse(T body, Response rawResponse) {
         this.body = body;
 
         Map<String, List<String>> headers = new HashMap<>();

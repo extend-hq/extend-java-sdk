@@ -5,8 +5,8 @@ package ai.extend.resources.processorrun;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -50,28 +50,30 @@ public class AsyncRawProcessorRunClient {
     /**
      * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunListResponse>> list() {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunListResponse>> list() {
         return list(ProcessorRunListRequest.builder().build());
     }
 
     /**
      * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunListResponse>> list(RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunListResponse>> list(
+            RequestOptions requestOptions) {
         return list(ProcessorRunListRequest.builder().build(), requestOptions);
     }
 
     /**
      * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunListResponse>> list(ProcessorRunListRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunListResponse>> list(
+            ProcessorRunListRequest request) {
         return list(request, null);
     }
 
     /**
      * List runs of a Processor. A ProcessorRun represents a single execution of a processor against a file.
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunListResponse>> list(
             ProcessorRunListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -135,14 +137,14 @@ public class AsyncRawProcessorRunClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ProcessorRunListResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunListResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ProcessorRunListResponse.class),
                                 response));
                         return;
@@ -193,7 +195,7 @@ public class AsyncRawProcessorRunClient {
      * <li>Or you can <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/legacy/get-processor-run">poll the get endpoint</a> for updates on the status of the processor run.</li>
      * </ul>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunCreateResponse>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunCreateResponse>> create(
             ProcessorRunCreateRequest request) {
         return create(request, null);
     }
@@ -211,7 +213,7 @@ public class AsyncRawProcessorRunClient {
      * <li>Or you can <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/legacy/get-processor-run">poll the get endpoint</a> for updates on the status of the processor run.</li>
      * </ul>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunCreateResponse>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunCreateResponse>> create(
             ProcessorRunCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -239,14 +241,14 @@ public class AsyncRawProcessorRunClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ProcessorRunCreateResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunCreateResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, ProcessorRunCreateResponse.class),
                                 response));
@@ -299,7 +301,7 @@ public class AsyncRawProcessorRunClient {
      * Retrieve details about a specific processor run, including its status, outputs, and any edits made during review.
      * <p>A common use case for this endpoint is to poll for the status and final output of an async processor run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/legacy/create-processor-run">Run Processor</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunGetResponse>> get(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunGetResponse>> get(String id) {
         return get(id, ProcessorRunGetRequest.builder().build());
     }
 
@@ -307,7 +309,7 @@ public class AsyncRawProcessorRunClient {
      * Retrieve details about a specific processor run, including its status, outputs, and any edits made during review.
      * <p>A common use case for this endpoint is to poll for the status and final output of an async processor run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/legacy/create-processor-run">Run Processor</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunGetResponse>> get(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunGetResponse>> get(
             String id, RequestOptions requestOptions) {
         return get(id, ProcessorRunGetRequest.builder().build(), requestOptions);
     }
@@ -316,7 +318,7 @@ public class AsyncRawProcessorRunClient {
      * Retrieve details about a specific processor run, including its status, outputs, and any edits made during review.
      * <p>A common use case for this endpoint is to poll for the status and final output of an async processor run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/legacy/create-processor-run">Run Processor</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunGetResponse>> get(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunGetResponse>> get(
             String id, ProcessorRunGetRequest request) {
         return get(id, request, null);
     }
@@ -325,7 +327,7 @@ public class AsyncRawProcessorRunClient {
      * Retrieve details about a specific processor run, including its status, outputs, and any edits made during review.
      * <p>A common use case for this endpoint is to poll for the status and final output of an async processor run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/legacy/create-processor-run">Run Processor</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunGetResponse>> get(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunGetResponse>> get(
             String id, ProcessorRunGetRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -350,14 +352,14 @@ public class AsyncRawProcessorRunClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ProcessorRunGetResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunGetResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ProcessorRunGetResponse.class),
                                 response));
                         return;
@@ -404,7 +406,7 @@ public class AsyncRawProcessorRunClient {
      * Delete a processor run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunDeleteResponse>> delete(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunDeleteResponse>> delete(String id) {
         return delete(id, ProcessorRunDeleteRequest.builder().build());
     }
 
@@ -412,7 +414,7 @@ public class AsyncRawProcessorRunClient {
      * Delete a processor run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunDeleteResponse>> delete(
             String id, RequestOptions requestOptions) {
         return delete(id, ProcessorRunDeleteRequest.builder().build(), requestOptions);
     }
@@ -421,7 +423,7 @@ public class AsyncRawProcessorRunClient {
      * Delete a processor run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunDeleteResponse>> delete(
             String id, ProcessorRunDeleteRequest request) {
         return delete(id, request, null);
     }
@@ -430,7 +432,7 @@ public class AsyncRawProcessorRunClient {
      * Delete a processor run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunDeleteResponse>> delete(
             String id, ProcessorRunDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -455,14 +457,14 @@ public class AsyncRawProcessorRunClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ProcessorRunDeleteResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunDeleteResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, ProcessorRunDeleteResponse.class),
                                 response));
@@ -505,7 +507,7 @@ public class AsyncRawProcessorRunClient {
      * Cancel a running processor run by its ID. This endpoint allows you to stop a processor run that is currently in progress.
      * <p>Note: Only processor runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Processor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunCancelResponse>> cancel(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunCancelResponse>> cancel(String id) {
         return cancel(id, ProcessorRunCancelRequest.builder().build());
     }
 
@@ -513,7 +515,7 @@ public class AsyncRawProcessorRunClient {
      * Cancel a running processor run by its ID. This endpoint allows you to stop a processor run that is currently in progress.
      * <p>Note: Only processor runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Processor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunCancelResponse>> cancel(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunCancelResponse>> cancel(
             String id, RequestOptions requestOptions) {
         return cancel(id, ProcessorRunCancelRequest.builder().build(), requestOptions);
     }
@@ -522,7 +524,7 @@ public class AsyncRawProcessorRunClient {
      * Cancel a running processor run by its ID. This endpoint allows you to stop a processor run that is currently in progress.
      * <p>Note: Only processor runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Processor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunCancelResponse>> cancel(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunCancelResponse>> cancel(
             String id, ProcessorRunCancelRequest request) {
         return cancel(id, request, null);
     }
@@ -531,7 +533,7 @@ public class AsyncRawProcessorRunClient {
      * Cancel a running processor run by its ID. This endpoint allows you to stop a processor run that is currently in progress.
      * <p>Note: Only processor runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Processor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorRunCancelResponse>> cancel(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunCancelResponse>> cancel(
             String id, ProcessorRunCancelRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -557,14 +559,14 @@ public class AsyncRawProcessorRunClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ProcessorRunCancelResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ProcessorRunCancelResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, ProcessorRunCancelResponse.class),
                                 response));

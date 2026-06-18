@@ -5,8 +5,8 @@ package ai.extend.resources.evaluationsetitems;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -54,7 +54,8 @@ public class AsyncRawEvaluationSetItemsClient {
      * List items in a specific evaluation set.
      * <p>Returns a summary of each evaluation set item. Use the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/get-evaluation-set-item">Get Evaluation Set Item</a> endpoint to get the full details of an evaluation set item.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItemsListResponse>> list(String evaluationSetId) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItemsListResponse>> list(
+            String evaluationSetId) {
         return list(evaluationSetId, EvaluationSetItemsListRequest.builder().build());
     }
 
@@ -62,7 +63,7 @@ public class AsyncRawEvaluationSetItemsClient {
      * List items in a specific evaluation set.
      * <p>Returns a summary of each evaluation set item. Use the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/get-evaluation-set-item">Get Evaluation Set Item</a> endpoint to get the full details of an evaluation set item.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItemsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItemsListResponse>> list(
             String evaluationSetId, RequestOptions requestOptions) {
         return list(evaluationSetId, EvaluationSetItemsListRequest.builder().build(), requestOptions);
     }
@@ -71,7 +72,7 @@ public class AsyncRawEvaluationSetItemsClient {
      * List items in a specific evaluation set.
      * <p>Returns a summary of each evaluation set item. Use the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/get-evaluation-set-item">Get Evaluation Set Item</a> endpoint to get the full details of an evaluation set item.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItemsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItemsListResponse>> list(
             String evaluationSetId, EvaluationSetItemsListRequest request) {
         return list(evaluationSetId, request, null);
     }
@@ -80,7 +81,7 @@ public class AsyncRawEvaluationSetItemsClient {
      * List items in a specific evaluation set.
      * <p>Returns a summary of each evaluation set item. Use the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/get-evaluation-set-item">Get Evaluation Set Item</a> endpoint to get the full details of an evaluation set item.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItemsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItemsListResponse>> list(
             String evaluationSetId, EvaluationSetItemsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -122,14 +123,15 @@ public class AsyncRawEvaluationSetItemsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<EvaluationSetItemsListResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItemsListResponse>> future =
+                new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, EvaluationSetItemsListResponse.class),
                                 response));
@@ -203,7 +205,7 @@ public class AsyncRawEvaluationSetItemsClient {
      * <p><strong>Limit:</strong> You can create up to 100 items at a time.</p>
      * <p>Learn more about how to create evaluation set items in the <a href="https://docs.extend.ai/2026-02-09/evaluation/overview">Evaluation Sets</a> product page.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItemsCreateResponse>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItemsCreateResponse>> create(
             String evaluationSetId, EvaluationSetItemsCreateRequest request) {
         return create(evaluationSetId, request, null);
     }
@@ -213,7 +215,7 @@ public class AsyncRawEvaluationSetItemsClient {
      * <p><strong>Limit:</strong> You can create up to 100 items at a time.</p>
      * <p>Learn more about how to create evaluation set items in the <a href="https://docs.extend.ai/2026-02-09/evaluation/overview">Evaluation Sets</a> product page.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItemsCreateResponse>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItemsCreateResponse>> create(
             String evaluationSetId, EvaluationSetItemsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -247,7 +249,7 @@ public class AsyncRawEvaluationSetItemsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<EvaluationSetItemsCreateResponse>> future =
+        CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItemsCreateResponse>> future =
                 new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
@@ -255,7 +257,7 @@ public class AsyncRawEvaluationSetItemsClient {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, EvaluationSetItemsCreateResponse.class),
                                 response));
@@ -327,7 +329,7 @@ public class AsyncRawEvaluationSetItemsClient {
     /**
      * Get details of an evaluation set item.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItem>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItem>> retrieve(
             String evaluationSetId, String itemId) {
         return retrieve(
                 evaluationSetId,
@@ -338,7 +340,7 @@ public class AsyncRawEvaluationSetItemsClient {
     /**
      * Get details of an evaluation set item.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItem>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItem>> retrieve(
             String evaluationSetId, String itemId, RequestOptions requestOptions) {
         return retrieve(
                 evaluationSetId,
@@ -350,7 +352,7 @@ public class AsyncRawEvaluationSetItemsClient {
     /**
      * Get details of an evaluation set item.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItem>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItem>> retrieve(
             String evaluationSetId, String itemId, EvaluationSetItemsRetrieveRequest request) {
         return retrieve(evaluationSetId, itemId, request, null);
     }
@@ -358,7 +360,7 @@ public class AsyncRawEvaluationSetItemsClient {
     /**
      * Get details of an evaluation set item.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItem>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItem>> retrieve(
             String evaluationSetId,
             String itemId,
             EvaluationSetItemsRetrieveRequest request,
@@ -388,14 +390,14 @@ public class AsyncRawEvaluationSetItemsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<EvaluationSetItem>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItem>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EvaluationSetItem.class),
                                 response));
                         return;
@@ -466,7 +468,7 @@ public class AsyncRawEvaluationSetItemsClient {
     /**
      * If you need to change the expected output for a given evaluation set item, you can use this endpoint to update the item. This can be useful if you need to correct an error in the expected output or if the output of the extractor, classifier, or splitter has changed.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItem>> update(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItem>> update(
             String evaluationSetId, String itemId, EvaluationSetItemsUpdateRequest request) {
         return update(evaluationSetId, itemId, request, null);
     }
@@ -474,7 +476,7 @@ public class AsyncRawEvaluationSetItemsClient {
     /**
      * If you need to change the expected output for a given evaluation set item, you can use this endpoint to update the item. This can be useful if you need to correct an error in the expected output or if the output of the extractor, classifier, or splitter has changed.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItem>> update(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItem>> update(
             String evaluationSetId,
             String itemId,
             EvaluationSetItemsUpdateRequest request,
@@ -512,14 +514,14 @@ public class AsyncRawEvaluationSetItemsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<EvaluationSetItem>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItem>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EvaluationSetItem.class),
                                 response));
                         return;
@@ -590,7 +592,7 @@ public class AsyncRawEvaluationSetItemsClient {
     /**
      * Delete an evaluation set item.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItemsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItemsDeleteResponse>> delete(
             String evaluationSetId, String itemId) {
         return delete(
                 evaluationSetId,
@@ -601,7 +603,7 @@ public class AsyncRawEvaluationSetItemsClient {
     /**
      * Delete an evaluation set item.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItemsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItemsDeleteResponse>> delete(
             String evaluationSetId, String itemId, RequestOptions requestOptions) {
         return delete(
                 evaluationSetId,
@@ -613,7 +615,7 @@ public class AsyncRawEvaluationSetItemsClient {
     /**
      * Delete an evaluation set item.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItemsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItemsDeleteResponse>> delete(
             String evaluationSetId, String itemId, EvaluationSetItemsDeleteRequest request) {
         return delete(evaluationSetId, itemId, request, null);
     }
@@ -621,7 +623,7 @@ public class AsyncRawEvaluationSetItemsClient {
     /**
      * Delete an evaluation set item.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetItemsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItemsDeleteResponse>> delete(
             String evaluationSetId,
             String itemId,
             EvaluationSetItemsDeleteRequest request,
@@ -651,7 +653,7 @@ public class AsyncRawEvaluationSetItemsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<EvaluationSetItemsDeleteResponse>> future =
+        CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetItemsDeleteResponse>> future =
                 new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
@@ -659,7 +661,7 @@ public class AsyncRawEvaluationSetItemsClient {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, EvaluationSetItemsDeleteResponse.class),
                                 response));

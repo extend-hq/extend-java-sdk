@@ -5,8 +5,8 @@ package ai.extend.resources.splitters;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -47,7 +47,7 @@ public class RawSplittersClient {
      * List all splitters.
      * <p>Returns a summary of each splitter. Use <code>GET /splitters/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public ExtendClientHttpResponse<SplittersListResponse> list() {
+    public ExtendClientBaseHttpResponse<SplittersListResponse> list() {
         return list(SplittersListRequest.builder().build());
     }
 
@@ -55,7 +55,7 @@ public class RawSplittersClient {
      * List all splitters.
      * <p>Returns a summary of each splitter. Use <code>GET /splitters/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public ExtendClientHttpResponse<SplittersListResponse> list(RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<SplittersListResponse> list(RequestOptions requestOptions) {
         return list(SplittersListRequest.builder().build(), requestOptions);
     }
 
@@ -63,7 +63,7 @@ public class RawSplittersClient {
      * List all splitters.
      * <p>Returns a summary of each splitter. Use <code>GET /splitters/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public ExtendClientHttpResponse<SplittersListResponse> list(SplittersListRequest request) {
+    public ExtendClientBaseHttpResponse<SplittersListResponse> list(SplittersListRequest request) {
         return list(request, null);
     }
 
@@ -71,7 +71,7 @@ public class RawSplittersClient {
      * List all splitters.
      * <p>Returns a summary of each splitter. Use <code>GET /splitters/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public ExtendClientHttpResponse<SplittersListResponse> list(
+    public ExtendClientBaseHttpResponse<SplittersListResponse> list(
             SplittersListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -115,7 +115,7 @@ public class RawSplittersClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, SplittersListResponse.class), response);
             }
             try {
@@ -159,14 +159,15 @@ public class RawSplittersClient {
     /**
      * Create a new splitter.
      */
-    public ExtendClientHttpResponse<Splitter> create(SplittersCreateRequest request) {
+    public ExtendClientBaseHttpResponse<Splitter> create(SplittersCreateRequest request) {
         return create(request, null);
     }
 
     /**
      * Create a new splitter.
      */
-    public ExtendClientHttpResponse<Splitter> create(SplittersCreateRequest request, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<Splitter> create(
+            SplittersCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("splitters");
@@ -197,7 +198,7 @@ public class RawSplittersClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Splitter.class), response);
             }
             try {
@@ -241,28 +242,28 @@ public class RawSplittersClient {
     /**
      * Get details of a splitter.
      */
-    public ExtendClientHttpResponse<Splitter> retrieve(String id) {
+    public ExtendClientBaseHttpResponse<Splitter> retrieve(String id) {
         return retrieve(id, SplittersRetrieveRequest.builder().build());
     }
 
     /**
      * Get details of a splitter.
      */
-    public ExtendClientHttpResponse<Splitter> retrieve(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<Splitter> retrieve(String id, RequestOptions requestOptions) {
         return retrieve(id, SplittersRetrieveRequest.builder().build(), requestOptions);
     }
 
     /**
      * Get details of a splitter.
      */
-    public ExtendClientHttpResponse<Splitter> retrieve(String id, SplittersRetrieveRequest request) {
+    public ExtendClientBaseHttpResponse<Splitter> retrieve(String id, SplittersRetrieveRequest request) {
         return retrieve(id, request, null);
     }
 
     /**
      * Get details of a splitter.
      */
-    public ExtendClientHttpResponse<Splitter> retrieve(
+    public ExtendClientBaseHttpResponse<Splitter> retrieve(
             String id, SplittersRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -291,7 +292,7 @@ public class RawSplittersClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Splitter.class), response);
             }
             try {
@@ -335,28 +336,28 @@ public class RawSplittersClient {
     /**
      * Update an existing splitter.
      */
-    public ExtendClientHttpResponse<Splitter> update(String id) {
+    public ExtendClientBaseHttpResponse<Splitter> update(String id) {
         return update(id, SplittersUpdateRequest.builder().build());
     }
 
     /**
      * Update an existing splitter.
      */
-    public ExtendClientHttpResponse<Splitter> update(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<Splitter> update(String id, RequestOptions requestOptions) {
         return update(id, SplittersUpdateRequest.builder().build(), requestOptions);
     }
 
     /**
      * Update an existing splitter.
      */
-    public ExtendClientHttpResponse<Splitter> update(String id, SplittersUpdateRequest request) {
+    public ExtendClientBaseHttpResponse<Splitter> update(String id, SplittersUpdateRequest request) {
         return update(id, request, null);
     }
 
     /**
      * Update an existing splitter.
      */
-    public ExtendClientHttpResponse<Splitter> update(
+    public ExtendClientBaseHttpResponse<Splitter> update(
             String id, SplittersUpdateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -393,7 +394,7 @@ public class RawSplittersClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Splitter.class), response);
             }
             try {

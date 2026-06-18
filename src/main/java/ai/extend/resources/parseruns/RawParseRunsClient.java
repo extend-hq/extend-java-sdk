@@ -5,8 +5,8 @@ package ai.extend.resources.parseruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -51,7 +51,7 @@ public class RawParseRunsClient {
      * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
-    public ExtendClientHttpResponse<ParseRunsListResponse> list() {
+    public ExtendClientBaseHttpResponse<ParseRunsListResponse> list() {
         return list(ParseRunsListRequest.builder().build());
     }
 
@@ -59,7 +59,7 @@ public class RawParseRunsClient {
      * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
-    public ExtendClientHttpResponse<ParseRunsListResponse> list(RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<ParseRunsListResponse> list(RequestOptions requestOptions) {
         return list(ParseRunsListRequest.builder().build(), requestOptions);
     }
 
@@ -67,7 +67,7 @@ public class RawParseRunsClient {
      * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
-    public ExtendClientHttpResponse<ParseRunsListResponse> list(ParseRunsListRequest request) {
+    public ExtendClientBaseHttpResponse<ParseRunsListResponse> list(ParseRunsListRequest request) {
         return list(request, null);
     }
 
@@ -75,7 +75,7 @@ public class RawParseRunsClient {
      * List parse runs, with optional filters for status, batch ID, source, and file name.
      * <p>Returns a paginated list of parse runs. Use <code>GET /parse_runs/{id}</code> to retrieve the full result including output for a specific run.</p>
      */
-    public ExtendClientHttpResponse<ParseRunsListResponse> list(
+    public ExtendClientBaseHttpResponse<ParseRunsListResponse> list(
             ParseRunsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -131,7 +131,7 @@ public class RawParseRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ParseRunsListResponse.class), response);
             }
             try {
@@ -177,7 +177,7 @@ public class RawParseRunsClient {
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Parse Run endpoint for results.</p>
      */
-    public ExtendClientHttpResponse<ParseRun> create(ParseRunsCreateRequest request) {
+    public ExtendClientBaseHttpResponse<ParseRun> create(ParseRunsCreateRequest request) {
         return create(request, null);
     }
 
@@ -186,7 +186,8 @@ public class RawParseRunsClient {
      * <p>The Parse endpoint allows you to convert documents into structured, machine-readable formats with fine-grained control over the parsing process. This endpoint is ideal for extracting cleaned document content to be used as context for downstream processing, e.g. RAG pipelines, custom ingestion pipelines, embeddings classification, etc.</p>
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Parse Run endpoint for results.</p>
      */
-    public ExtendClientHttpResponse<ParseRun> create(ParseRunsCreateRequest request, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<ParseRun> create(
+            ParseRunsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("parse_runs");
@@ -217,7 +218,7 @@ public class RawParseRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ParseRun.class), response);
             }
             try {
@@ -262,7 +263,7 @@ public class RawParseRunsClient {
      * Retrieve the status and results of a parse run.
      * <p>Use this endpoint to get results for a parse run that has already completed, or to check on the status of a parse run initiated by the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/parse/create-parse-run">Create Parse Run</a> endpoint.</p>
      */
-    public ExtendClientHttpResponse<ParseRun> retrieve(String id) {
+    public ExtendClientBaseHttpResponse<ParseRun> retrieve(String id) {
         return retrieve(id, ParseRunsRetrieveRequest.builder().build());
     }
 
@@ -270,7 +271,7 @@ public class RawParseRunsClient {
      * Retrieve the status and results of a parse run.
      * <p>Use this endpoint to get results for a parse run that has already completed, or to check on the status of a parse run initiated by the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/parse/create-parse-run">Create Parse Run</a> endpoint.</p>
      */
-    public ExtendClientHttpResponse<ParseRun> retrieve(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<ParseRun> retrieve(String id, RequestOptions requestOptions) {
         return retrieve(id, ParseRunsRetrieveRequest.builder().build(), requestOptions);
     }
 
@@ -278,7 +279,7 @@ public class RawParseRunsClient {
      * Retrieve the status and results of a parse run.
      * <p>Use this endpoint to get results for a parse run that has already completed, or to check on the status of a parse run initiated by the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/parse/create-parse-run">Create Parse Run</a> endpoint.</p>
      */
-    public ExtendClientHttpResponse<ParseRun> retrieve(String id, ParseRunsRetrieveRequest request) {
+    public ExtendClientBaseHttpResponse<ParseRun> retrieve(String id, ParseRunsRetrieveRequest request) {
         return retrieve(id, request, null);
     }
 
@@ -286,7 +287,7 @@ public class RawParseRunsClient {
      * Retrieve the status and results of a parse run.
      * <p>Use this endpoint to get results for a parse run that has already completed, or to check on the status of a parse run initiated by the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/parse/create-parse-run">Create Parse Run</a> endpoint.</p>
      */
-    public ExtendClientHttpResponse<ParseRun> retrieve(
+    public ExtendClientBaseHttpResponse<ParseRun> retrieve(
             String id, ParseRunsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -319,7 +320,7 @@ public class RawParseRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ParseRun.class), response);
             }
             try {
@@ -364,7 +365,7 @@ public class RawParseRunsClient {
      * Delete a parse run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<ParseRunsDeleteResponse> delete(String id) {
+    public ExtendClientBaseHttpResponse<ParseRunsDeleteResponse> delete(String id) {
         return delete(id, ParseRunsDeleteRequest.builder().build());
     }
 
@@ -372,7 +373,7 @@ public class RawParseRunsClient {
      * Delete a parse run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<ParseRunsDeleteResponse> delete(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<ParseRunsDeleteResponse> delete(String id, RequestOptions requestOptions) {
         return delete(id, ParseRunsDeleteRequest.builder().build(), requestOptions);
     }
 
@@ -380,7 +381,7 @@ public class RawParseRunsClient {
      * Delete a parse run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<ParseRunsDeleteResponse> delete(String id, ParseRunsDeleteRequest request) {
+    public ExtendClientBaseHttpResponse<ParseRunsDeleteResponse> delete(String id, ParseRunsDeleteRequest request) {
         return delete(id, request, null);
     }
 
@@ -388,7 +389,7 @@ public class RawParseRunsClient {
      * Delete a parse run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<ParseRunsDeleteResponse> delete(
+    public ExtendClientBaseHttpResponse<ParseRunsDeleteResponse> delete(
             String id, ParseRunsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -417,7 +418,7 @@ public class RawParseRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ParseRunsDeleteResponse.class),
                         response);
             }
@@ -463,7 +464,7 @@ public class RawParseRunsClient {
      * Cancel an in-progress parse run.
      * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public ExtendClientHttpResponse<ParseRun> cancel(String id) {
+    public ExtendClientBaseHttpResponse<ParseRun> cancel(String id) {
         return cancel(id, ParseRunsCancelRequest.builder().build());
     }
 
@@ -471,7 +472,7 @@ public class RawParseRunsClient {
      * Cancel an in-progress parse run.
      * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public ExtendClientHttpResponse<ParseRun> cancel(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<ParseRun> cancel(String id, RequestOptions requestOptions) {
         return cancel(id, ParseRunsCancelRequest.builder().build(), requestOptions);
     }
 
@@ -479,7 +480,7 @@ public class RawParseRunsClient {
      * Cancel an in-progress parse run.
      * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public ExtendClientHttpResponse<ParseRun> cancel(String id, ParseRunsCancelRequest request) {
+    public ExtendClientBaseHttpResponse<ParseRun> cancel(String id, ParseRunsCancelRequest request) {
         return cancel(id, request, null);
     }
 
@@ -487,7 +488,7 @@ public class RawParseRunsClient {
      * Cancel an in-progress parse run.
      * <p>Note: Only parse runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Parse runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public ExtendClientHttpResponse<ParseRun> cancel(
+    public ExtendClientBaseHttpResponse<ParseRun> cancel(
             String id, ParseRunsCancelRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -517,7 +518,7 @@ public class RawParseRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ParseRun.class), response);
             }
             try {
@@ -572,7 +573,7 @@ public class RawParseRunsClient {
      * <li>File input supports URLs, Extend file IDs, and raw text strings.</li>
      * </ul>
      */
-    public ExtendClientHttpResponse<BatchRun> createBatch(ParseRunsCreateBatchRequest request) {
+    public ExtendClientBaseHttpResponse<BatchRun> createBatch(ParseRunsCreateBatchRequest request) {
         return createBatch(request, null);
     }
 
@@ -590,7 +591,7 @@ public class RawParseRunsClient {
      * <li>File input supports URLs, Extend file IDs, and raw text strings.</li>
      * </ul>
      */
-    public ExtendClientHttpResponse<BatchRun> createBatch(
+    public ExtendClientBaseHttpResponse<BatchRun> createBatch(
             ParseRunsCreateBatchRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -622,7 +623,7 @@ public class RawParseRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, BatchRun.class), response);
             }
             try {

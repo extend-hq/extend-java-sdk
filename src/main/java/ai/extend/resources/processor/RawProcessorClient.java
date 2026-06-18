@@ -5,8 +5,8 @@ package ai.extend.resources.processor;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -42,28 +42,28 @@ public class RawProcessorClient {
     /**
      * List all processors in your organization
      */
-    public ExtendClientHttpResponse<LegacyListProcessorsResponse> list() {
+    public ExtendClientBaseHttpResponse<LegacyListProcessorsResponse> list() {
         return list(ProcessorListRequest.builder().build());
     }
 
     /**
      * List all processors in your organization
      */
-    public ExtendClientHttpResponse<LegacyListProcessorsResponse> list(RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<LegacyListProcessorsResponse> list(RequestOptions requestOptions) {
         return list(ProcessorListRequest.builder().build(), requestOptions);
     }
 
     /**
      * List all processors in your organization
      */
-    public ExtendClientHttpResponse<LegacyListProcessorsResponse> list(ProcessorListRequest request) {
+    public ExtendClientBaseHttpResponse<LegacyListProcessorsResponse> list(ProcessorListRequest request) {
         return list(request, null);
     }
 
     /**
      * List all processors in your organization
      */
-    public ExtendClientHttpResponse<LegacyListProcessorsResponse> list(
+    public ExtendClientBaseHttpResponse<LegacyListProcessorsResponse> list(
             ProcessorListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -111,7 +111,7 @@ public class RawProcessorClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, LegacyListProcessorsResponse.class),
                         response);
             }
@@ -144,14 +144,14 @@ public class RawProcessorClient {
     /**
      * Create a new processor in Extend, optionally cloning from an existing processor
      */
-    public ExtendClientHttpResponse<ProcessorCreateResponse> create(ProcessorCreateRequest request) {
+    public ExtendClientBaseHttpResponse<ProcessorCreateResponse> create(ProcessorCreateRequest request) {
         return create(request, null);
     }
 
     /**
      * Create a new processor in Extend, optionally cloning from an existing processor
      */
-    public ExtendClientHttpResponse<ProcessorCreateResponse> create(
+    public ExtendClientBaseHttpResponse<ProcessorCreateResponse> create(
             ProcessorCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -183,7 +183,7 @@ public class RawProcessorClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ProcessorCreateResponse.class),
                         response);
             }
@@ -213,28 +213,28 @@ public class RawProcessorClient {
     /**
      * Update an existing processor in Extend
      */
-    public ExtendClientHttpResponse<ProcessorUpdateResponse> update(String id) {
+    public ExtendClientBaseHttpResponse<ProcessorUpdateResponse> update(String id) {
         return update(id, ProcessorUpdateRequest.builder().build());
     }
 
     /**
      * Update an existing processor in Extend
      */
-    public ExtendClientHttpResponse<ProcessorUpdateResponse> update(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<ProcessorUpdateResponse> update(String id, RequestOptions requestOptions) {
         return update(id, ProcessorUpdateRequest.builder().build(), requestOptions);
     }
 
     /**
      * Update an existing processor in Extend
      */
-    public ExtendClientHttpResponse<ProcessorUpdateResponse> update(String id, ProcessorUpdateRequest request) {
+    public ExtendClientBaseHttpResponse<ProcessorUpdateResponse> update(String id, ProcessorUpdateRequest request) {
         return update(id, request, null);
     }
 
     /**
      * Update an existing processor in Extend
      */
-    public ExtendClientHttpResponse<ProcessorUpdateResponse> update(
+    public ExtendClientBaseHttpResponse<ProcessorUpdateResponse> update(
             String id, ProcessorUpdateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -271,7 +271,7 @@ public class RawProcessorClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ProcessorUpdateResponse.class),
                         response);
             }

@@ -5,8 +5,8 @@ package ai.extend.resources.splitruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -51,7 +51,7 @@ public class RawSplitRunsClient {
      * List all split runs.
      * <p>Returns a summary of each run. Use <code>GET /split_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public ExtendClientHttpResponse<SplitRunsListResponse> list() {
+    public ExtendClientBaseHttpResponse<SplitRunsListResponse> list() {
         return list(SplitRunsListRequest.builder().build());
     }
 
@@ -59,7 +59,7 @@ public class RawSplitRunsClient {
      * List all split runs.
      * <p>Returns a summary of each run. Use <code>GET /split_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public ExtendClientHttpResponse<SplitRunsListResponse> list(RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<SplitRunsListResponse> list(RequestOptions requestOptions) {
         return list(SplitRunsListRequest.builder().build(), requestOptions);
     }
 
@@ -67,7 +67,7 @@ public class RawSplitRunsClient {
      * List all split runs.
      * <p>Returns a summary of each run. Use <code>GET /split_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public ExtendClientHttpResponse<SplitRunsListResponse> list(SplitRunsListRequest request) {
+    public ExtendClientBaseHttpResponse<SplitRunsListResponse> list(SplitRunsListRequest request) {
         return list(request, null);
     }
 
@@ -75,7 +75,7 @@ public class RawSplitRunsClient {
      * List all split runs.
      * <p>Returns a summary of each run. Use <code>GET /split_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public ExtendClientHttpResponse<SplitRunsListResponse> list(
+    public ExtendClientBaseHttpResponse<SplitRunsListResponse> list(
             SplitRunsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -143,7 +143,7 @@ public class RawSplitRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, SplitRunsListResponse.class), response);
             }
             try {
@@ -188,7 +188,7 @@ public class RawSplitRunsClient {
      * Split a document into multiple parts using an existing splitter or an inline configuration.
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Split Run endpoint for results.</p>
      */
-    public ExtendClientHttpResponse<SplitRun> create(SplitRunsCreateRequest request) {
+    public ExtendClientBaseHttpResponse<SplitRun> create(SplitRunsCreateRequest request) {
         return create(request, null);
     }
 
@@ -196,7 +196,8 @@ public class RawSplitRunsClient {
      * Split a document into multiple parts using an existing splitter or an inline configuration.
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Split Run endpoint for results.</p>
      */
-    public ExtendClientHttpResponse<SplitRun> create(SplitRunsCreateRequest request, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<SplitRun> create(
+            SplitRunsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("split_runs");
@@ -227,7 +228,7 @@ public class RawSplitRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, SplitRun.class), response);
             }
             try {
@@ -272,7 +273,7 @@ public class RawSplitRunsClient {
      * Retrieve details about a specific split run, including its status and outputs.
      * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public ExtendClientHttpResponse<SplitRun> retrieve(String id) {
+    public ExtendClientBaseHttpResponse<SplitRun> retrieve(String id) {
         return retrieve(id, SplitRunsRetrieveRequest.builder().build());
     }
 
@@ -280,7 +281,7 @@ public class RawSplitRunsClient {
      * Retrieve details about a specific split run, including its status and outputs.
      * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public ExtendClientHttpResponse<SplitRun> retrieve(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<SplitRun> retrieve(String id, RequestOptions requestOptions) {
         return retrieve(id, SplitRunsRetrieveRequest.builder().build(), requestOptions);
     }
 
@@ -288,7 +289,7 @@ public class RawSplitRunsClient {
      * Retrieve details about a specific split run, including its status and outputs.
      * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public ExtendClientHttpResponse<SplitRun> retrieve(String id, SplitRunsRetrieveRequest request) {
+    public ExtendClientBaseHttpResponse<SplitRun> retrieve(String id, SplitRunsRetrieveRequest request) {
         return retrieve(id, request, null);
     }
 
@@ -296,7 +297,7 @@ public class RawSplitRunsClient {
      * Retrieve details about a specific split run, including its status and outputs.
      * <p>A common use case for this endpoint is to poll for the status and final output of a split run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/split/create-split-run">Create Split Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public ExtendClientHttpResponse<SplitRun> retrieve(
+    public ExtendClientBaseHttpResponse<SplitRun> retrieve(
             String id, SplitRunsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -325,7 +326,7 @@ public class RawSplitRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, SplitRun.class), response);
             }
             try {
@@ -370,7 +371,7 @@ public class RawSplitRunsClient {
      * Delete a split run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<SplitRunsDeleteResponse> delete(String id) {
+    public ExtendClientBaseHttpResponse<SplitRunsDeleteResponse> delete(String id) {
         return delete(id, SplitRunsDeleteRequest.builder().build());
     }
 
@@ -378,7 +379,7 @@ public class RawSplitRunsClient {
      * Delete a split run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<SplitRunsDeleteResponse> delete(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<SplitRunsDeleteResponse> delete(String id, RequestOptions requestOptions) {
         return delete(id, SplitRunsDeleteRequest.builder().build(), requestOptions);
     }
 
@@ -386,7 +387,7 @@ public class RawSplitRunsClient {
      * Delete a split run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<SplitRunsDeleteResponse> delete(String id, SplitRunsDeleteRequest request) {
+    public ExtendClientBaseHttpResponse<SplitRunsDeleteResponse> delete(String id, SplitRunsDeleteRequest request) {
         return delete(id, request, null);
     }
 
@@ -394,7 +395,7 @@ public class RawSplitRunsClient {
      * Delete a split run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<SplitRunsDeleteResponse> delete(
+    public ExtendClientBaseHttpResponse<SplitRunsDeleteResponse> delete(
             String id, SplitRunsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -423,7 +424,7 @@ public class RawSplitRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, SplitRunsDeleteResponse.class),
                         response);
             }
@@ -469,7 +470,7 @@ public class RawSplitRunsClient {
      * Cancel an in-progress split run.
      * <p>Note: Only split runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Splitter runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public ExtendClientHttpResponse<SplitRun> cancel(String id) {
+    public ExtendClientBaseHttpResponse<SplitRun> cancel(String id) {
         return cancel(id, SplitRunsCancelRequest.builder().build());
     }
 
@@ -477,7 +478,7 @@ public class RawSplitRunsClient {
      * Cancel an in-progress split run.
      * <p>Note: Only split runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Splitter runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public ExtendClientHttpResponse<SplitRun> cancel(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<SplitRun> cancel(String id, RequestOptions requestOptions) {
         return cancel(id, SplitRunsCancelRequest.builder().build(), requestOptions);
     }
 
@@ -485,7 +486,7 @@ public class RawSplitRunsClient {
      * Cancel an in-progress split run.
      * <p>Note: Only split runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Splitter runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public ExtendClientHttpResponse<SplitRun> cancel(String id, SplitRunsCancelRequest request) {
+    public ExtendClientBaseHttpResponse<SplitRun> cancel(String id, SplitRunsCancelRequest request) {
         return cancel(id, request, null);
     }
 
@@ -493,7 +494,7 @@ public class RawSplitRunsClient {
      * Cancel an in-progress split run.
      * <p>Note: Only split runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Splitter runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public ExtendClientHttpResponse<SplitRun> cancel(
+    public ExtendClientBaseHttpResponse<SplitRun> cancel(
             String id, SplitRunsCancelRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -523,7 +524,7 @@ public class RawSplitRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, SplitRun.class), response);
             }
             try {
@@ -580,7 +581,7 @@ public class RawSplitRunsClient {
      * <li>Raw text input (<code>FileFromText</code>) is not supported for split runs. Use a URL or file ID.</li>
      * </ul>
      */
-    public ExtendClientHttpResponse<BatchRun> createBatch(SplitRunsCreateBatchRequest request) {
+    public ExtendClientBaseHttpResponse<BatchRun> createBatch(SplitRunsCreateBatchRequest request) {
         return createBatch(request, null);
     }
 
@@ -600,7 +601,7 @@ public class RawSplitRunsClient {
      * <li>Raw text input (<code>FileFromText</code>) is not supported for split runs. Use a URL or file ID.</li>
      * </ul>
      */
-    public ExtendClientHttpResponse<BatchRun> createBatch(
+    public ExtendClientBaseHttpResponse<BatchRun> createBatch(
             SplitRunsCreateBatchRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -632,7 +633,7 @@ public class RawSplitRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, BatchRun.class), response);
             }
             try {

@@ -5,8 +5,8 @@ package ai.extend.resources.processorversion;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.RequestOptions;
@@ -41,7 +41,7 @@ public class RawProcessorVersionClient {
      * <p>Versions are typically returned in descending order of creation (newest first), but this should be confirmed in the actual implementation.
      * The <code>draft</code> version is the latest unpublished version of the processor, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public ExtendClientHttpResponse<ProcessorVersionListResponse> list(String id) {
+    public ExtendClientBaseHttpResponse<ProcessorVersionListResponse> list(String id) {
         return list(id, ProcessorVersionListRequest.builder().build());
     }
 
@@ -50,7 +50,7 @@ public class RawProcessorVersionClient {
      * <p>Versions are typically returned in descending order of creation (newest first), but this should be confirmed in the actual implementation.
      * The <code>draft</code> version is the latest unpublished version of the processor, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public ExtendClientHttpResponse<ProcessorVersionListResponse> list(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<ProcessorVersionListResponse> list(String id, RequestOptions requestOptions) {
         return list(id, ProcessorVersionListRequest.builder().build(), requestOptions);
     }
 
@@ -59,7 +59,8 @@ public class RawProcessorVersionClient {
      * <p>Versions are typically returned in descending order of creation (newest first), but this should be confirmed in the actual implementation.
      * The <code>draft</code> version is the latest unpublished version of the processor, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public ExtendClientHttpResponse<ProcessorVersionListResponse> list(String id, ProcessorVersionListRequest request) {
+    public ExtendClientBaseHttpResponse<ProcessorVersionListResponse> list(
+            String id, ProcessorVersionListRequest request) {
         return list(id, request, null);
     }
 
@@ -68,7 +69,7 @@ public class RawProcessorVersionClient {
      * <p>Versions are typically returned in descending order of creation (newest first), but this should be confirmed in the actual implementation.
      * The <code>draft</code> version is the latest unpublished version of the processor, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public ExtendClientHttpResponse<ProcessorVersionListResponse> list(
+    public ExtendClientBaseHttpResponse<ProcessorVersionListResponse> list(
             String id, ProcessorVersionListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -98,7 +99,7 @@ public class RawProcessorVersionClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ProcessorVersionListResponse.class),
                         response);
             }
@@ -129,7 +130,7 @@ public class RawProcessorVersionClient {
      * This endpoint allows you to publish a new version of an existing processor. Publishing a new version creates a snapshot of the processor's current configuration and makes it available for use in workflows.
      * <p>Publishing a new version does not automatically update existing workflows using this processor. You may need to manually update workflows to use the new version if desired.</p>
      */
-    public ExtendClientHttpResponse<ProcessorVersionCreateResponse> create(
+    public ExtendClientBaseHttpResponse<ProcessorVersionCreateResponse> create(
             String id, ProcessorVersionCreateRequest request) {
         return create(id, request, null);
     }
@@ -138,7 +139,7 @@ public class RawProcessorVersionClient {
      * This endpoint allows you to publish a new version of an existing processor. Publishing a new version creates a snapshot of the processor's current configuration and makes it available for use in workflows.
      * <p>Publishing a new version does not automatically update existing workflows using this processor. You may need to manually update workflows to use the new version if desired.</p>
      */
-    public ExtendClientHttpResponse<ProcessorVersionCreateResponse> create(
+    public ExtendClientBaseHttpResponse<ProcessorVersionCreateResponse> create(
             String id, ProcessorVersionCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -176,7 +177,7 @@ public class RawProcessorVersionClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ProcessorVersionCreateResponse.class),
                         response);
             }
@@ -203,7 +204,8 @@ public class RawProcessorVersionClient {
     /**
      * Retrieve a specific version of a processor in Extend
      */
-    public ExtendClientHttpResponse<ProcessorVersionGetResponse> get(String processorId, String processorVersionId) {
+    public ExtendClientBaseHttpResponse<ProcessorVersionGetResponse> get(
+            String processorId, String processorVersionId) {
         return get(
                 processorId,
                 processorVersionId,
@@ -213,7 +215,7 @@ public class RawProcessorVersionClient {
     /**
      * Retrieve a specific version of a processor in Extend
      */
-    public ExtendClientHttpResponse<ProcessorVersionGetResponse> get(
+    public ExtendClientBaseHttpResponse<ProcessorVersionGetResponse> get(
             String processorId, String processorVersionId, RequestOptions requestOptions) {
         return get(
                 processorId,
@@ -225,7 +227,7 @@ public class RawProcessorVersionClient {
     /**
      * Retrieve a specific version of a processor in Extend
      */
-    public ExtendClientHttpResponse<ProcessorVersionGetResponse> get(
+    public ExtendClientBaseHttpResponse<ProcessorVersionGetResponse> get(
             String processorId, String processorVersionId, ProcessorVersionGetRequest request) {
         return get(processorId, processorVersionId, request, null);
     }
@@ -233,7 +235,7 @@ public class RawProcessorVersionClient {
     /**
      * Retrieve a specific version of a processor in Extend
      */
-    public ExtendClientHttpResponse<ProcessorVersionGetResponse> get(
+    public ExtendClientBaseHttpResponse<ProcessorVersionGetResponse> get(
             String processorId,
             String processorVersionId,
             ProcessorVersionGetRequest request,
@@ -267,7 +269,7 @@ public class RawProcessorVersionClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ProcessorVersionGetResponse.class),
                         response);
             }

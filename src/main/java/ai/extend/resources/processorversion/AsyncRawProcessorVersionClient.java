@@ -5,8 +5,8 @@ package ai.extend.resources.processorversion;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.RequestOptions;
@@ -45,7 +45,7 @@ public class AsyncRawProcessorVersionClient {
      * <p>Versions are typically returned in descending order of creation (newest first), but this should be confirmed in the actual implementation.
      * The <code>draft</code> version is the latest unpublished version of the processor, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorVersionListResponse>> list(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorVersionListResponse>> list(String id) {
         return list(id, ProcessorVersionListRequest.builder().build());
     }
 
@@ -54,7 +54,7 @@ public class AsyncRawProcessorVersionClient {
      * <p>Versions are typically returned in descending order of creation (newest first), but this should be confirmed in the actual implementation.
      * The <code>draft</code> version is the latest unpublished version of the processor, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorVersionListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorVersionListResponse>> list(
             String id, RequestOptions requestOptions) {
         return list(id, ProcessorVersionListRequest.builder().build(), requestOptions);
     }
@@ -64,7 +64,7 @@ public class AsyncRawProcessorVersionClient {
      * <p>Versions are typically returned in descending order of creation (newest first), but this should be confirmed in the actual implementation.
      * The <code>draft</code> version is the latest unpublished version of the processor, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorVersionListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorVersionListResponse>> list(
             String id, ProcessorVersionListRequest request) {
         return list(id, request, null);
     }
@@ -74,7 +74,7 @@ public class AsyncRawProcessorVersionClient {
      * <p>Versions are typically returned in descending order of creation (newest first), but this should be confirmed in the actual implementation.
      * The <code>draft</code> version is the latest unpublished version of the processor, which can be published to create a new version. It might not have any changes from the last published version.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorVersionListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorVersionListResponse>> list(
             String id, ProcessorVersionListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -100,14 +100,15 @@ public class AsyncRawProcessorVersionClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ProcessorVersionListResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ProcessorVersionListResponse>> future =
+                new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, ProcessorVersionListResponse.class),
                                 response));
@@ -155,7 +156,7 @@ public class AsyncRawProcessorVersionClient {
      * This endpoint allows you to publish a new version of an existing processor. Publishing a new version creates a snapshot of the processor's current configuration and makes it available for use in workflows.
      * <p>Publishing a new version does not automatically update existing workflows using this processor. You may need to manually update workflows to use the new version if desired.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorVersionCreateResponse>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorVersionCreateResponse>> create(
             String id, ProcessorVersionCreateRequest request) {
         return create(id, request, null);
     }
@@ -164,7 +165,7 @@ public class AsyncRawProcessorVersionClient {
      * This endpoint allows you to publish a new version of an existing processor. Publishing a new version creates a snapshot of the processor's current configuration and makes it available for use in workflows.
      * <p>Publishing a new version does not automatically update existing workflows using this processor. You may need to manually update workflows to use the new version if desired.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorVersionCreateResponse>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorVersionCreateResponse>> create(
             String id, ProcessorVersionCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -198,14 +199,15 @@ public class AsyncRawProcessorVersionClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ProcessorVersionCreateResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ProcessorVersionCreateResponse>> future =
+                new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, ProcessorVersionCreateResponse.class),
                                 response));
@@ -247,7 +249,7 @@ public class AsyncRawProcessorVersionClient {
     /**
      * Retrieve a specific version of a processor in Extend
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorVersionGetResponse>> get(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorVersionGetResponse>> get(
             String processorId, String processorVersionId) {
         return get(
                 processorId,
@@ -258,7 +260,7 @@ public class AsyncRawProcessorVersionClient {
     /**
      * Retrieve a specific version of a processor in Extend
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorVersionGetResponse>> get(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorVersionGetResponse>> get(
             String processorId, String processorVersionId, RequestOptions requestOptions) {
         return get(
                 processorId,
@@ -270,7 +272,7 @@ public class AsyncRawProcessorVersionClient {
     /**
      * Retrieve a specific version of a processor in Extend
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorVersionGetResponse>> get(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorVersionGetResponse>> get(
             String processorId, String processorVersionId, ProcessorVersionGetRequest request) {
         return get(processorId, processorVersionId, request, null);
     }
@@ -278,7 +280,7 @@ public class AsyncRawProcessorVersionClient {
     /**
      * Retrieve a specific version of a processor in Extend
      */
-    public CompletableFuture<ExtendClientHttpResponse<ProcessorVersionGetResponse>> get(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ProcessorVersionGetResponse>> get(
             String processorId,
             String processorVersionId,
             ProcessorVersionGetRequest request,
@@ -308,14 +310,14 @@ public class AsyncRawProcessorVersionClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ProcessorVersionGetResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ProcessorVersionGetResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, ProcessorVersionGetResponse.class),
                                 response));

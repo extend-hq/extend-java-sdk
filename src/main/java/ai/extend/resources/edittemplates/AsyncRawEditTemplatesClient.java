@@ -5,8 +5,8 @@ package ai.extend.resources.edittemplates;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.RequestOptions;
 import ai.extend.errors.BadRequestError;
@@ -44,7 +44,7 @@ public class AsyncRawEditTemplatesClient {
      * Retrieve a saved edit template by ID.
      * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /edit_schemas/generate</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EditTemplate>> retrieve(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<EditTemplate>> retrieve(String id) {
         return retrieve(id, EditTemplatesRetrieveRequest.builder().build());
     }
 
@@ -52,7 +52,7 @@ public class AsyncRawEditTemplatesClient {
      * Retrieve a saved edit template by ID.
      * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /edit_schemas/generate</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EditTemplate>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EditTemplate>> retrieve(
             String id, RequestOptions requestOptions) {
         return retrieve(id, EditTemplatesRetrieveRequest.builder().build(), requestOptions);
     }
@@ -61,7 +61,7 @@ public class AsyncRawEditTemplatesClient {
      * Retrieve a saved edit template by ID.
      * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /edit_schemas/generate</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EditTemplate>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EditTemplate>> retrieve(
             String id, EditTemplatesRetrieveRequest request) {
         return retrieve(id, request, null);
     }
@@ -70,7 +70,7 @@ public class AsyncRawEditTemplatesClient {
      * Retrieve a saved edit template by ID.
      * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /edit_schemas/generate</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EditTemplate>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EditTemplate>> retrieve(
             String id, EditTemplatesRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -95,14 +95,14 @@ public class AsyncRawEditTemplatesClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<EditTemplate>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<EditTemplate>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EditTemplate.class), response));
                         return;
                     }

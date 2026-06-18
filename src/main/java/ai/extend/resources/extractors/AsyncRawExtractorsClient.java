@@ -5,8 +5,8 @@ package ai.extend.resources.extractors;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -51,7 +51,7 @@ public class AsyncRawExtractorsClient {
      * List all extractors.
      * <p>Returns a summary of each extractor. Use <code>GET /extractors/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractorsListResponse>> list() {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractorsListResponse>> list() {
         return list(ExtractorsListRequest.builder().build());
     }
 
@@ -59,7 +59,7 @@ public class AsyncRawExtractorsClient {
      * List all extractors.
      * <p>Returns a summary of each extractor. Use <code>GET /extractors/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractorsListResponse>> list(RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractorsListResponse>> list(RequestOptions requestOptions) {
         return list(ExtractorsListRequest.builder().build(), requestOptions);
     }
 
@@ -67,7 +67,7 @@ public class AsyncRawExtractorsClient {
      * List all extractors.
      * <p>Returns a summary of each extractor. Use <code>GET /extractors/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractorsListResponse>> list(ExtractorsListRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractorsListResponse>> list(ExtractorsListRequest request) {
         return list(request, null);
     }
 
@@ -75,7 +75,7 @@ public class AsyncRawExtractorsClient {
      * List all extractors.
      * <p>Returns a summary of each extractor. Use <code>GET /extractors/{id}</code> to retrieve the full object including <code>draftVersion</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<ExtractorsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<ExtractorsListResponse>> list(
             ExtractorsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -115,14 +115,14 @@ public class AsyncRawExtractorsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<ExtractorsListResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<ExtractorsListResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtractorsListResponse.class),
                                 response));
                         return;
@@ -194,7 +194,7 @@ public class AsyncRawExtractorsClient {
      * Create a new extractor.
      * <p>You can optionally provide a <code>generate</code> object to automatically generate an extraction schema from sample documents using AI. <code>generate</code> is mutually exclusive with <code>config</code> and <code>cloneExtractorId</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<Extractor>> create(ExtractorsCreateRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Extractor>> create(ExtractorsCreateRequest request) {
         return create(request, null);
     }
 
@@ -202,7 +202,7 @@ public class AsyncRawExtractorsClient {
      * Create a new extractor.
      * <p>You can optionally provide a <code>generate</code> object to automatically generate an extraction schema from sample documents using AI. <code>generate</code> is mutually exclusive with <code>config</code> and <code>cloneExtractorId</code>.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<Extractor>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<Extractor>> create(
             ExtractorsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -230,14 +230,14 @@ public class AsyncRawExtractorsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<Extractor>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<Extractor>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Extractor.class), response));
                         return;
                     }
@@ -307,21 +307,22 @@ public class AsyncRawExtractorsClient {
     /**
      * Get details of an extractor.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Extractor>> retrieve(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Extractor>> retrieve(String id) {
         return retrieve(id, ExtractorsRetrieveRequest.builder().build());
     }
 
     /**
      * Get details of an extractor.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Extractor>> retrieve(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Extractor>> retrieve(
+            String id, RequestOptions requestOptions) {
         return retrieve(id, ExtractorsRetrieveRequest.builder().build(), requestOptions);
     }
 
     /**
      * Get details of an extractor.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Extractor>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<Extractor>> retrieve(
             String id, ExtractorsRetrieveRequest request) {
         return retrieve(id, request, null);
     }
@@ -329,7 +330,7 @@ public class AsyncRawExtractorsClient {
     /**
      * Get details of an extractor.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Extractor>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<Extractor>> retrieve(
             String id, ExtractorsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -354,14 +355,14 @@ public class AsyncRawExtractorsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<Extractor>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<Extractor>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Extractor.class), response));
                         return;
                     }
@@ -431,28 +432,29 @@ public class AsyncRawExtractorsClient {
     /**
      * Update an existing extractor.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Extractor>> update(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Extractor>> update(String id) {
         return update(id, ExtractorsUpdateRequest.builder().build());
     }
 
     /**
      * Update an existing extractor.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Extractor>> update(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Extractor>> update(String id, RequestOptions requestOptions) {
         return update(id, ExtractorsUpdateRequest.builder().build(), requestOptions);
     }
 
     /**
      * Update an existing extractor.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Extractor>> update(String id, ExtractorsUpdateRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<Extractor>> update(
+            String id, ExtractorsUpdateRequest request) {
         return update(id, request, null);
     }
 
     /**
      * Update an existing extractor.
      */
-    public CompletableFuture<ExtendClientHttpResponse<Extractor>> update(
+    public CompletableFuture<ExtendClientBaseHttpResponse<Extractor>> update(
             String id, ExtractorsUpdateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -485,14 +487,14 @@ public class AsyncRawExtractorsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<Extractor>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<Extractor>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Extractor.class), response));
                         return;
                     }

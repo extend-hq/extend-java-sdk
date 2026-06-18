@@ -4,7 +4,10 @@
   "generatorVersion": "3.34.8",
   "generatorConfig": {
     "publish-to": "central",
-    "client-class-name": "ExtendClient",
+    "client-class-name": "ExtendClientBase",
+    "exported-client-class-name": "ExtendClient",
+    "base-api-exception-class-name": "ExtendClientApiException",
+    "base-exception-class-name": "ExtendClientException",
     "package-prefix": "ai.extend",
     "enable-inline-types": false,
     "inline-file-properties": false,
@@ -15,6 +18,6 @@
       "testImplementation org.mockito:mockito-inline:4.11.0"
     ]
   },
-  "originGitCommit": "3d99f65f34686b0f1567dcfce79ac4204c0634da",
-  "sdkVersion": "1.14.0"
+  "originGitCommit": "6dd03f55fc737ec02dbc158904c7274a58de36e7",
+  "sdkVersion": "1.15.0"
 }

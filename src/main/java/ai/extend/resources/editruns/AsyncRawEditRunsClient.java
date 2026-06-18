@@ -5,8 +5,8 @@ package ai.extend.resources.editruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.RequestOptions;
@@ -50,7 +50,7 @@ public class AsyncRawEditRunsClient {
      * <p>The Edit Runs endpoint allows you to convert and edit documents and get an edit run ID that can be used to check status and retrieve results with the Get Edit Run endpoint.</p>
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Edit Run endpoint for results.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EditRun>> create(EditRunsCreateRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<EditRun>> create(EditRunsCreateRequest request) {
         return create(request, null);
     }
 
@@ -59,7 +59,7 @@ public class AsyncRawEditRunsClient {
      * <p>The Edit Runs endpoint allows you to convert and edit documents and get an edit run ID that can be used to check status and retrieve results with the Get Edit Run endpoint.</p>
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Edit Run endpoint for results.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EditRun>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EditRun>> create(
             EditRunsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -87,14 +87,14 @@ public class AsyncRawEditRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<EditRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<EditRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EditRun.class), response));
                         return;
                     }
@@ -165,7 +165,7 @@ public class AsyncRawEditRunsClient {
      * Retrieve the status and results of an edit run.
      * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EditRun>> retrieve(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<EditRun>> retrieve(String id) {
         return retrieve(id, EditRunsRetrieveRequest.builder().build());
     }
 
@@ -173,7 +173,7 @@ public class AsyncRawEditRunsClient {
      * Retrieve the status and results of an edit run.
      * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EditRun>> retrieve(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<EditRun>> retrieve(String id, RequestOptions requestOptions) {
         return retrieve(id, EditRunsRetrieveRequest.builder().build(), requestOptions);
     }
 
@@ -181,7 +181,8 @@ public class AsyncRawEditRunsClient {
      * Retrieve the status and results of an edit run.
      * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EditRun>> retrieve(String id, EditRunsRetrieveRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<EditRun>> retrieve(
+            String id, EditRunsRetrieveRequest request) {
         return retrieve(id, request, null);
     }
 
@@ -189,7 +190,7 @@ public class AsyncRawEditRunsClient {
      * Retrieve the status and results of an edit run.
      * <p>Use this endpoint to get results for an edit run that has already completed, or to check on the status of an edit run initiated via the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/edit/create-edit-run">Create Edit Run</a> endpoint.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EditRun>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EditRun>> retrieve(
             String id, EditRunsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -214,14 +215,14 @@ public class AsyncRawEditRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<EditRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<EditRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EditRun.class), response));
                         return;
                     }
@@ -292,7 +293,7 @@ public class AsyncRawEditRunsClient {
      * Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EditRunsDeleteResponse>> delete(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<EditRunsDeleteResponse>> delete(String id) {
         return delete(id, EditRunsDeleteRequest.builder().build());
     }
 
@@ -300,7 +301,7 @@ public class AsyncRawEditRunsClient {
      * Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EditRunsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EditRunsDeleteResponse>> delete(
             String id, RequestOptions requestOptions) {
         return delete(id, EditRunsDeleteRequest.builder().build(), requestOptions);
     }
@@ -309,7 +310,7 @@ public class AsyncRawEditRunsClient {
      * Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EditRunsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EditRunsDeleteResponse>> delete(
             String id, EditRunsDeleteRequest request) {
         return delete(id, request, null);
     }
@@ -318,7 +319,7 @@ public class AsyncRawEditRunsClient {
      * Delete an edit run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than relying on automated data retention policies, or to make one-off deletions for your downstream customers.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EditRunsDeleteResponse>> delete(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EditRunsDeleteResponse>> delete(
             String id, EditRunsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -343,14 +344,14 @@ public class AsyncRawEditRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<EditRunsDeleteResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<EditRunsDeleteResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EditRunsDeleteResponse.class),
                                 response));
                         return;

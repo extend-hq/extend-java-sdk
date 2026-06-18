@@ -5,8 +5,8 @@ package ai.extend.resources.extractruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -51,7 +51,7 @@ public class RawExtractRunsClient {
      * List all extract runs.
      * <p>Returns a summary of each run. Use <code>GET /extract_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public ExtendClientHttpResponse<ExtractRunsListResponse> list() {
+    public ExtendClientBaseHttpResponse<ExtractRunsListResponse> list() {
         return list(ExtractRunsListRequest.builder().build());
     }
 
@@ -59,7 +59,7 @@ public class RawExtractRunsClient {
      * List all extract runs.
      * <p>Returns a summary of each run. Use <code>GET /extract_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public ExtendClientHttpResponse<ExtractRunsListResponse> list(RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<ExtractRunsListResponse> list(RequestOptions requestOptions) {
         return list(ExtractRunsListRequest.builder().build(), requestOptions);
     }
 
@@ -67,7 +67,7 @@ public class RawExtractRunsClient {
      * List all extract runs.
      * <p>Returns a summary of each run. Use <code>GET /extract_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public ExtendClientHttpResponse<ExtractRunsListResponse> list(ExtractRunsListRequest request) {
+    public ExtendClientBaseHttpResponse<ExtractRunsListResponse> list(ExtractRunsListRequest request) {
         return list(request, null);
     }
 
@@ -75,7 +75,7 @@ public class RawExtractRunsClient {
      * List all extract runs.
      * <p>Returns a summary of each run. Use <code>GET /extract_runs/{id}</code> to retrieve the full object including <code>output</code> and <code>config</code>.</p>
      */
-    public ExtendClientHttpResponse<ExtractRunsListResponse> list(
+    public ExtendClientBaseHttpResponse<ExtractRunsListResponse> list(
             ExtractRunsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -143,7 +143,7 @@ public class RawExtractRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtractRunsListResponse.class),
                         response);
             }
@@ -189,7 +189,7 @@ public class RawExtractRunsClient {
      * Extract structured data from a file using an existing extractor or an inline configuration.
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Extract Run endpoint for results.</p>
      */
-    public ExtendClientHttpResponse<ExtractRun> create(ExtractRunsCreateRequest request) {
+    public ExtendClientBaseHttpResponse<ExtractRun> create(ExtractRunsCreateRequest request) {
         return create(request, null);
     }
 
@@ -197,7 +197,7 @@ public class RawExtractRunsClient {
      * Extract structured data from a file using an existing extractor or an inline configuration.
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Extract Run endpoint for results.</p>
      */
-    public ExtendClientHttpResponse<ExtractRun> create(
+    public ExtendClientBaseHttpResponse<ExtractRun> create(
             ExtractRunsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -229,7 +229,7 @@ public class RawExtractRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtractRun.class), response);
             }
             try {
@@ -274,7 +274,7 @@ public class RawExtractRunsClient {
      * Retrieve details about a specific extract run, including its status, outputs, and any edits made during review.
      * <p>A common use case for this endpoint is to poll for the status and final output of an extract run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/extract/create-extract-run">Create Extract Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public ExtendClientHttpResponse<ExtractRun> retrieve(String id) {
+    public ExtendClientBaseHttpResponse<ExtractRun> retrieve(String id) {
         return retrieve(id, ExtractRunsRetrieveRequest.builder().build());
     }
 
@@ -282,7 +282,7 @@ public class RawExtractRunsClient {
      * Retrieve details about a specific extract run, including its status, outputs, and any edits made during review.
      * <p>A common use case for this endpoint is to poll for the status and final output of an extract run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/extract/create-extract-run">Create Extract Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public ExtendClientHttpResponse<ExtractRun> retrieve(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<ExtractRun> retrieve(String id, RequestOptions requestOptions) {
         return retrieve(id, ExtractRunsRetrieveRequest.builder().build(), requestOptions);
     }
 
@@ -290,7 +290,7 @@ public class RawExtractRunsClient {
      * Retrieve details about a specific extract run, including its status, outputs, and any edits made during review.
      * <p>A common use case for this endpoint is to poll for the status and final output of an extract run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/extract/create-extract-run">Create Extract Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public ExtendClientHttpResponse<ExtractRun> retrieve(String id, ExtractRunsRetrieveRequest request) {
+    public ExtendClientBaseHttpResponse<ExtractRun> retrieve(String id, ExtractRunsRetrieveRequest request) {
         return retrieve(id, request, null);
     }
 
@@ -298,7 +298,7 @@ public class RawExtractRunsClient {
      * Retrieve details about a specific extract run, including its status, outputs, and any edits made during review.
      * <p>A common use case for this endpoint is to poll for the status and final output of an extract run when using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/extract/create-extract-run">Create Extract Run</a> endpoint. For instance, if you do not want to not configure webhooks to receive the output via completion/failure events.</p>
      */
-    public ExtendClientHttpResponse<ExtractRun> retrieve(
+    public ExtendClientBaseHttpResponse<ExtractRun> retrieve(
             String id, ExtractRunsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -327,7 +327,7 @@ public class RawExtractRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtractRun.class), response);
             }
             try {
@@ -372,7 +372,7 @@ public class RawExtractRunsClient {
      * Delete an extract run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<ExtractRunsDeleteResponse> delete(String id) {
+    public ExtendClientBaseHttpResponse<ExtractRunsDeleteResponse> delete(String id) {
         return delete(id, ExtractRunsDeleteRequest.builder().build());
     }
 
@@ -380,7 +380,7 @@ public class RawExtractRunsClient {
      * Delete an extract run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<ExtractRunsDeleteResponse> delete(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<ExtractRunsDeleteResponse> delete(String id, RequestOptions requestOptions) {
         return delete(id, ExtractRunsDeleteRequest.builder().build(), requestOptions);
     }
 
@@ -388,7 +388,7 @@ public class RawExtractRunsClient {
      * Delete an extract run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<ExtractRunsDeleteResponse> delete(String id, ExtractRunsDeleteRequest request) {
+    public ExtendClientBaseHttpResponse<ExtractRunsDeleteResponse> delete(String id, ExtractRunsDeleteRequest request) {
         return delete(id, request, null);
     }
 
@@ -396,7 +396,7 @@ public class RawExtractRunsClient {
      * Delete an extract run and all associated data from Extend. This operation is permanent and cannot be undone.
      * <p>This endpoint can be used if you'd like to manage data retention on your own rather than automated data retention policies. Or make one-off deletions for your downstream customers.</p>
      */
-    public ExtendClientHttpResponse<ExtractRunsDeleteResponse> delete(
+    public ExtendClientBaseHttpResponse<ExtractRunsDeleteResponse> delete(
             String id, ExtractRunsDeleteRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -425,7 +425,7 @@ public class RawExtractRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtractRunsDeleteResponse.class),
                         response);
             }
@@ -471,7 +471,7 @@ public class RawExtractRunsClient {
      * Cancel an in-progress extract run.
      * <p>Note: Only extract runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Extractor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public ExtendClientHttpResponse<ExtractRun> cancel(String id) {
+    public ExtendClientBaseHttpResponse<ExtractRun> cancel(String id) {
         return cancel(id, ExtractRunsCancelRequest.builder().build());
     }
 
@@ -479,7 +479,7 @@ public class RawExtractRunsClient {
      * Cancel an in-progress extract run.
      * <p>Note: Only extract runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Extractor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public ExtendClientHttpResponse<ExtractRun> cancel(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<ExtractRun> cancel(String id, RequestOptions requestOptions) {
         return cancel(id, ExtractRunsCancelRequest.builder().build(), requestOptions);
     }
 
@@ -487,7 +487,7 @@ public class RawExtractRunsClient {
      * Cancel an in-progress extract run.
      * <p>Note: Only extract runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Extractor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public ExtendClientHttpResponse<ExtractRun> cancel(String id, ExtractRunsCancelRequest request) {
+    public ExtendClientBaseHttpResponse<ExtractRun> cancel(String id, ExtractRunsCancelRequest request) {
         return cancel(id, request, null);
     }
 
@@ -495,7 +495,7 @@ public class RawExtractRunsClient {
      * Cancel an in-progress extract run.
      * <p>Note: Only extract runs with a status of <code>&quot;PROCESSING&quot;</code> can be cancelled. Extractor runs that have already completed, failed, or been cancelled cannot be cancelled again.</p>
      */
-    public ExtendClientHttpResponse<ExtractRun> cancel(
+    public ExtendClientBaseHttpResponse<ExtractRun> cancel(
             String id, ExtractRunsCancelRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -525,7 +525,7 @@ public class RawExtractRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ExtractRun.class), response);
             }
             try {
@@ -581,7 +581,7 @@ public class RawExtractRunsClient {
      * <li>All inputs in a batch use the same extractor version and override config.</li>
      * </ul>
      */
-    public ExtendClientHttpResponse<BatchRun> createBatch(ExtractRunsCreateBatchRequest request) {
+    public ExtendClientBaseHttpResponse<BatchRun> createBatch(ExtractRunsCreateBatchRequest request) {
         return createBatch(request, null);
     }
 
@@ -600,7 +600,7 @@ public class RawExtractRunsClient {
      * <li>All inputs in a batch use the same extractor version and override config.</li>
      * </ul>
      */
-    public ExtendClientHttpResponse<BatchRun> createBatch(
+    public ExtendClientBaseHttpResponse<BatchRun> createBatch(
             ExtractRunsCreateBatchRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -632,7 +632,7 @@ public class RawExtractRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, BatchRun.class), response);
             }
             try {

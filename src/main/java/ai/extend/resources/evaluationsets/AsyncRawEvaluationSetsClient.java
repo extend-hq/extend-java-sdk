@@ -5,8 +5,8 @@ package ai.extend.resources.evaluationsets;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.QueryStringMapper;
@@ -49,21 +49,22 @@ public class AsyncRawEvaluationSetsClient {
     /**
      * List evaluation sets in your account.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetsListResponse>> list() {
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetsListResponse>> list() {
         return list(EvaluationSetsListRequest.builder().build());
     }
 
     /**
      * List evaluation sets in your account.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetsListResponse>> list(RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetsListResponse>> list(
+            RequestOptions requestOptions) {
         return list(EvaluationSetsListRequest.builder().build(), requestOptions);
     }
 
     /**
      * List evaluation sets in your account.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetsListResponse>> list(
             EvaluationSetsListRequest request) {
         return list(request, null);
     }
@@ -71,7 +72,7 @@ public class AsyncRawEvaluationSetsClient {
     /**
      * List evaluation sets in your account.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSetsListResponse>> list(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetsListResponse>> list(
             EvaluationSetsListRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -115,14 +116,14 @@ public class AsyncRawEvaluationSetsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<EvaluationSetsListResponse>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSetsListResponse>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
                                         responseBodyString, EvaluationSetsListResponse.class),
                                 response));
@@ -195,7 +196,7 @@ public class AsyncRawEvaluationSetsClient {
      * Evaluation sets are collections of files and expected outputs that are used to evaluate the performance of a given extractor, classifier, or splitter. This endpoint will create a new evaluation set, which items can be added to using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/create-evaluation-set-item">Create Evaluation Set Item</a> endpoint.
      * <p>Note: It is not necessary to create an evaluation set via API. You can also create an evaluation set via the Extend dashboard and take the ID from there. To learn more about how to create evaluation sets, see the <a href="https://docs.extend.ai/2026-02-09/evaluation/overview">Evaluation Sets</a> product page.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> create(EvaluationSetsCreateRequest request) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSet>> create(EvaluationSetsCreateRequest request) {
         return create(request, null);
     }
 
@@ -203,7 +204,7 @@ public class AsyncRawEvaluationSetsClient {
      * Evaluation sets are collections of files and expected outputs that are used to evaluate the performance of a given extractor, classifier, or splitter. This endpoint will create a new evaluation set, which items can be added to using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/create-evaluation-set-item">Create Evaluation Set Item</a> endpoint.
      * <p>Note: It is not necessary to create an evaluation set via API. You can also create an evaluation set via the Extend dashboard and take the ID from there. To learn more about how to create evaluation sets, see the <a href="https://docs.extend.ai/2026-02-09/evaluation/overview">Evaluation Sets</a> product page.</p>
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> create(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSet>> create(
             EvaluationSetsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -231,14 +232,14 @@ public class AsyncRawEvaluationSetsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSet>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EvaluationSet.class),
                                 response));
                         return;
@@ -309,14 +310,14 @@ public class AsyncRawEvaluationSetsClient {
     /**
      * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> retrieve(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSet>> retrieve(String id) {
         return retrieve(id, EvaluationSetsRetrieveRequest.builder().build());
     }
 
     /**
      * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSet>> retrieve(
             String id, RequestOptions requestOptions) {
         return retrieve(id, EvaluationSetsRetrieveRequest.builder().build(), requestOptions);
     }
@@ -324,7 +325,7 @@ public class AsyncRawEvaluationSetsClient {
     /**
      * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSet>> retrieve(
             String id, EvaluationSetsRetrieveRequest request) {
         return retrieve(id, request, null);
     }
@@ -332,7 +333,7 @@ public class AsyncRawEvaluationSetsClient {
     /**
      * Retrieve a specific evaluation set by ID. This returns an evaluation set object, but does not include the items in the evaluation set. You can use the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/evaluation/list-evaluation-set-items">List Evaluation Set Items</a> endpoint to get the items in an evaluation set.
      */
-    public CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> retrieve(
+    public CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSet>> retrieve(
             String id, EvaluationSetsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -357,14 +358,14 @@ public class AsyncRawEvaluationSetsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<EvaluationSet>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<EvaluationSet>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EvaluationSet.class),
                                 response));
                         return;

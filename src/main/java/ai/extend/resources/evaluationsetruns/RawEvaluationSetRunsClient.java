@@ -5,8 +5,8 @@ package ai.extend.resources.evaluationsetruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.RequestOptions;
@@ -43,7 +43,7 @@ public class RawEvaluationSetRunsClient {
      * Create and start an async evaluation set run. The response returns the evaluation set run object with its initial status; use <code>GET /evaluation_set_runs/{id}</code> to poll for completion.
      * <p>Evaluation set runs are currently supported for document processor evaluation sets.</p>
      */
-    public ExtendClientHttpResponse<EvaluationSetRun> create(EvaluationSetRunsCreateRequest request) {
+    public ExtendClientBaseHttpResponse<EvaluationSetRun> create(EvaluationSetRunsCreateRequest request) {
         return create(request, null);
     }
 
@@ -51,7 +51,7 @@ public class RawEvaluationSetRunsClient {
      * Create and start an async evaluation set run. The response returns the evaluation set run object with its initial status; use <code>GET /evaluation_set_runs/{id}</code> to poll for completion.
      * <p>Evaluation set runs are currently supported for document processor evaluation sets.</p>
      */
-    public ExtendClientHttpResponse<EvaluationSetRun> create(
+    public ExtendClientBaseHttpResponse<EvaluationSetRun> create(
             EvaluationSetRunsCreateRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -87,7 +87,7 @@ public class RawEvaluationSetRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EvaluationSetRun.class), response);
             }
             try {
@@ -131,28 +131,29 @@ public class RawEvaluationSetRunsClient {
     /**
      * Get details of an evaluation set run.
      */
-    public ExtendClientHttpResponse<EvaluationSetRun> retrieve(String id) {
+    public ExtendClientBaseHttpResponse<EvaluationSetRun> retrieve(String id) {
         return retrieve(id, EvaluationSetRunsRetrieveRequest.builder().build());
     }
 
     /**
      * Get details of an evaluation set run.
      */
-    public ExtendClientHttpResponse<EvaluationSetRun> retrieve(String id, RequestOptions requestOptions) {
+    public ExtendClientBaseHttpResponse<EvaluationSetRun> retrieve(String id, RequestOptions requestOptions) {
         return retrieve(id, EvaluationSetRunsRetrieveRequest.builder().build(), requestOptions);
     }
 
     /**
      * Get details of an evaluation set run.
      */
-    public ExtendClientHttpResponse<EvaluationSetRun> retrieve(String id, EvaluationSetRunsRetrieveRequest request) {
+    public ExtendClientBaseHttpResponse<EvaluationSetRun> retrieve(
+            String id, EvaluationSetRunsRetrieveRequest request) {
         return retrieve(id, request, null);
     }
 
     /**
      * Get details of an evaluation set run.
      */
-    public ExtendClientHttpResponse<EvaluationSetRun> retrieve(
+    public ExtendClientBaseHttpResponse<EvaluationSetRun> retrieve(
             String id, EvaluationSetRunsRetrieveRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -181,7 +182,7 @@ public class RawEvaluationSetRunsClient {
             ResponseBody responseBody = response.body();
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             if (response.isSuccessful()) {
-                return new ExtendClientHttpResponse<>(
+                return new ExtendClientBaseHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EvaluationSetRun.class), response);
             }
             try {

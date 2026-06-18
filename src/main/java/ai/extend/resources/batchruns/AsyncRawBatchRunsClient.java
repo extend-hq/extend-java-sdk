@@ -5,8 +5,8 @@ package ai.extend.resources.batchruns;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.ExtendClientApiException;
+import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
-import ai.extend.core.ExtendClientHttpResponse;
 import ai.extend.core.ObjectMappers;
 import ai.extend.core.RequestOptions;
 import ai.extend.errors.BadRequestError;
@@ -56,7 +56,7 @@ public class AsyncRawBatchRunsClient {
      * <li><code>GET /split_runs?batchId={id}</code></li>
      * </ul>
      */
-    public CompletableFuture<ExtendClientHttpResponse<BatchRun>> get(String id) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<BatchRun>> get(String id) {
         return get(id, null);
     }
 
@@ -78,7 +78,7 @@ public class AsyncRawBatchRunsClient {
      * <li><code>GET /split_runs?batchId={id}</code></li>
      * </ul>
      */
-    public CompletableFuture<ExtendClientHttpResponse<BatchRun>> get(String id, RequestOptions requestOptions) {
+    public CompletableFuture<ExtendClientBaseHttpResponse<BatchRun>> get(String id, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("batch_runs")
@@ -98,14 +98,14 @@ public class AsyncRawBatchRunsClient {
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<ExtendClientHttpResponse<BatchRun>> future = new CompletableFuture<>();
+        CompletableFuture<ExtendClientBaseHttpResponse<BatchRun>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     if (response.isSuccessful()) {
-                        future.complete(new ExtendClientHttpResponse<>(
+                        future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, BatchRun.class), response));
                         return;
                     }
