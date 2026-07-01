@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -45,6 +46,8 @@ public final class ExtractRunSummary {
 
     private final Optional<FileSummary> file;
 
+    private final Optional<List<FileSummary>> files;
+
     private final Optional<String> parseRunId;
 
     private final String dashboardUrl;
@@ -68,6 +71,7 @@ public final class ExtractRunSummary {
             boolean reviewed,
             boolean edited,
             Optional<FileSummary> file,
+            Optional<List<FileSummary>> files,
             Optional<String> parseRunId,
             String dashboardUrl,
             Optional<RunUsageSummary> usage,
@@ -84,6 +88,7 @@ public final class ExtractRunSummary {
         this.reviewed = reviewed;
         this.edited = edited;
         this.file = file;
+        this.files = files;
         this.parseRunId = parseRunId;
         this.dashboardUrl = dashboardUrl;
         this.usage = usage;
@@ -204,7 +209,7 @@ public final class ExtractRunSummary {
     }
 
     /**
-     * @return The file that was processed. <code>null</code> when the file could not be accessed or processed (for example a run that failed during file ingestion, or a multi-file batch run).
+     * @return The file that was processed. <code>null</code> for multifile runs (use <code>files</code> instead), and <code>null</code> when the file could not be accessed or processed (for example, a run that failed during file ingestion).
      */
     @JsonIgnore
     public Optional<FileSummary> getFile() {
@@ -212,6 +217,18 @@ public final class ExtractRunSummary {
             return Optional.empty();
         }
         return file;
+    }
+
+    /**
+     * @return The files that were processed, in the order they were submitted. Only populated for multifile runs (created with <code>package</code>).
+     * <p>For single-file runs, this is <code>null</code> — use <code>file</code> instead.</p>
+     */
+    @JsonIgnore
+    public Optional<List<FileSummary>> getFiles() {
+        if (files == null) {
+            return Optional.empty();
+        }
+        return files;
     }
 
     /**
@@ -293,6 +310,12 @@ public final class ExtractRunSummary {
     }
 
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("files")
+    private Optional<List<FileSummary>> _getFiles() {
+        return files;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
     @JsonProperty("parseRunId")
     private Optional<String> _getParseRunId() {
         return parseRunId;
@@ -326,6 +349,7 @@ public final class ExtractRunSummary {
                 && reviewed == other.reviewed
                 && edited == other.edited
                 && file.equals(other.file)
+                && files.equals(other.files)
                 && parseRunId.equals(other.parseRunId)
                 && dashboardUrl.equals(other.dashboardUrl)
                 && usage.equals(other.usage)
@@ -346,6 +370,7 @@ public final class ExtractRunSummary {
                 this.reviewed,
                 this.edited,
                 this.file,
+                this.files,
                 this.parseRunId,
                 this.dashboardUrl,
                 this.usage,
@@ -472,13 +497,23 @@ public final class ExtractRunSummary {
         _FinalStage metadata(Nullable<Map<String, Object>> metadata);
 
         /**
-         * <p>The file that was processed. <code>null</code> when the file could not be accessed or processed (for example a run that failed during file ingestion, or a multi-file batch run).</p>
+         * <p>The file that was processed. <code>null</code> for multifile runs (use <code>files</code> instead), and <code>null</code> when the file could not be accessed or processed (for example, a run that failed during file ingestion).</p>
          */
         _FinalStage file(Optional<FileSummary> file);
 
         _FinalStage file(FileSummary file);
 
         _FinalStage file(Nullable<FileSummary> file);
+
+        /**
+         * <p>The files that were processed, in the order they were submitted. Only populated for multifile runs (created with <code>package</code>).</p>
+         * <p>For single-file runs, this is <code>null</code> — use <code>file</code> instead.</p>
+         */
+        _FinalStage files(Optional<List<FileSummary>> files);
+
+        _FinalStage files(List<FileSummary> files);
+
+        _FinalStage files(Nullable<List<FileSummary>> files);
 
         /**
          * <p>The ID of the parse run that was used for this extract run.</p>
@@ -529,6 +564,8 @@ public final class ExtractRunSummary {
 
         private Optional<String> parseRunId = Optional.empty();
 
+        private Optional<List<FileSummary>> files = Optional.empty();
+
         private Optional<FileSummary> file = Optional.empty();
 
         private Optional<Map<String, Object>> metadata = Optional.empty();
@@ -558,6 +595,7 @@ public final class ExtractRunSummary {
             reviewed(other.getReviewed());
             edited(other.getEdited());
             file(other.getFile());
+            files(other.getFiles());
             parseRunId(other.getParseRunId());
             dashboardUrl(other.getDashboardUrl());
             usage(other.getUsage());
@@ -714,7 +752,46 @@ public final class ExtractRunSummary {
         }
 
         /**
-         * <p>The file that was processed. <code>null</code> when the file could not be accessed or processed (for example a run that failed during file ingestion, or a multi-file batch run).</p>
+         * <p>The files that were processed, in the order they were submitted. Only populated for multifile runs (created with <code>package</code>).</p>
+         * <p>For single-file runs, this is <code>null</code> — use <code>file</code> instead.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage files(Nullable<List<FileSummary>> files) {
+            if (files.isNull()) {
+                this.files = null;
+            } else if (files.isEmpty()) {
+                this.files = Optional.empty();
+            } else {
+                this.files = Optional.of(files.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>The files that were processed, in the order they were submitted. Only populated for multifile runs (created with <code>package</code>).</p>
+         * <p>For single-file runs, this is <code>null</code> — use <code>file</code> instead.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage files(List<FileSummary> files) {
+            this.files = Optional.ofNullable(files);
+            return this;
+        }
+
+        /**
+         * <p>The files that were processed, in the order they were submitted. Only populated for multifile runs (created with <code>package</code>).</p>
+         * <p>For single-file runs, this is <code>null</code> — use <code>file</code> instead.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "files", nulls = Nulls.SKIP)
+        public _FinalStage files(Optional<List<FileSummary>> files) {
+            this.files = files;
+            return this;
+        }
+
+        /**
+         * <p>The file that was processed. <code>null</code> for multifile runs (use <code>files</code> instead), and <code>null</code> when the file could not be accessed or processed (for example, a run that failed during file ingestion).</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -730,7 +807,7 @@ public final class ExtractRunSummary {
         }
 
         /**
-         * <p>The file that was processed. <code>null</code> when the file could not be accessed or processed (for example a run that failed during file ingestion, or a multi-file batch run).</p>
+         * <p>The file that was processed. <code>null</code> for multifile runs (use <code>files</code> instead), and <code>null</code> when the file could not be accessed or processed (for example, a run that failed during file ingestion).</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -740,7 +817,7 @@ public final class ExtractRunSummary {
         }
 
         /**
-         * <p>The file that was processed. <code>null</code> when the file could not be accessed or processed (for example a run that failed during file ingestion, or a multi-file batch run).</p>
+         * <p>The file that was processed. <code>null</code> for multifile runs (use <code>files</code> instead), and <code>null</code> when the file could not be accessed or processed (for example, a run that failed during file ingestion).</p>
          */
         @java.lang.Override
         @JsonSetter(value = "file", nulls = Nulls.SKIP)
@@ -999,6 +1076,7 @@ public final class ExtractRunSummary {
                     reviewed,
                     edited,
                     file,
+                    files,
                     parseRunId,
                     dashboardUrl,
                     usage,

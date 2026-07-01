@@ -189,6 +189,22 @@ public class RawExtractRunsClient {
      * Extract structured data from a file using an existing extractor or an inline configuration.
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Extract Run endpoint for results.</p>
      */
+    public ExtendClientBaseHttpResponse<ExtractRun> create() {
+        return create(ExtractRunsCreateRequest.builder().build());
+    }
+
+    /**
+     * Extract structured data from a file using an existing extractor or an inline configuration.
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Extract Run endpoint for results.</p>
+     */
+    public ExtendClientBaseHttpResponse<ExtractRun> create(RequestOptions requestOptions) {
+        return create(ExtractRunsCreateRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * Extract structured data from a file using an existing extractor or an inline configuration.
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Extract Run endpoint for results.</p>
+     */
     public ExtendClientBaseHttpResponse<ExtractRun> create(ExtractRunsCreateRequest request) {
         return create(request, null);
     }

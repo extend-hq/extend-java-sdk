@@ -218,6 +218,8 @@ Extract structured data from a file synchronously, waiting for the result before
 
 The Extract endpoint allows you to extract structured data from files using an existing extractor, an inline configuration, or no configuration at all. When neither is provided, Extend automatically infers a schema from the document before extraction — no extractor or schema is required.
 
+Pass `file` for a single document, or `package` to extract from multiple files in a single run. Exactly one of `file` or `package` must be provided.
+
 For more details, see the [Extract File guide](https://docs.extend.ai/2026-02-09/extraction/overview).
 </dd>
 </dl>
@@ -236,14 +238,6 @@ For more details, see the [Extract File guide](https://docs.extend.ai/2026-02-09
 client.extract(
     ExtractRequest
         .builder()
-        .file(
-            ExtractRequestFile.of(
-                FileFromUrl
-                    .builder()
-                    .url("https://example.com/invoice.pdf")
-                    .build()
-            )
-        )
         .config(
             ExtractConfigJson
                 .builder()
@@ -278,6 +272,14 @@ client.extract(
                 )
                 .build()
         )
+        .file(
+            ExtractRequestFile.of(
+                FileFromUrl
+                    .builder()
+                    .url("https://example.com/invoice.pdf")
+                    .build()
+            )
+        )
         .build()
 );
 ```
@@ -310,7 +312,23 @@ client.extract(
 <dl>
 <dd>
 
-**file:** `ExtractRequestFile` — The file to be extracted from. Files can be provided as a URL, Extend file ID, or raw text.
+**file:** `Optional<ExtractRequestFile>` 
+
+The file to be extracted from. Mutually exclusive with `package` — provide one or the other.
+
+Files can be provided as a URL, Extend file ID, or raw text.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**package_:** `Optional<MultiFileRunPackage>` 
+
+A collection of files to extract from together in a single run. Mutually exclusive with `file` — provide one or the other.
+
+See [Multifile Extraction](https://docs.extend.ai/2026-02-09/extraction/multifile) for details.
     
 </dd>
 </dl>
@@ -2105,6 +2123,12 @@ The request returns immediately with a `PROCESSING` status. Use webhooks or poll
 client.extractRuns().create(
     ExtractRunsCreateRequest
         .builder()
+        .extractor(
+            ExtractRunsCreateRequestExtractor
+                .builder()
+                .id("ex_1234567890")
+                .build()
+        )
         .file(
             ExtractRunsCreateRequestFile.of(
                 FileFromUrl
@@ -2112,12 +2136,6 @@ client.extractRuns().create(
                     .url("https://example.com/invoice.pdf")
                     .build()
             )
-        )
-        .extractor(
-            ExtractRunsCreateRequestExtractor
-                .builder()
-                .id("ex_1234567890")
-                .build()
         )
         .build()
 );
@@ -2151,7 +2169,23 @@ client.extractRuns().create(
 <dl>
 <dd>
 
-**file:** `ExtractRunsCreateRequestFile` — The file to be extracted from. Files can be provided as a URL, Extend file ID, or raw text.
+**file:** `Optional<ExtractRunsCreateRequestFile>` 
+
+The file to be extracted from. Mutually exclusive with `package` — provide one or the other.
+
+Files can be provided as a URL, Extend file ID, or raw text.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**package_:** `Optional<MultiFileRunPackage>` 
+
+A collection of files to extract from together in a single run. Mutually exclusive with `file` — provide one or the other.
+
+See [Multifile Extraction](https://docs.extend.ai/2026-02-09/extraction/multifile) for details.
     
 </dd>
 </dl>

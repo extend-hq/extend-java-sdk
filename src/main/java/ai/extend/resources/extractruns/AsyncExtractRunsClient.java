@@ -71,6 +71,22 @@ public class AsyncExtractRunsClient {
      * Extract structured data from a file using an existing extractor or an inline configuration.
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Extract Run endpoint for results.</p>
      */
+    public CompletableFuture<ExtractRun> create() {
+        return this.rawClient.create().thenApply(response -> response.body());
+    }
+
+    /**
+     * Extract structured data from a file using an existing extractor or an inline configuration.
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Extract Run endpoint for results.</p>
+     */
+    public CompletableFuture<ExtractRun> create(RequestOptions requestOptions) {
+        return this.rawClient.create(requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Extract structured data from a file using an existing extractor or an inline configuration.
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Extract Run endpoint for results.</p>
+     */
     public CompletableFuture<ExtractRun> create(ExtractRunsCreateRequest request) {
         return this.rawClient.create(request).thenApply(response -> response.body());
     }

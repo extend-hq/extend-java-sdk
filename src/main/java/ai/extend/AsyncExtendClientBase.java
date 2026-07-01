@@ -188,6 +188,29 @@ public class AsyncExtendClientBase {
      * Extract structured data from a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /extract_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor, an inline configuration, or no configuration at all. When neither is provided, Extend automatically infers a schema from the document before extraction — no extractor or schema is required.</p>
+     * <p>Pass <code>file</code> for a single document, or <code>package</code> to extract from multiple files in a single run. Exactly one of <code>file</code> or <code>package</code> must be provided.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/extraction/overview">Extract File guide</a>.</p>
+     */
+    public CompletableFuture<ExtractRun> extract() {
+        return this.rawClient.extract().thenApply(response -> response.body());
+    }
+
+    /**
+     * Extract structured data from a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
+     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /extract_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
+     * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor, an inline configuration, or no configuration at all. When neither is provided, Extend automatically infers a schema from the document before extraction — no extractor or schema is required.</p>
+     * <p>Pass <code>file</code> for a single document, or <code>package</code> to extract from multiple files in a single run. Exactly one of <code>file</code> or <code>package</code> must be provided.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/extraction/overview">Extract File guide</a>.</p>
+     */
+    public CompletableFuture<ExtractRun> extract(RequestOptions requestOptions) {
+        return this.rawClient.extract(requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Extract structured data from a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
+     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /extract_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
+     * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor, an inline configuration, or no configuration at all. When neither is provided, Extend automatically infers a schema from the document before extraction — no extractor or schema is required.</p>
+     * <p>Pass <code>file</code> for a single document, or <code>package</code> to extract from multiple files in a single run. Exactly one of <code>file</code> or <code>package</code> must be provided.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/extraction/overview">Extract File guide</a>.</p>
      */
     public CompletableFuture<ExtractRun> extract(ExtractRequest request) {
@@ -198,6 +221,7 @@ public class AsyncExtendClientBase {
      * Extract structured data from a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /extract_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Extract endpoint allows you to extract structured data from files using an existing extractor, an inline configuration, or no configuration at all. When neither is provided, Extend automatically infers a schema from the document before extraction — no extractor or schema is required.</p>
+     * <p>Pass <code>file</code> for a single document, or <code>package</code> to extract from multiple files in a single run. Exactly one of <code>file</code> or <code>package</code> must be provided.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/extraction/overview">Extract File guide</a>.</p>
      */
     public CompletableFuture<ExtractRun> extract(ExtractRequest request, RequestOptions requestOptions) {

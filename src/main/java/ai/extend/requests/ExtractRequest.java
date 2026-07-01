@@ -7,6 +7,7 @@ import ai.extend.core.ObjectMappers;
 import ai.extend.types.ExtractConfigJson;
 import ai.extend.types.ExtractRequestExtractor;
 import ai.extend.types.ExtractRequestFile;
+import ai.extend.types.MultiFileRunPackage;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -19,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import org.jetbrains.annotations.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ExtractRequest.Builder.class)
@@ -28,7 +28,9 @@ public final class ExtractRequest {
 
     private final Optional<ExtractConfigJson> config;
 
-    private final ExtractRequestFile file;
+    private final Optional<ExtractRequestFile> file;
+
+    private final Optional<MultiFileRunPackage> package_;
 
     private final Optional<Map<String, Object>> metadata;
 
@@ -37,12 +39,14 @@ public final class ExtractRequest {
     private ExtractRequest(
             Optional<ExtractRequestExtractor> extractor,
             Optional<ExtractConfigJson> config,
-            ExtractRequestFile file,
+            Optional<ExtractRequestFile> file,
+            Optional<MultiFileRunPackage> package_,
             Optional<Map<String, Object>> metadata,
             Map<String, Object> additionalProperties) {
         this.extractor = extractor;
         this.config = config;
         this.file = file;
+        this.package_ = package_;
         this.metadata = metadata;
         this.additionalProperties = additionalProperties;
     }
@@ -64,11 +68,21 @@ public final class ExtractRequest {
     }
 
     /**
-     * @return The file to be extracted from. Files can be provided as a URL, Extend file ID, or raw text.
+     * @return The file to be extracted from. Mutually exclusive with <code>package</code> — provide one or the other.
+     * <p>Files can be provided as a URL, Extend file ID, or raw text.</p>
      */
     @JsonProperty("file")
-    public ExtractRequestFile getFile() {
+    public Optional<ExtractRequestFile> getFile() {
         return file;
+    }
+
+    /**
+     * @return A collection of files to extract from together in a single run. Mutually exclusive with <code>file</code> — provide one or the other.
+     * <p>See <a href="https://docs.extend.ai/2026-02-09/extraction/multifile">Multifile Extraction</a> for details.</p>
+     */
+    @JsonProperty("package")
+    public Optional<MultiFileRunPackage> getPackage() {
+        return package_;
     }
 
     @JsonProperty("metadata")
@@ -91,12 +105,13 @@ public final class ExtractRequest {
         return extractor.equals(other.extractor)
                 && config.equals(other.config)
                 && file.equals(other.file)
+                && package_.equals(other.package_)
                 && metadata.equals(other.metadata);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.extractor, this.config, this.file, this.metadata);
+        return Objects.hash(this.extractor, this.config, this.file, this.package_, this.metadata);
     }
 
     @java.lang.Override
@@ -104,133 +119,107 @@ public final class ExtractRequest {
         return ObjectMappers.stringify(this);
     }
 
-    public static FileStage builder() {
+    public static Builder builder() {
         return new Builder();
     }
 
-    public interface FileStage {
-        /**
-         * <p>The file to be extracted from. Files can be provided as a URL, Extend file ID, or raw text.</p>
-         */
-        _FinalStage file(@NotNull ExtractRequestFile file);
-
-        Builder from(ExtractRequest other);
-    }
-
-    public interface _FinalStage {
-        ExtractRequest build();
-
-        /**
-         * <p>Reference to an existing extractor. Mutually exclusive with <code>config</code> — provide one or the other, or omit both to have Extend infer a schema from the document.</p>
-         */
-        _FinalStage extractor(Optional<ExtractRequestExtractor> extractor);
-
-        _FinalStage extractor(ExtractRequestExtractor extractor);
-
-        /**
-         * <p>Inline extract configuration. Mutually exclusive with <code>extractor</code> — provide one or the other, or omit both to have Extend infer a schema from the document.</p>
-         */
-        _FinalStage config(Optional<ExtractConfigJson> config);
-
-        _FinalStage config(ExtractConfigJson config);
-
-        _FinalStage metadata(Optional<Map<String, Object>> metadata);
-
-        _FinalStage metadata(Map<String, Object> metadata);
-    }
-
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements FileStage, _FinalStage {
-        private ExtractRequestFile file;
-
-        private Optional<Map<String, Object>> metadata = Optional.empty();
+    public static final class Builder {
+        private Optional<ExtractRequestExtractor> extractor = Optional.empty();
 
         private Optional<ExtractConfigJson> config = Optional.empty();
 
-        private Optional<ExtractRequestExtractor> extractor = Optional.empty();
+        private Optional<ExtractRequestFile> file = Optional.empty();
+
+        private Optional<MultiFileRunPackage> package_ = Optional.empty();
+
+        private Optional<Map<String, Object>> metadata = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
-        @java.lang.Override
         public Builder from(ExtractRequest other) {
             extractor(other.getExtractor());
             config(other.getConfig());
             file(other.getFile());
+            package_(other.getPackage());
             metadata(other.getMetadata());
             return this;
         }
 
         /**
-         * <p>The file to be extracted from. Files can be provided as a URL, Extend file ID, or raw text.</p>
-         * <p>The file to be extracted from. Files can be provided as a URL, Extend file ID, or raw text.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("file")
-        public _FinalStage file(@NotNull ExtractRequestFile file) {
-            this.file = Objects.requireNonNull(file, "file must not be null");
-            return this;
-        }
-
-        @java.lang.Override
-        public _FinalStage metadata(Map<String, Object> metadata) {
-            this.metadata = Optional.ofNullable(metadata);
-            return this;
-        }
-
-        @java.lang.Override
-        @JsonSetter(value = "metadata", nulls = Nulls.SKIP)
-        public _FinalStage metadata(Optional<Map<String, Object>> metadata) {
-            this.metadata = metadata;
-            return this;
-        }
-
-        /**
-         * <p>Inline extract configuration. Mutually exclusive with <code>extractor</code> — provide one or the other, or omit both to have Extend infer a schema from the document.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        public _FinalStage config(ExtractConfigJson config) {
-            this.config = Optional.ofNullable(config);
-            return this;
-        }
-
-        /**
-         * <p>Inline extract configuration. Mutually exclusive with <code>extractor</code> — provide one or the other, or omit both to have Extend infer a schema from the document.</p>
-         */
-        @java.lang.Override
-        @JsonSetter(value = "config", nulls = Nulls.SKIP)
-        public _FinalStage config(Optional<ExtractConfigJson> config) {
-            this.config = config;
-            return this;
-        }
-
-        /**
          * <p>Reference to an existing extractor. Mutually exclusive with <code>config</code> — provide one or the other, or omit both to have Extend infer a schema from the document.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
          */
-        @java.lang.Override
-        public _FinalStage extractor(ExtractRequestExtractor extractor) {
+        @JsonSetter(value = "extractor", nulls = Nulls.SKIP)
+        public Builder extractor(Optional<ExtractRequestExtractor> extractor) {
+            this.extractor = extractor;
+            return this;
+        }
+
+        public Builder extractor(ExtractRequestExtractor extractor) {
             this.extractor = Optional.ofNullable(extractor);
             return this;
         }
 
         /**
-         * <p>Reference to an existing extractor. Mutually exclusive with <code>config</code> — provide one or the other, or omit both to have Extend infer a schema from the document.</p>
+         * <p>Inline extract configuration. Mutually exclusive with <code>extractor</code> — provide one or the other, or omit both to have Extend infer a schema from the document.</p>
          */
-        @java.lang.Override
-        @JsonSetter(value = "extractor", nulls = Nulls.SKIP)
-        public _FinalStage extractor(Optional<ExtractRequestExtractor> extractor) {
-            this.extractor = extractor;
+        @JsonSetter(value = "config", nulls = Nulls.SKIP)
+        public Builder config(Optional<ExtractConfigJson> config) {
+            this.config = config;
             return this;
         }
 
-        @java.lang.Override
+        public Builder config(ExtractConfigJson config) {
+            this.config = Optional.ofNullable(config);
+            return this;
+        }
+
+        /**
+         * <p>The file to be extracted from. Mutually exclusive with <code>package</code> — provide one or the other.</p>
+         * <p>Files can be provided as a URL, Extend file ID, or raw text.</p>
+         */
+        @JsonSetter(value = "file", nulls = Nulls.SKIP)
+        public Builder file(Optional<ExtractRequestFile> file) {
+            this.file = file;
+            return this;
+        }
+
+        public Builder file(ExtractRequestFile file) {
+            this.file = Optional.ofNullable(file);
+            return this;
+        }
+
+        /**
+         * <p>A collection of files to extract from together in a single run. Mutually exclusive with <code>file</code> — provide one or the other.</p>
+         * <p>See <a href="https://docs.extend.ai/2026-02-09/extraction/multifile">Multifile Extraction</a> for details.</p>
+         */
+        @JsonSetter(value = "package", nulls = Nulls.SKIP)
+        public Builder package_(Optional<MultiFileRunPackage> package_) {
+            this.package_ = package_;
+            return this;
+        }
+
+        public Builder package_(MultiFileRunPackage package_) {
+            this.package_ = Optional.ofNullable(package_);
+            return this;
+        }
+
+        @JsonSetter(value = "metadata", nulls = Nulls.SKIP)
+        public Builder metadata(Optional<Map<String, Object>> metadata) {
+            this.metadata = metadata;
+            return this;
+        }
+
+        public Builder metadata(Map<String, Object> metadata) {
+            this.metadata = Optional.ofNullable(metadata);
+            return this;
+        }
+
         public ExtractRequest build() {
-            return new ExtractRequest(extractor, config, file, metadata, additionalProperties);
+            return new ExtractRequest(extractor, config, file, package_, metadata, additionalProperties);
         }
     }
 }
