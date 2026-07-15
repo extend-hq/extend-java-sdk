@@ -84,7 +84,7 @@ public final class ParseConfigBlockOptionsTables {
     }
 
     /**
-     * @return Options for agentic table processing using VLM-based review and correction.
+     * @return Options for agentic table processing using VLM-based review and correction. Enabling this incurs additional credits on pages where agentic table correction is triggered.
      */
     @JsonProperty("agentic")
     public Optional<ParseConfigBlockOptionsTablesAgentic> getAgentic() {
@@ -216,7 +216,7 @@ public final class ParseConfigBlockOptionsTables {
         }
 
         /**
-         * <p>Options for agentic table processing using VLM-based review and correction.</p>
+         * <p>Options for agentic table processing using VLM-based review and correction. Enabling this incurs additional credits on pages where agentic table correction is triggered.</p>
          */
         @JsonSetter(value = "agentic", nulls = Nulls.SKIP)
         public Builder agentic(Optional<ParseConfigBlockOptionsTablesAgentic> agentic) {

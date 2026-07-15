@@ -38,7 +38,7 @@ public class RawEditTemplatesClient {
 
     /**
      * Retrieve a saved edit template by ID.
-     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /edit_schemas/generate</code>.</p>
+     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
      */
     public ExtendClientBaseHttpResponse<EditTemplate> retrieve(String id) {
         return retrieve(id, EditTemplatesRetrieveRequest.builder().build());
@@ -46,7 +46,7 @@ public class RawEditTemplatesClient {
 
     /**
      * Retrieve a saved edit template by ID.
-     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /edit_schemas/generate</code>.</p>
+     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
      */
     public ExtendClientBaseHttpResponse<EditTemplate> retrieve(String id, RequestOptions requestOptions) {
         return retrieve(id, EditTemplatesRetrieveRequest.builder().build(), requestOptions);
@@ -54,7 +54,7 @@ public class RawEditTemplatesClient {
 
     /**
      * Retrieve a saved edit template by ID.
-     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /edit_schemas/generate</code>.</p>
+     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
      */
     public ExtendClientBaseHttpResponse<EditTemplate> retrieve(String id, EditTemplatesRetrieveRequest request) {
         return retrieve(id, request, null);
@@ -62,7 +62,7 @@ public class RawEditTemplatesClient {
 
     /**
      * Retrieve a saved edit template by ID.
-     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /edit_schemas/generate</code>.</p>
+     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
      */
     public ExtendClientBaseHttpResponse<EditTemplate> retrieve(
             String id, EditTemplatesRetrieveRequest request, RequestOptions requestOptions) {

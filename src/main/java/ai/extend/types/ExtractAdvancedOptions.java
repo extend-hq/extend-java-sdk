@@ -114,7 +114,11 @@ public final class ExtractAdvancedOptions {
     }
 
     /**
-     * @return Granularity for array citations. This requires citationsEnabled=true and a base processor version that supports property-level array citations (extraction_performance ≥ 4.4.0).
+     * @return Granularity for array citations. Requires turning on citations: <code>citationsEnabled=true</code>.
+     * <ul>
+     * <li><code>item</code>: Creates item-level citations for array fields. This will return a single bbox citation for each &quot;item&quot; in the array e.g. line_items[0], line_items[1], etc.</li>
+     * <li><code>property</code>: Creates property-level citations (cell-level citations) for array fields. This will return a citation for each property/cell for every item/row in the array, e.g. line_items[0].description, line_items[1].price, etc.</li>
+     * </ul>
      */
     @JsonProperty("arrayCitationStrategy")
     public Optional<ExtractAdvancedOptionsArrayCitationStrategy> getArrayCitationStrategy() {
@@ -160,6 +164,7 @@ public final class ExtractAdvancedOptions {
      * When enabled, each field in the output metadata will include a <code>reviewAgentScore</code> (1-5)
      * and may include additional <code>insights</code> of type <code>issue</code> or <code>review_summary</code> to help identify
      * fields that may need manual review.
+     * <p>Enabling the review agent incurs additional credits.</p>
      * <p>To learn more, view the <a href="https://docs.extend.ai/2026-02-09/extraction/review-agent">Review Agent Documentation</a></p>
      */
     @JsonProperty("reviewAgent")
@@ -337,7 +342,11 @@ public final class ExtractAdvancedOptions {
         }
 
         /**
-         * <p>Granularity for array citations. This requires citationsEnabled=true and a base processor version that supports property-level array citations (extraction_performance ≥ 4.4.0).</p>
+         * <p>Granularity for array citations. Requires turning on citations: <code>citationsEnabled=true</code>.</p>
+         * <ul>
+         * <li><code>item</code>: Creates item-level citations for array fields. This will return a single bbox citation for each &quot;item&quot; in the array e.g. line_items[0], line_items[1], etc.</li>
+         * <li><code>property</code>: Creates property-level citations (cell-level citations) for array fields. This will return a citation for each property/cell for every item/row in the array, e.g. line_items[0].description, line_items[1].price, etc.</li>
+         * </ul>
          */
         @JsonSetter(value = "arrayCitationStrategy", nulls = Nulls.SKIP)
         public Builder arrayCitationStrategy(
@@ -422,6 +431,7 @@ public final class ExtractAdvancedOptions {
          * When enabled, each field in the output metadata will include a <code>reviewAgentScore</code> (1-5)
          * and may include additional <code>insights</code> of type <code>issue</code> or <code>review_summary</code> to help identify
          * fields that may need manual review.</p>
+         * <p>Enabling the review agent incurs additional credits.</p>
          * <p>To learn more, view the <a href="https://docs.extend.ai/2026-02-09/extraction/review-agent">Review Agent Documentation</a></p>
          */
         @JsonSetter(value = "reviewAgent", nulls = Nulls.SKIP)

@@ -39,20 +39,22 @@ public class RawEditSchemasClient {
     }
 
     /**
-     * Detect fields in a PDF form and synchronously return an edit schema payload.
+     * <strong>Deprecated:</strong> Use <code>POST /detect_form</code> for synchronous form detection or <code>POST /form_detection_runs</code> for asynchronous processing.
+     * <p>Detect fields in a PDF form and synchronously return an edit schema payload.</p>
      * <p>Use this endpoint when you want Extend to bootstrap an <code>EditRootJSON</code> schema from an existing form, optionally mapping an existing schema onto the detected fields.</p>
      * <p>This endpoint returns the generated schema directly. There are no schema generation run resources to poll or delete.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/generate-edit-schema">Generate Edit Schema guide</a> and the <a href="https://docs.extend.ai/2026-02-09/editing/edit">Edit File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/detect-form">Detect Form guide</a> and the <a href="https://docs.extend.ai/2026-02-09/editing/overview">Edit File guide</a>.</p>
      */
     public ExtendClientBaseHttpResponse<EditSchemaGenerationResponse> generate(EditSchemasGenerateRequest request) {
         return generate(request, null);
     }
 
     /**
-     * Detect fields in a PDF form and synchronously return an edit schema payload.
+     * <strong>Deprecated:</strong> Use <code>POST /detect_form</code> for synchronous form detection or <code>POST /form_detection_runs</code> for asynchronous processing.
+     * <p>Detect fields in a PDF form and synchronously return an edit schema payload.</p>
      * <p>Use this endpoint when you want Extend to bootstrap an <code>EditRootJSON</code> schema from an existing form, optionally mapping an existing schema onto the detected fields.</p>
      * <p>This endpoint returns the generated schema directly. There are no schema generation run resources to poll or delete.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/generate-edit-schema">Generate Edit Schema guide</a> and the <a href="https://docs.extend.ai/2026-02-09/editing/edit">Edit File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/detect-form">Detect Form guide</a> and the <a href="https://docs.extend.ai/2026-02-09/editing/overview">Edit File guide</a>.</p>
      */
     public ExtendClientBaseHttpResponse<EditSchemaGenerationResponse> generate(
             EditSchemasGenerateRequest request, RequestOptions requestOptions) {

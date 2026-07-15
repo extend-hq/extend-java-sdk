@@ -10,10 +10,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = TableCellDetails.Builder.class)
@@ -22,11 +24,26 @@ public final class TableCellDetails {
 
     private final int columnIndex;
 
+    private final Optional<String> cellReference;
+
+    private final Optional<String> formula;
+
+    private final Optional<CellFormatting> formatting;
+
     private final Map<String, Object> additionalProperties;
 
-    private TableCellDetails(int rowIndex, int columnIndex, Map<String, Object> additionalProperties) {
+    private TableCellDetails(
+            int rowIndex,
+            int columnIndex,
+            Optional<String> cellReference,
+            Optional<String> formula,
+            Optional<CellFormatting> formatting,
+            Map<String, Object> additionalProperties) {
         this.rowIndex = rowIndex;
         this.columnIndex = columnIndex;
+        this.cellReference = cellReference;
+        this.formula = formula;
+        this.formatting = formatting;
         this.additionalProperties = additionalProperties;
     }
 
@@ -48,6 +65,30 @@ public final class TableCellDetails {
         return columnIndex;
     }
 
+    /**
+     * @return Source spreadsheet cell or range in A1 notation, such as <code>B2</code> or <code>A1:C1</code> for a merged cell. Only set for Excel table cells when <code>advancedOptions.excelIncludeCellMetadata</code> is enabled.
+     */
+    @JsonProperty("cellReference")
+    public Optional<String> getCellReference() {
+        return cellReference;
+    }
+
+    /**
+     * @return Source spreadsheet formula text with a leading <code>=</code>, when the cell has a formula. Only set for Excel table cells when <code>advancedOptions.excelIncludeCellMetadata</code> is enabled.
+     */
+    @JsonProperty("formula")
+    public Optional<String> getFormula() {
+        return formula;
+    }
+
+    /**
+     * @return Structured spreadsheet cell formatting. Only set when <code>advancedOptions.excelIncludeCellFormatting</code> is enabled and formatting is present.
+     */
+    @JsonProperty("formatting")
+    public Optional<CellFormatting> getFormatting() {
+        return formatting;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -60,12 +101,16 @@ public final class TableCellDetails {
     }
 
     private boolean equalTo(TableCellDetails other) {
-        return rowIndex == other.rowIndex && columnIndex == other.columnIndex;
+        return rowIndex == other.rowIndex
+                && columnIndex == other.columnIndex
+                && cellReference.equals(other.cellReference)
+                && formula.equals(other.formula)
+                && formatting.equals(other.formatting);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.rowIndex, this.columnIndex);
+        return Objects.hash(this.rowIndex, this.columnIndex, this.cellReference, this.formula, this.formatting);
     }
 
     @java.lang.Override
@@ -89,6 +134,27 @@ public final class TableCellDetails {
 
     public interface _FinalStage {
         TableCellDetails build();
+
+        /**
+         * <p>Source spreadsheet cell or range in A1 notation, such as <code>B2</code> or <code>A1:C1</code> for a merged cell. Only set for Excel table cells when <code>advancedOptions.excelIncludeCellMetadata</code> is enabled.</p>
+         */
+        _FinalStage cellReference(Optional<String> cellReference);
+
+        _FinalStage cellReference(String cellReference);
+
+        /**
+         * <p>Source spreadsheet formula text with a leading <code>=</code>, when the cell has a formula. Only set for Excel table cells when <code>advancedOptions.excelIncludeCellMetadata</code> is enabled.</p>
+         */
+        _FinalStage formula(Optional<String> formula);
+
+        _FinalStage formula(String formula);
+
+        /**
+         * <p>Structured spreadsheet cell formatting. Only set when <code>advancedOptions.excelIncludeCellFormatting</code> is enabled and formatting is present.</p>
+         */
+        _FinalStage formatting(Optional<CellFormatting> formatting);
+
+        _FinalStage formatting(CellFormatting formatting);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -96,6 +162,12 @@ public final class TableCellDetails {
         private int rowIndex;
 
         private int columnIndex;
+
+        private Optional<CellFormatting> formatting = Optional.empty();
+
+        private Optional<String> formula = Optional.empty();
+
+        private Optional<String> cellReference = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -106,6 +178,9 @@ public final class TableCellDetails {
         public Builder from(TableCellDetails other) {
             rowIndex(other.getRowIndex());
             columnIndex(other.getColumnIndex());
+            cellReference(other.getCellReference());
+            formula(other.getFormula());
+            formatting(other.getFormatting());
             return this;
         }
 
@@ -123,9 +198,70 @@ public final class TableCellDetails {
             return this;
         }
 
+        /**
+         * <p>Structured spreadsheet cell formatting. Only set when <code>advancedOptions.excelIncludeCellFormatting</code> is enabled and formatting is present.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage formatting(CellFormatting formatting) {
+            this.formatting = Optional.ofNullable(formatting);
+            return this;
+        }
+
+        /**
+         * <p>Structured spreadsheet cell formatting. Only set when <code>advancedOptions.excelIncludeCellFormatting</code> is enabled and formatting is present.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "formatting", nulls = Nulls.SKIP)
+        public _FinalStage formatting(Optional<CellFormatting> formatting) {
+            this.formatting = formatting;
+            return this;
+        }
+
+        /**
+         * <p>Source spreadsheet formula text with a leading <code>=</code>, when the cell has a formula. Only set for Excel table cells when <code>advancedOptions.excelIncludeCellMetadata</code> is enabled.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage formula(String formula) {
+            this.formula = Optional.ofNullable(formula);
+            return this;
+        }
+
+        /**
+         * <p>Source spreadsheet formula text with a leading <code>=</code>, when the cell has a formula. Only set for Excel table cells when <code>advancedOptions.excelIncludeCellMetadata</code> is enabled.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "formula", nulls = Nulls.SKIP)
+        public _FinalStage formula(Optional<String> formula) {
+            this.formula = formula;
+            return this;
+        }
+
+        /**
+         * <p>Source spreadsheet cell or range in A1 notation, such as <code>B2</code> or <code>A1:C1</code> for a merged cell. Only set for Excel table cells when <code>advancedOptions.excelIncludeCellMetadata</code> is enabled.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage cellReference(String cellReference) {
+            this.cellReference = Optional.ofNullable(cellReference);
+            return this;
+        }
+
+        /**
+         * <p>Source spreadsheet cell or range in A1 notation, such as <code>B2</code> or <code>A1:C1</code> for a merged cell. Only set for Excel table cells when <code>advancedOptions.excelIncludeCellMetadata</code> is enabled.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "cellReference", nulls = Nulls.SKIP)
+        public _FinalStage cellReference(Optional<String> cellReference) {
+            this.cellReference = cellReference;
+            return this;
+        }
+
         @java.lang.Override
         public TableCellDetails build() {
-            return new TableCellDetails(rowIndex, columnIndex, additionalProperties);
+            return new TableCellDetails(
+                    rowIndex, columnIndex, cellReference, formula, formatting, additionalProperties);
         }
     }
 }

@@ -10,27 +10,46 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
+import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ExtractStepDefinitionConfig.Builder.class)
 public final class ExtractStepDefinitionConfig {
-    private final ExtractorRef extractor;
+    private final Optional<ExtractorRef> extractor;
+
+    private final Optional<WorkflowInlineExtractConfig> extractorConfig;
 
     private final Map<String, Object> additionalProperties;
 
-    private ExtractStepDefinitionConfig(ExtractorRef extractor, Map<String, Object> additionalProperties) {
+    private ExtractStepDefinitionConfig(
+            Optional<ExtractorRef> extractor,
+            Optional<WorkflowInlineExtractConfig> extractorConfig,
+            Map<String, Object> additionalProperties) {
         this.extractor = extractor;
+        this.extractorConfig = extractorConfig;
         this.additionalProperties = additionalProperties;
     }
 
+    /**
+     * @return Reference to a saved extractor. Provide either this or <code>extractorConfig</code>, not both.
+     */
     @JsonProperty("extractor")
-    public ExtractorRef getExtractor() {
+    public Optional<ExtractorRef> getExtractor() {
         return extractor;
+    }
+
+    /**
+     * @return Inline extractor configuration. Provide either this or <code>extractor</code>, not both. Unlike the run endpoints, <code>schema</code> is required — schema-less extraction is not supported in workflows.
+     * <p>Inline configs are returned verbatim in responses (there is no saved processor, so no <code>version</code> is involved).</p>
+     */
+    @JsonProperty("extractorConfig")
+    public Optional<WorkflowInlineExtractConfig> getExtractorConfig() {
+        return extractorConfig;
     }
 
     @java.lang.Override
@@ -45,12 +64,12 @@ public final class ExtractStepDefinitionConfig {
     }
 
     private boolean equalTo(ExtractStepDefinitionConfig other) {
-        return extractor.equals(other.extractor);
+        return extractor.equals(other.extractor) && extractorConfig.equals(other.extractorConfig);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.extractor);
+        return Objects.hash(this.extractor, this.extractorConfig);
     }
 
     @java.lang.Override
@@ -58,45 +77,58 @@ public final class ExtractStepDefinitionConfig {
         return ObjectMappers.stringify(this);
     }
 
-    public static ExtractorStage builder() {
+    public static Builder builder() {
         return new Builder();
     }
 
-    public interface ExtractorStage {
-        _FinalStage extractor(@NotNull ExtractorRef extractor);
-
-        Builder from(ExtractStepDefinitionConfig other);
-    }
-
-    public interface _FinalStage {
-        ExtractStepDefinitionConfig build();
-    }
-
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements ExtractorStage, _FinalStage {
-        private ExtractorRef extractor;
+    public static final class Builder {
+        private Optional<ExtractorRef> extractor = Optional.empty();
+
+        private Optional<WorkflowInlineExtractConfig> extractorConfig = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
-        @java.lang.Override
         public Builder from(ExtractStepDefinitionConfig other) {
             extractor(other.getExtractor());
+            extractorConfig(other.getExtractorConfig());
             return this;
         }
 
-        @java.lang.Override
-        @JsonSetter("extractor")
-        public _FinalStage extractor(@NotNull ExtractorRef extractor) {
-            this.extractor = Objects.requireNonNull(extractor, "extractor must not be null");
+        /**
+         * <p>Reference to a saved extractor. Provide either this or <code>extractorConfig</code>, not both.</p>
+         */
+        @JsonSetter(value = "extractor", nulls = Nulls.SKIP)
+        public Builder extractor(Optional<ExtractorRef> extractor) {
+            this.extractor = extractor;
             return this;
         }
 
-        @java.lang.Override
+        public Builder extractor(ExtractorRef extractor) {
+            this.extractor = Optional.ofNullable(extractor);
+            return this;
+        }
+
+        /**
+         * <p>Inline extractor configuration. Provide either this or <code>extractor</code>, not both. Unlike the run endpoints, <code>schema</code> is required — schema-less extraction is not supported in workflows.</p>
+         * <p>Inline configs are returned verbatim in responses (there is no saved processor, so no <code>version</code> is involved).</p>
+         */
+        @JsonSetter(value = "extractorConfig", nulls = Nulls.SKIP)
+        public Builder extractorConfig(Optional<WorkflowInlineExtractConfig> extractorConfig) {
+            this.extractorConfig = extractorConfig;
+            return this;
+        }
+
+        public Builder extractorConfig(WorkflowInlineExtractConfig extractorConfig) {
+            this.extractorConfig = Optional.ofNullable(extractorConfig);
+            return this;
+        }
+
         public ExtractStepDefinitionConfig build() {
-            return new ExtractStepDefinitionConfig(extractor, additionalProperties);
+            return new ExtractStepDefinitionConfig(extractor, extractorConfig, additionalProperties);
         }
     }
 }

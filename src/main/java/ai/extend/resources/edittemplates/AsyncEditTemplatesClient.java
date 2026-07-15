@@ -28,7 +28,7 @@ public class AsyncEditTemplatesClient {
 
     /**
      * Retrieve a saved edit template by ID.
-     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /edit_schemas/generate</code>.</p>
+     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
      */
     public CompletableFuture<EditTemplate> retrieve(String id) {
         return this.rawClient.retrieve(id).thenApply(response -> response.body());
@@ -36,7 +36,7 @@ public class AsyncEditTemplatesClient {
 
     /**
      * Retrieve a saved edit template by ID.
-     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /edit_schemas/generate</code>.</p>
+     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
      */
     public CompletableFuture<EditTemplate> retrieve(String id, RequestOptions requestOptions) {
         return this.rawClient.retrieve(id, requestOptions).thenApply(response -> response.body());
@@ -44,7 +44,7 @@ public class AsyncEditTemplatesClient {
 
     /**
      * Retrieve a saved edit template by ID.
-     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /edit_schemas/generate</code>.</p>
+     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
      */
     public CompletableFuture<EditTemplate> retrieve(String id, EditTemplatesRetrieveRequest request) {
         return this.rawClient.retrieve(id, request).thenApply(response -> response.body());
@@ -52,7 +52,7 @@ public class AsyncEditTemplatesClient {
 
     /**
      * Retrieve a saved edit template by ID.
-     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /edit_schemas/generate</code>.</p>
+     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
      */
     public CompletableFuture<EditTemplate> retrieve(
             String id, EditTemplatesRetrieveRequest request, RequestOptions requestOptions) {

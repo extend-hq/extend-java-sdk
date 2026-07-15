@@ -48,8 +48,8 @@ public final class ClassifyStepDefinition {
 
     /**
      * @return Optional on create/update. Required before the workflow can be deployed. Omitted in responses when the step is not yet configured.
-     * <p>Reference to the classifier used by this step. The <code>next[].classificationId</code> values must match classification <code>id</code> values (not <code>type</code> strings) from the referenced classifier's configuration. For example, if the classifier defines <code>{ &quot;id&quot;: &quot;cls_invoice&quot;, &quot;type&quot;: &quot;invoice&quot; }</code>, use <code>&quot;cls_invoice&quot;</code> as the <code>classificationId</code>.</p>
-     * <p>The classifier <code>version</code> is required and must be a pinned version (semver like <code>&quot;0.1&quot;</code> or <code>&quot;draft&quot;</code>). <code>&quot;latest&quot;</code> is not allowed.</p>
+     * <p>When present, must contain exactly one of <code>classifier</code> (saved processor reference) or <code>classifierConfig</code> (inline configuration) — not both.</p>
+     * <p>The <code>next[].classificationId</code> values must match classification <code>id</code> values (not <code>type</code> strings) from the classifier's configuration — the referenced version's config for a saved reference, or the inline <code>classifications</code> array for an inline config. For example, if the classifier defines <code>{ &quot;id&quot;: &quot;cls_invoice&quot;, &quot;type&quot;: &quot;invoice&quot; }</code>, use <code>&quot;cls_invoice&quot;</code> as the <code>classificationId</code>.</p>
      * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#classify">Classify step docs</a>.</p>
      */
     @JsonProperty("config")
@@ -58,7 +58,7 @@ public final class ClassifyStepDefinition {
     }
 
     /**
-     * @return Can only be set when <code>config</code> is present. Each entry must include a <code>classificationId</code> matching a classification <code>id</code> from the referenced classifier's configuration. Use the classification's stable <code>id</code> (e.g. <code>&quot;cls_invoice&quot;</code>), not the <code>type</code> string.
+     * @return Can only be set when <code>config</code> is present. Each entry must include a <code>classificationId</code> matching a classification <code>id</code> from the classifier's configuration (saved or inline). Use the classification's stable <code>id</code> (e.g. <code>&quot;cls_invoice&quot;</code>), not the <code>type</code> string.
      * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#classify">Classify step docs</a>.</p>
      */
     @JsonProperty("next")
@@ -106,8 +106,8 @@ public final class ClassifyStepDefinition {
 
         /**
          * <p>Optional on create/update. Required before the workflow can be deployed. Omitted in responses when the step is not yet configured.</p>
-         * <p>Reference to the classifier used by this step. The <code>next[].classificationId</code> values must match classification <code>id</code> values (not <code>type</code> strings) from the referenced classifier's configuration. For example, if the classifier defines <code>{ &quot;id&quot;: &quot;cls_invoice&quot;, &quot;type&quot;: &quot;invoice&quot; }</code>, use <code>&quot;cls_invoice&quot;</code> as the <code>classificationId</code>.</p>
-         * <p>The classifier <code>version</code> is required and must be a pinned version (semver like <code>&quot;0.1&quot;</code> or <code>&quot;draft&quot;</code>). <code>&quot;latest&quot;</code> is not allowed.</p>
+         * <p>When present, must contain exactly one of <code>classifier</code> (saved processor reference) or <code>classifierConfig</code> (inline configuration) — not both.</p>
+         * <p>The <code>next[].classificationId</code> values must match classification <code>id</code> values (not <code>type</code> strings) from the classifier's configuration — the referenced version's config for a saved reference, or the inline <code>classifications</code> array for an inline config. For example, if the classifier defines <code>{ &quot;id&quot;: &quot;cls_invoice&quot;, &quot;type&quot;: &quot;invoice&quot; }</code>, use <code>&quot;cls_invoice&quot;</code> as the <code>classificationId</code>.</p>
          * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#classify">Classify step docs</a>.</p>
          */
         _FinalStage config(Optional<ClassifyStepDefinitionConfig> config);
@@ -115,7 +115,7 @@ public final class ClassifyStepDefinition {
         _FinalStage config(ClassifyStepDefinitionConfig config);
 
         /**
-         * <p>Can only be set when <code>config</code> is present. Each entry must include a <code>classificationId</code> matching a classification <code>id</code> from the referenced classifier's configuration. Use the classification's stable <code>id</code> (e.g. <code>&quot;cls_invoice&quot;</code>), not the <code>type</code> string.</p>
+         * <p>Can only be set when <code>config</code> is present. Each entry must include a <code>classificationId</code> matching a classification <code>id</code> from the classifier's configuration (saved or inline). Use the classification's stable <code>id</code> (e.g. <code>&quot;cls_invoice&quot;</code>), not the <code>type</code> string.</p>
          * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#classify">Classify step docs</a>.</p>
          */
         _FinalStage next(Optional<List<ClassificationNextEntry>> next);
@@ -152,7 +152,7 @@ public final class ClassifyStepDefinition {
         }
 
         /**
-         * <p>Can only be set when <code>config</code> is present. Each entry must include a <code>classificationId</code> matching a classification <code>id</code> from the referenced classifier's configuration. Use the classification's stable <code>id</code> (e.g. <code>&quot;cls_invoice&quot;</code>), not the <code>type</code> string.</p>
+         * <p>Can only be set when <code>config</code> is present. Each entry must include a <code>classificationId</code> matching a classification <code>id</code> from the classifier's configuration (saved or inline). Use the classification's stable <code>id</code> (e.g. <code>&quot;cls_invoice&quot;</code>), not the <code>type</code> string.</p>
          * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#classify">Classify step docs</a>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
@@ -163,7 +163,7 @@ public final class ClassifyStepDefinition {
         }
 
         /**
-         * <p>Can only be set when <code>config</code> is present. Each entry must include a <code>classificationId</code> matching a classification <code>id</code> from the referenced classifier's configuration. Use the classification's stable <code>id</code> (e.g. <code>&quot;cls_invoice&quot;</code>), not the <code>type</code> string.</p>
+         * <p>Can only be set when <code>config</code> is present. Each entry must include a <code>classificationId</code> matching a classification <code>id</code> from the classifier's configuration (saved or inline). Use the classification's stable <code>id</code> (e.g. <code>&quot;cls_invoice&quot;</code>), not the <code>type</code> string.</p>
          * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#classify">Classify step docs</a>.</p>
          */
         @java.lang.Override
@@ -175,8 +175,8 @@ public final class ClassifyStepDefinition {
 
         /**
          * <p>Optional on create/update. Required before the workflow can be deployed. Omitted in responses when the step is not yet configured.</p>
-         * <p>Reference to the classifier used by this step. The <code>next[].classificationId</code> values must match classification <code>id</code> values (not <code>type</code> strings) from the referenced classifier's configuration. For example, if the classifier defines <code>{ &quot;id&quot;: &quot;cls_invoice&quot;, &quot;type&quot;: &quot;invoice&quot; }</code>, use <code>&quot;cls_invoice&quot;</code> as the <code>classificationId</code>.</p>
-         * <p>The classifier <code>version</code> is required and must be a pinned version (semver like <code>&quot;0.1&quot;</code> or <code>&quot;draft&quot;</code>). <code>&quot;latest&quot;</code> is not allowed.</p>
+         * <p>When present, must contain exactly one of <code>classifier</code> (saved processor reference) or <code>classifierConfig</code> (inline configuration) — not both.</p>
+         * <p>The <code>next[].classificationId</code> values must match classification <code>id</code> values (not <code>type</code> strings) from the classifier's configuration — the referenced version's config for a saved reference, or the inline <code>classifications</code> array for an inline config. For example, if the classifier defines <code>{ &quot;id&quot;: &quot;cls_invoice&quot;, &quot;type&quot;: &quot;invoice&quot; }</code>, use <code>&quot;cls_invoice&quot;</code> as the <code>classificationId</code>.</p>
          * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#classify">Classify step docs</a>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
@@ -188,8 +188,8 @@ public final class ClassifyStepDefinition {
 
         /**
          * <p>Optional on create/update. Required before the workflow can be deployed. Omitted in responses when the step is not yet configured.</p>
-         * <p>Reference to the classifier used by this step. The <code>next[].classificationId</code> values must match classification <code>id</code> values (not <code>type</code> strings) from the referenced classifier's configuration. For example, if the classifier defines <code>{ &quot;id&quot;: &quot;cls_invoice&quot;, &quot;type&quot;: &quot;invoice&quot; }</code>, use <code>&quot;cls_invoice&quot;</code> as the <code>classificationId</code>.</p>
-         * <p>The classifier <code>version</code> is required and must be a pinned version (semver like <code>&quot;0.1&quot;</code> or <code>&quot;draft&quot;</code>). <code>&quot;latest&quot;</code> is not allowed.</p>
+         * <p>When present, must contain exactly one of <code>classifier</code> (saved processor reference) or <code>classifierConfig</code> (inline configuration) — not both.</p>
+         * <p>The <code>next[].classificationId</code> values must match classification <code>id</code> values (not <code>type</code> strings) from the classifier's configuration — the referenced version's config for a saved reference, or the inline <code>classifications</code> array for an inline config. For example, if the classifier defines <code>{ &quot;id&quot;: &quot;cls_invoice&quot;, &quot;type&quot;: &quot;invoice&quot; }</code>, use <code>&quot;cls_invoice&quot;</code> as the <code>classificationId</code>.</p>
          * <p>See the <a href="https://docs.extend.ai/2026-02-09/workflows/configuring-workflows#classify">Classify step docs</a>.</p>
          */
         @java.lang.Override

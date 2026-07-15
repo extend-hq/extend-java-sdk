@@ -48,6 +48,7 @@ public final class ExtractStepDefinition {
 
     /**
      * @return Optional on create/update. Required before the workflow can be deployed. Omitted in responses when the step is not yet configured.
+     * <p>When present, must contain exactly one of <code>extractor</code> (saved processor reference) or <code>extractorConfig</code> (inline configuration) — not both.</p>
      */
     @JsonProperty("config")
     public Optional<ExtractStepDefinitionConfig> getConfig() {
@@ -102,6 +103,7 @@ public final class ExtractStepDefinition {
 
         /**
          * <p>Optional on create/update. Required before the workflow can be deployed. Omitted in responses when the step is not yet configured.</p>
+         * <p>When present, must contain exactly one of <code>extractor</code> (saved processor reference) or <code>extractorConfig</code> (inline configuration) — not both.</p>
          */
         _FinalStage config(Optional<ExtractStepDefinitionConfig> config);
 
@@ -165,6 +167,7 @@ public final class ExtractStepDefinition {
 
         /**
          * <p>Optional on create/update. Required before the workflow can be deployed. Omitted in responses when the step is not yet configured.</p>
+         * <p>When present, must contain exactly one of <code>extractor</code> (saved processor reference) or <code>extractorConfig</code> (inline configuration) — not both.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -175,6 +178,7 @@ public final class ExtractStepDefinition {
 
         /**
          * <p>Optional on create/update. Required before the workflow can be deployed. Omitted in responses when the step is not yet configured.</p>
+         * <p>When present, must contain exactly one of <code>extractor</code> (saved processor reference) or <code>extractorConfig</code> (inline configuration) — not both.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "config", nulls = Nulls.SKIP)
