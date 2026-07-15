@@ -22,6 +22,9 @@ public final class RunUsageBreakdownEntryObject {
     public static final RunUsageBreakdownEntryObject EXTRACT_RUN =
             new RunUsageBreakdownEntryObject(Value.EXTRACT_RUN, "extract_run");
 
+    public static final RunUsageBreakdownEntryObject FORM_DETECTION_RUN =
+            new RunUsageBreakdownEntryObject(Value.FORM_DETECTION_RUN, "form_detection_run");
+
     private final Value value;
 
     private final String string;
@@ -65,6 +68,8 @@ public final class RunUsageBreakdownEntryObject {
                 return visitor.visitParseRun();
             case EXTRACT_RUN:
                 return visitor.visitExtractRun();
+            case FORM_DETECTION_RUN:
+                return visitor.visitFormDetectionRun();
             case UNKNOWN:
             default:
                 return visitor.visitUnknown(string);
@@ -84,6 +89,8 @@ public final class RunUsageBreakdownEntryObject {
                 return PARSE_RUN;
             case "extract_run":
                 return EXTRACT_RUN;
+            case "form_detection_run":
+                return FORM_DETECTION_RUN;
             default:
                 return new RunUsageBreakdownEntryObject(Value.UNKNOWN, value);
         }
@@ -100,6 +107,8 @@ public final class RunUsageBreakdownEntryObject {
 
         EDIT_RUN,
 
+        FORM_DETECTION_RUN,
+
         UNKNOWN
     }
 
@@ -113,6 +122,8 @@ public final class RunUsageBreakdownEntryObject {
         T visitParseRun();
 
         T visitEditRun();
+
+        T visitFormDetectionRun();
 
         T visitUnknown(String unknownType);
     }

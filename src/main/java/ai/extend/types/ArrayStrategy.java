@@ -37,7 +37,7 @@ public final class ArrayStrategy {
      * </li>
      * <li>
      * <p><code>large_array_max_context</code>: Optimizes for accuracy over latency in documents with very large arrays.</p>
-     * <p>This strategy will do multiple passes through the entire document to ensure there is no context loss across any chunks/pages, maximizing accuracy for complex array extraction, but adding material latency.</p>
+     * <p>This strategy will do multiple passes through the entire document to ensure there is no context loss across any chunks/pages, maximizing accuracy for complex array extraction, but adding material latency. This strategy incurs additional extraction credits when enabled.</p>
      * </li>
      * <li>
      * <p><code>large_array_overlap_context</code>: Balances accuracy and latency in documents with very large arrays.</p>
@@ -89,7 +89,7 @@ public final class ArrayStrategy {
          * </li>
          * <li>
          * <p><code>large_array_max_context</code>: Optimizes for accuracy over latency in documents with very large arrays.</p>
-         * <p>This strategy will do multiple passes through the entire document to ensure there is no context loss across any chunks/pages, maximizing accuracy for complex array extraction, but adding material latency.</p>
+         * <p>This strategy will do multiple passes through the entire document to ensure there is no context loss across any chunks/pages, maximizing accuracy for complex array extraction, but adding material latency. This strategy incurs additional extraction credits when enabled.</p>
          * </li>
          * <li>
          * <p><code>large_array_overlap_context</code>: Balances accuracy and latency in documents with very large arrays.</p>
@@ -130,7 +130,7 @@ public final class ArrayStrategy {
          * </li>
          * <li>
          * <p><code>large_array_max_context</code>: Optimizes for accuracy over latency in documents with very large arrays.</p>
-         * <p>This strategy will do multiple passes through the entire document to ensure there is no context loss across any chunks/pages, maximizing accuracy for complex array extraction, but adding material latency.</p>
+         * <p>This strategy will do multiple passes through the entire document to ensure there is no context loss across any chunks/pages, maximizing accuracy for complex array extraction, but adding material latency. This strategy incurs additional extraction credits when enabled.</p>
          * </li>
          * <li>
          * <p><code>large_array_overlap_context</code>: Balances accuracy and latency in documents with very large arrays.</p>
@@ -145,7 +145,7 @@ public final class ArrayStrategy {
          * </li>
          * <li>
          * <p><code>large_array_max_context</code>: Optimizes for accuracy over latency in documents with very large arrays.</p>
-         * <p>This strategy will do multiple passes through the entire document to ensure there is no context loss across any chunks/pages, maximizing accuracy for complex array extraction, but adding material latency.</p>
+         * <p>This strategy will do multiple passes through the entire document to ensure there is no context loss across any chunks/pages, maximizing accuracy for complex array extraction, but adding material latency. This strategy incurs additional extraction credits when enabled.</p>
          * </li>
          * <li>
          * <p><code>large_array_overlap_context</code>: Balances accuracy and latency in documents with very large arrays.</p>

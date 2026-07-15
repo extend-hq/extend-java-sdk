@@ -16,7 +16,9 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -49,6 +51,8 @@ public final class WorkflowRunSummary {
 
     private final Optional<String> rejectionNote;
 
+    private final List<FileSummary> files;
+
     private final OffsetDateTime createdAt;
 
     private final OffsetDateTime updatedAt;
@@ -70,6 +74,7 @@ public final class WorkflowRunSummary {
             Optional<OffsetDateTime> endTime,
             Optional<String> batchId,
             Optional<String> rejectionNote,
+            List<FileSummary> files,
             OffsetDateTime createdAt,
             OffsetDateTime updatedAt,
             Optional<RunUsageSummary> usage,
@@ -86,6 +91,7 @@ public final class WorkflowRunSummary {
         this.endTime = endTime;
         this.batchId = batchId;
         this.rejectionNote = rejectionNote;
+        this.files = files;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.usage = usage;
@@ -217,6 +223,14 @@ public final class WorkflowRunSummary {
         return rejectionNote;
     }
 
+    /**
+     * @return The input files that this workflow run was executed on. Provided directly on the list response so you don't need to fetch each run individually to inspect its input.
+     */
+    @JsonProperty("files")
+    public List<FileSummary> getFiles() {
+        return files;
+    }
+
     @JsonProperty("createdAt")
     public OffsetDateTime getCreatedAt() {
         return createdAt;
@@ -311,6 +325,7 @@ public final class WorkflowRunSummary {
                 && endTime.equals(other.endTime)
                 && batchId.equals(other.batchId)
                 && rejectionNote.equals(other.rejectionNote)
+                && files.equals(other.files)
                 && createdAt.equals(other.createdAt)
                 && updatedAt.equals(other.updatedAt)
                 && usage.equals(other.usage);
@@ -331,6 +346,7 @@ public final class WorkflowRunSummary {
                 this.endTime,
                 this.batchId,
                 this.rejectionNote,
+                this.files,
                 this.createdAt,
                 this.updatedAt,
                 this.usage);
@@ -457,6 +473,15 @@ public final class WorkflowRunSummary {
         _FinalStage rejectionNote(Nullable<String> rejectionNote);
 
         /**
+         * <p>The input files that this workflow run was executed on. Provided directly on the list response so you don't need to fetch each run individually to inspect its input.</p>
+         */
+        _FinalStage files(List<FileSummary> files);
+
+        _FinalStage addFiles(FileSummary files);
+
+        _FinalStage addAllFiles(List<FileSummary> files);
+
+        /**
          * <p>Usage credits consumed by this workflow run. Omits <code>breakdown</code> — fetch the full workflow run by id to see the per-line items for every contributing child run.</p>
          * <p><strong>Availability:</strong> Will not be returned for runs created before October 7, 2025 or for customers on legacy billing systems.</p>
          */
@@ -493,6 +518,8 @@ public final class WorkflowRunSummary {
 
         private Optional<RunUsageSummary> usage = Optional.empty();
 
+        private List<FileSummary> files = new ArrayList<>();
+
         private Optional<String> rejectionNote = Optional.empty();
 
         private Optional<String> batchId = Optional.empty();
@@ -526,6 +553,7 @@ public final class WorkflowRunSummary {
             endTime(other.getEndTime());
             batchId(other.getBatchId());
             rejectionNote(other.getRejectionNote());
+            files(other.getFiles());
             createdAt(other.getCreatedAt());
             updatedAt(other.getUpdatedAt());
             usage(other.getUsage());
@@ -631,6 +659,41 @@ public final class WorkflowRunSummary {
         @JsonSetter(value = "usage", nulls = Nulls.SKIP)
         public _FinalStage usage(Optional<RunUsageSummary> usage) {
             this.usage = usage;
+            return this;
+        }
+
+        /**
+         * <p>The input files that this workflow run was executed on. Provided directly on the list response so you don't need to fetch each run individually to inspect its input.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage addAllFiles(List<FileSummary> files) {
+            if (files != null) {
+                this.files.addAll(files);
+            }
+            return this;
+        }
+
+        /**
+         * <p>The input files that this workflow run was executed on. Provided directly on the list response so you don't need to fetch each run individually to inspect its input.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage addFiles(FileSummary files) {
+            this.files.add(files);
+            return this;
+        }
+
+        /**
+         * <p>The input files that this workflow run was executed on. Provided directly on the list response so you don't need to fetch each run individually to inspect its input.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "files", nulls = Nulls.SKIP)
+        public _FinalStage files(List<FileSummary> files) {
+            this.files.clear();
+            if (files != null) {
+                this.files.addAll(files);
+            }
             return this;
         }
 
@@ -922,6 +985,7 @@ public final class WorkflowRunSummary {
                     endTime,
                     batchId,
                     rejectionNote,
+                    files,
                     createdAt,
                     updatedAt,
                     usage,

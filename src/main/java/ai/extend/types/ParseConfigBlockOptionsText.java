@@ -44,7 +44,7 @@ public final class ParseConfigBlockOptionsText {
     }
 
     /**
-     * @return Options for agentic text processing using VLM-based review and correction.
+     * @return Options for agentic text processing using VLM-based review and correction. Enabling this incurs additional credits on pages where agentic text correction is triggered.
      */
     @JsonProperty("agentic")
     public Optional<ParseConfigBlockOptionsTextAgentic> getAgentic() {
@@ -112,7 +112,7 @@ public final class ParseConfigBlockOptionsText {
         }
 
         /**
-         * <p>Options for agentic text processing using VLM-based review and correction.</p>
+         * <p>Options for agentic text processing using VLM-based review and correction. Enabling this incurs additional credits on pages where agentic text correction is triggered.</p>
          */
         @JsonSetter(value = "agentic", nulls = Nulls.SKIP)
         public Builder agentic(Optional<ParseConfigBlockOptionsTextAgentic> agentic) {

@@ -24,6 +24,8 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = Citation.Builder.class)
 public final class Citation {
+    private final Optional<String> fileId;
+
     private final Optional<CitationPage> page;
 
     private final Optional<String> referenceText;
@@ -33,14 +35,24 @@ public final class Citation {
     private final Map<String, Object> additionalProperties;
 
     private Citation(
+            Optional<String> fileId,
             Optional<CitationPage> page,
             Optional<String> referenceText,
             Optional<List<Polygon>> polygon,
             Map<String, Object> additionalProperties) {
+        this.fileId = fileId;
         this.page = page;
         this.referenceText = referenceText;
         this.polygon = polygon;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return ID of the file the cited content was found in. On multifile runs, join this against the run's <code>files</code> array to determine which input file the citation refers to; on single-file runs it equals the run's <code>file.id</code>.
+     */
+    @JsonProperty("fileId")
+    public Optional<String> getFileId() {
+        return fileId;
     }
 
     @JsonProperty("page")
@@ -85,12 +97,15 @@ public final class Citation {
     }
 
     private boolean equalTo(Citation other) {
-        return page.equals(other.page) && referenceText.equals(other.referenceText) && polygon.equals(other.polygon);
+        return fileId.equals(other.fileId)
+                && page.equals(other.page)
+                && referenceText.equals(other.referenceText)
+                && polygon.equals(other.polygon);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.page, this.referenceText, this.polygon);
+        return Objects.hash(this.fileId, this.page, this.referenceText, this.polygon);
     }
 
     @java.lang.Override
@@ -104,6 +119,8 @@ public final class Citation {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<String> fileId = Optional.empty();
+
         private Optional<CitationPage> page = Optional.empty();
 
         private Optional<String> referenceText = Optional.empty();
@@ -116,9 +133,24 @@ public final class Citation {
         private Builder() {}
 
         public Builder from(Citation other) {
+            fileId(other.getFileId());
             page(other.getPage());
             referenceText(other.getReferenceText());
             polygon(other.getPolygon());
+            return this;
+        }
+
+        /**
+         * <p>ID of the file the cited content was found in. On multifile runs, join this against the run's <code>files</code> array to determine which input file the citation refers to; on single-file runs it equals the run's <code>file.id</code>.</p>
+         */
+        @JsonSetter(value = "fileId", nulls = Nulls.SKIP)
+        public Builder fileId(Optional<String> fileId) {
+            this.fileId = fileId;
+            return this;
+        }
+
+        public Builder fileId(String fileId) {
+            this.fileId = Optional.ofNullable(fileId);
             return this;
         }
 
@@ -173,7 +205,7 @@ public final class Citation {
         }
 
         public Citation build() {
-            return new Citation(page, referenceText, polygon, additionalProperties);
+            return new Citation(fileId, page, referenceText, polygon, additionalProperties);
         }
     }
 }

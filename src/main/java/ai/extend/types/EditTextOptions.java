@@ -31,6 +31,8 @@ public final class EditTextOptions {
 
     private final Optional<Integer> maxLength;
 
+    private final Optional<Boolean> multiLine;
+
     private final Map<String, Object> additionalProperties;
 
     private EditTextOptions(
@@ -39,12 +41,14 @@ public final class EditTextOptions {
             Optional<String> font,
             Optional<Boolean> combing,
             Optional<Integer> maxLength,
+            Optional<Boolean> multiLine,
             Map<String, Object> additionalProperties) {
         this.fontSize = fontSize;
         this.fontColor = fontColor;
         this.font = font;
         this.combing = combing;
         this.maxLength = maxLength;
+        this.multiLine = multiLine;
         this.additionalProperties = additionalProperties;
     }
 
@@ -88,6 +92,14 @@ public final class EditTextOptions {
         return maxLength;
     }
 
+    /**
+     * @return Whether text can wrap across multiple lines
+     */
+    @JsonProperty("multiLine")
+    public Optional<Boolean> getMultiLine() {
+        return multiLine;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -104,12 +116,13 @@ public final class EditTextOptions {
                 && fontColor.equals(other.fontColor)
                 && font.equals(other.font)
                 && combing.equals(other.combing)
-                && maxLength.equals(other.maxLength);
+                && maxLength.equals(other.maxLength)
+                && multiLine.equals(other.multiLine);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.fontSize, this.fontColor, this.font, this.combing, this.maxLength);
+        return Objects.hash(this.fontSize, this.fontColor, this.font, this.combing, this.maxLength, this.multiLine);
     }
 
     @java.lang.Override
@@ -133,6 +146,8 @@ public final class EditTextOptions {
 
         private Optional<Integer> maxLength = Optional.empty();
 
+        private Optional<Boolean> multiLine = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -144,6 +159,7 @@ public final class EditTextOptions {
             font(other.getFont());
             combing(other.getCombing());
             maxLength(other.getMaxLength());
+            multiLine(other.getMultiLine());
             return this;
         }
 
@@ -217,8 +233,22 @@ public final class EditTextOptions {
             return this;
         }
 
+        /**
+         * <p>Whether text can wrap across multiple lines</p>
+         */
+        @JsonSetter(value = "multiLine", nulls = Nulls.SKIP)
+        public Builder multiLine(Optional<Boolean> multiLine) {
+            this.multiLine = multiLine;
+            return this;
+        }
+
+        public Builder multiLine(Boolean multiLine) {
+            this.multiLine = Optional.ofNullable(multiLine);
+            return this;
+        }
+
         public EditTextOptions build() {
-            return new EditTextOptions(fontSize, fontColor, font, combing, maxLength, additionalProperties);
+            return new EditTextOptions(fontSize, fontColor, font, combing, maxLength, multiLine, additionalProperties);
         }
     }
 }

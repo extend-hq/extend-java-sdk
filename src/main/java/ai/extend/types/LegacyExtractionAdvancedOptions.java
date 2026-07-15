@@ -145,6 +145,7 @@ public final class LegacyExtractionAdvancedOptions {
      * When enabled, each field in the output metadata will include a <code>reviewAgentScore</code> (1-5)
      * and may include additional <code>insights</code> of type <code>issue</code> or <code>review_summary</code> to help identify
      * fields that may need manual review.
+     * <p>Enabling the review agent incurs additional credits.</p>
      * <p>To learn more, view the <a href="https://docs.extend.ai/2026-02-09/extraction/review-agent">Review Agent Documentation</a></p>
      */
     @JsonProperty("reviewAgent")
@@ -409,6 +410,7 @@ public final class LegacyExtractionAdvancedOptions {
          * When enabled, each field in the output metadata will include a <code>reviewAgentScore</code> (1-5)
          * and may include additional <code>insights</code> of type <code>issue</code> or <code>review_summary</code> to help identify
          * fields that may need manual review.</p>
+         * <p>Enabling the review agent incurs additional credits.</p>
          * <p>To learn more, view the <a href="https://docs.extend.ai/2026-02-09/extraction/review-agent">Review Agent Documentation</a></p>
          */
         @JsonSetter(value = "reviewAgent", nulls = Nulls.SKIP)

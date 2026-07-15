@@ -33,6 +33,10 @@ public final class ParseConfigAdvancedOptions {
 
     private final Optional<Boolean> excelSkipCalculation;
 
+    private final Optional<Boolean> excelIncludeCellMetadata;
+
+    private final Optional<Boolean> excelIncludeCellFormatting;
+
     private final Optional<Double> verticalGroupingThreshold;
 
     private final Optional<ParseConfigAdvancedOptionsReturnOcr> returnOcr;
@@ -54,6 +58,8 @@ public final class ParseConfigAdvancedOptions {
             Optional<Boolean> excelSkipHiddenContent,
             Optional<Boolean> excelUseRawCellValues,
             Optional<Boolean> excelSkipCalculation,
+            Optional<Boolean> excelIncludeCellMetadata,
+            Optional<Boolean> excelIncludeCellFormatting,
             Optional<Double> verticalGroupingThreshold,
             Optional<ParseConfigAdvancedOptionsReturnOcr> returnOcr,
             Optional<Boolean> alwaysConvertToPdf,
@@ -67,6 +73,8 @@ public final class ParseConfigAdvancedOptions {
         this.excelSkipHiddenContent = excelSkipHiddenContent;
         this.excelUseRawCellValues = excelUseRawCellValues;
         this.excelSkipCalculation = excelSkipCalculation;
+        this.excelIncludeCellMetadata = excelIncludeCellMetadata;
+        this.excelIncludeCellFormatting = excelIncludeCellFormatting;
         this.verticalGroupingThreshold = verticalGroupingThreshold;
         this.returnOcr = returnOcr;
         this.alwaysConvertToPdf = alwaysConvertToPdf;
@@ -93,7 +101,7 @@ public final class ParseConfigAdvancedOptions {
      * @return Controls how Excel files are parsed.
      * <ul>
      * <li><code>basic</code>: Fast, deterministic parsing.</li>
-     * <li><code>advanced</code>: Enable layout block detection for complex spreadsheets.</li>
+     * <li><code>advanced</code>: Enable layout block detection for complex spreadsheets. This mode incurs additional credits when enabled.</li>
      * </ul>
      * <p>For <code>.xls</code> files, <code>basic</code> mode is always used.</p>
      */
@@ -124,6 +132,22 @@ public final class ParseConfigAdvancedOptions {
     @JsonProperty("excelSkipCalculation")
     public Optional<Boolean> getExcelSkipCalculation() {
         return excelSkipCalculation;
+    }
+
+    /**
+     * @return Whether to include spreadsheet cell provenance when parsing Excel files in advanced mode. When enabled, table cell block details include source cell references and formulas, text or heading block details can include source ranges, and HTML table output includes <code>data-cell</code> and <code>data-formula</code> attributes.
+     */
+    @JsonProperty("excelIncludeCellMetadata")
+    public Optional<Boolean> getExcelIncludeCellMetadata() {
+        return excelIncludeCellMetadata;
+    }
+
+    /**
+     * @return Whether to include spreadsheet cell formatting when parsing Excel files in advanced mode. When enabled, table cell block details include structured formatting such as bold, italic, font color, and background color, and HTML table output preserves inline cell styles.
+     */
+    @JsonProperty("excelIncludeCellFormatting")
+    public Optional<Boolean> getExcelIncludeCellFormatting() {
+        return excelIncludeCellFormatting;
     }
 
     /**
@@ -204,6 +228,8 @@ public final class ParseConfigAdvancedOptions {
                 && excelSkipHiddenContent.equals(other.excelSkipHiddenContent)
                 && excelUseRawCellValues.equals(other.excelUseRawCellValues)
                 && excelSkipCalculation.equals(other.excelSkipCalculation)
+                && excelIncludeCellMetadata.equals(other.excelIncludeCellMetadata)
+                && excelIncludeCellFormatting.equals(other.excelIncludeCellFormatting)
                 && verticalGroupingThreshold.equals(other.verticalGroupingThreshold)
                 && returnOcr.equals(other.returnOcr)
                 && alwaysConvertToPdf.equals(other.alwaysConvertToPdf)
@@ -221,6 +247,8 @@ public final class ParseConfigAdvancedOptions {
                 this.excelSkipHiddenContent,
                 this.excelUseRawCellValues,
                 this.excelSkipCalculation,
+                this.excelIncludeCellMetadata,
+                this.excelIncludeCellFormatting,
                 this.verticalGroupingThreshold,
                 this.returnOcr,
                 this.alwaysConvertToPdf,
@@ -252,6 +280,10 @@ public final class ParseConfigAdvancedOptions {
 
         private Optional<Boolean> excelSkipCalculation = Optional.empty();
 
+        private Optional<Boolean> excelIncludeCellMetadata = Optional.empty();
+
+        private Optional<Boolean> excelIncludeCellFormatting = Optional.empty();
+
         private Optional<Double> verticalGroupingThreshold = Optional.empty();
 
         private Optional<ParseConfigAdvancedOptionsReturnOcr> returnOcr = Optional.empty();
@@ -277,6 +309,8 @@ public final class ParseConfigAdvancedOptions {
             excelSkipHiddenContent(other.getExcelSkipHiddenContent());
             excelUseRawCellValues(other.getExcelUseRawCellValues());
             excelSkipCalculation(other.getExcelSkipCalculation());
+            excelIncludeCellMetadata(other.getExcelIncludeCellMetadata());
+            excelIncludeCellFormatting(other.getExcelIncludeCellFormatting());
             verticalGroupingThreshold(other.getVerticalGroupingThreshold());
             returnOcr(other.getReturnOcr());
             alwaysConvertToPdf(other.getAlwaysConvertToPdf());
@@ -315,7 +349,7 @@ public final class ParseConfigAdvancedOptions {
          * <p>Controls how Excel files are parsed.</p>
          * <ul>
          * <li><code>basic</code>: Fast, deterministic parsing.</li>
-         * <li><code>advanced</code>: Enable layout block detection for complex spreadsheets.</li>
+         * <li><code>advanced</code>: Enable layout block detection for complex spreadsheets. This mode incurs additional credits when enabled.</li>
          * </ul>
          * <p>For <code>.xls</code> files, <code>basic</code> mode is always used.</p>
          */
@@ -369,6 +403,34 @@ public final class ParseConfigAdvancedOptions {
 
         public Builder excelSkipCalculation(Boolean excelSkipCalculation) {
             this.excelSkipCalculation = Optional.ofNullable(excelSkipCalculation);
+            return this;
+        }
+
+        /**
+         * <p>Whether to include spreadsheet cell provenance when parsing Excel files in advanced mode. When enabled, table cell block details include source cell references and formulas, text or heading block details can include source ranges, and HTML table output includes <code>data-cell</code> and <code>data-formula</code> attributes.</p>
+         */
+        @JsonSetter(value = "excelIncludeCellMetadata", nulls = Nulls.SKIP)
+        public Builder excelIncludeCellMetadata(Optional<Boolean> excelIncludeCellMetadata) {
+            this.excelIncludeCellMetadata = excelIncludeCellMetadata;
+            return this;
+        }
+
+        public Builder excelIncludeCellMetadata(Boolean excelIncludeCellMetadata) {
+            this.excelIncludeCellMetadata = Optional.ofNullable(excelIncludeCellMetadata);
+            return this;
+        }
+
+        /**
+         * <p>Whether to include spreadsheet cell formatting when parsing Excel files in advanced mode. When enabled, table cell block details include structured formatting such as bold, italic, font color, and background color, and HTML table output preserves inline cell styles.</p>
+         */
+        @JsonSetter(value = "excelIncludeCellFormatting", nulls = Nulls.SKIP)
+        public Builder excelIncludeCellFormatting(Optional<Boolean> excelIncludeCellFormatting) {
+            this.excelIncludeCellFormatting = excelIncludeCellFormatting;
+            return this;
+        }
+
+        public Builder excelIncludeCellFormatting(Boolean excelIncludeCellFormatting) {
+            this.excelIncludeCellFormatting = Optional.ofNullable(excelIncludeCellFormatting);
             return this;
         }
 
@@ -479,6 +541,8 @@ public final class ParseConfigAdvancedOptions {
                     excelSkipHiddenContent,
                     excelUseRawCellValues,
                     excelSkipCalculation,
+                    excelIncludeCellMetadata,
+                    excelIncludeCellFormatting,
                     verticalGroupingThreshold,
                     returnOcr,
                     alwaysConvertToPdf,

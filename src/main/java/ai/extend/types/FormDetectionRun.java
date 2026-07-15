@@ -22,37 +22,37 @@ import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-@JsonDeserialize(builder = EditRun.Builder.class)
-public final class EditRun {
+@JsonDeserialize(builder = FormDetectionRun.Builder.class)
+public final class FormDetectionRun {
     private final String id;
 
     private final FileSummary file;
 
-    private final EditRunStatus status;
+    private final FormDetectionRunStatus status;
 
     private final Optional<String> failureReason;
 
     private final Optional<String> failureMessage;
 
-    private final EditConfig config;
+    private final EditSchemaGenerationConfig config;
 
-    private final Optional<EditRunOutput> output;
+    private final Optional<EditSchemaGenerationResponse> output;
 
-    private final Optional<EditRunMetrics> metrics;
+    private final Optional<FormDetectionRunMetrics> metrics;
 
     private final Optional<RunUsage> usage;
 
     private final Map<String, Object> additionalProperties;
 
-    private EditRun(
+    private FormDetectionRun(
             String id,
             FileSummary file,
-            EditRunStatus status,
+            FormDetectionRunStatus status,
             Optional<String> failureReason,
             Optional<String> failureMessage,
-            EditConfig config,
-            Optional<EditRunOutput> output,
-            Optional<EditRunMetrics> metrics,
+            EditSchemaGenerationConfig config,
+            Optional<EditSchemaGenerationResponse> output,
+            Optional<FormDetectionRunMetrics> metrics,
             Optional<RunUsage> usage,
             Map<String, Object> additionalProperties) {
         this.id = id;
@@ -68,16 +68,16 @@ public final class EditRun {
     }
 
     /**
-     * @return The type of object. Will always be <code>&quot;edit_run&quot;</code>.
+     * @return The type of object. Will always be <code>&quot;form_detection_run&quot;</code>.
      */
     @JsonProperty("object")
     public String getObject() {
-        return "edit_run";
+        return "form_detection_run";
     }
 
     /**
-     * @return A unique identifier for the edit run.
-     * <p>Example: <code>&quot;edr_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+     * @return A unique identifier for the form detection run.
+     * <p>Example: <code>&quot;sgr_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
      */
     @JsonProperty("id")
     public String getId() {
@@ -85,7 +85,7 @@ public final class EditRun {
     }
 
     /**
-     * @return The input file that was submitted for editing.
+     * @return The input PDF submitted for form detection.
      */
     @JsonProperty("file")
     public FileSummary getFile() {
@@ -93,15 +93,15 @@ public final class EditRun {
     }
 
     /**
-     * @return The status of the edit run:
+     * @return The status of the form detection run:
      * <ul>
-     * <li><code>&quot;PROCESSING&quot;</code> - The file is still being processed</li>
-     * <li><code>&quot;PROCESSED&quot;</code> - The file was successfully edited</li>
-     * <li><code>&quot;FAILED&quot;</code> - The editing failed (see <code>failureReason</code> for details)</li>
+     * <li><code>&quot;PROCESSING&quot;</code> - The form is still being analyzed</li>
+     * <li><code>&quot;PROCESSED&quot;</code> - Form detection completed successfully</li>
+     * <li><code>&quot;FAILED&quot;</code> - Form detection failed (see <code>failureReason</code> for details)</li>
      * </ul>
      */
     @JsonProperty("status")
-    public EditRunStatus getStatus() {
+    public FormDetectionRunStatus getStatus() {
         return status;
     }
 
@@ -110,18 +110,17 @@ public final class EditRun {
      * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
      * <p>Possible values include:</p>
      * <ul>
-     * <li><code>UNABLE_TO_DOWNLOAD_FILE</code> - Failed to load the requested file</li>
-     * <li><code>FILE_TYPE_NOT_SUPPORTED</code> - File type not supported. Edit runs currently require a PDF</li>
-     * <li><code>FILE_SIZE_TOO_LARGE</code> - The file exceeds the maximum allowed size</li>
-     * <li><code>CORRUPT_FILE</code> - The file appears to be corrupted and cannot be edited</li>
-     * <li><code>FIELD_DETECTION_ERROR</code> - An error occurred during field detection</li>
-     * <li><code>PASSWORD_PROTECTED_FILE</code> - The file is password protected and cannot be edited</li>
-     * <li><code>FAILED_TO_CONVERT_TO_PDF</code> - The file could not be converted to PDF for processing</li>
-     * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
-     * <li><code>INVALID_OPTIONS</code> - The provided configuration options are invalid</li>
-     * <li><code>EMPTY_SCHEMA</code> - No schema was provided and no fields could be detected</li>
-     * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to process the file</li>
-     * <li><code>SCHEMA_VALIDATION_ERROR</code> - The generated output value failed validation against the edit schema</li>
+     * <li><code>UNABLE_TO_DOWNLOAD_FILE</code></li>
+     * <li><code>FILE_TYPE_NOT_SUPPORTED</code></li>
+     * <li><code>FILE_SIZE_TOO_LARGE</code></li>
+     * <li><code>CORRUPT_FILE</code></li>
+     * <li><code>FIELD_DETECTION_ERROR</code></li>
+     * <li><code>PASSWORD_PROTECTED_FILE</code></li>
+     * <li><code>FAILED_TO_CONVERT_TO_PDF</code></li>
+     * <li><code>EMPTY_SCHEMA</code></li>
+     * <li><code>INTERNAL_ERROR</code></li>
+     * <li><code>INVALID_OPTIONS</code></li>
+     * <li><code>OUT_OF_CREDITS</code></li>
      * </ul>
      * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
      */
@@ -146,19 +145,19 @@ public final class EditRun {
     }
 
     /**
-     * @return The configuration used for this edit run, including any default values that were applied.
+     * @return The configuration used for this form detection run, including any default values that were applied.
      */
     @JsonProperty("config")
-    public EditConfig getConfig() {
+    public EditSchemaGenerationConfig getConfig() {
         return config;
     }
 
     /**
-     * @return The output of the edit run.
+     * @return The detected schema and optional mapping metadata.
      * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
      */
     @JsonIgnore
-    public Optional<EditRunOutput> getOutput() {
+    public Optional<EditSchemaGenerationResponse> getOutput() {
         if (output == null) {
             return Optional.empty();
         }
@@ -166,11 +165,11 @@ public final class EditRun {
     }
 
     /**
-     * @return Metrics about the editing process.
+     * @return Metrics about the form detection process.
      * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
      */
     @JsonIgnore
-    public Optional<EditRunMetrics> getMetrics() {
+    public Optional<FormDetectionRunMetrics> getMetrics() {
         if (metrics == null) {
             return Optional.empty();
         }
@@ -178,8 +177,7 @@ public final class EditRun {
     }
 
     /**
-     * @return Usage credits consumed by this edit run.
-     * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
+     * @return Usage credits consumed by this form detection run.
      */
     @JsonIgnore
     public Optional<RunUsage> getUsage() {
@@ -203,13 +201,13 @@ public final class EditRun {
 
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
     @JsonProperty("output")
-    private Optional<EditRunOutput> _getOutput() {
+    private Optional<EditSchemaGenerationResponse> _getOutput() {
         return output;
     }
 
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
     @JsonProperty("metrics")
-    private Optional<EditRunMetrics> _getMetrics() {
+    private Optional<FormDetectionRunMetrics> _getMetrics() {
         return metrics;
     }
 
@@ -222,7 +220,7 @@ public final class EditRun {
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        return other instanceof EditRun && equalTo((EditRun) other);
+        return other instanceof FormDetectionRun && equalTo((FormDetectionRun) other);
     }
 
     @JsonAnyGetter
@@ -230,7 +228,7 @@ public final class EditRun {
         return this.additionalProperties;
     }
 
-    private boolean equalTo(EditRun other) {
+    private boolean equalTo(FormDetectionRun other) {
         return id.equals(other.id)
                 && file.equals(other.file)
                 && status.equals(other.status)
@@ -267,60 +265,59 @@ public final class EditRun {
 
     public interface IdStage {
         /**
-         * <p>A unique identifier for the edit run.</p>
-         * <p>Example: <code>&quot;edr_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         * <p>A unique identifier for the form detection run.</p>
+         * <p>Example: <code>&quot;sgr_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
          */
         FileStage id(@NotNull String id);
 
-        Builder from(EditRun other);
+        Builder from(FormDetectionRun other);
     }
 
     public interface FileStage {
         /**
-         * <p>The input file that was submitted for editing.</p>
+         * <p>The input PDF submitted for form detection.</p>
          */
         StatusStage file(@NotNull FileSummary file);
     }
 
     public interface StatusStage {
         /**
-         * <p>The status of the edit run:</p>
+         * <p>The status of the form detection run:</p>
          * <ul>
-         * <li><code>&quot;PROCESSING&quot;</code> - The file is still being processed</li>
-         * <li><code>&quot;PROCESSED&quot;</code> - The file was successfully edited</li>
-         * <li><code>&quot;FAILED&quot;</code> - The editing failed (see <code>failureReason</code> for details)</li>
+         * <li><code>&quot;PROCESSING&quot;</code> - The form is still being analyzed</li>
+         * <li><code>&quot;PROCESSED&quot;</code> - Form detection completed successfully</li>
+         * <li><code>&quot;FAILED&quot;</code> - Form detection failed (see <code>failureReason</code> for details)</li>
          * </ul>
          */
-        ConfigStage status(@NotNull EditRunStatus status);
+        ConfigStage status(@NotNull FormDetectionRunStatus status);
     }
 
     public interface ConfigStage {
         /**
-         * <p>The configuration used for this edit run, including any default values that were applied.</p>
+         * <p>The configuration used for this form detection run, including any default values that were applied.</p>
          */
-        _FinalStage config(@NotNull EditConfig config);
+        _FinalStage config(@NotNull EditSchemaGenerationConfig config);
     }
 
     public interface _FinalStage {
-        EditRun build();
+        FormDetectionRun build();
 
         /**
          * <p>The reason for failure.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
          * <p>Possible values include:</p>
          * <ul>
-         * <li><code>UNABLE_TO_DOWNLOAD_FILE</code> - Failed to load the requested file</li>
-         * <li><code>FILE_TYPE_NOT_SUPPORTED</code> - File type not supported. Edit runs currently require a PDF</li>
-         * <li><code>FILE_SIZE_TOO_LARGE</code> - The file exceeds the maximum allowed size</li>
-         * <li><code>CORRUPT_FILE</code> - The file appears to be corrupted and cannot be edited</li>
-         * <li><code>FIELD_DETECTION_ERROR</code> - An error occurred during field detection</li>
-         * <li><code>PASSWORD_PROTECTED_FILE</code> - The file is password protected and cannot be edited</li>
-         * <li><code>FAILED_TO_CONVERT_TO_PDF</code> - The file could not be converted to PDF for processing</li>
-         * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
-         * <li><code>INVALID_OPTIONS</code> - The provided configuration options are invalid</li>
-         * <li><code>EMPTY_SCHEMA</code> - No schema was provided and no fields could be detected</li>
-         * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to process the file</li>
-         * <li><code>SCHEMA_VALIDATION_ERROR</code> - The generated output value failed validation against the edit schema</li>
+         * <li><code>UNABLE_TO_DOWNLOAD_FILE</code></li>
+         * <li><code>FILE_TYPE_NOT_SUPPORTED</code></li>
+         * <li><code>FILE_SIZE_TOO_LARGE</code></li>
+         * <li><code>CORRUPT_FILE</code></li>
+         * <li><code>FIELD_DETECTION_ERROR</code></li>
+         * <li><code>PASSWORD_PROTECTED_FILE</code></li>
+         * <li><code>FAILED_TO_CONVERT_TO_PDF</code></li>
+         * <li><code>EMPTY_SCHEMA</code></li>
+         * <li><code>INTERNAL_ERROR</code></li>
+         * <li><code>INVALID_OPTIONS</code></li>
+         * <li><code>OUT_OF_CREDITS</code></li>
          * </ul>
          * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
          */
@@ -341,28 +338,27 @@ public final class EditRun {
         _FinalStage failureMessage(Nullable<String> failureMessage);
 
         /**
-         * <p>The output of the edit run.</p>
+         * <p>The detected schema and optional mapping metadata.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
          */
-        _FinalStage output(Optional<EditRunOutput> output);
+        _FinalStage output(Optional<EditSchemaGenerationResponse> output);
 
-        _FinalStage output(EditRunOutput output);
+        _FinalStage output(EditSchemaGenerationResponse output);
 
-        _FinalStage output(Nullable<EditRunOutput> output);
+        _FinalStage output(Nullable<EditSchemaGenerationResponse> output);
 
         /**
-         * <p>Metrics about the editing process.</p>
+         * <p>Metrics about the form detection process.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
          */
-        _FinalStage metrics(Optional<EditRunMetrics> metrics);
+        _FinalStage metrics(Optional<FormDetectionRunMetrics> metrics);
 
-        _FinalStage metrics(EditRunMetrics metrics);
+        _FinalStage metrics(FormDetectionRunMetrics metrics);
 
-        _FinalStage metrics(Nullable<EditRunMetrics> metrics);
+        _FinalStage metrics(Nullable<FormDetectionRunMetrics> metrics);
 
         /**
-         * <p>Usage credits consumed by this edit run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
+         * <p>Usage credits consumed by this form detection run.</p>
          */
         _FinalStage usage(Optional<RunUsage> usage);
 
@@ -377,15 +373,15 @@ public final class EditRun {
 
         private FileSummary file;
 
-        private EditRunStatus status;
+        private FormDetectionRunStatus status;
 
-        private EditConfig config;
+        private EditSchemaGenerationConfig config;
 
         private Optional<RunUsage> usage = Optional.empty();
 
-        private Optional<EditRunMetrics> metrics = Optional.empty();
+        private Optional<FormDetectionRunMetrics> metrics = Optional.empty();
 
-        private Optional<EditRunOutput> output = Optional.empty();
+        private Optional<EditSchemaGenerationResponse> output = Optional.empty();
 
         private Optional<String> failureMessage = Optional.empty();
 
@@ -397,7 +393,7 @@ public final class EditRun {
         private Builder() {}
 
         @java.lang.Override
-        public Builder from(EditRun other) {
+        public Builder from(FormDetectionRun other) {
             id(other.getId());
             file(other.getFile());
             status(other.getStatus());
@@ -411,10 +407,10 @@ public final class EditRun {
         }
 
         /**
-         * <p>A unique identifier for the edit run.</p>
-         * <p>Example: <code>&quot;edr_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
-         * <p>A unique identifier for the edit run.</p>
-         * <p>Example: <code>&quot;edr_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         * <p>A unique identifier for the form detection run.</p>
+         * <p>Example: <code>&quot;sgr_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         * <p>A unique identifier for the form detection run.</p>
+         * <p>Example: <code>&quot;sgr_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -425,8 +421,8 @@ public final class EditRun {
         }
 
         /**
-         * <p>The input file that was submitted for editing.</p>
-         * <p>The input file that was submitted for editing.</p>
+         * <p>The input PDF submitted for form detection.</p>
+         * <p>The input PDF submitted for form detection.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -437,42 +433,41 @@ public final class EditRun {
         }
 
         /**
-         * <p>The status of the edit run:</p>
+         * <p>The status of the form detection run:</p>
          * <ul>
-         * <li><code>&quot;PROCESSING&quot;</code> - The file is still being processed</li>
-         * <li><code>&quot;PROCESSED&quot;</code> - The file was successfully edited</li>
-         * <li><code>&quot;FAILED&quot;</code> - The editing failed (see <code>failureReason</code> for details)</li>
+         * <li><code>&quot;PROCESSING&quot;</code> - The form is still being analyzed</li>
+         * <li><code>&quot;PROCESSED&quot;</code> - Form detection completed successfully</li>
+         * <li><code>&quot;FAILED&quot;</code> - Form detection failed (see <code>failureReason</code> for details)</li>
          * </ul>
-         * <p>The status of the edit run:</p>
+         * <p>The status of the form detection run:</p>
          * <ul>
-         * <li><code>&quot;PROCESSING&quot;</code> - The file is still being processed</li>
-         * <li><code>&quot;PROCESSED&quot;</code> - The file was successfully edited</li>
-         * <li><code>&quot;FAILED&quot;</code> - The editing failed (see <code>failureReason</code> for details)</li>
+         * <li><code>&quot;PROCESSING&quot;</code> - The form is still being analyzed</li>
+         * <li><code>&quot;PROCESSED&quot;</code> - Form detection completed successfully</li>
+         * <li><code>&quot;FAILED&quot;</code> - Form detection failed (see <code>failureReason</code> for details)</li>
          * </ul>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
         @JsonSetter("status")
-        public ConfigStage status(@NotNull EditRunStatus status) {
+        public ConfigStage status(@NotNull FormDetectionRunStatus status) {
             this.status = Objects.requireNonNull(status, "status must not be null");
             return this;
         }
 
         /**
-         * <p>The configuration used for this edit run, including any default values that were applied.</p>
-         * <p>The configuration used for this edit run, including any default values that were applied.</p>
+         * <p>The configuration used for this form detection run, including any default values that were applied.</p>
+         * <p>The configuration used for this form detection run, including any default values that were applied.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
         @JsonSetter("config")
-        public _FinalStage config(@NotNull EditConfig config) {
+        public _FinalStage config(@NotNull EditSchemaGenerationConfig config) {
             this.config = Objects.requireNonNull(config, "config must not be null");
             return this;
         }
 
         /**
-         * <p>Usage credits consumed by this edit run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
+         * <p>Usage credits consumed by this form detection run.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -488,8 +483,7 @@ public final class EditRun {
         }
 
         /**
-         * <p>Usage credits consumed by this edit run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
+         * <p>Usage credits consumed by this form detection run.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -499,8 +493,7 @@ public final class EditRun {
         }
 
         /**
-         * <p>Usage credits consumed by this edit run.</p>
-         * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>, the run was created after October 7, 2025, and the customer is on the current billing system.</p>
+         * <p>Usage credits consumed by this form detection run.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "usage", nulls = Nulls.SKIP)
@@ -510,12 +503,12 @@ public final class EditRun {
         }
 
         /**
-         * <p>Metrics about the editing process.</p>
+         * <p>Metrics about the form detection process.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage metrics(Nullable<EditRunMetrics> metrics) {
+        public _FinalStage metrics(Nullable<FormDetectionRunMetrics> metrics) {
             if (metrics.isNull()) {
                 this.metrics = null;
             } else if (metrics.isEmpty()) {
@@ -527,34 +520,34 @@ public final class EditRun {
         }
 
         /**
-         * <p>Metrics about the editing process.</p>
+         * <p>Metrics about the form detection process.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage metrics(EditRunMetrics metrics) {
+        public _FinalStage metrics(FormDetectionRunMetrics metrics) {
             this.metrics = Optional.ofNullable(metrics);
             return this;
         }
 
         /**
-         * <p>Metrics about the editing process.</p>
+         * <p>Metrics about the form detection process.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "metrics", nulls = Nulls.SKIP)
-        public _FinalStage metrics(Optional<EditRunMetrics> metrics) {
+        public _FinalStage metrics(Optional<FormDetectionRunMetrics> metrics) {
             this.metrics = metrics;
             return this;
         }
 
         /**
-         * <p>The output of the edit run.</p>
+         * <p>The detected schema and optional mapping metadata.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage output(Nullable<EditRunOutput> output) {
+        public _FinalStage output(Nullable<EditSchemaGenerationResponse> output) {
             if (output.isNull()) {
                 this.output = null;
             } else if (output.isEmpty()) {
@@ -566,23 +559,23 @@ public final class EditRun {
         }
 
         /**
-         * <p>The output of the edit run.</p>
+         * <p>The detected schema and optional mapping metadata.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage output(EditRunOutput output) {
+        public _FinalStage output(EditSchemaGenerationResponse output) {
             this.output = Optional.ofNullable(output);
             return this;
         }
 
         /**
-         * <p>The output of the edit run.</p>
+         * <p>The detected schema and optional mapping metadata.</p>
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;PROCESSED&quot;</code>.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "output", nulls = Nulls.SKIP)
-        public _FinalStage output(Optional<EditRunOutput> output) {
+        public _FinalStage output(Optional<EditSchemaGenerationResponse> output) {
             this.output = output;
             return this;
         }
@@ -631,18 +624,17 @@ public final class EditRun {
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
          * <p>Possible values include:</p>
          * <ul>
-         * <li><code>UNABLE_TO_DOWNLOAD_FILE</code> - Failed to load the requested file</li>
-         * <li><code>FILE_TYPE_NOT_SUPPORTED</code> - File type not supported. Edit runs currently require a PDF</li>
-         * <li><code>FILE_SIZE_TOO_LARGE</code> - The file exceeds the maximum allowed size</li>
-         * <li><code>CORRUPT_FILE</code> - The file appears to be corrupted and cannot be edited</li>
-         * <li><code>FIELD_DETECTION_ERROR</code> - An error occurred during field detection</li>
-         * <li><code>PASSWORD_PROTECTED_FILE</code> - The file is password protected and cannot be edited</li>
-         * <li><code>FAILED_TO_CONVERT_TO_PDF</code> - The file could not be converted to PDF for processing</li>
-         * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
-         * <li><code>INVALID_OPTIONS</code> - The provided configuration options are invalid</li>
-         * <li><code>EMPTY_SCHEMA</code> - No schema was provided and no fields could be detected</li>
-         * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to process the file</li>
-         * <li><code>SCHEMA_VALIDATION_ERROR</code> - The generated output value failed validation against the edit schema</li>
+         * <li><code>UNABLE_TO_DOWNLOAD_FILE</code></li>
+         * <li><code>FILE_TYPE_NOT_SUPPORTED</code></li>
+         * <li><code>FILE_SIZE_TOO_LARGE</code></li>
+         * <li><code>CORRUPT_FILE</code></li>
+         * <li><code>FIELD_DETECTION_ERROR</code></li>
+         * <li><code>PASSWORD_PROTECTED_FILE</code></li>
+         * <li><code>FAILED_TO_CONVERT_TO_PDF</code></li>
+         * <li><code>EMPTY_SCHEMA</code></li>
+         * <li><code>INTERNAL_ERROR</code></li>
+         * <li><code>INVALID_OPTIONS</code></li>
+         * <li><code>OUT_OF_CREDITS</code></li>
          * </ul>
          * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
@@ -664,18 +656,17 @@ public final class EditRun {
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
          * <p>Possible values include:</p>
          * <ul>
-         * <li><code>UNABLE_TO_DOWNLOAD_FILE</code> - Failed to load the requested file</li>
-         * <li><code>FILE_TYPE_NOT_SUPPORTED</code> - File type not supported. Edit runs currently require a PDF</li>
-         * <li><code>FILE_SIZE_TOO_LARGE</code> - The file exceeds the maximum allowed size</li>
-         * <li><code>CORRUPT_FILE</code> - The file appears to be corrupted and cannot be edited</li>
-         * <li><code>FIELD_DETECTION_ERROR</code> - An error occurred during field detection</li>
-         * <li><code>PASSWORD_PROTECTED_FILE</code> - The file is password protected and cannot be edited</li>
-         * <li><code>FAILED_TO_CONVERT_TO_PDF</code> - The file could not be converted to PDF for processing</li>
-         * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
-         * <li><code>INVALID_OPTIONS</code> - The provided configuration options are invalid</li>
-         * <li><code>EMPTY_SCHEMA</code> - No schema was provided and no fields could be detected</li>
-         * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to process the file</li>
-         * <li><code>SCHEMA_VALIDATION_ERROR</code> - The generated output value failed validation against the edit schema</li>
+         * <li><code>UNABLE_TO_DOWNLOAD_FILE</code></li>
+         * <li><code>FILE_TYPE_NOT_SUPPORTED</code></li>
+         * <li><code>FILE_SIZE_TOO_LARGE</code></li>
+         * <li><code>CORRUPT_FILE</code></li>
+         * <li><code>FIELD_DETECTION_ERROR</code></li>
+         * <li><code>PASSWORD_PROTECTED_FILE</code></li>
+         * <li><code>FAILED_TO_CONVERT_TO_PDF</code></li>
+         * <li><code>EMPTY_SCHEMA</code></li>
+         * <li><code>INTERNAL_ERROR</code></li>
+         * <li><code>INVALID_OPTIONS</code></li>
+         * <li><code>OUT_OF_CREDITS</code></li>
          * </ul>
          * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
@@ -691,18 +682,17 @@ public final class EditRun {
          * <p><strong>Availability:</strong> Present when <code>status</code> is <code>&quot;FAILED&quot;</code>.</p>
          * <p>Possible values include:</p>
          * <ul>
-         * <li><code>UNABLE_TO_DOWNLOAD_FILE</code> - Failed to load the requested file</li>
-         * <li><code>FILE_TYPE_NOT_SUPPORTED</code> - File type not supported. Edit runs currently require a PDF</li>
-         * <li><code>FILE_SIZE_TOO_LARGE</code> - The file exceeds the maximum allowed size</li>
-         * <li><code>CORRUPT_FILE</code> - The file appears to be corrupted and cannot be edited</li>
-         * <li><code>FIELD_DETECTION_ERROR</code> - An error occurred during field detection</li>
-         * <li><code>PASSWORD_PROTECTED_FILE</code> - The file is password protected and cannot be edited</li>
-         * <li><code>FAILED_TO_CONVERT_TO_PDF</code> - The file could not be converted to PDF for processing</li>
-         * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
-         * <li><code>INVALID_OPTIONS</code> - The provided configuration options are invalid</li>
-         * <li><code>EMPTY_SCHEMA</code> - No schema was provided and no fields could be detected</li>
-         * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to process the file</li>
-         * <li><code>SCHEMA_VALIDATION_ERROR</code> - The generated output value failed validation against the edit schema</li>
+         * <li><code>UNABLE_TO_DOWNLOAD_FILE</code></li>
+         * <li><code>FILE_TYPE_NOT_SUPPORTED</code></li>
+         * <li><code>FILE_SIZE_TOO_LARGE</code></li>
+         * <li><code>CORRUPT_FILE</code></li>
+         * <li><code>FIELD_DETECTION_ERROR</code></li>
+         * <li><code>PASSWORD_PROTECTED_FILE</code></li>
+         * <li><code>FAILED_TO_CONVERT_TO_PDF</code></li>
+         * <li><code>EMPTY_SCHEMA</code></li>
+         * <li><code>INTERNAL_ERROR</code></li>
+         * <li><code>INVALID_OPTIONS</code></li>
+         * <li><code>OUT_OF_CREDITS</code></li>
          * </ul>
          * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
          */
@@ -714,8 +704,8 @@ public final class EditRun {
         }
 
         @java.lang.Override
-        public EditRun build() {
-            return new EditRun(
+        public FormDetectionRun build() {
+            return new FormDetectionRun(
                     id,
                     file,
                     status,

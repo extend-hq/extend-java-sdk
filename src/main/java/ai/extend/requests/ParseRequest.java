@@ -4,6 +4,7 @@
 package ai.extend.requests;
 
 import ai.extend.core.ObjectMappers;
+import ai.extend.types.DataRetention;
 import ai.extend.types.ParseConfig;
 import ai.extend.types.ParseRequestFile;
 import ai.extend.types.ParseRequestResponseType;
@@ -35,6 +36,8 @@ public final class ParseRequest {
 
     private final Optional<Map<String, Object>> metadata;
 
+    private final Optional<DataRetention> dataRetention;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseRequest(
@@ -43,12 +46,14 @@ public final class ParseRequest {
             ParseRequestFile file,
             Optional<ParseConfig> config,
             Optional<Map<String, Object>> metadata,
+            Optional<DataRetention> dataRetention,
             Map<String, Object> additionalProperties) {
         this.extendWorkspaceId = extendWorkspaceId;
         this.responseType = responseType;
         this.file = file;
         this.config = config;
         this.metadata = metadata;
+        this.dataRetention = dataRetention;
         this.additionalProperties = additionalProperties;
     }
 
@@ -90,6 +95,11 @@ public final class ParseRequest {
         return metadata;
     }
 
+    @JsonProperty("dataRetention")
+    public Optional<DataRetention> getDataRetention() {
+        return dataRetention;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -106,12 +116,14 @@ public final class ParseRequest {
                 && responseType.equals(other.responseType)
                 && file.equals(other.file)
                 && config.equals(other.config)
-                && metadata.equals(other.metadata);
+                && metadata.equals(other.metadata)
+                && dataRetention.equals(other.dataRetention);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.extendWorkspaceId, this.responseType, this.file, this.config, this.metadata);
+        return Objects.hash(
+                this.extendWorkspaceId, this.responseType, this.file, this.config, this.metadata, this.dataRetention);
     }
 
     @java.lang.Override
@@ -160,11 +172,17 @@ public final class ParseRequest {
         _FinalStage metadata(Optional<Map<String, Object>> metadata);
 
         _FinalStage metadata(Map<String, Object> metadata);
+
+        _FinalStage dataRetention(Optional<DataRetention> dataRetention);
+
+        _FinalStage dataRetention(DataRetention dataRetention);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements FileStage, _FinalStage {
         private ParseRequestFile file;
+
+        private Optional<DataRetention> dataRetention = Optional.empty();
 
         private Optional<Map<String, Object>> metadata = Optional.empty();
 
@@ -186,6 +204,7 @@ public final class ParseRequest {
             file(other.getFile());
             config(other.getConfig());
             metadata(other.getMetadata());
+            dataRetention(other.getDataRetention());
             return this;
         }
 
@@ -198,6 +217,19 @@ public final class ParseRequest {
         @JsonSetter("file")
         public _FinalStage file(@NotNull ParseRequestFile file) {
             this.file = Objects.requireNonNull(file, "file must not be null");
+            return this;
+        }
+
+        @java.lang.Override
+        public _FinalStage dataRetention(DataRetention dataRetention) {
+            this.dataRetention = Optional.ofNullable(dataRetention);
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter(value = "dataRetention", nulls = Nulls.SKIP)
+        public _FinalStage dataRetention(Optional<DataRetention> dataRetention) {
+            this.dataRetention = dataRetention;
             return this;
         }
 
@@ -276,7 +308,8 @@ public final class ParseRequest {
 
         @java.lang.Override
         public ParseRequest build() {
-            return new ParseRequest(extendWorkspaceId, responseType, file, config, metadata, additionalProperties);
+            return new ParseRequest(
+                    extendWorkspaceId, responseType, file, config, metadata, dataRetention, additionalProperties);
         }
     }
 }

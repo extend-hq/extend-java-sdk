@@ -34,18 +34,20 @@ public final class BlockDetails {
     @SuppressWarnings("unchecked")
     public <T> T visit(Visitor<T> visitor) {
         if (this.type == 0) {
-            return visitor.visit((TableDetails) this.value);
+            return visitor.visit((TextDetails) this.value);
         } else if (this.type == 1) {
-            return visitor.visit((TableCellDetails) this.value);
+            return visitor.visit((TableDetails) this.value);
         } else if (this.type == 2) {
-            return visitor.visit((FigureDetails) this.value);
+            return visitor.visit((TableCellDetails) this.value);
         } else if (this.type == 3) {
-            return visitor.visit((BarcodeDetails) this.value);
+            return visitor.visit((FigureDetails) this.value);
         } else if (this.type == 4) {
-            return visitor.visit((FormulaDetails) this.value);
+            return visitor.visit((BarcodeDetails) this.value);
         } else if (this.type == 5) {
-            return visitor.visit((KeyValueDetails) this.value);
+            return visitor.visit((FormulaDetails) this.value);
         } else if (this.type == 6) {
+            return visitor.visit((KeyValueDetails) this.value);
+        } else if (this.type == 7) {
             return visitor.visit((Map<String, Object>) this.value);
         }
         throw new IllegalStateException("Failed to visit value. This should never happen.");
@@ -71,35 +73,41 @@ public final class BlockDetails {
         return this.value.toString();
     }
 
-    public static BlockDetails of(TableDetails value) {
+    public static BlockDetails of(TextDetails value) {
         return new BlockDetails(value, 0);
     }
 
-    public static BlockDetails of(TableCellDetails value) {
+    public static BlockDetails of(TableDetails value) {
         return new BlockDetails(value, 1);
     }
 
-    public static BlockDetails of(FigureDetails value) {
+    public static BlockDetails of(TableCellDetails value) {
         return new BlockDetails(value, 2);
     }
 
-    public static BlockDetails of(BarcodeDetails value) {
+    public static BlockDetails of(FigureDetails value) {
         return new BlockDetails(value, 3);
     }
 
-    public static BlockDetails of(FormulaDetails value) {
+    public static BlockDetails of(BarcodeDetails value) {
         return new BlockDetails(value, 4);
     }
 
-    public static BlockDetails of(KeyValueDetails value) {
+    public static BlockDetails of(FormulaDetails value) {
         return new BlockDetails(value, 5);
     }
 
-    public static BlockDetails of(Map<String, Object> value) {
+    public static BlockDetails of(KeyValueDetails value) {
         return new BlockDetails(value, 6);
     }
 
+    public static BlockDetails of(Map<String, Object> value) {
+        return new BlockDetails(value, 7);
+    }
+
     public interface Visitor<T> {
+        T visit(TextDetails value);
+
         T visit(TableDetails value);
 
         T visit(TableCellDetails value);
@@ -123,6 +131,10 @@ public final class BlockDetails {
         @java.lang.Override
         public BlockDetails deserialize(JsonParser p, DeserializationContext context) throws IOException {
             Object value = p.readValueAs(Object.class);
+            try {
+                return of(ObjectMappers.JSON_MAPPER.convertValue(value, TextDetails.class));
+            } catch (RuntimeException e) {
+            }
             try {
                 return of(ObjectMappers.JSON_MAPPER.convertValue(value, TableDetails.class));
             } catch (RuntimeException e) {

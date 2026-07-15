@@ -5,6 +5,7 @@ package ai.extend.resources.parseruns.requests;
 
 import ai.extend.core.ObjectMappers;
 import ai.extend.resources.parseruns.types.ParseRunsCreateRequestFile;
+import ai.extend.types.DataRetention;
 import ai.extend.types.ParseConfig;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -29,16 +30,20 @@ public final class ParseRunsCreateRequest {
 
     private final Optional<Map<String, Object>> metadata;
 
+    private final Optional<DataRetention> dataRetention;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseRunsCreateRequest(
             ParseRunsCreateRequestFile file,
             Optional<ParseConfig> config,
             Optional<Map<String, Object>> metadata,
+            Optional<DataRetention> dataRetention,
             Map<String, Object> additionalProperties) {
         this.file = file;
         this.config = config;
         this.metadata = metadata;
+        this.dataRetention = dataRetention;
         this.additionalProperties = additionalProperties;
     }
 
@@ -60,6 +65,11 @@ public final class ParseRunsCreateRequest {
         return metadata;
     }
 
+    @JsonProperty("dataRetention")
+    public Optional<DataRetention> getDataRetention() {
+        return dataRetention;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -72,12 +82,15 @@ public final class ParseRunsCreateRequest {
     }
 
     private boolean equalTo(ParseRunsCreateRequest other) {
-        return file.equals(other.file) && config.equals(other.config) && metadata.equals(other.metadata);
+        return file.equals(other.file)
+                && config.equals(other.config)
+                && metadata.equals(other.metadata)
+                && dataRetention.equals(other.dataRetention);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.file, this.config, this.metadata);
+        return Objects.hash(this.file, this.config, this.metadata, this.dataRetention);
     }
 
     @java.lang.Override
@@ -108,11 +121,17 @@ public final class ParseRunsCreateRequest {
         _FinalStage metadata(Optional<Map<String, Object>> metadata);
 
         _FinalStage metadata(Map<String, Object> metadata);
+
+        _FinalStage dataRetention(Optional<DataRetention> dataRetention);
+
+        _FinalStage dataRetention(DataRetention dataRetention);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder implements FileStage, _FinalStage {
         private ParseRunsCreateRequestFile file;
+
+        private Optional<DataRetention> dataRetention = Optional.empty();
 
         private Optional<Map<String, Object>> metadata = Optional.empty();
 
@@ -128,6 +147,7 @@ public final class ParseRunsCreateRequest {
             file(other.getFile());
             config(other.getConfig());
             metadata(other.getMetadata());
+            dataRetention(other.getDataRetention());
             return this;
         }
 
@@ -140,6 +160,19 @@ public final class ParseRunsCreateRequest {
         @JsonSetter("file")
         public _FinalStage file(@NotNull ParseRunsCreateRequestFile file) {
             this.file = Objects.requireNonNull(file, "file must not be null");
+            return this;
+        }
+
+        @java.lang.Override
+        public _FinalStage dataRetention(DataRetention dataRetention) {
+            this.dataRetention = Optional.ofNullable(dataRetention);
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter(value = "dataRetention", nulls = Nulls.SKIP)
+        public _FinalStage dataRetention(Optional<DataRetention> dataRetention) {
+            this.dataRetention = dataRetention;
             return this;
         }
 
@@ -171,7 +204,7 @@ public final class ParseRunsCreateRequest {
 
         @java.lang.Override
         public ParseRunsCreateRequest build() {
-            return new ParseRunsCreateRequest(file, config, metadata, additionalProperties);
+            return new ParseRunsCreateRequest(file, config, metadata, dataRetention, additionalProperties);
         }
     }
 }

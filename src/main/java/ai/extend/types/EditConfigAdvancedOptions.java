@@ -28,6 +28,8 @@ public final class EditConfigAdvancedOptions {
 
     private final Optional<Boolean> nativeFieldsOnly;
 
+    private final Optional<Boolean> conditionalGenerationEnabled;
+
     private final Map<String, Object> additionalProperties;
 
     private EditConfigAdvancedOptions(
@@ -35,11 +37,13 @@ public final class EditConfigAdvancedOptions {
             Optional<Boolean> flattenPdf,
             Optional<Boolean> radioEnumsEnabled,
             Optional<Boolean> nativeFieldsOnly,
+            Optional<Boolean> conditionalGenerationEnabled,
             Map<String, Object> additionalProperties) {
         this.tableParsingEnabled = tableParsingEnabled;
         this.flattenPdf = flattenPdf;
         this.radioEnumsEnabled = radioEnumsEnabled;
         this.nativeFieldsOnly = nativeFieldsOnly;
+        this.conditionalGenerationEnabled = conditionalGenerationEnabled;
         this.additionalProperties = additionalProperties;
     }
 
@@ -75,6 +79,14 @@ public final class EditConfigAdvancedOptions {
         return nativeFieldsOnly;
     }
 
+    /**
+     * @return When enabled and no <code>config.schema</code> is supplied, reads requirements explicitly stated in the form and adds supported root-level JSON Schema conditional validation rules to the generated schema. If generated edit values do not satisfy the rules, the Edit run fails with <code>SCHEMA_VALIDATION_ERROR</code>. Has no effect when a schema is supplied. Defaults to <code>false</code>.
+     */
+    @JsonProperty("conditionalGenerationEnabled")
+    public Optional<Boolean> getConditionalGenerationEnabled() {
+        return conditionalGenerationEnabled;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -90,12 +102,18 @@ public final class EditConfigAdvancedOptions {
         return tableParsingEnabled.equals(other.tableParsingEnabled)
                 && flattenPdf.equals(other.flattenPdf)
                 && radioEnumsEnabled.equals(other.radioEnumsEnabled)
-                && nativeFieldsOnly.equals(other.nativeFieldsOnly);
+                && nativeFieldsOnly.equals(other.nativeFieldsOnly)
+                && conditionalGenerationEnabled.equals(other.conditionalGenerationEnabled);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.tableParsingEnabled, this.flattenPdf, this.radioEnumsEnabled, this.nativeFieldsOnly);
+        return Objects.hash(
+                this.tableParsingEnabled,
+                this.flattenPdf,
+                this.radioEnumsEnabled,
+                this.nativeFieldsOnly,
+                this.conditionalGenerationEnabled);
     }
 
     @java.lang.Override
@@ -117,6 +135,8 @@ public final class EditConfigAdvancedOptions {
 
         private Optional<Boolean> nativeFieldsOnly = Optional.empty();
 
+        private Optional<Boolean> conditionalGenerationEnabled = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -127,6 +147,7 @@ public final class EditConfigAdvancedOptions {
             flattenPdf(other.getFlattenPdf());
             radioEnumsEnabled(other.getRadioEnumsEnabled());
             nativeFieldsOnly(other.getNativeFieldsOnly());
+            conditionalGenerationEnabled(other.getConditionalGenerationEnabled());
             return this;
         }
 
@@ -186,9 +207,28 @@ public final class EditConfigAdvancedOptions {
             return this;
         }
 
+        /**
+         * <p>When enabled and no <code>config.schema</code> is supplied, reads requirements explicitly stated in the form and adds supported root-level JSON Schema conditional validation rules to the generated schema. If generated edit values do not satisfy the rules, the Edit run fails with <code>SCHEMA_VALIDATION_ERROR</code>. Has no effect when a schema is supplied. Defaults to <code>false</code>.</p>
+         */
+        @JsonSetter(value = "conditionalGenerationEnabled", nulls = Nulls.SKIP)
+        public Builder conditionalGenerationEnabled(Optional<Boolean> conditionalGenerationEnabled) {
+            this.conditionalGenerationEnabled = conditionalGenerationEnabled;
+            return this;
+        }
+
+        public Builder conditionalGenerationEnabled(Boolean conditionalGenerationEnabled) {
+            this.conditionalGenerationEnabled = Optional.ofNullable(conditionalGenerationEnabled);
+            return this;
+        }
+
         public EditConfigAdvancedOptions build() {
             return new EditConfigAdvancedOptions(
-                    tableParsingEnabled, flattenPdf, radioEnumsEnabled, nativeFieldsOnly, additionalProperties);
+                    tableParsingEnabled,
+                    flattenPdf,
+                    radioEnumsEnabled,
+                    nativeFieldsOnly,
+                    conditionalGenerationEnabled,
+                    additionalProperties);
         }
     }
 }

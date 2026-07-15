@@ -10,27 +10,47 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
+import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = ClassifyStepDefinitionConfig.Builder.class)
 public final class ClassifyStepDefinitionConfig {
-    private final ClassifierRef classifier;
+    private final Optional<ClassifierRef> classifier;
+
+    private final Optional<ClassifyConfig> classifierConfig;
 
     private final Map<String, Object> additionalProperties;
 
-    private ClassifyStepDefinitionConfig(ClassifierRef classifier, Map<String, Object> additionalProperties) {
+    private ClassifyStepDefinitionConfig(
+            Optional<ClassifierRef> classifier,
+            Optional<ClassifyConfig> classifierConfig,
+            Map<String, Object> additionalProperties) {
         this.classifier = classifier;
+        this.classifierConfig = classifierConfig;
         this.additionalProperties = additionalProperties;
     }
 
+    /**
+     * @return Reference to a saved classifier. Provide either this or <code>classifierConfig</code>, not both.
+     * <p>The <code>version</code> is required and must be a pinned version (semver like <code>&quot;0.1&quot;</code> or <code>&quot;draft&quot;</code>). <code>&quot;latest&quot;</code> is not allowed.</p>
+     */
     @JsonProperty("classifier")
-    public ClassifierRef getClassifier() {
+    public Optional<ClassifierRef> getClassifier() {
         return classifier;
+    }
+
+    /**
+     * @return Inline classifier configuration. Provide either this or <code>classifier</code>, not both. Same shape as the <code>config</code> accepted by <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a>.
+     * <p>Inline configs are returned verbatim in responses (there is no saved processor, so no <code>version</code> is involved).</p>
+     */
+    @JsonProperty("classifierConfig")
+    public Optional<ClassifyConfig> getClassifierConfig() {
+        return classifierConfig;
     }
 
     @java.lang.Override
@@ -45,12 +65,12 @@ public final class ClassifyStepDefinitionConfig {
     }
 
     private boolean equalTo(ClassifyStepDefinitionConfig other) {
-        return classifier.equals(other.classifier);
+        return classifier.equals(other.classifier) && classifierConfig.equals(other.classifierConfig);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.classifier);
+        return Objects.hash(this.classifier, this.classifierConfig);
     }
 
     @java.lang.Override
@@ -58,45 +78,59 @@ public final class ClassifyStepDefinitionConfig {
         return ObjectMappers.stringify(this);
     }
 
-    public static ClassifierStage builder() {
+    public static Builder builder() {
         return new Builder();
     }
 
-    public interface ClassifierStage {
-        _FinalStage classifier(@NotNull ClassifierRef classifier);
-
-        Builder from(ClassifyStepDefinitionConfig other);
-    }
-
-    public interface _FinalStage {
-        ClassifyStepDefinitionConfig build();
-    }
-
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements ClassifierStage, _FinalStage {
-        private ClassifierRef classifier;
+    public static final class Builder {
+        private Optional<ClassifierRef> classifier = Optional.empty();
+
+        private Optional<ClassifyConfig> classifierConfig = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
-        @java.lang.Override
         public Builder from(ClassifyStepDefinitionConfig other) {
             classifier(other.getClassifier());
+            classifierConfig(other.getClassifierConfig());
             return this;
         }
 
-        @java.lang.Override
-        @JsonSetter("classifier")
-        public _FinalStage classifier(@NotNull ClassifierRef classifier) {
-            this.classifier = Objects.requireNonNull(classifier, "classifier must not be null");
+        /**
+         * <p>Reference to a saved classifier. Provide either this or <code>classifierConfig</code>, not both.</p>
+         * <p>The <code>version</code> is required and must be a pinned version (semver like <code>&quot;0.1&quot;</code> or <code>&quot;draft&quot;</code>). <code>&quot;latest&quot;</code> is not allowed.</p>
+         */
+        @JsonSetter(value = "classifier", nulls = Nulls.SKIP)
+        public Builder classifier(Optional<ClassifierRef> classifier) {
+            this.classifier = classifier;
             return this;
         }
 
-        @java.lang.Override
+        public Builder classifier(ClassifierRef classifier) {
+            this.classifier = Optional.ofNullable(classifier);
+            return this;
+        }
+
+        /**
+         * <p>Inline classifier configuration. Provide either this or <code>classifier</code>, not both. Same shape as the <code>config</code> accepted by <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/classify/create-classify-run">Create Classify Run</a>.</p>
+         * <p>Inline configs are returned verbatim in responses (there is no saved processor, so no <code>version</code> is involved).</p>
+         */
+        @JsonSetter(value = "classifierConfig", nulls = Nulls.SKIP)
+        public Builder classifierConfig(Optional<ClassifyConfig> classifierConfig) {
+            this.classifierConfig = classifierConfig;
+            return this;
+        }
+
+        public Builder classifierConfig(ClassifyConfig classifierConfig) {
+            this.classifierConfig = Optional.ofNullable(classifierConfig);
+            return this;
+        }
+
         public ClassifyStepDefinitionConfig build() {
-            return new ClassifyStepDefinitionConfig(classifier, additionalProperties);
+            return new ClassifyStepDefinitionConfig(classifier, classifierConfig, additionalProperties);
         }
     }
 }

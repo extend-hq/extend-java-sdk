@@ -29,6 +29,8 @@ public final class ApiError {
 
     private final Optional<String> requestId;
 
+    private final Optional<String> docUrl;
+
     private final Map<String, Object> additionalProperties;
 
     private ApiError(
@@ -36,11 +38,13 @@ public final class ApiError {
             String message,
             boolean retryable,
             Optional<String> requestId,
+            Optional<String> docUrl,
             Map<String, Object> additionalProperties) {
         this.code = code;
         this.message = message;
         this.retryable = retryable;
         this.requestId = requestId;
+        this.docUrl = docUrl;
         this.additionalProperties = additionalProperties;
     }
 
@@ -79,6 +83,14 @@ public final class ApiError {
         return requestId;
     }
 
+    /**
+     * @return Link to relevant documentation when one is available.
+     */
+    @JsonProperty("docUrl")
+    public Optional<String> getDocUrl() {
+        return docUrl;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -94,12 +106,13 @@ public final class ApiError {
         return code.equals(other.code)
                 && message.equals(other.message)
                 && retryable == other.retryable
-                && requestId.equals(other.requestId);
+                && requestId.equals(other.requestId)
+                && docUrl.equals(other.docUrl);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.code, this.message, this.retryable, this.requestId);
+        return Objects.hash(this.code, this.message, this.retryable, this.requestId, this.docUrl);
     }
 
     @java.lang.Override
@@ -146,6 +159,13 @@ public final class ApiError {
         _FinalStage requestId(Optional<String> requestId);
 
         _FinalStage requestId(String requestId);
+
+        /**
+         * <p>Link to relevant documentation when one is available.</p>
+         */
+        _FinalStage docUrl(Optional<String> docUrl);
+
+        _FinalStage docUrl(String docUrl);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -155,6 +175,8 @@ public final class ApiError {
         private String message;
 
         private boolean retryable;
+
+        private Optional<String> docUrl = Optional.empty();
 
         private Optional<String> requestId = Optional.empty();
 
@@ -169,6 +191,7 @@ public final class ApiError {
             message(other.getMessage());
             retryable(other.getRetryable());
             requestId(other.getRequestId());
+            docUrl(other.getDocUrl());
             return this;
         }
 
@@ -213,6 +236,26 @@ public final class ApiError {
         }
 
         /**
+         * <p>Link to relevant documentation when one is available.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage docUrl(String docUrl) {
+            this.docUrl = Optional.ofNullable(docUrl);
+            return this;
+        }
+
+        /**
+         * <p>Link to relevant documentation when one is available.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "docUrl", nulls = Nulls.SKIP)
+        public _FinalStage docUrl(Optional<String> docUrl) {
+            this.docUrl = docUrl;
+            return this;
+        }
+
+        /**
          * <p>Unique request identifier for support purposes. Always include this
          * when contacting Extend support about an error.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
@@ -236,7 +279,7 @@ public final class ApiError {
 
         @java.lang.Override
         public ApiError build() {
-            return new ApiError(code, message, retryable, requestId, additionalProperties);
+            return new ApiError(code, message, retryable, requestId, docUrl, additionalProperties);
         }
     }
 }

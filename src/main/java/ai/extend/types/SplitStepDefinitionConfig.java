@@ -10,27 +10,47 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
+import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = SplitStepDefinitionConfig.Builder.class)
 public final class SplitStepDefinitionConfig {
-    private final SplitterRef splitter;
+    private final Optional<SplitterRef> splitter;
+
+    private final Optional<SplitConfig> splitterConfig;
 
     private final Map<String, Object> additionalProperties;
 
-    private SplitStepDefinitionConfig(SplitterRef splitter, Map<String, Object> additionalProperties) {
+    private SplitStepDefinitionConfig(
+            Optional<SplitterRef> splitter,
+            Optional<SplitConfig> splitterConfig,
+            Map<String, Object> additionalProperties) {
         this.splitter = splitter;
+        this.splitterConfig = splitterConfig;
         this.additionalProperties = additionalProperties;
     }
 
+    /**
+     * @return Reference to a saved splitter. Provide either this or <code>splitterConfig</code>, not both.
+     * <p>The <code>version</code> is required and must be a pinned version (semver like <code>&quot;0.1&quot;</code> or <code>&quot;draft&quot;</code>). <code>&quot;latest&quot;</code> is not allowed.</p>
+     */
     @JsonProperty("splitter")
-    public SplitterRef getSplitter() {
+    public Optional<SplitterRef> getSplitter() {
         return splitter;
+    }
+
+    /**
+     * @return Inline splitter configuration. Provide either this or <code>splitter</code>, not both. Same shape as the <code>config</code> accepted by <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/split/create-split-run">Create Split Run</a>.
+     * <p>Inline configs are returned verbatim in responses (there is no saved processor, so no <code>version</code> is involved).</p>
+     */
+    @JsonProperty("splitterConfig")
+    public Optional<SplitConfig> getSplitterConfig() {
+        return splitterConfig;
     }
 
     @java.lang.Override
@@ -45,12 +65,12 @@ public final class SplitStepDefinitionConfig {
     }
 
     private boolean equalTo(SplitStepDefinitionConfig other) {
-        return splitter.equals(other.splitter);
+        return splitter.equals(other.splitter) && splitterConfig.equals(other.splitterConfig);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.splitter);
+        return Objects.hash(this.splitter, this.splitterConfig);
     }
 
     @java.lang.Override
@@ -58,45 +78,59 @@ public final class SplitStepDefinitionConfig {
         return ObjectMappers.stringify(this);
     }
 
-    public static SplitterStage builder() {
+    public static Builder builder() {
         return new Builder();
     }
 
-    public interface SplitterStage {
-        _FinalStage splitter(@NotNull SplitterRef splitter);
-
-        Builder from(SplitStepDefinitionConfig other);
-    }
-
-    public interface _FinalStage {
-        SplitStepDefinitionConfig build();
-    }
-
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements SplitterStage, _FinalStage {
-        private SplitterRef splitter;
+    public static final class Builder {
+        private Optional<SplitterRef> splitter = Optional.empty();
+
+        private Optional<SplitConfig> splitterConfig = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
-        @java.lang.Override
         public Builder from(SplitStepDefinitionConfig other) {
             splitter(other.getSplitter());
+            splitterConfig(other.getSplitterConfig());
             return this;
         }
 
-        @java.lang.Override
-        @JsonSetter("splitter")
-        public _FinalStage splitter(@NotNull SplitterRef splitter) {
-            this.splitter = Objects.requireNonNull(splitter, "splitter must not be null");
+        /**
+         * <p>Reference to a saved splitter. Provide either this or <code>splitterConfig</code>, not both.</p>
+         * <p>The <code>version</code> is required and must be a pinned version (semver like <code>&quot;0.1&quot;</code> or <code>&quot;draft&quot;</code>). <code>&quot;latest&quot;</code> is not allowed.</p>
+         */
+        @JsonSetter(value = "splitter", nulls = Nulls.SKIP)
+        public Builder splitter(Optional<SplitterRef> splitter) {
+            this.splitter = splitter;
             return this;
         }
 
-        @java.lang.Override
+        public Builder splitter(SplitterRef splitter) {
+            this.splitter = Optional.ofNullable(splitter);
+            return this;
+        }
+
+        /**
+         * <p>Inline splitter configuration. Provide either this or <code>splitter</code>, not both. Same shape as the <code>config</code> accepted by <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/split/create-split-run">Create Split Run</a>.</p>
+         * <p>Inline configs are returned verbatim in responses (there is no saved processor, so no <code>version</code> is involved).</p>
+         */
+        @JsonSetter(value = "splitterConfig", nulls = Nulls.SKIP)
+        public Builder splitterConfig(Optional<SplitConfig> splitterConfig) {
+            this.splitterConfig = splitterConfig;
+            return this;
+        }
+
+        public Builder splitterConfig(SplitConfig splitterConfig) {
+            this.splitterConfig = Optional.ofNullable(splitterConfig);
+            return this;
+        }
+
         public SplitStepDefinitionConfig build() {
-            return new SplitStepDefinitionConfig(splitter, additionalProperties);
+            return new SplitStepDefinitionConfig(splitter, splitterConfig, additionalProperties);
         }
     }
 }

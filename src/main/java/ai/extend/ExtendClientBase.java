@@ -7,6 +7,7 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.core.Suppliers;
 import ai.extend.requests.ClassifyRequest;
+import ai.extend.requests.DetectFormRequest;
 import ai.extend.requests.EditRequest;
 import ai.extend.requests.ExtractRequest;
 import ai.extend.requests.ParseRequest;
@@ -26,6 +27,7 @@ import ai.extend.resources.extractors.ExtractorsClient;
 import ai.extend.resources.extractorversions.ExtractorVersionsClient;
 import ai.extend.resources.extractruns.ExtractRunsClient;
 import ai.extend.resources.files.FilesClient;
+import ai.extend.resources.formdetectionruns.FormDetectionRunsClient;
 import ai.extend.resources.parseruns.ParseRunsClient;
 import ai.extend.resources.processor.ProcessorClient;
 import ai.extend.resources.processorrun.ProcessorRunClient;
@@ -41,6 +43,7 @@ import ai.extend.resources.workflowversions.WorkflowVersionsClient;
 import ai.extend.types.ClassifyRun;
 import ai.extend.types.EditRun;
 import ai.extend.types.ExtractRun;
+import ai.extend.types.FormDetectionRun;
 import ai.extend.types.ParseRun;
 import ai.extend.types.SplitRun;
 import java.util.function.Supplier;
@@ -59,6 +62,8 @@ public class ExtendClientBase {
     protected final Supplier<EditTemplatesClient> editTemplatesClient;
 
     protected final Supplier<EditSchemasClient> editSchemasClient;
+
+    protected final Supplier<FormDetectionRunsClient> formDetectionRunsClient;
 
     protected final Supplier<ExtractRunsClient> extractRunsClient;
 
@@ -112,6 +117,7 @@ public class ExtendClientBase {
         this.editRunsClient = Suppliers.memoize(() -> new EditRunsClient(clientOptions));
         this.editTemplatesClient = Suppliers.memoize(() -> new EditTemplatesClient(clientOptions));
         this.editSchemasClient = Suppliers.memoize(() -> new EditSchemasClient(clientOptions));
+        this.formDetectionRunsClient = Suppliers.memoize(() -> new FormDetectionRunsClient(clientOptions));
         this.extractRunsClient = Suppliers.memoize(() -> new ExtractRunsClient(clientOptions));
         this.extractorsClient = Suppliers.memoize(() -> new ExtractorsClient(clientOptions));
         this.extractorVersionsClient = Suppliers.memoize(() -> new ExtractorVersionsClient(clientOptions));
@@ -167,7 +173,7 @@ public class ExtendClientBase {
      * Edit a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /edit_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/edit">Edit File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/overview">Edit File guide</a>. See <a href="https://docs.extend.ai/2026-02-09/editing/error-handling">Editing Error Handling</a> for HTTP errors and run failure reasons.</p>
      */
     public EditRun edit(EditRequest request) {
         return this.rawClient.edit(request).body();
@@ -177,10 +183,26 @@ public class ExtendClientBase {
      * Edit a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /edit_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/edit">Edit File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/overview">Edit File guide</a>. See <a href="https://docs.extend.ai/2026-02-09/editing/error-handling">Editing Error Handling</a> for HTTP errors and run failure reasons.</p>
      */
     public EditRun edit(EditRequest request, RequestOptions requestOptions) {
         return this.rawClient.edit(request, requestOptions).body();
+    }
+
+    /**
+     * Detect fields in a PDF form and wait for the generated edit schema before returning. This endpoint has a 5-minute timeout.
+     * <p>For production workloads, use <code>POST /form_detection_runs</code> and poll <code>GET /form_detection_runs/{id}</code> instead. The response is a completed <code>form_detection_run</code>; its <code>output.schema</code> can be passed directly to <code>POST /edit</code> or <code>POST /edit_runs</code>.</p>
+     */
+    public FormDetectionRun detectForm(DetectFormRequest request) {
+        return this.rawClient.detectForm(request).body();
+    }
+
+    /**
+     * Detect fields in a PDF form and wait for the generated edit schema before returning. This endpoint has a 5-minute timeout.
+     * <p>For production workloads, use <code>POST /form_detection_runs</code> and poll <code>GET /form_detection_runs/{id}</code> instead. The response is a completed <code>form_detection_run</code>; its <code>output.schema</code> can be passed directly to <code>POST /edit</code> or <code>POST /edit_runs</code>.</p>
+     */
+    public FormDetectionRun detectForm(DetectFormRequest request, RequestOptions requestOptions) {
+        return this.rawClient.detectForm(request, requestOptions).body();
     }
 
     /**
@@ -231,7 +253,7 @@ public class ExtendClientBase {
      * Classify a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /classify_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/classification/configuring-a-classifier">Classify File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/classification/configuration">Classify File guide</a>.</p>
      */
     public ClassifyRun classify(ClassifyRequest request) {
         return this.rawClient.classify(request).body();
@@ -241,7 +263,7 @@ public class ExtendClientBase {
      * Classify a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /classify_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/classification/configuring-a-classifier">Classify File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/classification/configuration">Classify File guide</a>.</p>
      */
     public ClassifyRun classify(ClassifyRequest request, RequestOptions requestOptions) {
         return this.rawClient.classify(request, requestOptions).body();
@@ -251,7 +273,7 @@ public class ExtendClientBase {
      * Split a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /split_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/splitting/configuring-a-splitter">Split File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/splitting/configuration">Split File guide</a>.</p>
      */
     public SplitRun split(SplitRequest request) {
         return this.rawClient.split(request).body();
@@ -261,7 +283,7 @@ public class ExtendClientBase {
      * Split a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /split_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/splitting/configuring-a-splitter">Split File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/splitting/configuration">Split File guide</a>.</p>
      */
     public SplitRun split(SplitRequest request, RequestOptions requestOptions) {
         return this.rawClient.split(request, requestOptions).body();
@@ -285,6 +307,10 @@ public class ExtendClientBase {
 
     public EditSchemasClient editSchemas() {
         return this.editSchemasClient.get();
+    }
+
+    public FormDetectionRunsClient formDetectionRuns() {
+        return this.formDetectionRunsClient.get();
     }
 
     public ExtractRunsClient extractRuns() {

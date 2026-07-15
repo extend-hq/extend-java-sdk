@@ -20,6 +20,7 @@ import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
 import ai.extend.requests.ClassifyRequest;
+import ai.extend.requests.DetectFormRequest;
 import ai.extend.requests.EditRequest;
 import ai.extend.requests.ExtractRequest;
 import ai.extend.requests.ParseRequest;
@@ -28,6 +29,7 @@ import ai.extend.types.ApiError;
 import ai.extend.types.ClassifyRun;
 import ai.extend.types.EditRun;
 import ai.extend.types.ExtractRun;
+import ai.extend.types.FormDetectionRun;
 import ai.extend.types.ParseRun;
 import ai.extend.types.SplitRun;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -181,7 +183,7 @@ public class AsyncRawExtendClientBase {
      * Edit a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /edit_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/edit">Edit File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/overview">Edit File guide</a>. See <a href="https://docs.extend.ai/2026-02-09/editing/error-handling">Editing Error Handling</a> for HTTP errors and run failure reasons.</p>
      */
     public CompletableFuture<ExtendClientBaseHttpResponse<EditRun>> edit(EditRequest request) {
         return edit(request, null);
@@ -191,7 +193,7 @@ public class AsyncRawExtendClientBase {
      * Edit a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /edit_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/edit">Edit File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/overview">Edit File guide</a>. See <a href="https://docs.extend.ai/2026-02-09/editing/error-handling">Editing Error Handling</a> for HTTP errors and run failure reasons.</p>
      */
     public CompletableFuture<ExtendClientBaseHttpResponse<EditRun>> edit(
             EditRequest request, RequestOptions requestOptions) {
@@ -230,6 +232,121 @@ public class AsyncRawExtendClientBase {
                     if (response.isSuccessful()) {
                         future.complete(new ExtendClientBaseHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EditRun.class), response));
+                        return;
+                    }
+                    try {
+                        switch (response.code()) {
+                            case 400:
+                                future.completeExceptionally(new BadRequestError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                            case 401:
+                                future.completeExceptionally(new UnauthorizedError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                            case 402:
+                                future.completeExceptionally(new PaymentRequiredError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
+                                        response));
+                                return;
+                            case 403:
+                                future.completeExceptionally(new ForbiddenError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
+                                        response));
+                                return;
+                            case 404:
+                                future.completeExceptionally(new NotFoundError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                            case 422:
+                                future.completeExceptionally(new UnprocessableEntityError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class),
+                                        response));
+                                return;
+                            case 429:
+                                future.completeExceptionally(new TooManyRequestsError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                            case 500:
+                                future.completeExceptionally(new InternalServerError(
+                                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                                        response));
+                                return;
+                        }
+                    } catch (JsonProcessingException ignored) {
+                        // unable to map error response, throwing generic error
+                    }
+                    Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
+                    future.completeExceptionally(new ExtendClientApiException(
+                            "Error with status code " + response.code(), response.code(), errorBody, response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new ExtendClientException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
+    }
+
+    /**
+     * Detect fields in a PDF form and wait for the generated edit schema before returning. This endpoint has a 5-minute timeout.
+     * <p>For production workloads, use <code>POST /form_detection_runs</code> and poll <code>GET /form_detection_runs/{id}</code> instead. The response is a completed <code>form_detection_run</code>; its <code>output.schema</code> can be passed directly to <code>POST /edit</code> or <code>POST /edit_runs</code>.</p>
+     */
+    public CompletableFuture<ExtendClientBaseHttpResponse<FormDetectionRun>> detectForm(DetectFormRequest request) {
+        return detectForm(request, null);
+    }
+
+    /**
+     * Detect fields in a PDF form and wait for the generated edit schema before returning. This endpoint has a 5-minute timeout.
+     * <p>For production workloads, use <code>POST /form_detection_runs</code> and poll <code>GET /form_detection_runs/{id}</code> instead. The response is a completed <code>form_detection_run</code>; its <code>output.schema</code> can be passed directly to <code>POST /edit</code> or <code>POST /edit_runs</code>.</p>
+     */
+    public CompletableFuture<ExtendClientBaseHttpResponse<FormDetectionRun>> detectForm(
+            DetectFormRequest request, RequestOptions requestOptions) {
+        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("detect_form");
+        if (requestOptions != null) {
+            requestOptions.getQueryParameters().forEach((_key, _value) -> {
+                httpUrl.addQueryParameter(_key, _value);
+            });
+        }
+        RequestBody body;
+        try {
+            body = RequestBody.create(
+                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
+        } catch (JsonProcessingException e) {
+            throw new ExtendClientException("Failed to serialize request", e);
+        }
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl.build())
+                .method("POST", body)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<ExtendClientBaseHttpResponse<FormDetectionRun>> future = new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    if (response.isSuccessful()) {
+                        future.complete(new ExtendClientBaseHttpResponse<>(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, FormDetectionRun.class),
+                                response));
                         return;
                     }
                     try {
@@ -441,7 +558,7 @@ public class AsyncRawExtendClientBase {
      * Classify a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /classify_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/classification/configuring-a-classifier">Classify File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/classification/configuration">Classify File guide</a>.</p>
      */
     public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRun>> classify(ClassifyRequest request) {
         return classify(request, null);
@@ -451,7 +568,7 @@ public class AsyncRawExtendClientBase {
      * Classify a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /classify_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Classify endpoint allows you to classify documents using an existing classifier or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/classification/configuring-a-classifier">Classify File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/classification/configuration">Classify File guide</a>.</p>
      */
     public CompletableFuture<ExtendClientBaseHttpResponse<ClassifyRun>> classify(
             ClassifyRequest request, RequestOptions requestOptions) {
@@ -559,7 +676,7 @@ public class AsyncRawExtendClientBase {
      * Split a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /split_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/splitting/configuring-a-splitter">Split File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/splitting/configuration">Split File guide</a>.</p>
      */
     public CompletableFuture<ExtendClientBaseHttpResponse<SplitRun>> split(SplitRequest request) {
         return split(request, null);
@@ -569,7 +686,7 @@ public class AsyncRawExtendClientBase {
      * Split a document synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /split_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Split endpoint allows you to split documents into multiple parts using an existing splitter or an inline configuration.</p>
-     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/splitting/configuring-a-splitter">Split File guide</a>.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/splitting/configuration">Split File guide</a>.</p>
      */
     public CompletableFuture<ExtendClientBaseHttpResponse<SplitRun>> split(
             SplitRequest request, RequestOptions requestOptions) {

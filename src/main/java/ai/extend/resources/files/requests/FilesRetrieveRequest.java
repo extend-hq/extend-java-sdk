@@ -53,7 +53,7 @@ public final class FilesRetrieveRequest {
     }
 
     /**
-     * @return <strong>Deprecated:</strong> Use <code>POST /parse_runs</code> instead to parse file contents.
+     * @return <strong>Deprecated:</strong> Use <code>POST /parse_runs</code> instead to parse file contents and get contents or <code>GET /parse_runs/{id}</code> to retrieve the results async if file is already parsed. Files parsed with versions &gt;2.x will not support this parameter.
      * <p>If set to true, the raw text content of the file will be included in the response.</p>
      */
     @JsonProperty("rawText")
@@ -62,7 +62,7 @@ public final class FilesRetrieveRequest {
     }
 
     /**
-     * @return <strong>Deprecated:</strong> Use <code>POST /parse_runs</code> instead to parse file contents.
+     * @return <strong>Deprecated:</strong> Use <code>POST /parse_runs</code> instead to parse file contents and get contents or <code>GET /parse_runs/{id}</code> to retrieve the results async if file is already parsed. Files parsed with versions &gt;2.x will not support this parameter.
      * <p>If set to true, the markdown content of the file will be included in the response.</p>
      * <p>Only available for files with a type of PDF, IMG, or DOCX files that were auto-converted to PDFs.</p>
      */
@@ -72,7 +72,7 @@ public final class FilesRetrieveRequest {
     }
 
     /**
-     * @return <strong>Deprecated:</strong> Use <code>POST /parse_runs</code> instead to parse file contents.
+     * @return <strong>Deprecated:</strong> Use <code>POST /parse_runs</code> instead to parse file contents and get contents or <code>GET /parse_runs/{id}</code> to retrieve the results async if file is already parsed. Files parsed with versions &gt;2.x will not support this parameter.
      * <p>If set to true, the html content of the file will be included in the response.</p>
      * <p>Only available for files with a type of DOCX.</p>
      */
@@ -150,7 +150,7 @@ public final class FilesRetrieveRequest {
         }
 
         /**
-         * <p><strong>Deprecated:</strong> Use <code>POST /parse_runs</code> instead to parse file contents.</p>
+         * <p><strong>Deprecated:</strong> Use <code>POST /parse_runs</code> instead to parse file contents and get contents or <code>GET /parse_runs/{id}</code> to retrieve the results async if file is already parsed. Files parsed with versions &gt;2.x will not support this parameter.</p>
          * <p>If set to true, the raw text content of the file will be included in the response.</p>
          */
         @JsonSetter(value = "rawText", nulls = Nulls.SKIP)
@@ -165,7 +165,7 @@ public final class FilesRetrieveRequest {
         }
 
         /**
-         * <p><strong>Deprecated:</strong> Use <code>POST /parse_runs</code> instead to parse file contents.</p>
+         * <p><strong>Deprecated:</strong> Use <code>POST /parse_runs</code> instead to parse file contents and get contents or <code>GET /parse_runs/{id}</code> to retrieve the results async if file is already parsed. Files parsed with versions &gt;2.x will not support this parameter.</p>
          * <p>If set to true, the markdown content of the file will be included in the response.</p>
          * <p>Only available for files with a type of PDF, IMG, or DOCX files that were auto-converted to PDFs.</p>
          */
@@ -181,7 +181,7 @@ public final class FilesRetrieveRequest {
         }
 
         /**
-         * <p><strong>Deprecated:</strong> Use <code>POST /parse_runs</code> instead to parse file contents.</p>
+         * <p><strong>Deprecated:</strong> Use <code>POST /parse_runs</code> instead to parse file contents and get contents or <code>GET /parse_runs/{id}</code> to retrieve the results async if file is already parsed. Files parsed with versions &gt;2.x will not support this parameter.</p>
          * <p>If set to true, the html content of the file will be included in the response.</p>
          * <p>Only available for files with a type of DOCX.</p>
          */
