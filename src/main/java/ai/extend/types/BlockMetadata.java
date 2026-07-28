@@ -27,8 +27,6 @@ public final class BlockMetadata {
 
     private final Optional<BlockMetadataSheet> sheet;
 
-    private final Optional<BlockMetadataTextDirection> textDirection;
-
     private final Optional<Double> minOcrConfidence;
 
     private final Optional<Double> avgOcrConfidence;
@@ -38,13 +36,11 @@ public final class BlockMetadata {
     private BlockMetadata(
             Optional<BlockMetadataPage> page,
             Optional<BlockMetadataSheet> sheet,
-            Optional<BlockMetadataTextDirection> textDirection,
             Optional<Double> minOcrConfidence,
             Optional<Double> avgOcrConfidence,
             Map<String, Object> additionalProperties) {
         this.page = page;
         this.sheet = sheet;
-        this.textDirection = textDirection;
         this.minOcrConfidence = minOcrConfidence;
         this.avgOcrConfidence = avgOcrConfidence;
         this.additionalProperties = additionalProperties;
@@ -64,14 +60,6 @@ public final class BlockMetadata {
     @JsonProperty("sheet")
     public Optional<BlockMetadataSheet> getSheet() {
         return sheet;
-    }
-
-    /**
-     * @return Text direction for this block's content (&quot;ltr&quot; for left-to-right, &quot;rtl&quot; for right-to-left).
-     */
-    @JsonProperty("textDirection")
-    public Optional<BlockMetadataTextDirection> getTextDirection() {
-        return textDirection;
     }
 
     /**
@@ -122,14 +110,13 @@ public final class BlockMetadata {
     private boolean equalTo(BlockMetadata other) {
         return page.equals(other.page)
                 && sheet.equals(other.sheet)
-                && textDirection.equals(other.textDirection)
                 && minOcrConfidence.equals(other.minOcrConfidence)
                 && avgOcrConfidence.equals(other.avgOcrConfidence);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.page, this.sheet, this.textDirection, this.minOcrConfidence, this.avgOcrConfidence);
+        return Objects.hash(this.page, this.sheet, this.minOcrConfidence, this.avgOcrConfidence);
     }
 
     @java.lang.Override
@@ -147,8 +134,6 @@ public final class BlockMetadata {
 
         private Optional<BlockMetadataSheet> sheet = Optional.empty();
 
-        private Optional<BlockMetadataTextDirection> textDirection = Optional.empty();
-
         private Optional<Double> minOcrConfidence = Optional.empty();
 
         private Optional<Double> avgOcrConfidence = Optional.empty();
@@ -161,7 +146,6 @@ public final class BlockMetadata {
         public Builder from(BlockMetadata other) {
             page(other.getPage());
             sheet(other.getSheet());
-            textDirection(other.getTextDirection());
             minOcrConfidence(other.getMinOcrConfidence());
             avgOcrConfidence(other.getAvgOcrConfidence());
             return this;
@@ -192,20 +176,6 @@ public final class BlockMetadata {
 
         public Builder sheet(BlockMetadataSheet sheet) {
             this.sheet = Optional.ofNullable(sheet);
-            return this;
-        }
-
-        /**
-         * <p>Text direction for this block's content (&quot;ltr&quot; for left-to-right, &quot;rtl&quot; for right-to-left).</p>
-         */
-        @JsonSetter(value = "textDirection", nulls = Nulls.SKIP)
-        public Builder textDirection(Optional<BlockMetadataTextDirection> textDirection) {
-            this.textDirection = textDirection;
-            return this;
-        }
-
-        public Builder textDirection(BlockMetadataTextDirection textDirection) {
-            this.textDirection = Optional.ofNullable(textDirection);
             return this;
         }
 
@@ -260,8 +230,7 @@ public final class BlockMetadata {
         }
 
         public BlockMetadata build() {
-            return new BlockMetadata(
-                    page, sheet, textDirection, minOcrConfidence, avgOcrConfidence, additionalProperties);
+            return new BlockMetadata(page, sheet, minOcrConfidence, avgOcrConfidence, additionalProperties);
         }
     }
 }

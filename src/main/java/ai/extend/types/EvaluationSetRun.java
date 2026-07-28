@@ -105,6 +105,9 @@ public final class EvaluationSetRun {
         return entityVersion;
     }
 
+    /**
+     * @return Metrics for the evaluation set run. The shape depends on the entity type.
+     */
     @JsonProperty("metrics")
     public EvaluationSetRunMetrics getMetrics() {
         return metrics;
@@ -212,6 +215,9 @@ public final class EvaluationSetRun {
     }
 
     public interface MetricsStage {
+        /**
+         * <p>Metrics for the evaluation set run. The shape depends on the entity type.</p>
+         */
         StatusStage metrics(@NotNull EvaluationSetRunMetrics metrics);
     }
 
@@ -339,6 +345,11 @@ public final class EvaluationSetRun {
             return this;
         }
 
+        /**
+         * <p>Metrics for the evaluation set run. The shape depends on the entity type.</p>
+         * <p>Metrics for the evaluation set run. The shape depends on the entity type.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
         @java.lang.Override
         @JsonSetter("metrics")
         public StatusStage metrics(@NotNull EvaluationSetRunMetrics metrics) {

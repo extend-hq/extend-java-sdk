@@ -3,128 +3,261 @@
  */
 package ai.extend.types;
 
-import ai.extend.core.ObjectMappers;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import java.util.HashMap;
-import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Objects;
 import java.util.Optional;
 
-@JsonInclude(JsonInclude.Include.NON_ABSENT)
-@JsonDeserialize(builder = EvaluationSetRunMetrics.Builder.class)
 public final class EvaluationSetRunMetrics {
-    private final Optional<Double> numFiles;
+    private final Value value;
 
-    private final Optional<Double> numPages;
-
-    private final Map<String, Object> additionalProperties;
-
-    private EvaluationSetRunMetrics(
-            Optional<Double> numFiles, Optional<Double> numPages, Map<String, Object> additionalProperties) {
-        this.numFiles = numFiles;
-        this.numPages = numPages;
-        this.additionalProperties = additionalProperties;
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    private EvaluationSetRunMetrics(Value value) {
+        this.value = value;
     }
 
-    /**
-     * @return The total number of files processed in this evaluation set run
-     */
-    @JsonProperty("numFiles")
-    public Optional<Double> getNumFiles() {
-        return numFiles;
+    public <T> T visit(Visitor<T> visitor) {
+        return value.visit(visitor);
     }
 
-    /**
-     * @return The total number of pages processed in this evaluation set run
-     */
-    @JsonProperty("numPages")
-    public Optional<Double> getNumPages() {
-        return numPages;
+    public static EvaluationSetRunMetrics extract(ExtractEvaluationSetRunMetrics value) {
+        return new EvaluationSetRunMetrics(new ExtractValue(value));
     }
 
-    @java.lang.Override
-    public boolean equals(Object other) {
-        if (this == other) return true;
-        return other instanceof EvaluationSetRunMetrics && equalTo((EvaluationSetRunMetrics) other);
+    public static EvaluationSetRunMetrics classify(ClassifyEvaluationSetRunMetrics value) {
+        return new EvaluationSetRunMetrics(new ClassifyValue(value));
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
+    public static EvaluationSetRunMetrics splitter(SplitterEvaluationSetRunMetrics value) {
+        return new EvaluationSetRunMetrics(new SplitterValue(value));
     }
 
-    private boolean equalTo(EvaluationSetRunMetrics other) {
-        return numFiles.equals(other.numFiles) && numPages.equals(other.numPages);
+    public boolean isExtract() {
+        return value instanceof ExtractValue;
     }
 
-    @java.lang.Override
-    public int hashCode() {
-        return Objects.hash(this.numFiles, this.numPages);
+    public boolean isClassify() {
+        return value instanceof ClassifyValue;
     }
 
-    @java.lang.Override
-    public String toString() {
-        return ObjectMappers.stringify(this);
+    public boolean isSplitter() {
+        return value instanceof SplitterValue;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public boolean _isUnknown() {
+        return value instanceof _UnknownValue;
     }
 
+    public Optional<ExtractEvaluationSetRunMetrics> getExtract() {
+        if (isExtract()) {
+            return Optional.of(((ExtractValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<ClassifyEvaluationSetRunMetrics> getClassify() {
+        if (isClassify()) {
+            return Optional.of(((ClassifyValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<SplitterEvaluationSetRunMetrics> getSplitter() {
+        if (isSplitter()) {
+            return Optional.of(((SplitterValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Object> _getUnknown() {
+        if (_isUnknown()) {
+            return Optional.of(((_UnknownValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    @JsonValue
+    private Value getValue() {
+        return this.value;
+    }
+
+    public interface Visitor<T> {
+        T visitExtract(ExtractEvaluationSetRunMetrics extract);
+
+        T visitClassify(ClassifyEvaluationSetRunMetrics classify);
+
+        T visitSplitter(SplitterEvaluationSetRunMetrics splitter);
+
+        T _visitUnknown(Object unknownType);
+    }
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true, defaultImpl = _UnknownValue.class)
+    @JsonSubTypes({
+        @JsonSubTypes.Type(ExtractValue.class),
+        @JsonSubTypes.Type(ClassifyValue.class),
+        @JsonSubTypes.Type(SplitterValue.class)
+    })
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder {
-        private Optional<Double> numFiles = Optional.empty();
+    private interface Value {
+        <T> T visit(Visitor<T> visitor);
+    }
 
-        private Optional<Double> numPages = Optional.empty();
+    @JsonTypeName("EXTRACT")
+    @JsonIgnoreProperties("type")
+    private static final class ExtractValue implements Value {
+        @JsonUnwrapped
+        private ExtractEvaluationSetRunMetrics value;
 
-        @JsonAnySetter
-        private Map<String, Object> additionalProperties = new HashMap<>();
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ExtractValue() {}
 
-        private Builder() {}
-
-        public Builder from(EvaluationSetRunMetrics other) {
-            numFiles(other.getNumFiles());
-            numPages(other.getNumPages());
-            return this;
+        private ExtractValue(ExtractEvaluationSetRunMetrics value) {
+            this.value = value;
         }
 
-        /**
-         * <p>The total number of files processed in this evaluation set run</p>
-         */
-        @JsonSetter(value = "numFiles", nulls = Nulls.SKIP)
-        public Builder numFiles(Optional<Double> numFiles) {
-            this.numFiles = numFiles;
-            return this;
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitExtract(value);
         }
 
-        public Builder numFiles(Double numFiles) {
-            this.numFiles = Optional.ofNullable(numFiles);
-            return this;
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ExtractValue && equalTo((ExtractValue) other);
         }
 
-        /**
-         * <p>The total number of pages processed in this evaluation set run</p>
-         */
-        @JsonSetter(value = "numPages", nulls = Nulls.SKIP)
-        public Builder numPages(Optional<Double> numPages) {
-            this.numPages = numPages;
-            return this;
+        private boolean equalTo(ExtractValue other) {
+            return value.equals(other.value);
         }
 
-        public Builder numPages(Double numPages) {
-            this.numPages = Optional.ofNullable(numPages);
-            return this;
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
         }
 
-        public EvaluationSetRunMetrics build() {
-            return new EvaluationSetRunMetrics(numFiles, numPages, additionalProperties);
+        @java.lang.Override
+        public String toString() {
+            return "EvaluationSetRunMetrics{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("CLASSIFY")
+    @JsonIgnoreProperties("type")
+    private static final class ClassifyValue implements Value {
+        @JsonUnwrapped
+        private ClassifyEvaluationSetRunMetrics value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ClassifyValue() {}
+
+        private ClassifyValue(ClassifyEvaluationSetRunMetrics value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitClassify(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ClassifyValue && equalTo((ClassifyValue) other);
+        }
+
+        private boolean equalTo(ClassifyValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "EvaluationSetRunMetrics{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("SPLITTER")
+    @JsonIgnoreProperties("type")
+    private static final class SplitterValue implements Value {
+        @JsonUnwrapped
+        private SplitterEvaluationSetRunMetrics value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private SplitterValue() {}
+
+        private SplitterValue(SplitterEvaluationSetRunMetrics value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitSplitter(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof SplitterValue && equalTo((SplitterValue) other);
+        }
+
+        private boolean equalTo(SplitterValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "EvaluationSetRunMetrics{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonIgnoreProperties("type")
+    private static final class _UnknownValue implements Value {
+        private String type;
+
+        @JsonValue
+        private Object value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private _UnknownValue(@JsonProperty("value") Object value) {}
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor._visitUnknown(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof _UnknownValue && equalTo((_UnknownValue) other);
+        }
+
+        private boolean equalTo(_UnknownValue other) {
+            return type.equals(other.type) && value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.type, this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "EvaluationSetRunMetrics{" + "type: " + type + ", value: " + value + "}";
         }
     }
 }
