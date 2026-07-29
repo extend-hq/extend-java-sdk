@@ -35,6 +35,8 @@ public final class ClassifierVersionSummary {
 
     private final OffsetDateTime createdAt;
 
+    private final Optional<CreatedBy> createdBy;
+
     private final Map<String, Object> additionalProperties;
 
     private ClassifierVersionSummary(
@@ -43,12 +45,14 @@ public final class ClassifierVersionSummary {
             String version,
             String classifierId,
             OffsetDateTime createdAt,
+            Optional<CreatedBy> createdBy,
             Map<String, Object> additionalProperties) {
         this.id = id;
         this.description = description;
         this.version = version;
         this.classifierId = classifierId;
         this.createdAt = createdAt;
+        this.createdBy = createdBy;
         this.additionalProperties = additionalProperties;
     }
 
@@ -104,10 +108,24 @@ public final class ClassifierVersionSummary {
         return createdAt;
     }
 
+    @JsonIgnore
+    public Optional<CreatedBy> getCreatedBy() {
+        if (createdBy == null) {
+            return Optional.empty();
+        }
+        return createdBy;
+    }
+
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
     @JsonProperty("description")
     private Optional<String> _getDescription() {
         return description;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("createdBy")
+    private Optional<CreatedBy> _getCreatedBy() {
+        return createdBy;
     }
 
     @java.lang.Override
@@ -126,12 +144,13 @@ public final class ClassifierVersionSummary {
                 && description.equals(other.description)
                 && version.equals(other.version)
                 && classifierId.equals(other.classifierId)
-                && createdAt.equals(other.createdAt);
+                && createdAt.equals(other.createdAt)
+                && createdBy.equals(other.createdBy);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.id, this.description, this.version, this.classifierId, this.createdAt);
+        return Objects.hash(this.id, this.description, this.version, this.classifierId, this.createdAt, this.createdBy);
     }
 
     @java.lang.Override
@@ -185,6 +204,12 @@ public final class ClassifierVersionSummary {
         _FinalStage description(String description);
 
         _FinalStage description(Nullable<String> description);
+
+        _FinalStage createdBy(Optional<CreatedBy> createdBy);
+
+        _FinalStage createdBy(CreatedBy createdBy);
+
+        _FinalStage createdBy(Nullable<CreatedBy> createdBy);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -196,6 +221,8 @@ public final class ClassifierVersionSummary {
         private String classifierId;
 
         private OffsetDateTime createdAt;
+
+        private Optional<CreatedBy> createdBy = Optional.empty();
 
         private Optional<String> description = Optional.empty();
 
@@ -211,6 +238,7 @@ public final class ClassifierVersionSummary {
             version(other.getVersion());
             classifierId(other.getClassifierId());
             createdAt(other.getCreatedAt());
+            createdBy(other.getCreatedBy());
             return this;
         }
 
@@ -263,6 +291,31 @@ public final class ClassifierVersionSummary {
             return this;
         }
 
+        @java.lang.Override
+        public _FinalStage createdBy(Nullable<CreatedBy> createdBy) {
+            if (createdBy.isNull()) {
+                this.createdBy = null;
+            } else if (createdBy.isEmpty()) {
+                this.createdBy = Optional.empty();
+            } else {
+                this.createdBy = Optional.of(createdBy.get());
+            }
+            return this;
+        }
+
+        @java.lang.Override
+        public _FinalStage createdBy(CreatedBy createdBy) {
+            this.createdBy = Optional.ofNullable(createdBy);
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter(value = "createdBy", nulls = Nulls.SKIP)
+        public _FinalStage createdBy(Optional<CreatedBy> createdBy) {
+            this.createdBy = createdBy;
+            return this;
+        }
+
         /**
          * <p>A description of this version of the classifier.</p>
          * <p>Example: <code>&quot;Added new document types for Q4 processing&quot;</code></p>
@@ -305,7 +358,7 @@ public final class ClassifierVersionSummary {
         @java.lang.Override
         public ClassifierVersionSummary build() {
             return new ClassifierVersionSummary(
-                    id, description, version, classifierId, createdAt, additionalProperties);
+                    id, description, version, classifierId, createdAt, createdBy, additionalProperties);
         }
     }
 }

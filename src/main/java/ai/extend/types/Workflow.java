@@ -3,18 +3,23 @@
  */
 package ai.extend.types;
 
+import ai.extend.core.Nullable;
+import ai.extend.core.NullableNonemptyFilter;
 import ai.extend.core.ObjectMappers;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
@@ -30,6 +35,8 @@ public final class Workflow {
 
     private final WorkflowVersion draftVersion;
 
+    private final Optional<CreatedBy> createdBy;
+
     private final Map<String, Object> additionalProperties;
 
     private Workflow(
@@ -38,12 +45,14 @@ public final class Workflow {
             OffsetDateTime createdAt,
             OffsetDateTime updatedAt,
             WorkflowVersion draftVersion,
+            Optional<CreatedBy> createdBy,
             Map<String, Object> additionalProperties) {
         this.id = id;
         this.name = name;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.draftVersion = draftVersion;
+        this.createdBy = createdBy;
         this.additionalProperties = additionalProperties;
     }
 
@@ -86,6 +95,20 @@ public final class Workflow {
         return draftVersion;
     }
 
+    @JsonIgnore
+    public Optional<CreatedBy> getCreatedBy() {
+        if (createdBy == null) {
+            return Optional.empty();
+        }
+        return createdBy;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("createdBy")
+    private Optional<CreatedBy> _getCreatedBy() {
+        return createdBy;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -102,12 +125,13 @@ public final class Workflow {
                 && name.equals(other.name)
                 && createdAt.equals(other.createdAt)
                 && updatedAt.equals(other.updatedAt)
-                && draftVersion.equals(other.draftVersion);
+                && draftVersion.equals(other.draftVersion)
+                && createdBy.equals(other.createdBy);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.id, this.name, this.createdAt, this.updatedAt, this.draftVersion);
+        return Objects.hash(this.id, this.name, this.createdAt, this.updatedAt, this.draftVersion, this.createdBy);
     }
 
     @java.lang.Override
@@ -149,6 +173,12 @@ public final class Workflow {
 
     public interface _FinalStage {
         Workflow build();
+
+        _FinalStage createdBy(Optional<CreatedBy> createdBy);
+
+        _FinalStage createdBy(CreatedBy createdBy);
+
+        _FinalStage createdBy(Nullable<CreatedBy> createdBy);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -164,6 +194,8 @@ public final class Workflow {
 
         private WorkflowVersion draftVersion;
 
+        private Optional<CreatedBy> createdBy = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -176,6 +208,7 @@ public final class Workflow {
             createdAt(other.getCreatedAt());
             updatedAt(other.getUpdatedAt());
             draftVersion(other.getDraftVersion());
+            createdBy(other.getCreatedBy());
             return this;
         }
 
@@ -225,8 +258,33 @@ public final class Workflow {
         }
 
         @java.lang.Override
+        public _FinalStage createdBy(Nullable<CreatedBy> createdBy) {
+            if (createdBy.isNull()) {
+                this.createdBy = null;
+            } else if (createdBy.isEmpty()) {
+                this.createdBy = Optional.empty();
+            } else {
+                this.createdBy = Optional.of(createdBy.get());
+            }
+            return this;
+        }
+
+        @java.lang.Override
+        public _FinalStage createdBy(CreatedBy createdBy) {
+            this.createdBy = Optional.ofNullable(createdBy);
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter(value = "createdBy", nulls = Nulls.SKIP)
+        public _FinalStage createdBy(Optional<CreatedBy> createdBy) {
+            this.createdBy = createdBy;
+            return this;
+        }
+
+        @java.lang.Override
         public Workflow build() {
-            return new Workflow(id, name, createdAt, updatedAt, draftVersion, additionalProperties);
+            return new Workflow(id, name, createdAt, updatedAt, draftVersion, createdBy, additionalProperties);
         }
     }
 }

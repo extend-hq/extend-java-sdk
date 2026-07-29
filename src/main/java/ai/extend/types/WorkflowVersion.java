@@ -37,6 +37,8 @@ public final class WorkflowVersion {
 
     private final OffsetDateTime createdAt;
 
+    private final Optional<CreatedBy> createdBy;
+
     private final Map<String, Object> additionalProperties;
 
     private WorkflowVersion(
@@ -45,12 +47,14 @@ public final class WorkflowVersion {
             Optional<String> name,
             List<WorkflowStepDefinition> steps,
             OffsetDateTime createdAt,
+            Optional<CreatedBy> createdBy,
             Map<String, Object> additionalProperties) {
         this.id = id;
         this.version = version;
         this.name = name;
         this.steps = steps;
         this.createdAt = createdAt;
+        this.createdBy = createdBy;
         this.additionalProperties = additionalProperties;
     }
 
@@ -102,10 +106,24 @@ public final class WorkflowVersion {
         return createdAt;
     }
 
+    @JsonIgnore
+    public Optional<CreatedBy> getCreatedBy() {
+        if (createdBy == null) {
+            return Optional.empty();
+        }
+        return createdBy;
+    }
+
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
     @JsonProperty("name")
     private Optional<String> _getName() {
         return name;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("createdBy")
+    private Optional<CreatedBy> _getCreatedBy() {
+        return createdBy;
     }
 
     @java.lang.Override
@@ -124,12 +142,13 @@ public final class WorkflowVersion {
                 && version.equals(other.version)
                 && name.equals(other.name)
                 && steps.equals(other.steps)
-                && createdAt.equals(other.createdAt);
+                && createdAt.equals(other.createdAt)
+                && createdBy.equals(other.createdBy);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.id, this.version, this.name, this.steps, this.createdAt);
+        return Objects.hash(this.id, this.version, this.name, this.steps, this.createdAt, this.createdBy);
     }
 
     @java.lang.Override
@@ -181,6 +200,12 @@ public final class WorkflowVersion {
         _FinalStage addSteps(WorkflowStepDefinition steps);
 
         _FinalStage addAllSteps(List<WorkflowStepDefinition> steps);
+
+        _FinalStage createdBy(Optional<CreatedBy> createdBy);
+
+        _FinalStage createdBy(CreatedBy createdBy);
+
+        _FinalStage createdBy(Nullable<CreatedBy> createdBy);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -190,6 +215,8 @@ public final class WorkflowVersion {
         private String version;
 
         private OffsetDateTime createdAt;
+
+        private Optional<CreatedBy> createdBy = Optional.empty();
 
         private List<WorkflowStepDefinition> steps = new ArrayList<>();
 
@@ -207,6 +234,7 @@ public final class WorkflowVersion {
             name(other.getName());
             steps(other.getSteps());
             createdAt(other.getCreatedAt());
+            createdBy(other.getCreatedBy());
             return this;
         }
 
@@ -238,6 +266,31 @@ public final class WorkflowVersion {
         @JsonSetter("createdAt")
         public _FinalStage createdAt(@NotNull OffsetDateTime createdAt) {
             this.createdAt = Objects.requireNonNull(createdAt, "createdAt must not be null");
+            return this;
+        }
+
+        @java.lang.Override
+        public _FinalStage createdBy(Nullable<CreatedBy> createdBy) {
+            if (createdBy.isNull()) {
+                this.createdBy = null;
+            } else if (createdBy.isEmpty()) {
+                this.createdBy = Optional.empty();
+            } else {
+                this.createdBy = Optional.of(createdBy.get());
+            }
+            return this;
+        }
+
+        @java.lang.Override
+        public _FinalStage createdBy(CreatedBy createdBy) {
+            this.createdBy = Optional.ofNullable(createdBy);
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter(value = "createdBy", nulls = Nulls.SKIP)
+        public _FinalStage createdBy(Optional<CreatedBy> createdBy) {
+            this.createdBy = createdBy;
             return this;
         }
 
@@ -314,7 +367,7 @@ public final class WorkflowVersion {
 
         @java.lang.Override
         public WorkflowVersion build() {
-            return new WorkflowVersion(id, version, name, steps, createdAt, additionalProperties);
+            return new WorkflowVersion(id, version, name, steps, createdAt, createdBy, additionalProperties);
         }
     }
 }
