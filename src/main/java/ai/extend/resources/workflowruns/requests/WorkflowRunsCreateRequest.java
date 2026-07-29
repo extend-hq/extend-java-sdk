@@ -7,6 +7,7 @@ import ai.extend.core.ObjectMappers;
 import ai.extend.resources.workflowruns.types.WorkflowRunsCreateRequestFile;
 import ai.extend.resources.workflowruns.types.WorkflowRunsCreateRequestOutputsItem;
 import ai.extend.types.WorkflowReference;
+import ai.extend.types.WorkflowRunPackage;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -27,7 +28,9 @@ import org.jetbrains.annotations.NotNull;
 public final class WorkflowRunsCreateRequest {
     private final WorkflowReference workflow;
 
-    private final WorkflowRunsCreateRequestFile file;
+    private final Optional<WorkflowRunsCreateRequestFile> file;
+
+    private final Optional<WorkflowRunPackage> package_;
 
     private final Optional<List<WorkflowRunsCreateRequestOutputsItem>> outputs;
 
@@ -41,7 +44,8 @@ public final class WorkflowRunsCreateRequest {
 
     private WorkflowRunsCreateRequest(
             WorkflowReference workflow,
-            WorkflowRunsCreateRequestFile file,
+            Optional<WorkflowRunsCreateRequestFile> file,
+            Optional<WorkflowRunPackage> package_,
             Optional<List<WorkflowRunsCreateRequestOutputsItem>> outputs,
             Optional<Integer> priority,
             Optional<Map<String, Object>> metadata,
@@ -49,6 +53,7 @@ public final class WorkflowRunsCreateRequest {
             Map<String, Object> additionalProperties) {
         this.workflow = workflow;
         this.file = file;
+        this.package_ = package_;
         this.outputs = outputs;
         this.priority = priority;
         this.metadata = metadata;
@@ -62,15 +67,23 @@ public final class WorkflowRunsCreateRequest {
     }
 
     /**
-     * @return The file to be processed. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/general/supported-file-types">here</a>. Files can be provided as a URL, an Extend file ID, or raw text. If you wish to process more at a time, consider using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/workflow/batch-create-workflow-runs">Batch Run Workflow</a> endpoint.
+     * @return The file to be processed. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/general/supported-file-types">here</a>. Files can be provided as a URL, an Extend file ID, or raw text. Mutually exclusive with <code>package</code> — provide one or the other. If you wish to process many files as independent runs, consider using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/workflow/batch-create-workflow-runs">Batch Run Workflow</a> endpoint.
      */
     @JsonProperty("file")
-    public WorkflowRunsCreateRequestFile getFile() {
+    public Optional<WorkflowRunsCreateRequestFile> getFile() {
         return file;
     }
 
     /**
-     * @return Predetermined outputs to be used for the workflow run. Generally not recommended for most use cases, however, can be useful in cases of overriding a classification in a workflow, or a subset of extraction fields when data is known.
+     * @return A set of 2–50 files to process together in a single workflow run. Mutually exclusive with <code>file</code> — provide one or the other.
+     */
+    @JsonProperty("package")
+    public Optional<WorkflowRunPackage> getPackage() {
+        return package_;
+    }
+
+    /**
+     * @return Predetermined outputs to be used for the workflow run. Generally not recommended for most use cases, however, can be useful in cases of overriding a classification in a workflow, or a subset of extraction fields when data is known. Not supported on package runs — a package run produces a single merged result across all files and cannot accept pre-supplied per-processor outputs.
      */
     @JsonProperty("outputs")
     public Optional<List<WorkflowRunsCreateRequestOutputsItem>> getOutputs() {
@@ -106,6 +119,7 @@ public final class WorkflowRunsCreateRequest {
     private boolean equalTo(WorkflowRunsCreateRequest other) {
         return workflow.equals(other.workflow)
                 && file.equals(other.file)
+                && package_.equals(other.package_)
                 && outputs.equals(other.outputs)
                 && priority.equals(other.priority)
                 && metadata.equals(other.metadata)
@@ -114,7 +128,8 @@ public final class WorkflowRunsCreateRequest {
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.workflow, this.file, this.outputs, this.priority, this.metadata, this.secrets);
+        return Objects.hash(
+                this.workflow, this.file, this.package_, this.outputs, this.priority, this.metadata, this.secrets);
     }
 
     @java.lang.Override
@@ -127,23 +142,30 @@ public final class WorkflowRunsCreateRequest {
     }
 
     public interface WorkflowStage {
-        FileStage workflow(@NotNull WorkflowReference workflow);
+        _FinalStage workflow(@NotNull WorkflowReference workflow);
 
         Builder from(WorkflowRunsCreateRequest other);
-    }
-
-    public interface FileStage {
-        /**
-         * <p>The file to be processed. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/general/supported-file-types">here</a>. Files can be provided as a URL, an Extend file ID, or raw text. If you wish to process more at a time, consider using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/workflow/batch-create-workflow-runs">Batch Run Workflow</a> endpoint.</p>
-         */
-        _FinalStage file(@NotNull WorkflowRunsCreateRequestFile file);
     }
 
     public interface _FinalStage {
         WorkflowRunsCreateRequest build();
 
         /**
-         * <p>Predetermined outputs to be used for the workflow run. Generally not recommended for most use cases, however, can be useful in cases of overriding a classification in a workflow, or a subset of extraction fields when data is known.</p>
+         * <p>The file to be processed. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/general/supported-file-types">here</a>. Files can be provided as a URL, an Extend file ID, or raw text. Mutually exclusive with <code>package</code> — provide one or the other. If you wish to process many files as independent runs, consider using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/workflow/batch-create-workflow-runs">Batch Run Workflow</a> endpoint.</p>
+         */
+        _FinalStage file(Optional<WorkflowRunsCreateRequestFile> file);
+
+        _FinalStage file(WorkflowRunsCreateRequestFile file);
+
+        /**
+         * <p>A set of 2–50 files to process together in a single workflow run. Mutually exclusive with <code>file</code> — provide one or the other.</p>
+         */
+        _FinalStage package_(Optional<WorkflowRunPackage> package_);
+
+        _FinalStage package_(WorkflowRunPackage package_);
+
+        /**
+         * <p>Predetermined outputs to be used for the workflow run. Generally not recommended for most use cases, however, can be useful in cases of overriding a classification in a workflow, or a subset of extraction fields when data is known. Not supported on package runs — a package run produces a single merged result across all files and cannot accept pre-supplied per-processor outputs.</p>
          */
         _FinalStage outputs(Optional<List<WorkflowRunsCreateRequestOutputsItem>> outputs);
 
@@ -163,10 +185,8 @@ public final class WorkflowRunsCreateRequest {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements WorkflowStage, FileStage, _FinalStage {
+    public static final class Builder implements WorkflowStage, _FinalStage {
         private WorkflowReference workflow;
-
-        private WorkflowRunsCreateRequestFile file;
 
         private Optional<Map<String, Object>> secrets = Optional.empty();
 
@@ -175,6 +195,10 @@ public final class WorkflowRunsCreateRequest {
         private Optional<Integer> priority = Optional.empty();
 
         private Optional<List<WorkflowRunsCreateRequestOutputsItem>> outputs = Optional.empty();
+
+        private Optional<WorkflowRunPackage> package_ = Optional.empty();
+
+        private Optional<WorkflowRunsCreateRequestFile> file = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -185,6 +209,7 @@ public final class WorkflowRunsCreateRequest {
         public Builder from(WorkflowRunsCreateRequest other) {
             workflow(other.getWorkflow());
             file(other.getFile());
+            package_(other.getPackage());
             outputs(other.getOutputs());
             priority(other.getPriority());
             metadata(other.getMetadata());
@@ -194,20 +219,8 @@ public final class WorkflowRunsCreateRequest {
 
         @java.lang.Override
         @JsonSetter("workflow")
-        public FileStage workflow(@NotNull WorkflowReference workflow) {
+        public _FinalStage workflow(@NotNull WorkflowReference workflow) {
             this.workflow = Objects.requireNonNull(workflow, "workflow must not be null");
-            return this;
-        }
-
-        /**
-         * <p>The file to be processed. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/general/supported-file-types">here</a>. Files can be provided as a URL, an Extend file ID, or raw text. If you wish to process more at a time, consider using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/workflow/batch-create-workflow-runs">Batch Run Workflow</a> endpoint.</p>
-         * <p>The file to be processed. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/general/supported-file-types">here</a>. Files can be provided as a URL, an Extend file ID, or raw text. If you wish to process more at a time, consider using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/workflow/batch-create-workflow-runs">Batch Run Workflow</a> endpoint.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("file")
-        public _FinalStage file(@NotNull WorkflowRunsCreateRequestFile file) {
-            this.file = Objects.requireNonNull(file, "file must not be null");
             return this;
         }
 
@@ -251,7 +264,7 @@ public final class WorkflowRunsCreateRequest {
         }
 
         /**
-         * <p>Predetermined outputs to be used for the workflow run. Generally not recommended for most use cases, however, can be useful in cases of overriding a classification in a workflow, or a subset of extraction fields when data is known.</p>
+         * <p>Predetermined outputs to be used for the workflow run. Generally not recommended for most use cases, however, can be useful in cases of overriding a classification in a workflow, or a subset of extraction fields when data is known. Not supported on package runs — a package run produces a single merged result across all files and cannot accept pre-supplied per-processor outputs.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -261,7 +274,7 @@ public final class WorkflowRunsCreateRequest {
         }
 
         /**
-         * <p>Predetermined outputs to be used for the workflow run. Generally not recommended for most use cases, however, can be useful in cases of overriding a classification in a workflow, or a subset of extraction fields when data is known.</p>
+         * <p>Predetermined outputs to be used for the workflow run. Generally not recommended for most use cases, however, can be useful in cases of overriding a classification in a workflow, or a subset of extraction fields when data is known. Not supported on package runs — a package run produces a single merged result across all files and cannot accept pre-supplied per-processor outputs.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "outputs", nulls = Nulls.SKIP)
@@ -270,10 +283,50 @@ public final class WorkflowRunsCreateRequest {
             return this;
         }
 
+        /**
+         * <p>A set of 2–50 files to process together in a single workflow run. Mutually exclusive with <code>file</code> — provide one or the other.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage package_(WorkflowRunPackage package_) {
+            this.package_ = Optional.ofNullable(package_);
+            return this;
+        }
+
+        /**
+         * <p>A set of 2–50 files to process together in a single workflow run. Mutually exclusive with <code>file</code> — provide one or the other.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "package", nulls = Nulls.SKIP)
+        public _FinalStage package_(Optional<WorkflowRunPackage> package_) {
+            this.package_ = package_;
+            return this;
+        }
+
+        /**
+         * <p>The file to be processed. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/general/supported-file-types">here</a>. Files can be provided as a URL, an Extend file ID, or raw text. Mutually exclusive with <code>package</code> — provide one or the other. If you wish to process many files as independent runs, consider using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/workflow/batch-create-workflow-runs">Batch Run Workflow</a> endpoint.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage file(WorkflowRunsCreateRequestFile file) {
+            this.file = Optional.ofNullable(file);
+            return this;
+        }
+
+        /**
+         * <p>The file to be processed. Supported file types can be found <a href="https://docs.extend.ai/2026-02-09/general/supported-file-types">here</a>. Files can be provided as a URL, an Extend file ID, or raw text. Mutually exclusive with <code>package</code> — provide one or the other. If you wish to process many files as independent runs, consider using the <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/workflow/batch-create-workflow-runs">Batch Run Workflow</a> endpoint.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "file", nulls = Nulls.SKIP)
+        public _FinalStage file(Optional<WorkflowRunsCreateRequestFile> file) {
+            this.file = file;
+            return this;
+        }
+
         @java.lang.Override
         public WorkflowRunsCreateRequest build() {
             return new WorkflowRunsCreateRequest(
-                    workflow, file, outputs, priority, metadata, secrets, additionalProperties);
+                    workflow, file, package_, outputs, priority, metadata, secrets, additionalProperties);
         }
     }
 }

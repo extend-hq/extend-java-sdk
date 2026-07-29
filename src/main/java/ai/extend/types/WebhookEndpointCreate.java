@@ -45,6 +45,8 @@ public final class WebhookEndpointCreate {
 
     private final OffsetDateTime createdAt;
 
+    private final Optional<CreatedBy> createdBy;
+
     private final Map<String, Object> additionalProperties;
 
     private WebhookEndpointCreate(
@@ -57,6 +59,7 @@ public final class WebhookEndpointCreate {
             Optional<WebhookAdvancedOptions> advancedOptions,
             String signingSecret,
             OffsetDateTime createdAt,
+            Optional<CreatedBy> createdBy,
             Map<String, Object> additionalProperties) {
         this.id = id;
         this.url = url;
@@ -67,6 +70,7 @@ public final class WebhookEndpointCreate {
         this.advancedOptions = advancedOptions;
         this.signingSecret = signingSecret;
         this.createdAt = createdAt;
+        this.createdBy = createdBy;
         this.additionalProperties = additionalProperties;
     }
 
@@ -145,10 +149,24 @@ public final class WebhookEndpointCreate {
         return createdAt;
     }
 
+    @JsonIgnore
+    public Optional<CreatedBy> getCreatedBy() {
+        if (createdBy == null) {
+            return Optional.empty();
+        }
+        return createdBy;
+    }
+
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
     @JsonProperty("advancedOptions")
     private Optional<WebhookAdvancedOptions> _getAdvancedOptions() {
         return advancedOptions;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("createdBy")
+    private Optional<CreatedBy> _getCreatedBy() {
+        return createdBy;
     }
 
     @java.lang.Override
@@ -171,7 +189,8 @@ public final class WebhookEndpointCreate {
                 && apiVersion.equals(other.apiVersion)
                 && advancedOptions.equals(other.advancedOptions)
                 && signingSecret.equals(other.signingSecret)
-                && createdAt.equals(other.createdAt);
+                && createdAt.equals(other.createdAt)
+                && createdBy.equals(other.createdBy);
     }
 
     @java.lang.Override
@@ -185,7 +204,8 @@ public final class WebhookEndpointCreate {
                 this.apiVersion,
                 this.advancedOptions,
                 this.signingSecret,
-                this.createdAt);
+                this.createdAt,
+                this.createdBy);
     }
 
     @java.lang.Override
@@ -263,6 +283,12 @@ public final class WebhookEndpointCreate {
         _FinalStage advancedOptions(WebhookAdvancedOptions advancedOptions);
 
         _FinalStage advancedOptions(Nullable<WebhookAdvancedOptions> advancedOptions);
+
+        _FinalStage createdBy(Optional<CreatedBy> createdBy);
+
+        _FinalStage createdBy(CreatedBy createdBy);
+
+        _FinalStage createdBy(Nullable<CreatedBy> createdBy);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -289,6 +315,8 @@ public final class WebhookEndpointCreate {
 
         private OffsetDateTime createdAt;
 
+        private Optional<CreatedBy> createdBy = Optional.empty();
+
         private Optional<WebhookAdvancedOptions> advancedOptions = Optional.empty();
 
         private List<WebhookEndpointEventType> enabledEvents = new ArrayList<>();
@@ -309,6 +337,7 @@ public final class WebhookEndpointCreate {
             advancedOptions(other.getAdvancedOptions());
             signingSecret(other.getSigningSecret());
             createdAt(other.getCreatedAt());
+            createdBy(other.getCreatedBy());
             return this;
         }
 
@@ -385,6 +414,31 @@ public final class WebhookEndpointCreate {
         @JsonSetter("createdAt")
         public _FinalStage createdAt(@NotNull OffsetDateTime createdAt) {
             this.createdAt = Objects.requireNonNull(createdAt, "createdAt must not be null");
+            return this;
+        }
+
+        @java.lang.Override
+        public _FinalStage createdBy(Nullable<CreatedBy> createdBy) {
+            if (createdBy.isNull()) {
+                this.createdBy = null;
+            } else if (createdBy.isEmpty()) {
+                this.createdBy = Optional.empty();
+            } else {
+                this.createdBy = Optional.of(createdBy.get());
+            }
+            return this;
+        }
+
+        @java.lang.Override
+        public _FinalStage createdBy(CreatedBy createdBy) {
+            this.createdBy = Optional.ofNullable(createdBy);
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter(value = "createdBy", nulls = Nulls.SKIP)
+        public _FinalStage createdBy(Optional<CreatedBy> createdBy) {
+            this.createdBy = createdBy;
             return this;
         }
 
@@ -471,6 +525,7 @@ public final class WebhookEndpointCreate {
                     advancedOptions,
                     signingSecret,
                     createdAt,
+                    createdBy,
                     additionalProperties);
         }
     }

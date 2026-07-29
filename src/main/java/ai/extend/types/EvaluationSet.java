@@ -3,18 +3,23 @@
  */
 package ai.extend.types;
 
+import ai.extend.core.Nullable;
+import ai.extend.core.NullableNonemptyFilter;
 import ai.extend.core.ObjectMappers;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
@@ -32,6 +37,8 @@ public final class EvaluationSet {
 
     private final OffsetDateTime updatedAt;
 
+    private final Optional<CreatedBy> createdBy;
+
     private final Map<String, Object> additionalProperties;
 
     private EvaluationSet(
@@ -41,6 +48,7 @@ public final class EvaluationSet {
             EvaluationSetEntity entity,
             OffsetDateTime createdAt,
             OffsetDateTime updatedAt,
+            Optional<CreatedBy> createdBy,
             Map<String, Object> additionalProperties) {
         this.id = id;
         this.name = name;
@@ -48,6 +56,7 @@ public final class EvaluationSet {
         this.entity = entity;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.createdBy = createdBy;
         this.additionalProperties = additionalProperties;
     }
 
@@ -104,6 +113,20 @@ public final class EvaluationSet {
         return updatedAt;
     }
 
+    @JsonIgnore
+    public Optional<CreatedBy> getCreatedBy() {
+        if (createdBy == null) {
+            return Optional.empty();
+        }
+        return createdBy;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("createdBy")
+    private Optional<CreatedBy> _getCreatedBy() {
+        return createdBy;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -121,12 +144,14 @@ public final class EvaluationSet {
                 && description.equals(other.description)
                 && entity.equals(other.entity)
                 && createdAt.equals(other.createdAt)
-                && updatedAt.equals(other.updatedAt);
+                && updatedAt.equals(other.updatedAt)
+                && createdBy.equals(other.createdBy);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.id, this.name, this.description, this.entity, this.createdAt, this.updatedAt);
+        return Objects.hash(
+                this.id, this.name, this.description, this.entity, this.createdAt, this.updatedAt, this.createdBy);
     }
 
     @java.lang.Override
@@ -181,6 +206,12 @@ public final class EvaluationSet {
 
     public interface _FinalStage {
         EvaluationSet build();
+
+        _FinalStage createdBy(Optional<CreatedBy> createdBy);
+
+        _FinalStage createdBy(CreatedBy createdBy);
+
+        _FinalStage createdBy(Nullable<CreatedBy> createdBy);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -198,6 +229,8 @@ public final class EvaluationSet {
 
         private OffsetDateTime updatedAt;
 
+        private Optional<CreatedBy> createdBy = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -211,6 +244,7 @@ public final class EvaluationSet {
             entity(other.getEntity());
             createdAt(other.getCreatedAt());
             updatedAt(other.getUpdatedAt());
+            createdBy(other.getCreatedBy());
             return this;
         }
 
@@ -283,8 +317,34 @@ public final class EvaluationSet {
         }
 
         @java.lang.Override
+        public _FinalStage createdBy(Nullable<CreatedBy> createdBy) {
+            if (createdBy.isNull()) {
+                this.createdBy = null;
+            } else if (createdBy.isEmpty()) {
+                this.createdBy = Optional.empty();
+            } else {
+                this.createdBy = Optional.of(createdBy.get());
+            }
+            return this;
+        }
+
+        @java.lang.Override
+        public _FinalStage createdBy(CreatedBy createdBy) {
+            this.createdBy = Optional.ofNullable(createdBy);
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter(value = "createdBy", nulls = Nulls.SKIP)
+        public _FinalStage createdBy(Optional<CreatedBy> createdBy) {
+            this.createdBy = createdBy;
+            return this;
+        }
+
+        @java.lang.Override
         public EvaluationSet build() {
-            return new EvaluationSet(id, name, description, entity, createdAt, updatedAt, additionalProperties);
+            return new EvaluationSet(
+                    id, name, description, entity, createdAt, updatedAt, createdBy, additionalProperties);
         }
     }
 }

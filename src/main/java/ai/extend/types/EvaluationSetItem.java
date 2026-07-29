@@ -3,17 +3,22 @@
  */
 package ai.extend.types;
 
+import ai.extend.core.Nullable;
+import ai.extend.core.NullableNonemptyFilter;
 import ai.extend.core.ObjectMappers;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
@@ -27,6 +32,8 @@ public final class EvaluationSetItem {
 
     private final ProvidedProcessorOutput expectedOutput;
 
+    private final Optional<CreatedBy> createdBy;
+
     private final Map<String, Object> additionalProperties;
 
     private EvaluationSetItem(
@@ -34,11 +41,13 @@ public final class EvaluationSetItem {
             String evaluationSetId,
             FileSummary file,
             ProvidedProcessorOutput expectedOutput,
+            Optional<CreatedBy> createdBy,
             Map<String, Object> additionalProperties) {
         this.id = id;
         this.evaluationSetId = evaluationSetId;
         this.file = file;
         this.expectedOutput = expectedOutput;
+        this.createdBy = createdBy;
         this.additionalProperties = additionalProperties;
     }
 
@@ -84,6 +93,20 @@ public final class EvaluationSetItem {
         return expectedOutput;
     }
 
+    @JsonIgnore
+    public Optional<CreatedBy> getCreatedBy() {
+        if (createdBy == null) {
+            return Optional.empty();
+        }
+        return createdBy;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("createdBy")
+    private Optional<CreatedBy> _getCreatedBy() {
+        return createdBy;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -99,12 +122,13 @@ public final class EvaluationSetItem {
         return id.equals(other.id)
                 && evaluationSetId.equals(other.evaluationSetId)
                 && file.equals(other.file)
-                && expectedOutput.equals(other.expectedOutput);
+                && expectedOutput.equals(other.expectedOutput)
+                && createdBy.equals(other.createdBy);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.id, this.evaluationSetId, this.file, this.expectedOutput);
+        return Objects.hash(this.id, this.evaluationSetId, this.file, this.expectedOutput, this.createdBy);
     }
 
     @java.lang.Override
@@ -150,6 +174,12 @@ public final class EvaluationSetItem {
 
     public interface _FinalStage {
         EvaluationSetItem build();
+
+        _FinalStage createdBy(Optional<CreatedBy> createdBy);
+
+        _FinalStage createdBy(CreatedBy createdBy);
+
+        _FinalStage createdBy(Nullable<CreatedBy> createdBy);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -163,6 +193,8 @@ public final class EvaluationSetItem {
 
         private ProvidedProcessorOutput expectedOutput;
 
+        private Optional<CreatedBy> createdBy = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -174,6 +206,7 @@ public final class EvaluationSetItem {
             evaluationSetId(other.getEvaluationSetId());
             file(other.getFile());
             expectedOutput(other.getExpectedOutput());
+            createdBy(other.getCreatedBy());
             return this;
         }
 
@@ -230,8 +263,33 @@ public final class EvaluationSetItem {
         }
 
         @java.lang.Override
+        public _FinalStage createdBy(Nullable<CreatedBy> createdBy) {
+            if (createdBy.isNull()) {
+                this.createdBy = null;
+            } else if (createdBy.isEmpty()) {
+                this.createdBy = Optional.empty();
+            } else {
+                this.createdBy = Optional.of(createdBy.get());
+            }
+            return this;
+        }
+
+        @java.lang.Override
+        public _FinalStage createdBy(CreatedBy createdBy) {
+            this.createdBy = Optional.ofNullable(createdBy);
+            return this;
+        }
+
+        @java.lang.Override
+        @JsonSetter(value = "createdBy", nulls = Nulls.SKIP)
+        public _FinalStage createdBy(Optional<CreatedBy> createdBy) {
+            this.createdBy = createdBy;
+            return this;
+        }
+
+        @java.lang.Override
         public EvaluationSetItem build() {
-            return new EvaluationSetItem(id, evaluationSetId, file, expectedOutput, additionalProperties);
+            return new EvaluationSetItem(id, evaluationSetId, file, expectedOutput, createdBy, additionalProperties);
         }
     }
 }
