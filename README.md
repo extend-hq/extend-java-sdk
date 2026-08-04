@@ -1,5 +1,7 @@
 # Extend Java Library
 
+Official Java SDK for [Extend](https://www.extend.ai) (extend.ai) — the document processing API. Parse, extract, classify, split, and edit PDFs and 35+ file types via Maven Central (`ai.extend:extend-java-sdk`).
+
 [![Maven Central](https://img.shields.io/maven-central/v/ai.extend/extend-java-sdk)](https://central.sonatype.com/artifact/ai.extend/extend-java-sdk)
 
 The Extend Java library provides convenient, strongly typed access to the [Extend API](https://docs.extend.ai/2026-02-09/developers) — enabling you to parse, extract, classify, split, and edit documents with a few lines of code.
