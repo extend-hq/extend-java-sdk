@@ -50,7 +50,7 @@ java {
 
 group = 'ai.extend'
 
-version = '1.18.0'
+version = '1.19.0'
 
 jar {
     dependsOn(":generatePomFileForMavenPublication")
@@ -81,11 +81,11 @@ publishing {
         maven(MavenPublication) {
             groupId = 'ai.extend'
             artifactId = 'extend-java-sdk'
-            version = '1.18.0'
+            version = '1.19.0'
             from components.java
             pom {
                 name = 'Extend.ai'
-                description = 'The Java SDK for Extend.ai'
+                description = 'Official Java SDK for Extend (extend.ai) — the document processing API. Parse, extract, classify, split, and edit PDFs and 35+ file types'
                 url = 'https://docs.extend.ai/2026-02-09/api-reference'
                 licenses {
                     license {
