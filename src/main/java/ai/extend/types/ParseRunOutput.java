@@ -3,9 +3,12 @@
  */
 package ai.extend.types;
 
+import ai.extend.core.Nullable;
+import ai.extend.core.NullableNonemptyFilter;
 import ai.extend.core.ObjectMappers;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -26,12 +29,18 @@ public final class ParseRunOutput {
 
     private final Optional<ParseRunOutputOcr> ocr;
 
+    private final Optional<ParseRunOutputMetadata> metadata;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseRunOutput(
-            List<Chunk> chunks, Optional<ParseRunOutputOcr> ocr, Map<String, Object> additionalProperties) {
+            List<Chunk> chunks,
+            Optional<ParseRunOutputOcr> ocr,
+            Optional<ParseRunOutputMetadata> metadata,
+            Map<String, Object> additionalProperties) {
         this.chunks = chunks;
         this.ocr = ocr;
+        this.metadata = metadata;
         this.additionalProperties = additionalProperties;
     }
 
@@ -51,6 +60,23 @@ public final class ParseRunOutput {
         return ocr;
     }
 
+    /**
+     * @return Rotation, dimension, and file-type metadata about the parse output. <code>null</code> for parse runs that completed before this field was introduced.
+     */
+    @JsonIgnore
+    public Optional<ParseRunOutputMetadata> getMetadata() {
+        if (metadata == null) {
+            return Optional.empty();
+        }
+        return metadata;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("metadata")
+    private Optional<ParseRunOutputMetadata> _getMetadata() {
+        return metadata;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -63,12 +89,12 @@ public final class ParseRunOutput {
     }
 
     private boolean equalTo(ParseRunOutput other) {
-        return chunks.equals(other.chunks) && ocr.equals(other.ocr);
+        return chunks.equals(other.chunks) && ocr.equals(other.ocr) && metadata.equals(other.metadata);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.chunks, this.ocr);
+        return Objects.hash(this.chunks, this.ocr, this.metadata);
     }
 
     @java.lang.Override
@@ -86,6 +112,8 @@ public final class ParseRunOutput {
 
         private Optional<ParseRunOutputOcr> ocr = Optional.empty();
 
+        private Optional<ParseRunOutputMetadata> metadata = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -94,6 +122,7 @@ public final class ParseRunOutput {
         public Builder from(ParseRunOutput other) {
             chunks(other.getChunks());
             ocr(other.getOcr());
+            metadata(other.getMetadata());
             return this;
         }
 
@@ -135,8 +164,33 @@ public final class ParseRunOutput {
             return this;
         }
 
+        /**
+         * <p>Rotation, dimension, and file-type metadata about the parse output. <code>null</code> for parse runs that completed before this field was introduced.</p>
+         */
+        @JsonSetter(value = "metadata", nulls = Nulls.SKIP)
+        public Builder metadata(Optional<ParseRunOutputMetadata> metadata) {
+            this.metadata = metadata;
+            return this;
+        }
+
+        public Builder metadata(ParseRunOutputMetadata metadata) {
+            this.metadata = Optional.ofNullable(metadata);
+            return this;
+        }
+
+        public Builder metadata(Nullable<ParseRunOutputMetadata> metadata) {
+            if (metadata.isNull()) {
+                this.metadata = null;
+            } else if (metadata.isEmpty()) {
+                this.metadata = Optional.empty();
+            } else {
+                this.metadata = Optional.of(metadata.get());
+            }
+            return this;
+        }
+
         public ParseRunOutput build() {
-            return new ParseRunOutput(chunks, ocr, additionalProperties);
+            return new ParseRunOutput(chunks, ocr, metadata, additionalProperties);
         }
     }
 }

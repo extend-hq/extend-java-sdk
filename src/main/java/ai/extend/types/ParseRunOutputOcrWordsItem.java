@@ -10,10 +10,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
@@ -27,6 +29,8 @@ public final class ParseRunOutputOcrWordsItem {
 
     private final double pageNumber;
 
+    private final Optional<String> blockId;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseRunOutputOcrWordsItem(
@@ -34,11 +38,13 @@ public final class ParseRunOutputOcrWordsItem {
             BoundingBox boundingBox,
             double confidence,
             double pageNumber,
+            Optional<String> blockId,
             Map<String, Object> additionalProperties) {
         this.content = content;
         this.boundingBox = boundingBox;
         this.confidence = confidence;
         this.pageNumber = pageNumber;
+        this.blockId = blockId;
         this.additionalProperties = additionalProperties;
     }
 
@@ -74,6 +80,14 @@ public final class ParseRunOutputOcrWordsItem {
         return pageNumber;
     }
 
+    /**
+     * @return The <code>id</code> of the block (see the <code>Block</code> schema) this word was assigned to, based on bounding-box overlap. Omitted when the word doesn't fall within any block's bounding box.
+     */
+    @JsonProperty("blockId")
+    public Optional<String> getBlockId() {
+        return blockId;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -89,12 +103,13 @@ public final class ParseRunOutputOcrWordsItem {
         return content.equals(other.content)
                 && boundingBox.equals(other.boundingBox)
                 && confidence == other.confidence
-                && pageNumber == other.pageNumber;
+                && pageNumber == other.pageNumber
+                && blockId.equals(other.blockId);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.content, this.boundingBox, this.confidence, this.pageNumber);
+        return Objects.hash(this.content, this.boundingBox, this.confidence, this.pageNumber, this.blockId);
     }
 
     @java.lang.Override
@@ -138,6 +153,13 @@ public final class ParseRunOutputOcrWordsItem {
 
     public interface _FinalStage {
         ParseRunOutputOcrWordsItem build();
+
+        /**
+         * <p>The <code>id</code> of the block (see the <code>Block</code> schema) this word was assigned to, based on bounding-box overlap. Omitted when the word doesn't fall within any block's bounding box.</p>
+         */
+        _FinalStage blockId(Optional<String> blockId);
+
+        _FinalStage blockId(String blockId);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -151,6 +173,8 @@ public final class ParseRunOutputOcrWordsItem {
 
         private double pageNumber;
 
+        private Optional<String> blockId = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -162,6 +186,7 @@ public final class ParseRunOutputOcrWordsItem {
             boundingBox(other.getBoundingBox());
             confidence(other.getConfidence());
             pageNumber(other.getPageNumber());
+            blockId(other.getBlockId());
             return this;
         }
 
@@ -213,9 +238,30 @@ public final class ParseRunOutputOcrWordsItem {
             return this;
         }
 
+        /**
+         * <p>The <code>id</code> of the block (see the <code>Block</code> schema) this word was assigned to, based on bounding-box overlap. Omitted when the word doesn't fall within any block's bounding box.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage blockId(String blockId) {
+            this.blockId = Optional.ofNullable(blockId);
+            return this;
+        }
+
+        /**
+         * <p>The <code>id</code> of the block (see the <code>Block</code> schema) this word was assigned to, based on bounding-box overlap. Omitted when the word doesn't fall within any block's bounding box.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "blockId", nulls = Nulls.SKIP)
+        public _FinalStage blockId(Optional<String> blockId) {
+            this.blockId = blockId;
+            return this;
+        }
+
         @java.lang.Override
         public ParseRunOutputOcrWordsItem build() {
-            return new ParseRunOutputOcrWordsItem(content, boundingBox, confidence, pageNumber, additionalProperties);
+            return new ParseRunOutputOcrWordsItem(
+                    content, boundingBox, confidence, pageNumber, blockId, additionalProperties);
         }
     }
 }

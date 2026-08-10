@@ -31,7 +31,7 @@ public final class WorkflowRunPackage {
     }
 
     /**
-     * @return The files to process, in submission order. Each entry can be a URL or an existing Extend file ID. Raw text and base64 inputs are not supported for package runs.
+     * @return The files to process. Each entry can be a URL or an existing Extend file ID. Raw text and base64 inputs are not supported for package runs.
      * <p>Duplicate file IDs and duplicate URLs are rejected — each file may appear only once. A URL and a file ID are never treated as duplicates of each other, even if they resolve to the same document.</p>
      */
     @JsonProperty("files")
@@ -83,7 +83,7 @@ public final class WorkflowRunPackage {
         }
 
         /**
-         * <p>The files to process, in submission order. Each entry can be a URL or an existing Extend file ID. Raw text and base64 inputs are not supported for package runs.</p>
+         * <p>The files to process. Each entry can be a URL or an existing Extend file ID. Raw text and base64 inputs are not supported for package runs.</p>
          * <p>Duplicate file IDs and duplicate URLs are rejected — each file may appear only once. A URL and a file ID are never treated as duplicates of each other, even if they resolve to the same document.</p>
          */
         @JsonSetter(value = "files", nulls = Nulls.SKIP)

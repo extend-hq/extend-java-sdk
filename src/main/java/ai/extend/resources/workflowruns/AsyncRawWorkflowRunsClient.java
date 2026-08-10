@@ -211,7 +211,7 @@ public class AsyncRawWorkflowRunsClient {
 
     /**
      * Run a workflow. A workflow is a sequence of steps that process files and data in a specific order to achieve a desired outcome.
-     * <p>Pass <code>file</code> for a single document, or <code>package</code> to process 2-50 files together as one package in a single run. Exactly one of <code>file</code> or <code>package</code> must be provided.</p>
+     * <p>Pass <code>file</code> for a single document use case (more common), or <code>package</code> to process 2-50 files together as one package in a single run where context across files is used together to determine final output. Exactly one of <code>file</code> or <code>package</code> must be provided.</p>
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Workflow Run endpoint for results.</p>
      */
     public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> create(WorkflowRunsCreateRequest request) {
@@ -220,7 +220,7 @@ public class AsyncRawWorkflowRunsClient {
 
     /**
      * Run a workflow. A workflow is a sequence of steps that process files and data in a specific order to achieve a desired outcome.
-     * <p>Pass <code>file</code> for a single document, or <code>package</code> to process 2-50 files together as one package in a single run. Exactly one of <code>file</code> or <code>package</code> must be provided.</p>
+     * <p>Pass <code>file</code> for a single document use case (more common), or <code>package</code> to process 2-50 files together as one package in a single run where context across files is used together to determine final output. Exactly one of <code>file</code> or <code>package</code> must be provided.</p>
      * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Workflow Run endpoint for results.</p>
      */
     public CompletableFuture<ExtendClientBaseHttpResponse<WorkflowRun>> create(
