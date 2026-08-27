@@ -106,6 +106,14 @@ public final class WebhookEvent {
         return new WebhookEvent(new EditRunFailedValue(value));
     }
 
+    public static WebhookEvent formDetectionRunProcessed(FormDetectionRunProcessedWebhookEvent value) {
+        return new WebhookEvent(new FormDetectionRunProcessedValue(value));
+    }
+
+    public static WebhookEvent formDetectionRunFailed(FormDetectionRunFailedWebhookEvent value) {
+        return new WebhookEvent(new FormDetectionRunFailedValue(value));
+    }
+
     public static WebhookEvent workflowCreated(WorkflowCreatedWebhookEvent value) {
         return new WebhookEvent(new WorkflowCreatedValue(value));
     }
@@ -256,6 +264,14 @@ public final class WebhookEvent {
 
     public boolean isEditRunFailed() {
         return value instanceof EditRunFailedValue;
+    }
+
+    public boolean isFormDetectionRunProcessed() {
+        return value instanceof FormDetectionRunProcessedValue;
+    }
+
+    public boolean isFormDetectionRunFailed() {
+        return value instanceof FormDetectionRunFailedValue;
     }
 
     public boolean isWorkflowCreated() {
@@ -474,6 +490,20 @@ public final class WebhookEvent {
         return Optional.empty();
     }
 
+    public Optional<FormDetectionRunProcessedWebhookEvent> getFormDetectionRunProcessed() {
+        if (isFormDetectionRunProcessed()) {
+            return Optional.of(((FormDetectionRunProcessedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<FormDetectionRunFailedWebhookEvent> getFormDetectionRunFailed() {
+        if (isFormDetectionRunFailed()) {
+            return Optional.of(((FormDetectionRunFailedValue) value).value);
+        }
+        return Optional.empty();
+    }
+
     public Optional<WorkflowCreatedWebhookEvent> getWorkflowCreated() {
         if (isWorkflowCreated()) {
             return Optional.of(((WorkflowCreatedValue) value).value);
@@ -653,6 +683,10 @@ public final class WebhookEvent {
 
         T visitEditRunFailed(EditRunFailedWebhookEvent editRunFailed);
 
+        T visitFormDetectionRunProcessed(FormDetectionRunProcessedWebhookEvent formDetectionRunProcessed);
+
+        T visitFormDetectionRunFailed(FormDetectionRunFailedWebhookEvent formDetectionRunFailed);
+
         T visitWorkflowCreated(WorkflowCreatedWebhookEvent workflowCreated);
 
         T visitWorkflowDeployed(WorkflowDeployedWebhookEvent workflowDeployed);
@@ -714,6 +748,8 @@ public final class WebhookEvent {
         @JsonSubTypes.Type(ParseRunFailedValue.class),
         @JsonSubTypes.Type(EditRunProcessedValue.class),
         @JsonSubTypes.Type(EditRunFailedValue.class),
+        @JsonSubTypes.Type(FormDetectionRunProcessedValue.class),
+        @JsonSubTypes.Type(FormDetectionRunFailedValue.class),
         @JsonSubTypes.Type(WorkflowCreatedValue.class),
         @JsonSubTypes.Type(WorkflowDeployedValue.class),
         @JsonSubTypes.Type(WorkflowDeletedValue.class),
@@ -1505,6 +1541,84 @@ public final class WebhookEvent {
         }
 
         private boolean equalTo(EditRunFailedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("form_detection_run.processed")
+    @JsonIgnoreProperties("eventType")
+    private static final class FormDetectionRunProcessedValue implements Value {
+        @JsonUnwrapped
+        private FormDetectionRunProcessedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private FormDetectionRunProcessedValue() {}
+
+        private FormDetectionRunProcessedValue(FormDetectionRunProcessedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitFormDetectionRunProcessed(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof FormDetectionRunProcessedValue && equalTo((FormDetectionRunProcessedValue) other);
+        }
+
+        private boolean equalTo(FormDetectionRunProcessedValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WebhookEvent{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("form_detection_run.failed")
+    @JsonIgnoreProperties("eventType")
+    private static final class FormDetectionRunFailedValue implements Value {
+        @JsonUnwrapped
+        private FormDetectionRunFailedWebhookEvent value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private FormDetectionRunFailedValue() {}
+
+        private FormDetectionRunFailedValue(FormDetectionRunFailedWebhookEvent value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitFormDetectionRunFailed(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof FormDetectionRunFailedValue && equalTo((FormDetectionRunFailedValue) other);
+        }
+
+        private boolean equalTo(FormDetectionRunFailedValue other) {
             return value.equals(other.value);
         }
 
