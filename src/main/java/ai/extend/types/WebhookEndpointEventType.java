@@ -10,6 +10,9 @@ public final class WebhookEndpointEventType {
     public static final WebhookEndpointEventType CLASSIFIER_UPDATED =
             new WebhookEndpointEventType(Value.CLASSIFIER_UPDATED, "classifier.updated");
 
+    public static final WebhookEndpointEventType FORM_DETECTION_RUN_FAILED =
+            new WebhookEndpointEventType(Value.FORM_DETECTION_RUN_FAILED, "form_detection_run.failed");
+
     public static final WebhookEndpointEventType EXTRACTOR_UPDATED =
             new WebhookEndpointEventType(Value.EXTRACTOR_UPDATED, "extractor.updated");
 
@@ -66,6 +69,9 @@ public final class WebhookEndpointEventType {
 
     public static final WebhookEndpointEventType EXTRACTOR_DELETED =
             new WebhookEndpointEventType(Value.EXTRACTOR_DELETED, "extractor.deleted");
+
+    public static final WebhookEndpointEventType FORM_DETECTION_RUN_PROCESSED =
+            new WebhookEndpointEventType(Value.FORM_DETECTION_RUN_PROCESSED, "form_detection_run.processed");
 
     public static final WebhookEndpointEventType CLASSIFIER_CREATED =
             new WebhookEndpointEventType(Value.CLASSIFIER_CREATED, "classifier.created");
@@ -138,6 +144,8 @@ public final class WebhookEndpointEventType {
         switch (value) {
             case CLASSIFIER_UPDATED:
                 return visitor.visitClassifierUpdated();
+            case FORM_DETECTION_RUN_FAILED:
+                return visitor.visitFormDetectionRunFailed();
             case EXTRACTOR_UPDATED:
                 return visitor.visitExtractorUpdated();
             case SPLITTER_CREATED:
@@ -176,6 +184,8 @@ public final class WebhookEndpointEventType {
                 return visitor.visitClassifyRunFailed();
             case EXTRACTOR_DELETED:
                 return visitor.visitExtractorDeleted();
+            case FORM_DETECTION_RUN_PROCESSED:
+                return visitor.visitFormDetectionRunProcessed();
             case CLASSIFIER_CREATED:
                 return visitor.visitClassifierCreated();
             case CLASSIFY_RUN_PROCESSED:
@@ -211,6 +221,8 @@ public final class WebhookEndpointEventType {
         switch (value) {
             case "classifier.updated":
                 return CLASSIFIER_UPDATED;
+            case "form_detection_run.failed":
+                return FORM_DETECTION_RUN_FAILED;
             case "extractor.updated":
                 return EXTRACTOR_UPDATED;
             case "splitter.created":
@@ -249,6 +261,8 @@ public final class WebhookEndpointEventType {
                 return CLASSIFY_RUN_FAILED;
             case "extractor.deleted":
                 return EXTRACTOR_DELETED;
+            case "form_detection_run.processed":
+                return FORM_DETECTION_RUN_PROCESSED;
             case "classifier.created":
                 return CLASSIFIER_CREATED;
             case "classify_run.processed":
@@ -286,6 +300,10 @@ public final class WebhookEndpointEventType {
         EDIT_RUN_PROCESSED,
 
         EDIT_RUN_FAILED,
+
+        FORM_DETECTION_RUN_PROCESSED,
+
+        FORM_DETECTION_RUN_FAILED,
 
         EXTRACT_RUN_PROCESSED,
 
@@ -354,6 +372,10 @@ public final class WebhookEndpointEventType {
         T visitEditRunProcessed();
 
         T visitEditRunFailed();
+
+        T visitFormDetectionRunProcessed();
+
+        T visitFormDetectionRunFailed();
 
         T visitExtractRunProcessed();
 

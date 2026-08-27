@@ -20,6 +20,8 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = EditConfig.Builder.class)
 public final class EditConfig {
+    private final Optional<String> engineVersion;
+
     private final Optional<EditRootJson> schema;
 
     private final Optional<String> instructions;
@@ -31,16 +33,26 @@ public final class EditConfig {
     private final Map<String, Object> additionalProperties;
 
     private EditConfig(
+            Optional<String> engineVersion,
             Optional<EditRootJson> schema,
             Optional<String> instructions,
             Optional<String> schemaGenerationInstructions,
             Optional<EditConfigAdvancedOptions> advancedOptions,
             Map<String, Object> additionalProperties) {
+        this.engineVersion = engineVersion;
         this.schema = schema;
         this.instructions = instructions;
         this.schemaGenerationInstructions = schemaGenerationInstructions;
         this.advancedOptions = advancedOptions;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The Edit engine version to use. Use an exact version for reproducible results, or <code>latest</code> to use the latest stable version. Defaults to <code>0.0.1</code> when omitted. Responses contain the resolved exact version.
+     */
+    @JsonProperty("engineVersion")
+    public Optional<String> getEngineVersion() {
+        return engineVersion;
     }
 
     @JsonProperty("schema")
@@ -84,7 +96,8 @@ public final class EditConfig {
     }
 
     private boolean equalTo(EditConfig other) {
-        return schema.equals(other.schema)
+        return engineVersion.equals(other.engineVersion)
+                && schema.equals(other.schema)
                 && instructions.equals(other.instructions)
                 && schemaGenerationInstructions.equals(other.schemaGenerationInstructions)
                 && advancedOptions.equals(other.advancedOptions);
@@ -92,7 +105,12 @@ public final class EditConfig {
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.schema, this.instructions, this.schemaGenerationInstructions, this.advancedOptions);
+        return Objects.hash(
+                this.engineVersion,
+                this.schema,
+                this.instructions,
+                this.schemaGenerationInstructions,
+                this.advancedOptions);
     }
 
     @java.lang.Override
@@ -106,6 +124,8 @@ public final class EditConfig {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<String> engineVersion = Optional.empty();
+
         private Optional<EditRootJson> schema = Optional.empty();
 
         private Optional<String> instructions = Optional.empty();
@@ -120,10 +140,25 @@ public final class EditConfig {
         private Builder() {}
 
         public Builder from(EditConfig other) {
+            engineVersion(other.getEngineVersion());
             schema(other.getSchema());
             instructions(other.getInstructions());
             schemaGenerationInstructions(other.getSchemaGenerationInstructions());
             advancedOptions(other.getAdvancedOptions());
+            return this;
+        }
+
+        /**
+         * <p>The Edit engine version to use. Use an exact version for reproducible results, or <code>latest</code> to use the latest stable version. Defaults to <code>0.0.1</code> when omitted. Responses contain the resolved exact version.</p>
+         */
+        @JsonSetter(value = "engineVersion", nulls = Nulls.SKIP)
+        public Builder engineVersion(Optional<String> engineVersion) {
+            this.engineVersion = engineVersion;
+            return this;
+        }
+
+        public Builder engineVersion(String engineVersion) {
+            this.engineVersion = Optional.ofNullable(engineVersion);
             return this;
         }
 
@@ -182,7 +217,12 @@ public final class EditConfig {
 
         public EditConfig build() {
             return new EditConfig(
-                    schema, instructions, schemaGenerationInstructions, advancedOptions, additionalProperties);
+                    engineVersion,
+                    schema,
+                    instructions,
+                    schemaGenerationInstructions,
+                    advancedOptions,
+                    additionalProperties);
         }
     }
 }

@@ -191,7 +191,7 @@ public class ExtendClientBase {
 
     /**
      * Detect fields in a PDF form and wait for the generated edit schema before returning. This endpoint has a 5-minute timeout.
-     * <p>For production workloads, use <code>POST /form_detection_runs</code> and poll <code>GET /form_detection_runs/{id}</code> instead. The response is a completed <code>form_detection_run</code>; its <code>output.schema</code> can be passed directly to <code>POST /edit</code> or <code>POST /edit_runs</code>.</p>
+     * <p>For production workloads, use <code>POST /form_detection_runs</code> and receive the result by webhook or poll <code>GET /form_detection_runs/{id}</code> instead. The response is a completed <code>form_detection_run</code>; its <code>output.schema</code> can be passed directly to <code>POST /edit</code> or <code>POST /edit_runs</code>.</p>
      */
     public FormDetectionRun detectForm(DetectFormRequest request) {
         return this.rawClient.detectForm(request).body();
@@ -199,7 +199,7 @@ public class ExtendClientBase {
 
     /**
      * Detect fields in a PDF form and wait for the generated edit schema before returning. This endpoint has a 5-minute timeout.
-     * <p>For production workloads, use <code>POST /form_detection_runs</code> and poll <code>GET /form_detection_runs/{id}</code> instead. The response is a completed <code>form_detection_run</code>; its <code>output.schema</code> can be passed directly to <code>POST /edit</code> or <code>POST /edit_runs</code>.</p>
+     * <p>For production workloads, use <code>POST /form_detection_runs</code> and receive the result by webhook or poll <code>GET /form_detection_runs/{id}</code> instead. The response is a completed <code>form_detection_run</code>; its <code>output.schema</code> can be passed directly to <code>POST /edit</code> or <code>POST /edit_runs</code>.</p>
      */
     public FormDetectionRun detectForm(DetectFormRequest request, RequestOptions requestOptions) {
         return this.rawClient.detectForm(request, requestOptions).body();

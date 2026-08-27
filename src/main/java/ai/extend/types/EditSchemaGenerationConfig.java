@@ -20,6 +20,8 @@ import java.util.Optional;
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = EditSchemaGenerationConfig.Builder.class)
 public final class EditSchemaGenerationConfig {
+    private final Optional<String> engineVersion;
+
     private final Optional<EditRootJson> inputSchema;
 
     private final Optional<String> instructions;
@@ -29,14 +31,24 @@ public final class EditSchemaGenerationConfig {
     private final Map<String, Object> additionalProperties;
 
     private EditSchemaGenerationConfig(
+            Optional<String> engineVersion,
             Optional<EditRootJson> inputSchema,
             Optional<String> instructions,
             Optional<EditSchemaGenerationConfigAdvancedOptions> advancedOptions,
             Map<String, Object> additionalProperties) {
+        this.engineVersion = engineVersion;
         this.inputSchema = inputSchema;
         this.instructions = instructions;
         this.advancedOptions = advancedOptions;
         this.additionalProperties = additionalProperties;
+    }
+
+    /**
+     * @return The Edit engine version to use for form detection. Use an exact version for reproducible results, or <code>latest</code> to use the latest stable version. Defaults to <code>0.0.1</code> when omitted. Responses contain the resolved exact version.
+     */
+    @JsonProperty("engineVersion")
+    public Optional<String> getEngineVersion() {
+        return engineVersion;
     }
 
     /**
@@ -76,14 +88,15 @@ public final class EditSchemaGenerationConfig {
     }
 
     private boolean equalTo(EditSchemaGenerationConfig other) {
-        return inputSchema.equals(other.inputSchema)
+        return engineVersion.equals(other.engineVersion)
+                && inputSchema.equals(other.inputSchema)
                 && instructions.equals(other.instructions)
                 && advancedOptions.equals(other.advancedOptions);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.inputSchema, this.instructions, this.advancedOptions);
+        return Objects.hash(this.engineVersion, this.inputSchema, this.instructions, this.advancedOptions);
     }
 
     @java.lang.Override
@@ -97,6 +110,8 @@ public final class EditSchemaGenerationConfig {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<String> engineVersion = Optional.empty();
+
         private Optional<EditRootJson> inputSchema = Optional.empty();
 
         private Optional<String> instructions = Optional.empty();
@@ -109,9 +124,24 @@ public final class EditSchemaGenerationConfig {
         private Builder() {}
 
         public Builder from(EditSchemaGenerationConfig other) {
+            engineVersion(other.getEngineVersion());
             inputSchema(other.getInputSchema());
             instructions(other.getInstructions());
             advancedOptions(other.getAdvancedOptions());
+            return this;
+        }
+
+        /**
+         * <p>The Edit engine version to use for form detection. Use an exact version for reproducible results, or <code>latest</code> to use the latest stable version. Defaults to <code>0.0.1</code> when omitted. Responses contain the resolved exact version.</p>
+         */
+        @JsonSetter(value = "engineVersion", nulls = Nulls.SKIP)
+        public Builder engineVersion(Optional<String> engineVersion) {
+            this.engineVersion = engineVersion;
+            return this;
+        }
+
+        public Builder engineVersion(String engineVersion) {
+            this.engineVersion = Optional.ofNullable(engineVersion);
             return this;
         }
 
@@ -159,7 +189,8 @@ public final class EditSchemaGenerationConfig {
         }
 
         public EditSchemaGenerationConfig build() {
-            return new EditSchemaGenerationConfig(inputSchema, instructions, advancedOptions, additionalProperties);
+            return new EditSchemaGenerationConfig(
+                    engineVersion, inputSchema, instructions, advancedOptions, additionalProperties);
         }
     }
 }

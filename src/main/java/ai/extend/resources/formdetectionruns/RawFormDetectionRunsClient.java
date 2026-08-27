@@ -41,7 +41,7 @@ public class RawFormDetectionRunsClient {
 
     /**
      * Start detecting fields in a PDF form and return immediately with a <code>form_detection_run</code> resource, typically in the <code>PROCESSING</code> state.
-     * <p>Poll <code>GET /form_detection_runs/{id}</code> until the status is <code>PROCESSED</code> or <code>FAILED</code>. When processing succeeds, <code>output.schema</code> contains an edit schema you can pass directly to <code>POST /edit</code> or <code>POST /edit_runs</code>.</p>
+     * <p>Subscribe to the <code>form_detection_run.processed</code> and <code>form_detection_run.failed</code> webhook events, or poll <code>GET /form_detection_runs/{id}</code> until the status is <code>PROCESSED</code> or <code>FAILED</code>. When processing succeeds, <code>output.schema</code> contains an edit schema you can pass directly to <code>POST /edit</code> or <code>POST /edit_runs</code>.</p>
      */
     public ExtendClientBaseHttpResponse<FormDetectionRun> create(FormDetectionRunsCreateRequest request) {
         return create(request, null);
@@ -49,7 +49,7 @@ public class RawFormDetectionRunsClient {
 
     /**
      * Start detecting fields in a PDF form and return immediately with a <code>form_detection_run</code> resource, typically in the <code>PROCESSING</code> state.
-     * <p>Poll <code>GET /form_detection_runs/{id}</code> until the status is <code>PROCESSED</code> or <code>FAILED</code>. When processing succeeds, <code>output.schema</code> contains an edit schema you can pass directly to <code>POST /edit</code> or <code>POST /edit_runs</code>.</p>
+     * <p>Subscribe to the <code>form_detection_run.processed</code> and <code>form_detection_run.failed</code> webhook events, or poll <code>GET /form_detection_runs/{id}</code> until the status is <code>PROCESSED</code> or <code>FAILED</code>. When processing succeeds, <code>output.schema</code> contains an edit schema you can pass directly to <code>POST /edit</code> or <code>POST /edit_runs</code>.</p>
      */
     public ExtendClientBaseHttpResponse<FormDetectionRun> create(
             FormDetectionRunsCreateRequest request, RequestOptions requestOptions) {
