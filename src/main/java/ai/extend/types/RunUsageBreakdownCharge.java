@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 public final class RunUsageBreakdownCharge {
     private final String product;
 
-    private final String unit;
+    private final RunUsageBreakdownChargeUnit unit;
 
     private final double quantity;
 
@@ -36,7 +36,7 @@ public final class RunUsageBreakdownCharge {
 
     private RunUsageBreakdownCharge(
             String product,
-            String unit,
+            RunUsageBreakdownChargeUnit unit,
             double quantity,
             double credits,
             Optional<List<Integer>> pages,
@@ -50,7 +50,7 @@ public final class RunUsageBreakdownCharge {
     }
 
     /**
-     * @return Identifier for the billable cost driver.
+     * @return Identifier for the billable cost driver. Base charges use the processor and tier (e.g. <code>extraction_performance</code>, <code>extraction_light</code>, <code>parse_light</code>); add-ons use the feature code (e.g. <code>review_agent</code>, <code>large_array_max_context</code>, <code>extraction_schema_groups</code>, <code>priority_parsing</code>, <code>agentic_text_correction</code>, <code>advanced_excel_parsing</code>); <code>agent_usage</code> is an Operator overage for unusually high effort relative to document size.
      */
     @JsonProperty("product")
     public String getProduct() {
@@ -58,10 +58,10 @@ public final class RunUsageBreakdownCharge {
     }
 
     /**
-     * @return The unit <code>quantity</code> is measured in.
+     * @return The unit <code>quantity</code> is measured in. <code>page</code> for per-page charges, <code>cell</code> for advanced Excel parsing, <code>usd</code> for additional amounts billed such as Operator overages (<code>agent_usage</code>).
      */
     @JsonProperty("unit")
-    public String getUnit() {
+    public RunUsageBreakdownChargeUnit getUnit() {
         return unit;
     }
 
@@ -124,7 +124,7 @@ public final class RunUsageBreakdownCharge {
 
     public interface ProductStage {
         /**
-         * <p>Identifier for the billable cost driver.</p>
+         * <p>Identifier for the billable cost driver. Base charges use the processor and tier (e.g. <code>extraction_performance</code>, <code>extraction_light</code>, <code>parse_light</code>); add-ons use the feature code (e.g. <code>review_agent</code>, <code>large_array_max_context</code>, <code>extraction_schema_groups</code>, <code>priority_parsing</code>, <code>agentic_text_correction</code>, <code>advanced_excel_parsing</code>); <code>agent_usage</code> is an Operator overage for unusually high effort relative to document size.</p>
          */
         UnitStage product(@NotNull String product);
 
@@ -133,9 +133,9 @@ public final class RunUsageBreakdownCharge {
 
     public interface UnitStage {
         /**
-         * <p>The unit <code>quantity</code> is measured in.</p>
+         * <p>The unit <code>quantity</code> is measured in. <code>page</code> for per-page charges, <code>cell</code> for advanced Excel parsing, <code>usd</code> for additional amounts billed such as Operator overages (<code>agent_usage</code>).</p>
          */
-        QuantityStage unit(@NotNull String unit);
+        QuantityStage unit(@NotNull RunUsageBreakdownChargeUnit unit);
     }
 
     public interface QuantityStage {
@@ -167,7 +167,7 @@ public final class RunUsageBreakdownCharge {
     public static final class Builder implements ProductStage, UnitStage, QuantityStage, CreditsStage, _FinalStage {
         private String product;
 
-        private String unit;
+        private RunUsageBreakdownChargeUnit unit;
 
         private double quantity;
 
@@ -191,8 +191,8 @@ public final class RunUsageBreakdownCharge {
         }
 
         /**
-         * <p>Identifier for the billable cost driver.</p>
-         * <p>Identifier for the billable cost driver.</p>
+         * <p>Identifier for the billable cost driver. Base charges use the processor and tier (e.g. <code>extraction_performance</code>, <code>extraction_light</code>, <code>parse_light</code>); add-ons use the feature code (e.g. <code>review_agent</code>, <code>large_array_max_context</code>, <code>extraction_schema_groups</code>, <code>priority_parsing</code>, <code>agentic_text_correction</code>, <code>advanced_excel_parsing</code>); <code>agent_usage</code> is an Operator overage for unusually high effort relative to document size.</p>
+         * <p>Identifier for the billable cost driver. Base charges use the processor and tier (e.g. <code>extraction_performance</code>, <code>extraction_light</code>, <code>parse_light</code>); add-ons use the feature code (e.g. <code>review_agent</code>, <code>large_array_max_context</code>, <code>extraction_schema_groups</code>, <code>priority_parsing</code>, <code>agentic_text_correction</code>, <code>advanced_excel_parsing</code>); <code>agent_usage</code> is an Operator overage for unusually high effort relative to document size.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -203,13 +203,13 @@ public final class RunUsageBreakdownCharge {
         }
 
         /**
-         * <p>The unit <code>quantity</code> is measured in.</p>
-         * <p>The unit <code>quantity</code> is measured in.</p>
+         * <p>The unit <code>quantity</code> is measured in. <code>page</code> for per-page charges, <code>cell</code> for advanced Excel parsing, <code>usd</code> for additional amounts billed such as Operator overages (<code>agent_usage</code>).</p>
+         * <p>The unit <code>quantity</code> is measured in. <code>page</code> for per-page charges, <code>cell</code> for advanced Excel parsing, <code>usd</code> for additional amounts billed such as Operator overages (<code>agent_usage</code>).</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
         @JsonSetter("unit")
-        public QuantityStage unit(@NotNull String unit) {
+        public QuantityStage unit(@NotNull RunUsageBreakdownChargeUnit unit) {
             this.unit = Objects.requireNonNull(unit, "unit must not be null");
             return this;
         }

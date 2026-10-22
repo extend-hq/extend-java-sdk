@@ -44,7 +44,7 @@ public final class EditSchemaGenerationConfig {
     }
 
     /**
-     * @return The Edit engine version to use for form detection. Use an exact version for reproducible results, or <code>latest</code> to use the latest stable version. Defaults to <code>0.0.1</code> when omitted. Responses contain the resolved exact version.
+     * @return The Edit engine version to use for form detection. Use an exact version for reproducible results, or <code>latest</code> to use the latest stable version. Defaults to <code>1.0.0</code> when omitted. Responses contain the resolved exact version.
      */
     @JsonProperty("engineVersion")
     public Optional<String> getEngineVersion() {
@@ -132,7 +132,7 @@ public final class EditSchemaGenerationConfig {
         }
 
         /**
-         * <p>The Edit engine version to use for form detection. Use an exact version for reproducible results, or <code>latest</code> to use the latest stable version. Defaults to <code>0.0.1</code> when omitted. Responses contain the resolved exact version.</p>
+         * <p>The Edit engine version to use for form detection. Use an exact version for reproducible results, or <code>latest</code> to use the latest stable version. Defaults to <code>1.0.0</code> when omitted. Responses contain the resolved exact version.</p>
          */
         @JsonSetter(value = "engineVersion", nulls = Nulls.SKIP)
         public Builder engineVersion(Optional<String> engineVersion) {

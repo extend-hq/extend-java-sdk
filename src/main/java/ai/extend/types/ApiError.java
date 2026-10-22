@@ -31,6 +31,8 @@ public final class ApiError {
 
     private final Optional<String> docUrl;
 
+    private final Optional<String> runId;
+
     private final Map<String, Object> additionalProperties;
 
     private ApiError(
@@ -39,12 +41,14 @@ public final class ApiError {
             boolean retryable,
             Optional<String> requestId,
             Optional<String> docUrl,
+            Optional<String> runId,
             Map<String, Object> additionalProperties) {
         this.code = code;
         this.message = message;
         this.retryable = retryable;
         this.requestId = requestId;
         this.docUrl = docUrl;
+        this.runId = runId;
         this.additionalProperties = additionalProperties;
     }
 
@@ -91,6 +95,14 @@ public final class ApiError {
         return docUrl;
     }
 
+    /**
+     * @return The ID of the run the error refers to, when the run outlives the request. Currently returned only when a synchronous <code>POST /verify</code> request times out: the verify run keeps processing, so fetch it with <code>GET /verify_runs/{id}</code> instead of resubmitting the file.
+     */
+    @JsonProperty("runId")
+    public Optional<String> getRunId() {
+        return runId;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -107,12 +119,13 @@ public final class ApiError {
                 && message.equals(other.message)
                 && retryable == other.retryable
                 && requestId.equals(other.requestId)
-                && docUrl.equals(other.docUrl);
+                && docUrl.equals(other.docUrl)
+                && runId.equals(other.runId);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.code, this.message, this.retryable, this.requestId, this.docUrl);
+        return Objects.hash(this.code, this.message, this.retryable, this.requestId, this.docUrl, this.runId);
     }
 
     @java.lang.Override
@@ -166,6 +179,13 @@ public final class ApiError {
         _FinalStage docUrl(Optional<String> docUrl);
 
         _FinalStage docUrl(String docUrl);
+
+        /**
+         * <p>The ID of the run the error refers to, when the run outlives the request. Currently returned only when a synchronous <code>POST /verify</code> request times out: the verify run keeps processing, so fetch it with <code>GET /verify_runs/{id}</code> instead of resubmitting the file.</p>
+         */
+        _FinalStage runId(Optional<String> runId);
+
+        _FinalStage runId(String runId);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -175,6 +195,8 @@ public final class ApiError {
         private String message;
 
         private boolean retryable;
+
+        private Optional<String> runId = Optional.empty();
 
         private Optional<String> docUrl = Optional.empty();
 
@@ -192,6 +214,7 @@ public final class ApiError {
             retryable(other.getRetryable());
             requestId(other.getRequestId());
             docUrl(other.getDocUrl());
+            runId(other.getRunId());
             return this;
         }
 
@@ -232,6 +255,26 @@ public final class ApiError {
         @JsonSetter("retryable")
         public _FinalStage retryable(boolean retryable) {
             this.retryable = retryable;
+            return this;
+        }
+
+        /**
+         * <p>The ID of the run the error refers to, when the run outlives the request. Currently returned only when a synchronous <code>POST /verify</code> request times out: the verify run keeps processing, so fetch it with <code>GET /verify_runs/{id}</code> instead of resubmitting the file.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage runId(String runId) {
+            this.runId = Optional.ofNullable(runId);
+            return this;
+        }
+
+        /**
+         * <p>The ID of the run the error refers to, when the run outlives the request. Currently returned only when a synchronous <code>POST /verify</code> request times out: the verify run keeps processing, so fetch it with <code>GET /verify_runs/{id}</code> instead of resubmitting the file.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "runId", nulls = Nulls.SKIP)
+        public _FinalStage runId(Optional<String> runId) {
+            this.runId = runId;
             return this;
         }
 
@@ -279,7 +322,7 @@ public final class ApiError {
 
         @java.lang.Override
         public ApiError build() {
-            return new ApiError(code, message, retryable, requestId, docUrl, additionalProperties);
+            return new ApiError(code, message, retryable, requestId, docUrl, runId, additionalProperties);
         }
     }
 }

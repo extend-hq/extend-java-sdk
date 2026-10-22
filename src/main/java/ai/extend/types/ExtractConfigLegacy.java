@@ -54,7 +54,8 @@ public final class ExtractConfigLegacy {
     }
 
     /**
-     * @return The base processor to use. For extractors, this can be either <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code>. Defaults to <code>&quot;extraction_performance&quot;</code> if not provided. See <a href="https://docs.extend.ai/2026-02-09/model-versioning/extraction/extraction-performance">Extraction Changelog</a> for more details.
+     * @return The base processor to use. For extractors, this can be <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code>. Defaults to <code>&quot;extraction_performance&quot;</code> if not provided. See <a href="https://docs.extend.ai/2026-02-09/model-versioning/extraction/extraction-performance">Extraction Changelog</a> for more details.
+     * <p><code>&quot;extraction_operator&quot;</code> is not supported on legacy <code>fields</code> configs.</p>
      */
     @JsonProperty("baseProcessor")
     public Optional<ExtractConfigLegacyBaseProcessor> getBaseProcessor() {
@@ -62,7 +63,7 @@ public final class ExtractConfigLegacy {
     }
 
     /**
-     * @return The version of the <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/model-versioning/extraction/extraction-performance">Extraction Changelog</a> for more details.
+     * @return The version of the <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code> processor to use. If not provided, the latest stable version will be used. See <a href="https://docs.extend.ai/2026-02-09/model-versioning/extraction/extraction-performance">Extraction Changelog</a> for more details.
      */
     @JsonProperty("baseVersion")
     public Optional<String> getBaseVersion() {
@@ -172,7 +173,8 @@ public final class ExtractConfigLegacy {
         }
 
         /**
-         * <p>The base processor to use. For extractors, this can be either <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code>. Defaults to <code>&quot;extraction_performance&quot;</code> if not provided. See <a href="https://docs.extend.ai/2026-02-09/model-versioning/extraction/extraction-performance">Extraction Changelog</a> for more details.</p>
+         * <p>The base processor to use. For extractors, this can be <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code>. Defaults to <code>&quot;extraction_performance&quot;</code> if not provided. See <a href="https://docs.extend.ai/2026-02-09/model-versioning/extraction/extraction-performance">Extraction Changelog</a> for more details.</p>
+         * <p><code>&quot;extraction_operator&quot;</code> is not supported on legacy <code>fields</code> configs.</p>
          */
         @JsonSetter(value = "baseProcessor", nulls = Nulls.SKIP)
         public Builder baseProcessor(Optional<ExtractConfigLegacyBaseProcessor> baseProcessor) {
@@ -186,7 +188,7 @@ public final class ExtractConfigLegacy {
         }
 
         /**
-         * <p>The version of the <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code> processor to use. If not provided, the latest stable version for the selected <code>baseProcessor</code> will be used automatically. See <a href="https://docs.extend.ai/2026-02-09/model-versioning/extraction/extraction-performance">Extraction Changelog</a> for more details.</p>
+         * <p>The version of the <code>&quot;extraction_performance&quot;</code> or <code>&quot;extraction_light&quot;</code> processor to use. If not provided, the latest stable version will be used. See <a href="https://docs.extend.ai/2026-02-09/model-versioning/extraction/extraction-performance">Extraction Changelog</a> for more details.</p>
          */
         @JsonSetter(value = "baseVersion", nulls = Nulls.SKIP)
         public Builder baseVersion(Optional<String> baseVersion) {

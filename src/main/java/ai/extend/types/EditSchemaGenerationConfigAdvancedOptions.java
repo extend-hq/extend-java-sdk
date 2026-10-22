@@ -52,7 +52,7 @@ public final class EditSchemaGenerationConfigAdvancedOptions {
     }
 
     /**
-     * @return Whether to model radio fields as enums. This ensures only one radio widget is selected. Defaults to <code>false</code>.
+     * @return Whether to represent radio groups as enums so only one option can be selected. Defaults to <code>true</code> for Edit <code>1.0.0</code> and <code>1.0.0-beta</code>, and <code>false</code> for <code>0.0.1</code>.
      */
     @JsonProperty("radioEnumsEnabled")
     public Optional<Boolean> getRadioEnumsEnabled() {
@@ -150,7 +150,7 @@ public final class EditSchemaGenerationConfigAdvancedOptions {
         }
 
         /**
-         * <p>Whether to model radio fields as enums. This ensures only one radio widget is selected. Defaults to <code>false</code>.</p>
+         * <p>Whether to represent radio groups as enums so only one option can be selected. Defaults to <code>true</code> for Edit <code>1.0.0</code> and <code>1.0.0-beta</code>, and <code>false</code> for <code>0.0.1</code>.</p>
          */
         @JsonSetter(value = "radioEnumsEnabled", nulls = Nulls.SKIP)
         public Builder radioEnumsEnabled(Optional<Boolean> radioEnumsEnabled) {

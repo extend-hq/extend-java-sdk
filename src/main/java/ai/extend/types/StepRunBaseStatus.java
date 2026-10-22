@@ -19,6 +19,8 @@ public final class StepRunBaseStatus {
 
     public static final StepRunBaseStatus FAILED = new StepRunBaseStatus(Value.FAILED, "FAILED");
 
+    public static final StepRunBaseStatus INVALIDATED = new StepRunBaseStatus(Value.INVALIDATED, "INVALIDATED");
+
     private final Value value;
 
     private final String string;
@@ -63,6 +65,8 @@ public final class StepRunBaseStatus {
                 return visitor.visitWaiting();
             case FAILED:
                 return visitor.visitFailed();
+            case INVALIDATED:
+                return visitor.visitInvalidated();
             case UNKNOWN:
             default:
                 return visitor.visitUnknown(string);
@@ -84,6 +88,8 @@ public final class StepRunBaseStatus {
                 return WAITING;
             case "FAILED":
                 return FAILED;
+            case "INVALIDATED":
+                return INVALIDATED;
             default:
                 return new StepRunBaseStatus(Value.UNKNOWN, value);
         }
@@ -100,6 +106,8 @@ public final class StepRunBaseStatus {
 
         FAILED,
 
+        INVALIDATED,
+
         CANCELLED,
 
         UNKNOWN
@@ -115,6 +123,8 @@ public final class StepRunBaseStatus {
         T visitProcessed();
 
         T visitFailed();
+
+        T visitInvalidated();
 
         T visitCancelled();
 

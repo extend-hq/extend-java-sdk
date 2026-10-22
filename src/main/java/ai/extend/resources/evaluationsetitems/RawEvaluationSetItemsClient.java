@@ -166,6 +166,11 @@ public class RawEvaluationSetItemsClient {
 
     /**
      * Evaluation set items are the individual files and expected outputs that are used to evaluate the performance of a given extractor, classifier, or splitter in Extend. This endpoint will create new evaluation set items in Extend, which will be used during an evaluation run.
+     * <p>Each item references exactly one of:</p>
+     * <ul>
+     * <li><strong><code>fileId</code></strong> — a single file. The item is evaluated as one single-file run.</li>
+     * <li><strong><code>fileIds</code></strong> — an ordered package of 2–50 files. The item is evaluated as one <a href="https://docs.extend.ai/2026-02-09/extraction/multifile">multifile extraction</a> run, with a single <code>expectedOutput</code> covering the whole package. Multifile items are only supported on evaluation sets attached to a JSON-schema extractor.</li>
+     * </ul>
      * <p><strong>Limit:</strong> You can create up to 100 items at a time.</p>
      * <p>Learn more about how to create evaluation set items in the <a href="https://docs.extend.ai/2026-02-09/evaluation/overview">Evaluation Sets</a> product page.</p>
      */
@@ -176,6 +181,11 @@ public class RawEvaluationSetItemsClient {
 
     /**
      * Evaluation set items are the individual files and expected outputs that are used to evaluate the performance of a given extractor, classifier, or splitter in Extend. This endpoint will create new evaluation set items in Extend, which will be used during an evaluation run.
+     * <p>Each item references exactly one of:</p>
+     * <ul>
+     * <li><strong><code>fileId</code></strong> — a single file. The item is evaluated as one single-file run.</li>
+     * <li><strong><code>fileIds</code></strong> — an ordered package of 2–50 files. The item is evaluated as one <a href="https://docs.extend.ai/2026-02-09/extraction/multifile">multifile extraction</a> run, with a single <code>expectedOutput</code> covering the whole package. Multifile items are only supported on evaluation sets attached to a JSON-schema extractor.</li>
+     * </ul>
      * <p><strong>Limit:</strong> You can create up to 100 items at a time.</p>
      * <p>Learn more about how to create evaluation set items in the <a href="https://docs.extend.ai/2026-02-09/evaluation/overview">Evaluation Sets</a> product page.</p>
      */

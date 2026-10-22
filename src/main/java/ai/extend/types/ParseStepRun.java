@@ -94,6 +94,7 @@ public final class ParseStepRun implements IStepRunBase {
      * <li><code>&quot;PROCESSING&quot;</code> - The step run is currently executing</li>
      * <li><code>&quot;PROCESSED&quot;</code> - The step run completed successfully</li>
      * <li><code>&quot;FAILED&quot;</code> - The step run encountered an error</li>
+     * <li><code>&quot;INVALIDATED&quot;</code> - The step run was invalidated</li>
      * <li><code>&quot;CANCELLED&quot;</code> - The step run was cancelled</li>
      * </ul>
      */
@@ -194,6 +195,7 @@ public final class ParseStepRun implements IStepRunBase {
          * <li><code>&quot;PROCESSING&quot;</code> - The step run is currently executing</li>
          * <li><code>&quot;PROCESSED&quot;</code> - The step run completed successfully</li>
          * <li><code>&quot;FAILED&quot;</code> - The step run encountered an error</li>
+         * <li><code>&quot;INVALIDATED&quot;</code> - The step run was invalidated</li>
          * <li><code>&quot;CANCELLED&quot;</code> - The step run was cancelled</li>
          * </ul>
          */
@@ -292,6 +294,7 @@ public final class ParseStepRun implements IStepRunBase {
          * <li><code>&quot;PROCESSING&quot;</code> - The step run is currently executing</li>
          * <li><code>&quot;PROCESSED&quot;</code> - The step run completed successfully</li>
          * <li><code>&quot;FAILED&quot;</code> - The step run encountered an error</li>
+         * <li><code>&quot;INVALIDATED&quot;</code> - The step run was invalidated</li>
          * <li><code>&quot;CANCELLED&quot;</code> - The step run was cancelled</li>
          * </ul>
          * <p>The status of the workflow step run:</p>
@@ -301,6 +304,7 @@ public final class ParseStepRun implements IStepRunBase {
          * <li><code>&quot;PROCESSING&quot;</code> - The step run is currently executing</li>
          * <li><code>&quot;PROCESSED&quot;</code> - The step run completed successfully</li>
          * <li><code>&quot;FAILED&quot;</code> - The step run encountered an error</li>
+         * <li><code>&quot;INVALIDATED&quot;</code> - The step run was invalidated</li>
          * <li><code>&quot;CANCELLED&quot;</code> - The step run was cancelled</li>
          * </ul>
          * @return Reference to {@code this} so that method calls can be chained together.

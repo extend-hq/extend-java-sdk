@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,16 +27,23 @@ import org.jetbrains.annotations.NotNull;
 public final class EvaluationSetItemSummary {
     private final String id;
 
-    private final FileSummary file;
+    private final Optional<FileSummary> file;
+
+    private final Optional<List<FileSummary>> files;
 
     private final Optional<CreatedBy> createdBy;
 
     private final Map<String, Object> additionalProperties;
 
     private EvaluationSetItemSummary(
-            String id, FileSummary file, Optional<CreatedBy> createdBy, Map<String, Object> additionalProperties) {
+            String id,
+            Optional<FileSummary> file,
+            Optional<List<FileSummary>> files,
+            Optional<CreatedBy> createdBy,
+            Map<String, Object> additionalProperties) {
         this.id = id;
         this.file = file;
+        this.files = files;
         this.createdBy = createdBy;
         this.additionalProperties = additionalProperties;
     }
@@ -58,11 +66,26 @@ public final class EvaluationSetItemSummary {
     }
 
     /**
-     * @return A summary of the file associated with the evaluation set item.
+     * @return A summary of the file associated with the evaluation set item. <code>null</code> for multifile items (use <code>files</code> instead).
      */
-    @JsonProperty("file")
-    public FileSummary getFile() {
+    @JsonIgnore
+    public Optional<FileSummary> getFile() {
+        if (file == null) {
+            return Optional.empty();
+        }
         return file;
+    }
+
+    /**
+     * @return The files associated with a multifile evaluation set item, in the order they were submitted. Only populated for items created with <code>fileIds</code>.
+     * <p>For single-file items, this is <code>null</code> — use <code>file</code> instead.</p>
+     */
+    @JsonIgnore
+    public Optional<List<FileSummary>> getFiles() {
+        if (files == null) {
+            return Optional.empty();
+        }
+        return files;
     }
 
     @JsonIgnore
@@ -71,6 +94,18 @@ public final class EvaluationSetItemSummary {
             return Optional.empty();
         }
         return createdBy;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("file")
+    private Optional<FileSummary> _getFile() {
+        return file;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("files")
+    private Optional<List<FileSummary>> _getFiles() {
+        return files;
     }
 
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
@@ -91,12 +126,15 @@ public final class EvaluationSetItemSummary {
     }
 
     private boolean equalTo(EvaluationSetItemSummary other) {
-        return id.equals(other.id) && file.equals(other.file) && createdBy.equals(other.createdBy);
+        return id.equals(other.id)
+                && file.equals(other.file)
+                && files.equals(other.files)
+                && createdBy.equals(other.createdBy);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.id, this.file, this.createdBy);
+        return Objects.hash(this.id, this.file, this.files, this.createdBy);
     }
 
     @java.lang.Override
@@ -113,20 +151,32 @@ public final class EvaluationSetItemSummary {
          * <p>The ID of the evaluation set item.</p>
          * <p>Example: <code>&quot;evi_kR9mNP12Qw4yTv8BdR3H&quot;</code></p>
          */
-        FileStage id(@NotNull String id);
+        _FinalStage id(@NotNull String id);
 
         Builder from(EvaluationSetItemSummary other);
     }
 
-    public interface FileStage {
-        /**
-         * <p>A summary of the file associated with the evaluation set item.</p>
-         */
-        _FinalStage file(@NotNull FileSummary file);
-    }
-
     public interface _FinalStage {
         EvaluationSetItemSummary build();
+
+        /**
+         * <p>A summary of the file associated with the evaluation set item. <code>null</code> for multifile items (use <code>files</code> instead).</p>
+         */
+        _FinalStage file(Optional<FileSummary> file);
+
+        _FinalStage file(FileSummary file);
+
+        _FinalStage file(Nullable<FileSummary> file);
+
+        /**
+         * <p>The files associated with a multifile evaluation set item, in the order they were submitted. Only populated for items created with <code>fileIds</code>.</p>
+         * <p>For single-file items, this is <code>null</code> — use <code>file</code> instead.</p>
+         */
+        _FinalStage files(Optional<List<FileSummary>> files);
+
+        _FinalStage files(List<FileSummary> files);
+
+        _FinalStage files(Nullable<List<FileSummary>> files);
 
         _FinalStage createdBy(Optional<CreatedBy> createdBy);
 
@@ -136,12 +186,14 @@ public final class EvaluationSetItemSummary {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements IdStage, FileStage, _FinalStage {
+    public static final class Builder implements IdStage, _FinalStage {
         private String id;
 
-        private FileSummary file;
-
         private Optional<CreatedBy> createdBy = Optional.empty();
+
+        private Optional<List<FileSummary>> files = Optional.empty();
+
+        private Optional<FileSummary> file = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -152,6 +204,7 @@ public final class EvaluationSetItemSummary {
         public Builder from(EvaluationSetItemSummary other) {
             id(other.getId());
             file(other.getFile());
+            files(other.getFiles());
             createdBy(other.getCreatedBy());
             return this;
         }
@@ -165,20 +218,8 @@ public final class EvaluationSetItemSummary {
          */
         @java.lang.Override
         @JsonSetter("id")
-        public FileStage id(@NotNull String id) {
+        public _FinalStage id(@NotNull String id) {
             this.id = Objects.requireNonNull(id, "id must not be null");
-            return this;
-        }
-
-        /**
-         * <p>A summary of the file associated with the evaluation set item.</p>
-         * <p>A summary of the file associated with the evaluation set item.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("file")
-        public _FinalStage file(@NotNull FileSummary file) {
-            this.file = Objects.requireNonNull(file, "file must not be null");
             return this;
         }
 
@@ -207,9 +248,84 @@ public final class EvaluationSetItemSummary {
             return this;
         }
 
+        /**
+         * <p>The files associated with a multifile evaluation set item, in the order they were submitted. Only populated for items created with <code>fileIds</code>.</p>
+         * <p>For single-file items, this is <code>null</code> — use <code>file</code> instead.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage files(Nullable<List<FileSummary>> files) {
+            if (files.isNull()) {
+                this.files = null;
+            } else if (files.isEmpty()) {
+                this.files = Optional.empty();
+            } else {
+                this.files = Optional.of(files.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>The files associated with a multifile evaluation set item, in the order they were submitted. Only populated for items created with <code>fileIds</code>.</p>
+         * <p>For single-file items, this is <code>null</code> — use <code>file</code> instead.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage files(List<FileSummary> files) {
+            this.files = Optional.ofNullable(files);
+            return this;
+        }
+
+        /**
+         * <p>The files associated with a multifile evaluation set item, in the order they were submitted. Only populated for items created with <code>fileIds</code>.</p>
+         * <p>For single-file items, this is <code>null</code> — use <code>file</code> instead.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "files", nulls = Nulls.SKIP)
+        public _FinalStage files(Optional<List<FileSummary>> files) {
+            this.files = files;
+            return this;
+        }
+
+        /**
+         * <p>A summary of the file associated with the evaluation set item. <code>null</code> for multifile items (use <code>files</code> instead).</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage file(Nullable<FileSummary> file) {
+            if (file.isNull()) {
+                this.file = null;
+            } else if (file.isEmpty()) {
+                this.file = Optional.empty();
+            } else {
+                this.file = Optional.of(file.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>A summary of the file associated with the evaluation set item. <code>null</code> for multifile items (use <code>files</code> instead).</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage file(FileSummary file) {
+            this.file = Optional.ofNullable(file);
+            return this;
+        }
+
+        /**
+         * <p>A summary of the file associated with the evaluation set item. <code>null</code> for multifile items (use <code>files</code> instead).</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "file", nulls = Nulls.SKIP)
+        public _FinalStage file(Optional<FileSummary> file) {
+            this.file = file;
+            return this;
+        }
+
         @java.lang.Override
         public EvaluationSetItemSummary build() {
-            return new EvaluationSetItemSummary(id, file, createdBy, additionalProperties);
+            return new EvaluationSetItemSummary(id, file, files, createdBy, additionalProperties);
         }
     }
 }

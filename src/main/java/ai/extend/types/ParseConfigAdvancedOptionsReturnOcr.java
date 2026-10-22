@@ -22,10 +22,14 @@ import java.util.Optional;
 public final class ParseConfigAdvancedOptionsReturnOcr {
     private final Optional<Boolean> words;
 
+    private final Optional<Boolean> lines;
+
     private final Map<String, Object> additionalProperties;
 
-    private ParseConfigAdvancedOptionsReturnOcr(Optional<Boolean> words, Map<String, Object> additionalProperties) {
+    private ParseConfigAdvancedOptionsReturnOcr(
+            Optional<Boolean> words, Optional<Boolean> lines, Map<String, Object> additionalProperties) {
         this.words = words;
+        this.lines = lines;
         this.additionalProperties = additionalProperties;
     }
 
@@ -35,6 +39,14 @@ public final class ParseConfigAdvancedOptionsReturnOcr {
     @JsonProperty("words")
     public Optional<Boolean> getWords() {
         return words;
+    }
+
+    /**
+     * @return Whether to include line-level OCR data at <code>output.ocr.lines</code>, including bounding boxes and confidence scores when available. Does not enable word-level OCR output.
+     */
+    @JsonProperty("lines")
+    public Optional<Boolean> getLines() {
+        return lines;
     }
 
     @java.lang.Override
@@ -50,12 +62,12 @@ public final class ParseConfigAdvancedOptionsReturnOcr {
     }
 
     private boolean equalTo(ParseConfigAdvancedOptionsReturnOcr other) {
-        return words.equals(other.words);
+        return words.equals(other.words) && lines.equals(other.lines);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.words);
+        return Objects.hash(this.words, this.lines);
     }
 
     @java.lang.Override
@@ -71,6 +83,8 @@ public final class ParseConfigAdvancedOptionsReturnOcr {
     public static final class Builder {
         private Optional<Boolean> words = Optional.empty();
 
+        private Optional<Boolean> lines = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -78,6 +92,7 @@ public final class ParseConfigAdvancedOptionsReturnOcr {
 
         public Builder from(ParseConfigAdvancedOptionsReturnOcr other) {
             words(other.getWords());
+            lines(other.getLines());
             return this;
         }
 
@@ -95,8 +110,22 @@ public final class ParseConfigAdvancedOptionsReturnOcr {
             return this;
         }
 
+        /**
+         * <p>Whether to include line-level OCR data at <code>output.ocr.lines</code>, including bounding boxes and confidence scores when available. Does not enable word-level OCR output.</p>
+         */
+        @JsonSetter(value = "lines", nulls = Nulls.SKIP)
+        public Builder lines(Optional<Boolean> lines) {
+            this.lines = lines;
+            return this;
+        }
+
+        public Builder lines(Boolean lines) {
+            this.lines = Optional.ofNullable(lines);
+            return this;
+        }
+
         public ParseConfigAdvancedOptionsReturnOcr build() {
-            return new ParseConfigAdvancedOptionsReturnOcr(words, additionalProperties);
+            return new ParseConfigAdvancedOptionsReturnOcr(words, lines, additionalProperties);
         }
     }
 }

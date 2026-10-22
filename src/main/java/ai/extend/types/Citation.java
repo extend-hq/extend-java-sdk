@@ -32,6 +32,8 @@ public final class Citation {
 
     private final Optional<List<Polygon>> polygon;
 
+    private final Optional<String> cellRange;
+
     private final Map<String, Object> additionalProperties;
 
     private Citation(
@@ -39,11 +41,13 @@ public final class Citation {
             Optional<CitationPage> page,
             Optional<String> referenceText,
             Optional<List<Polygon>> polygon,
+            Optional<String> cellRange,
             Map<String, Object> additionalProperties) {
         this.fileId = fileId;
         this.page = page;
         this.referenceText = referenceText;
         this.polygon = polygon;
+        this.cellRange = cellRange;
         this.additionalProperties = additionalProperties;
     }
 
@@ -79,6 +83,14 @@ public final class Citation {
         return polygon;
     }
 
+    /**
+     * @return The cited cell or range in A1 notation for Excel and CSV files. Returned instead of a polygon when a cell reference is available.
+     */
+    @JsonProperty("cellRange")
+    public Optional<String> getCellRange() {
+        return cellRange;
+    }
+
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
     @JsonProperty("referenceText")
     private Optional<String> _getReferenceText() {
@@ -100,12 +112,13 @@ public final class Citation {
         return fileId.equals(other.fileId)
                 && page.equals(other.page)
                 && referenceText.equals(other.referenceText)
-                && polygon.equals(other.polygon);
+                && polygon.equals(other.polygon)
+                && cellRange.equals(other.cellRange);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.fileId, this.page, this.referenceText, this.polygon);
+        return Objects.hash(this.fileId, this.page, this.referenceText, this.polygon, this.cellRange);
     }
 
     @java.lang.Override
@@ -127,6 +140,8 @@ public final class Citation {
 
         private Optional<List<Polygon>> polygon = Optional.empty();
 
+        private Optional<String> cellRange = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -137,6 +152,7 @@ public final class Citation {
             page(other.getPage());
             referenceText(other.getReferenceText());
             polygon(other.getPolygon());
+            cellRange(other.getCellRange());
             return this;
         }
 
@@ -204,8 +220,22 @@ public final class Citation {
             return this;
         }
 
+        /**
+         * <p>The cited cell or range in A1 notation for Excel and CSV files. Returned instead of a polygon when a cell reference is available.</p>
+         */
+        @JsonSetter(value = "cellRange", nulls = Nulls.SKIP)
+        public Builder cellRange(Optional<String> cellRange) {
+            this.cellRange = cellRange;
+            return this;
+        }
+
+        public Builder cellRange(String cellRange) {
+            this.cellRange = Optional.ofNullable(cellRange);
+            return this;
+        }
+
         public Citation build() {
-            return new Citation(fileId, page, referenceText, polygon, additionalProperties);
+            return new Citation(fileId, page, referenceText, polygon, cellRange, additionalProperties);
         }
     }
 }

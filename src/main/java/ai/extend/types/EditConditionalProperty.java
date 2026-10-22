@@ -25,9 +25,9 @@ public final class EditConditionalProperty {
 
     private final Optional<String> description;
 
-    private final Optional<List<String>> enum_;
+    private final Optional<List<Optional<EditConditionalPropertyEnumItem>>> enum_;
 
-    private final Optional<EditConditionalObjectProperty> items;
+    private final Optional<EditConditionalProperty> items;
 
     private final Optional<Map<String, EditConditionalProperty>> properties;
 
@@ -66,8 +66,8 @@ public final class EditConditionalProperty {
     private EditConditionalProperty(
             Optional<Object> type,
             Optional<String> description,
-            Optional<List<String>> enum_,
-            Optional<EditConditionalObjectProperty> items,
+            Optional<List<Optional<EditConditionalPropertyEnumItem>>> enum_,
+            Optional<EditConditionalProperty> items,
             Optional<Map<String, EditConditionalProperty>> properties,
             Optional<List<String>> required,
             Optional<Boolean> additionalProperties,
@@ -129,7 +129,7 @@ public final class EditConditionalProperty {
      * @return Allowed values for enum-based conditional constraints.
      */
     @JsonProperty("enum")
-    public Optional<List<String>> getEnum() {
+    public Optional<List<Optional<EditConditionalPropertyEnumItem>>> getEnum() {
         return enum_;
     }
 
@@ -137,7 +137,7 @@ public final class EditConditionalProperty {
      * @return Nested array item schema for conditional array constraints.
      */
     @JsonProperty("items")
-    public Optional<EditConditionalObjectProperty> getItems() {
+    public Optional<EditConditionalProperty> getItems() {
         return items;
     }
 
@@ -343,9 +343,9 @@ public final class EditConditionalProperty {
 
         private Optional<String> description = Optional.empty();
 
-        private Optional<List<String>> enum_ = Optional.empty();
+        private Optional<List<Optional<EditConditionalPropertyEnumItem>>> enum_ = Optional.empty();
 
-        private Optional<EditConditionalObjectProperty> items = Optional.empty();
+        private Optional<EditConditionalProperty> items = Optional.empty();
 
         private Optional<Map<String, EditConditionalProperty>> properties = Optional.empty();
 
@@ -441,12 +441,12 @@ public final class EditConditionalProperty {
          * <p>Allowed values for enum-based conditional constraints.</p>
          */
         @JsonSetter(value = "enum", nulls = Nulls.SKIP)
-        public Builder enum_(Optional<List<String>> enum_) {
+        public Builder enum_(Optional<List<Optional<EditConditionalPropertyEnumItem>>> enum_) {
             this.enum_ = enum_;
             return this;
         }
 
-        public Builder enum_(List<String> enum_) {
+        public Builder enum_(List<Optional<EditConditionalPropertyEnumItem>> enum_) {
             this.enum_ = Optional.ofNullable(enum_);
             return this;
         }
@@ -455,12 +455,12 @@ public final class EditConditionalProperty {
          * <p>Nested array item schema for conditional array constraints.</p>
          */
         @JsonSetter(value = "items", nulls = Nulls.SKIP)
-        public Builder items(Optional<EditConditionalObjectProperty> items) {
+        public Builder items(Optional<EditConditionalProperty> items) {
             this.items = items;
             return this;
         }
 
-        public Builder items(EditConditionalObjectProperty items) {
+        public Builder items(EditConditionalProperty items) {
             this.items = Optional.ofNullable(items);
             return this;
         }

@@ -159,7 +159,7 @@ public final class ParseConfigAdvancedOptions {
     }
 
     /**
-     * @return Options for returning raw OCR data in the response.
+     * @return Options for returning raw OCR data in the response. Words and lines are independent opt-ins and both default to false.
      */
     @JsonProperty("returnOcr")
     public Optional<ParseConfigAdvancedOptionsReturnOcr> getReturnOcr() {
@@ -449,7 +449,7 @@ public final class ParseConfigAdvancedOptions {
         }
 
         /**
-         * <p>Options for returning raw OCR data in the response.</p>
+         * <p>Options for returning raw OCR data in the response. Words and lines are independent opt-ins and both default to false.</p>
          */
         @JsonSetter(value = "returnOcr", nulls = Nulls.SKIP)
         public Builder returnOcr(Optional<ParseConfigAdvancedOptionsReturnOcr> returnOcr) {

@@ -56,7 +56,7 @@ public final class EditConfigAdvancedOptions {
     }
 
     /**
-     * @return Whether to flatten PDF forms after editing (makes form fields non-editable). Defaults to <code>true</code>.
+     * @return Whether to flatten PDF forms after editing (makes form fields non-editable). Defaults to <code>true</code> for Edit <code>1.0.0</code> and <code>0.0.1</code>, and <code>false</code> for <code>1.0.0-beta</code>.
      */
     @JsonProperty("flattenPdf")
     public Optional<Boolean> getFlattenPdf() {
@@ -64,7 +64,7 @@ public final class EditConfigAdvancedOptions {
     }
 
     /**
-     * @return Whether to model radio fields as enums. This ensures only one radio widget is filled. Defaults to false.
+     * @return Whether to represent radio groups as enums so only one option can be selected. Defaults to <code>true</code> for Edit <code>1.0.0</code> and <code>1.0.0-beta</code>, and <code>false</code> for <code>0.0.1</code>.
      */
     @JsonProperty("radioEnumsEnabled")
     public Optional<Boolean> getRadioEnumsEnabled() {
@@ -166,7 +166,7 @@ public final class EditConfigAdvancedOptions {
         }
 
         /**
-         * <p>Whether to flatten PDF forms after editing (makes form fields non-editable). Defaults to <code>true</code>.</p>
+         * <p>Whether to flatten PDF forms after editing (makes form fields non-editable). Defaults to <code>true</code> for Edit <code>1.0.0</code> and <code>0.0.1</code>, and <code>false</code> for <code>1.0.0-beta</code>.</p>
          */
         @JsonSetter(value = "flattenPdf", nulls = Nulls.SKIP)
         public Builder flattenPdf(Optional<Boolean> flattenPdf) {
@@ -180,7 +180,7 @@ public final class EditConfigAdvancedOptions {
         }
 
         /**
-         * <p>Whether to model radio fields as enums. This ensures only one radio widget is filled. Defaults to false.</p>
+         * <p>Whether to represent radio groups as enums so only one option can be selected. Defaults to <code>true</code> for Edit <code>1.0.0</code> and <code>1.0.0-beta</code>, and <code>false</code> for <code>0.0.1</code>.</p>
          */
         @JsonSetter(value = "radioEnumsEnabled", nulls = Nulls.SKIP)
         public Builder radioEnumsEnabled(Optional<Boolean> radioEnumsEnabled) {

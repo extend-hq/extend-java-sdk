@@ -18,30 +18,46 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import org.jetbrains.annotations.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = EditRunsCreateRequest.Builder.class)
 public final class EditRunsCreateRequest {
-    private final EditRunsCreateRequestFile file;
+    private final Optional<EditRunsCreateRequestFile> file;
+
+    private final Optional<String> templateId;
 
     private final Optional<EditConfig> config;
 
     private final Map<String, Object> additionalProperties;
 
     private EditRunsCreateRequest(
-            EditRunsCreateRequestFile file, Optional<EditConfig> config, Map<String, Object> additionalProperties) {
+            Optional<EditRunsCreateRequestFile> file,
+            Optional<String> templateId,
+            Optional<EditConfig> config,
+            Map<String, Object> additionalProperties) {
         this.file = file;
+        this.templateId = templateId;
         this.config = config;
         this.additionalProperties = additionalProperties;
     }
 
     /**
-     * @return The file to be edited. Files can be provided as a URL or an Extend file ID.
+     * @return The file to be edited. Mutually exclusive with <code>templateId</code> — provide one or the other.
+     * <p>Files can be provided as a URL or an Extend file ID.</p>
      */
     @JsonProperty("file")
-    public EditRunsCreateRequestFile getFile() {
+    public Optional<EditRunsCreateRequestFile> getFile() {
         return file;
+    }
+
+    /**
+     * @return The ID of a saved <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/edit/get-edit-template">edit template</a> to run against. Mutually exclusive with <code>file</code> — provide one or the other.
+     * <p>The template's saved file is used as the input file, and its saved <code>config</code> (schema, instructions, engine version, and advanced options) is used to fill in any values not set on the request's own <code>config</code>. Values set on the request's <code>config</code> always take precedence over the template's.</p>
+     * <p>Example: <code>&quot;edt_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+     */
+    @JsonProperty("templateId")
+    public Optional<String> getTemplateId() {
+        return templateId;
     }
 
     @JsonProperty("config")
@@ -61,12 +77,12 @@ public final class EditRunsCreateRequest {
     }
 
     private boolean equalTo(EditRunsCreateRequest other) {
-        return file.equals(other.file) && config.equals(other.config);
+        return file.equals(other.file) && templateId.equals(other.templateId) && config.equals(other.config);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.file, this.config);
+        return Objects.hash(this.file, this.templateId, this.config);
     }
 
     @java.lang.Override
@@ -74,30 +90,15 @@ public final class EditRunsCreateRequest {
         return ObjectMappers.stringify(this);
     }
 
-    public static FileStage builder() {
+    public static Builder builder() {
         return new Builder();
     }
 
-    public interface FileStage {
-        /**
-         * <p>The file to be edited. Files can be provided as a URL or an Extend file ID.</p>
-         */
-        _FinalStage file(@NotNull EditRunsCreateRequestFile file);
-
-        Builder from(EditRunsCreateRequest other);
-    }
-
-    public interface _FinalStage {
-        EditRunsCreateRequest build();
-
-        _FinalStage config(Optional<EditConfig> config);
-
-        _FinalStage config(EditConfig config);
-    }
-
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements FileStage, _FinalStage {
-        private EditRunsCreateRequestFile file;
+    public static final class Builder {
+        private Optional<EditRunsCreateRequestFile> file = Optional.empty();
+
+        private Optional<String> templateId = Optional.empty();
 
         private Optional<EditConfig> config = Optional.empty();
 
@@ -106,41 +107,57 @@ public final class EditRunsCreateRequest {
 
         private Builder() {}
 
-        @java.lang.Override
         public Builder from(EditRunsCreateRequest other) {
             file(other.getFile());
+            templateId(other.getTemplateId());
             config(other.getConfig());
             return this;
         }
 
         /**
-         * <p>The file to be edited. Files can be provided as a URL or an Extend file ID.</p>
-         * <p>The file to be edited. Files can be provided as a URL or an Extend file ID.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
+         * <p>The file to be edited. Mutually exclusive with <code>templateId</code> — provide one or the other.</p>
+         * <p>Files can be provided as a URL or an Extend file ID.</p>
          */
-        @java.lang.Override
-        @JsonSetter("file")
-        public _FinalStage file(@NotNull EditRunsCreateRequestFile file) {
-            this.file = Objects.requireNonNull(file, "file must not be null");
+        @JsonSetter(value = "file", nulls = Nulls.SKIP)
+        public Builder file(Optional<EditRunsCreateRequestFile> file) {
+            this.file = file;
             return this;
         }
 
-        @java.lang.Override
-        public _FinalStage config(EditConfig config) {
-            this.config = Optional.ofNullable(config);
+        public Builder file(EditRunsCreateRequestFile file) {
+            this.file = Optional.ofNullable(file);
             return this;
         }
 
-        @java.lang.Override
+        /**
+         * <p>The ID of a saved <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/edit/get-edit-template">edit template</a> to run against. Mutually exclusive with <code>file</code> — provide one or the other.</p>
+         * <p>The template's saved file is used as the input file, and its saved <code>config</code> (schema, instructions, engine version, and advanced options) is used to fill in any values not set on the request's own <code>config</code>. Values set on the request's <code>config</code> always take precedence over the template's.</p>
+         * <p>Example: <code>&quot;edt_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         */
+        @JsonSetter(value = "templateId", nulls = Nulls.SKIP)
+        public Builder templateId(Optional<String> templateId) {
+            this.templateId = templateId;
+            return this;
+        }
+
+        public Builder templateId(String templateId) {
+            this.templateId = Optional.ofNullable(templateId);
+            return this;
+        }
+
         @JsonSetter(value = "config", nulls = Nulls.SKIP)
-        public _FinalStage config(Optional<EditConfig> config) {
+        public Builder config(Optional<EditConfig> config) {
             this.config = config;
             return this;
         }
 
-        @java.lang.Override
+        public Builder config(EditConfig config) {
+            this.config = Optional.ofNullable(config);
+            return this;
+        }
+
         public EditRunsCreateRequest build() {
-            return new EditRunsCreateRequest(file, config, additionalProperties);
+            return new EditRunsCreateRequest(file, templateId, config, additionalProperties);
         }
     }
 }

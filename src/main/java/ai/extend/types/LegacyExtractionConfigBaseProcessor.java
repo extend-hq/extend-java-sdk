@@ -13,6 +13,9 @@ public final class LegacyExtractionConfigBaseProcessor {
     public static final LegacyExtractionConfigBaseProcessor EXTRACTION_LIGHT =
             new LegacyExtractionConfigBaseProcessor(Value.EXTRACTION_LIGHT, "extraction_light");
 
+    public static final LegacyExtractionConfigBaseProcessor EXTRACTION_OPERATOR =
+            new LegacyExtractionConfigBaseProcessor(Value.EXTRACTION_OPERATOR, "extraction_operator");
+
     private final Value value;
 
     private final String string;
@@ -50,6 +53,8 @@ public final class LegacyExtractionConfigBaseProcessor {
                 return visitor.visitExtractionPerformance();
             case EXTRACTION_LIGHT:
                 return visitor.visitExtractionLight();
+            case EXTRACTION_OPERATOR:
+                return visitor.visitExtractionOperator();
             case UNKNOWN:
             default:
                 return visitor.visitUnknown(string);
@@ -63,6 +68,8 @@ public final class LegacyExtractionConfigBaseProcessor {
                 return EXTRACTION_PERFORMANCE;
             case "extraction_light":
                 return EXTRACTION_LIGHT;
+            case "extraction_operator":
+                return EXTRACTION_OPERATOR;
             default:
                 return new LegacyExtractionConfigBaseProcessor(Value.UNKNOWN, value);
         }
@@ -73,6 +80,8 @@ public final class LegacyExtractionConfigBaseProcessor {
 
         EXTRACTION_LIGHT,
 
+        EXTRACTION_OPERATOR,
+
         UNKNOWN
     }
 
@@ -80,6 +89,8 @@ public final class LegacyExtractionConfigBaseProcessor {
         T visitExtractionPerformance();
 
         T visitExtractionLight();
+
+        T visitExtractionOperator();
 
         T visitUnknown(String unknownType);
     }

@@ -30,6 +30,8 @@ public final class LegacyJsonOutputMetadataValueCitationsItem {
 
     private final Optional<List<LegacyJsonOutputMetadataValueCitationsItemPolygonItem>> polygon;
 
+    private final Optional<String> cellRange;
+
     private final Optional<Double> pageWidth;
 
     private final Optional<Double> pageHeight;
@@ -40,19 +42,21 @@ public final class LegacyJsonOutputMetadataValueCitationsItem {
             Optional<Double> page,
             Optional<String> referenceText,
             Optional<List<LegacyJsonOutputMetadataValueCitationsItemPolygonItem>> polygon,
+            Optional<String> cellRange,
             Optional<Double> pageWidth,
             Optional<Double> pageHeight,
             Map<String, Object> additionalProperties) {
         this.page = page;
         this.referenceText = referenceText;
         this.polygon = polygon;
+        this.cellRange = cellRange;
         this.pageWidth = pageWidth;
         this.pageHeight = pageHeight;
         this.additionalProperties = additionalProperties;
     }
 
     /**
-     * @return Page number where the citation was found
+     * @return Page number where the citation was found. For Excel, the 1-based worksheet index; for CSV, always 1.
      */
     @JsonProperty("page")
     public Optional<Double> getPage() {
@@ -76,6 +80,14 @@ public final class LegacyJsonOutputMetadataValueCitationsItem {
     @JsonProperty("polygon")
     public Optional<List<LegacyJsonOutputMetadataValueCitationsItemPolygonItem>> getPolygon() {
         return polygon;
+    }
+
+    /**
+     * @return The cited cell or range in A1 notation for Excel and CSV files. Returned instead of a polygon when a cell reference is available.
+     */
+    @JsonProperty("cellRange")
+    public Optional<String> getCellRange() {
+        return cellRange;
     }
 
     /**
@@ -116,13 +128,15 @@ public final class LegacyJsonOutputMetadataValueCitationsItem {
         return page.equals(other.page)
                 && referenceText.equals(other.referenceText)
                 && polygon.equals(other.polygon)
+                && cellRange.equals(other.cellRange)
                 && pageWidth.equals(other.pageWidth)
                 && pageHeight.equals(other.pageHeight);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.page, this.referenceText, this.polygon, this.pageWidth, this.pageHeight);
+        return Objects.hash(
+                this.page, this.referenceText, this.polygon, this.cellRange, this.pageWidth, this.pageHeight);
     }
 
     @java.lang.Override
@@ -142,6 +156,8 @@ public final class LegacyJsonOutputMetadataValueCitationsItem {
 
         private Optional<List<LegacyJsonOutputMetadataValueCitationsItemPolygonItem>> polygon = Optional.empty();
 
+        private Optional<String> cellRange = Optional.empty();
+
         private Optional<Double> pageWidth = Optional.empty();
 
         private Optional<Double> pageHeight = Optional.empty();
@@ -155,13 +171,14 @@ public final class LegacyJsonOutputMetadataValueCitationsItem {
             page(other.getPage());
             referenceText(other.getReferenceText());
             polygon(other.getPolygon());
+            cellRange(other.getCellRange());
             pageWidth(other.getPageWidth());
             pageHeight(other.getPageHeight());
             return this;
         }
 
         /**
-         * <p>Page number where the citation was found</p>
+         * <p>Page number where the citation was found. For Excel, the 1-based worksheet index; for CSV, always 1.</p>
          */
         @JsonSetter(value = "page", nulls = Nulls.SKIP)
         public Builder page(Optional<Double> page) {
@@ -214,6 +231,20 @@ public final class LegacyJsonOutputMetadataValueCitationsItem {
         }
 
         /**
+         * <p>The cited cell or range in A1 notation for Excel and CSV files. Returned instead of a polygon when a cell reference is available.</p>
+         */
+        @JsonSetter(value = "cellRange", nulls = Nulls.SKIP)
+        public Builder cellRange(Optional<String> cellRange) {
+            this.cellRange = cellRange;
+            return this;
+        }
+
+        public Builder cellRange(String cellRange) {
+            this.cellRange = Optional.ofNullable(cellRange);
+            return this;
+        }
+
+        /**
          * <p>Width of the page in points</p>
          */
         @JsonSetter(value = "pageWidth", nulls = Nulls.SKIP)
@@ -243,7 +274,7 @@ public final class LegacyJsonOutputMetadataValueCitationsItem {
 
         public LegacyJsonOutputMetadataValueCitationsItem build() {
             return new LegacyJsonOutputMetadataValueCitationsItem(
-                    page, referenceText, polygon, pageWidth, pageHeight, additionalProperties);
+                    page, referenceText, polygon, cellRange, pageWidth, pageHeight, additionalProperties);
         }
     }
 }

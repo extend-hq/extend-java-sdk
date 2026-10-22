@@ -13,6 +13,9 @@ public final class ExtractBaseProcessor {
     public static final ExtractBaseProcessor EXTRACTION_LIGHT =
             new ExtractBaseProcessor(Value.EXTRACTION_LIGHT, "extraction_light");
 
+    public static final ExtractBaseProcessor EXTRACTION_OPERATOR =
+            new ExtractBaseProcessor(Value.EXTRACTION_OPERATOR, "extraction_operator");
+
     private final Value value;
 
     private final String string;
@@ -49,6 +52,8 @@ public final class ExtractBaseProcessor {
                 return visitor.visitExtractionPerformance();
             case EXTRACTION_LIGHT:
                 return visitor.visitExtractionLight();
+            case EXTRACTION_OPERATOR:
+                return visitor.visitExtractionOperator();
             case UNKNOWN:
             default:
                 return visitor.visitUnknown(string);
@@ -62,6 +67,8 @@ public final class ExtractBaseProcessor {
                 return EXTRACTION_PERFORMANCE;
             case "extraction_light":
                 return EXTRACTION_LIGHT;
+            case "extraction_operator":
+                return EXTRACTION_OPERATOR;
             default:
                 return new ExtractBaseProcessor(Value.UNKNOWN, value);
         }
@@ -72,6 +79,8 @@ public final class ExtractBaseProcessor {
 
         EXTRACTION_LIGHT,
 
+        EXTRACTION_OPERATOR,
+
         UNKNOWN
     }
 
@@ -79,6 +88,8 @@ public final class ExtractBaseProcessor {
         T visitExtractionPerformance();
 
         T visitExtractionLight();
+
+        T visitExtractionOperator();
 
         T visitUnknown(String unknownType);
     }

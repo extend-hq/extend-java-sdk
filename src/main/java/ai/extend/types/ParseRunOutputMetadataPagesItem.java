@@ -59,7 +59,7 @@ public final class ParseRunOutputMetadataPagesItem {
     }
 
     /**
-     * @return Degrees Extend rotated the page clockwise to make it upright. <code>0</code> if rotation detection ran and the page was already upright; <code>null</code> if rotation detection was disabled for this run.
+     * @return Degrees Extend rotated the page to make it upright, as a multiple of 90. Positive values are clockwise and negative values are counterclockwise (for example, <code>-90</code> is equivalent to <code>270</code>). <code>0</code> if rotation detection ran and the page was already upright; <code>null</code> if rotation detection was disabled for this run. Normalize with <code>((value % 360) + 360) % 360</code> before branching on it.
      */
     @JsonIgnore
     public Optional<Integer> getRotationApplied() {
@@ -167,7 +167,7 @@ public final class ParseRunOutputMetadataPagesItem {
         ParseRunOutputMetadataPagesItem build();
 
         /**
-         * <p>Degrees Extend rotated the page clockwise to make it upright. <code>0</code> if rotation detection ran and the page was already upright; <code>null</code> if rotation detection was disabled for this run.</p>
+         * <p>Degrees Extend rotated the page to make it upright, as a multiple of 90. Positive values are clockwise and negative values are counterclockwise (for example, <code>-90</code> is equivalent to <code>270</code>). <code>0</code> if rotation detection ran and the page was already upright; <code>null</code> if rotation detection was disabled for this run. Normalize with <code>((value % 360) + 360) % 360</code> before branching on it.</p>
          */
         _FinalStage rotationApplied(Optional<Integer> rotationApplied);
 
@@ -253,7 +253,7 @@ public final class ParseRunOutputMetadataPagesItem {
         }
 
         /**
-         * <p>Degrees Extend rotated the page clockwise to make it upright. <code>0</code> if rotation detection ran and the page was already upright; <code>null</code> if rotation detection was disabled for this run.</p>
+         * <p>Degrees Extend rotated the page to make it upright, as a multiple of 90. Positive values are clockwise and negative values are counterclockwise (for example, <code>-90</code> is equivalent to <code>270</code>). <code>0</code> if rotation detection ran and the page was already upright; <code>null</code> if rotation detection was disabled for this run. Normalize with <code>((value % 360) + 360) % 360</code> before branching on it.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -269,7 +269,7 @@ public final class ParseRunOutputMetadataPagesItem {
         }
 
         /**
-         * <p>Degrees Extend rotated the page clockwise to make it upright. <code>0</code> if rotation detection ran and the page was already upright; <code>null</code> if rotation detection was disabled for this run.</p>
+         * <p>Degrees Extend rotated the page to make it upright, as a multiple of 90. Positive values are clockwise and negative values are counterclockwise (for example, <code>-90</code> is equivalent to <code>270</code>). <code>0</code> if rotation detection ran and the page was already upright; <code>null</code> if rotation detection was disabled for this run. Normalize with <code>((value % 360) + 360) % 360</code> before branching on it.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -279,7 +279,7 @@ public final class ParseRunOutputMetadataPagesItem {
         }
 
         /**
-         * <p>Degrees Extend rotated the page clockwise to make it upright. <code>0</code> if rotation detection ran and the page was already upright; <code>null</code> if rotation detection was disabled for this run.</p>
+         * <p>Degrees Extend rotated the page to make it upright, as a multiple of 90. Positive values are clockwise and negative values are counterclockwise (for example, <code>-90</code> is equivalent to <code>270</code>). <code>0</code> if rotation detection ran and the page was already upright; <code>null</code> if rotation detection was disabled for this run. Normalize with <code>((value % 360) + 360) % 360</code> before branching on it.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "rotationApplied", nulls = Nulls.SKIP)

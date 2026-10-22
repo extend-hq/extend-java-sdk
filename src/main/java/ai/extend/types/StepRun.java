@@ -58,6 +58,14 @@ public final class StepRun {
         return new StepRun(new ExternalDataValidationValue(value));
     }
 
+    public static StepRun validation(ValidationStepRun value) {
+        return new StepRun(new ValidationValue(value));
+    }
+
+    public static StepRun router(RouterStepRun value) {
+        return new StepRun(new RouterValue(value));
+    }
+
     public boolean isParse() {
         return value instanceof ParseValue;
     }
@@ -88,6 +96,14 @@ public final class StepRun {
 
     public boolean isExternalDataValidation() {
         return value instanceof ExternalDataValidationValue;
+    }
+
+    public boolean isValidation() {
+        return value instanceof ValidationValue;
+    }
+
+    public boolean isRouter() {
+        return value instanceof RouterValue;
     }
 
     public boolean _isUnknown() {
@@ -150,6 +166,20 @@ public final class StepRun {
         return Optional.empty();
     }
 
+    public Optional<ValidationStepRun> getValidation() {
+        if (isValidation()) {
+            return Optional.of(((ValidationValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<RouterStepRun> getRouter() {
+        if (isRouter()) {
+            return Optional.of(((RouterValue) value).value);
+        }
+        return Optional.empty();
+    }
+
     public Optional<Object> _getUnknown() {
         if (_isUnknown()) {
             return Optional.of(((_UnknownValue) value).value);
@@ -179,6 +209,10 @@ public final class StepRun {
 
         T visitExternalDataValidation(ExternalDataValidationStepRun externalDataValidation);
 
+        T visitValidation(ValidationStepRun validation);
+
+        T visitRouter(RouterStepRun router);
+
         T _visitUnknown(Object unknownType);
     }
 
@@ -191,7 +225,9 @@ public final class StepRun {
         @JsonSubTypes.Type(MergeExtractValue.class),
         @JsonSubTypes.Type(ConditionalExtractValue.class),
         @JsonSubTypes.Type(RuleValidationValue.class),
-        @JsonSubTypes.Type(ExternalDataValidationValue.class)
+        @JsonSubTypes.Type(ExternalDataValidationValue.class),
+        @JsonSubTypes.Type(ValidationValue.class),
+        @JsonSubTypes.Type(RouterValue.class)
     })
     @JsonIgnoreProperties(ignoreUnknown = true)
     private interface Value {
@@ -496,6 +532,84 @@ public final class StepRun {
         }
 
         private boolean equalTo(ExternalDataValidationValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "StepRun{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("VALIDATION")
+    @JsonIgnoreProperties("stepType")
+    private static final class ValidationValue implements Value {
+        @JsonUnwrapped
+        private ValidationStepRun value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ValidationValue() {}
+
+        private ValidationValue(ValidationStepRun value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitValidation(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ValidationValue && equalTo((ValidationValue) other);
+        }
+
+        private boolean equalTo(ValidationValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "StepRun{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("ROUTER")
+    @JsonIgnoreProperties("stepType")
+    private static final class RouterValue implements Value {
+        @JsonUnwrapped
+        private RouterStepRun value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private RouterValue() {}
+
+        private RouterValue(RouterStepRun value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitRouter(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof RouterValue && equalTo((RouterValue) other);
+        }
+
+        private boolean equalTo(RouterValue other) {
             return value.equals(other.value);
         }
 

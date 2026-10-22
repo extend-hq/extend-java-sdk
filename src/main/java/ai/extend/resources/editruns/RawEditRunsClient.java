@@ -9,6 +9,7 @@ import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
 import ai.extend.core.MediaTypes;
 import ai.extend.core.ObjectMappers;
+import ai.extend.core.QueryStringMapper;
 import ai.extend.core.RequestOptions;
 import ai.extend.errors.BadRequestError;
 import ai.extend.errors.ForbiddenError;
@@ -20,8 +21,10 @@ import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
 import ai.extend.resources.editruns.requests.EditRunsCreateRequest;
 import ai.extend.resources.editruns.requests.EditRunsDeleteRequest;
+import ai.extend.resources.editruns.requests.EditRunsListRequest;
 import ai.extend.resources.editruns.requests.EditRunsRetrieveRequest;
 import ai.extend.resources.editruns.types.EditRunsDeleteResponse;
+import ai.extend.resources.editruns.types.EditRunsListResponse;
 import ai.extend.types.ApiError;
 import ai.extend.types.EditRun;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -39,6 +42,149 @@ public class RawEditRunsClient {
 
     public RawEditRunsClient(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
+    }
+
+    /**
+     * List edit runs, with optional filters for status, source, and file name.
+     * <p>Returns a paginated list of edit runs. Use <code>GET /edit_runs/{id}</code> to retrieve the full result, including <code>config</code> and <code>output</code>, for a specific run.</p>
+     */
+    public ExtendClientBaseHttpResponse<EditRunsListResponse> list() {
+        return list(EditRunsListRequest.builder().build());
+    }
+
+    /**
+     * List edit runs, with optional filters for status, source, and file name.
+     * <p>Returns a paginated list of edit runs. Use <code>GET /edit_runs/{id}</code> to retrieve the full result, including <code>config</code> and <code>output</code>, for a specific run.</p>
+     */
+    public ExtendClientBaseHttpResponse<EditRunsListResponse> list(RequestOptions requestOptions) {
+        return list(EditRunsListRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * List edit runs, with optional filters for status, source, and file name.
+     * <p>Returns a paginated list of edit runs. Use <code>GET /edit_runs/{id}</code> to retrieve the full result, including <code>config</code> and <code>output</code>, for a specific run.</p>
+     */
+    public ExtendClientBaseHttpResponse<EditRunsListResponse> list(EditRunsListRequest request) {
+        return list(request, null);
+    }
+
+    /**
+     * List edit runs, with optional filters for status, source, and file name.
+     * <p>Returns a paginated list of edit runs. Use <code>GET /edit_runs/{id}</code> to retrieve the full result, including <code>config</code> and <code>output</code>, for a specific run.</p>
+     */
+    public ExtendClientBaseHttpResponse<EditRunsListResponse> list(
+            EditRunsListRequest request, RequestOptions requestOptions) {
+        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("edit_runs");
+        if (request.getStatus().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "status", request.getStatus().get(), false);
+        }
+        if (request.getSource().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "source", request.getSource().get(), false);
+        }
+        if (request.getFileNameContains().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "fileNameContains", request.getFileNameContains().get(), false);
+        }
+        if (request.getSortBy().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "sortBy", request.getSortBy().get(), false);
+        }
+        if (request.getSortDir().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "sortDir", request.getSortDir().get(), false);
+        }
+        if (request.getNextPageToken().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "nextPageToken", request.getNextPageToken().get(), false);
+        }
+        if (request.getMaxPageSize().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "maxPageSize", request.getMaxPageSize().get(), false);
+        }
+        if (requestOptions != null) {
+            requestOptions.getQueryParameters().forEach((_key, _value) -> {
+                httpUrl.addQueryParameter(_key, _value);
+            });
+        }
+        Request.Builder _requestBuilder = new Request.Builder()
+                .url(httpUrl.build())
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            if (response.isSuccessful()) {
+                return new ExtendClientBaseHttpResponse<>(
+                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EditRunsListResponse.class), response);
+            }
+            try {
+                switch (response.code()) {
+                    case 400:
+                        throw new BadRequestError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 401:
+                        throw new UnauthorizedError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 402:
+                        throw new PaymentRequiredError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 403:
+                        throw new ForbiddenError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 404:
+                        throw new NotFoundError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 422:
+                        throw new UnprocessableEntityError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 429:
+                        throw new TooManyRequestsError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 500:
+                        throw new InternalServerError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                }
+            } catch (JsonProcessingException ignored) {
+                // unable to map error response, throwing generic error
+            }
+            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
+            throw new ExtendClientApiException(
+                    "Error with status code " + response.code(), response.code(), errorBody, response);
+        } catch (IOException e) {
+            throw new ExtendClientException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
+     * Edit and manipulate PDF documents by detecting and filling form fields.
+     * <p>The Edit Runs endpoint allows you to convert and edit documents and get an edit run ID that can be used to check status and retrieve results with the Get Edit Run endpoint.</p>
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Edit Run endpoint for results.</p>
+     */
+    public ExtendClientBaseHttpResponse<EditRun> create() {
+        return create(EditRunsCreateRequest.builder().build());
+    }
+
+    /**
+     * Edit and manipulate PDF documents by detecting and filling form fields.
+     * <p>The Edit Runs endpoint allows you to convert and edit documents and get an edit run ID that can be used to check status and retrieve results with the Get Edit Run endpoint.</p>
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Edit Run endpoint for results.</p>
+     */
+    public ExtendClientBaseHttpResponse<EditRun> create(RequestOptions requestOptions) {
+        return create(EditRunsCreateRequest.builder().build(), requestOptions);
     }
 
     /**

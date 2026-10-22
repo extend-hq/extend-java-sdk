@@ -7,6 +7,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public final class ClassifyBaseProcessor {
+    public static final ClassifyBaseProcessor CLASSIFICATION_STANDARD =
+            new ClassifyBaseProcessor(Value.CLASSIFICATION_STANDARD, "classification_standard");
+
     public static final ClassifyBaseProcessor CLASSIFICATION_PERFORMANCE =
             new ClassifyBaseProcessor(Value.CLASSIFICATION_PERFORMANCE, "classification_performance");
 
@@ -46,6 +49,8 @@ public final class ClassifyBaseProcessor {
 
     public <T> T visit(Visitor<T> visitor) {
         switch (value) {
+            case CLASSIFICATION_STANDARD:
+                return visitor.visitClassificationStandard();
             case CLASSIFICATION_PERFORMANCE:
                 return visitor.visitClassificationPerformance();
             case CLASSIFICATION_LIGHT:
@@ -59,6 +64,8 @@ public final class ClassifyBaseProcessor {
     @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
     public static ClassifyBaseProcessor valueOf(String value) {
         switch (value) {
+            case "classification_standard":
+                return CLASSIFICATION_STANDARD;
             case "classification_performance":
                 return CLASSIFICATION_PERFORMANCE;
             case "classification_light":
@@ -69,6 +76,8 @@ public final class ClassifyBaseProcessor {
     }
 
     public enum Value {
+        CLASSIFICATION_STANDARD,
+
         CLASSIFICATION_PERFORMANCE,
 
         CLASSIFICATION_LIGHT,
@@ -77,6 +86,8 @@ public final class ClassifyBaseProcessor {
     }
 
     public interface Visitor<T> {
+        T visitClassificationStandard();
+
         T visitClassificationPerformance();
 
         T visitClassificationLight();
