@@ -8,6 +8,7 @@ import ai.extend.core.ExtendClientApiException;
 import ai.extend.core.ExtendClientBaseHttpResponse;
 import ai.extend.core.ExtendClientException;
 import ai.extend.core.ObjectMappers;
+import ai.extend.core.QueryStringMapper;
 import ai.extend.core.RequestOptions;
 import ai.extend.errors.BadRequestError;
 import ai.extend.errors.ForbiddenError;
@@ -17,7 +18,9 @@ import ai.extend.errors.PaymentRequiredError;
 import ai.extend.errors.TooManyRequestsError;
 import ai.extend.errors.UnauthorizedError;
 import ai.extend.errors.UnprocessableEntityError;
+import ai.extend.resources.edittemplates.requests.EditTemplatesListRequest;
 import ai.extend.resources.edittemplates.requests.EditTemplatesRetrieveRequest;
+import ai.extend.resources.edittemplates.types.EditTemplatesListResponse;
 import ai.extend.types.ApiError;
 import ai.extend.types.EditTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,8 +40,126 @@ public class RawEditTemplatesClient {
     }
 
     /**
+     * List the edit templates saved in a workspace, with an optional filter on the template name.
+     * <p>Returns a paginated list of edit template summaries. Use <code>GET /edit_templates/{id}</code> to retrieve a specific template in full, including its <code>config</code> and <code>schemaConfig</code>.</p>
+     */
+    public ExtendClientBaseHttpResponse<EditTemplatesListResponse> list() {
+        return list(EditTemplatesListRequest.builder().build());
+    }
+
+    /**
+     * List the edit templates saved in a workspace, with an optional filter on the template name.
+     * <p>Returns a paginated list of edit template summaries. Use <code>GET /edit_templates/{id}</code> to retrieve a specific template in full, including its <code>config</code> and <code>schemaConfig</code>.</p>
+     */
+    public ExtendClientBaseHttpResponse<EditTemplatesListResponse> list(RequestOptions requestOptions) {
+        return list(EditTemplatesListRequest.builder().build(), requestOptions);
+    }
+
+    /**
+     * List the edit templates saved in a workspace, with an optional filter on the template name.
+     * <p>Returns a paginated list of edit template summaries. Use <code>GET /edit_templates/{id}</code> to retrieve a specific template in full, including its <code>config</code> and <code>schemaConfig</code>.</p>
+     */
+    public ExtendClientBaseHttpResponse<EditTemplatesListResponse> list(EditTemplatesListRequest request) {
+        return list(request, null);
+    }
+
+    /**
+     * List the edit templates saved in a workspace, with an optional filter on the template name.
+     * <p>Returns a paginated list of edit template summaries. Use <code>GET /edit_templates/{id}</code> to retrieve a specific template in full, including its <code>config</code> and <code>schemaConfig</code>.</p>
+     */
+    public ExtendClientBaseHttpResponse<EditTemplatesListResponse> list(
+            EditTemplatesListRequest request, RequestOptions requestOptions) {
+        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("edit_templates");
+        if (request.getNameContains().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "nameContains", request.getNameContains().get(), false);
+        }
+        if (request.getSortBy().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "sortBy", request.getSortBy().get(), false);
+        }
+        if (request.getSortDir().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "sortDir", request.getSortDir().get(), false);
+        }
+        if (request.getNextPageToken().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "nextPageToken", request.getNextPageToken().get(), false);
+        }
+        if (request.getMaxPageSize().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "maxPageSize", request.getMaxPageSize().get(), false);
+        }
+        if (requestOptions != null) {
+            requestOptions.getQueryParameters().forEach((_key, _value) -> {
+                httpUrl.addQueryParameter(_key, _value);
+            });
+        }
+        Request.Builder _requestBuilder = new Request.Builder()
+                .url(httpUrl.build())
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Accept", "application/json");
+        if (request.getExtendWorkspaceId().isPresent()) {
+            _requestBuilder.addHeader(
+                    "x-extend-workspace-id", request.getExtendWorkspaceId().get());
+        }
+        Request okhttpRequest = _requestBuilder.build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            if (response.isSuccessful()) {
+                return new ExtendClientBaseHttpResponse<>(
+                        ObjectMappers.JSON_MAPPER.readValue(responseBodyString, EditTemplatesListResponse.class),
+                        response);
+            }
+            try {
+                switch (response.code()) {
+                    case 400:
+                        throw new BadRequestError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 401:
+                        throw new UnauthorizedError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 402:
+                        throw new PaymentRequiredError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 403:
+                        throw new ForbiddenError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 404:
+                        throw new NotFoundError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 422:
+                        throw new UnprocessableEntityError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, ApiError.class), response);
+                    case 429:
+                        throw new TooManyRequestsError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                    case 500:
+                        throw new InternalServerError(
+                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
+                }
+            } catch (JsonProcessingException ignored) {
+                // unable to map error response, throwing generic error
+            }
+            Object errorBody = ObjectMappers.parseErrorBody(responseBodyString);
+            throw new ExtendClientApiException(
+                    "Error with status code " + response.code(), response.code(), errorBody, response);
+        } catch (IOException e) {
+            throw new ExtendClientException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
      * Retrieve a saved edit template by ID.
-     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
+     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. To run an edit directly from a template, pass its ID as the top-level <code>templateId</code> field (in place of <code>file</code>) to <code>POST /edit</code> or <code>POST /edit_runs</code> — the template's file and <code>config</code> are used automatically, and any <code>config</code> values also set on the request take precedence over the template's. Reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
      */
     public ExtendClientBaseHttpResponse<EditTemplate> retrieve(String id) {
         return retrieve(id, EditTemplatesRetrieveRequest.builder().build());
@@ -46,7 +167,7 @@ public class RawEditTemplatesClient {
 
     /**
      * Retrieve a saved edit template by ID.
-     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
+     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. To run an edit directly from a template, pass its ID as the top-level <code>templateId</code> field (in place of <code>file</code>) to <code>POST /edit</code> or <code>POST /edit_runs</code> — the template's file and <code>config</code> are used automatically, and any <code>config</code> values also set on the request take precedence over the template's. Reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
      */
     public ExtendClientBaseHttpResponse<EditTemplate> retrieve(String id, RequestOptions requestOptions) {
         return retrieve(id, EditTemplatesRetrieveRequest.builder().build(), requestOptions);
@@ -54,7 +175,7 @@ public class RawEditTemplatesClient {
 
     /**
      * Retrieve a saved edit template by ID.
-     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
+     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. To run an edit directly from a template, pass its ID as the top-level <code>templateId</code> field (in place of <code>file</code>) to <code>POST /edit</code> or <code>POST /edit_runs</code> — the template's file and <code>config</code> are used automatically, and any <code>config</code> values also set on the request take precedence over the template's. Reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
      */
     public ExtendClientBaseHttpResponse<EditTemplate> retrieve(String id, EditTemplatesRetrieveRequest request) {
         return retrieve(id, request, null);
@@ -62,7 +183,7 @@ public class RawEditTemplatesClient {
 
     /**
      * Retrieve a saved edit template by ID.
-     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
+     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. To run an edit directly from a template, pass its ID as the top-level <code>templateId</code> field (in place of <code>file</code>) to <code>POST /edit</code> or <code>POST /edit_runs</code> — the template's file and <code>config</code> are used automatically, and any <code>config</code> values also set on the request take precedence over the template's. Reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
      */
     public ExtendClientBaseHttpResponse<EditTemplate> retrieve(
             String id, EditTemplatesRetrieveRequest request, RequestOptions requestOptions) {

@@ -23,7 +23,11 @@ import java.util.Optional;
 public final class EditTextOptions {
     private final Optional<Double> fontSize;
 
-    private final Optional<List<Double>> fontColor;
+    private final Optional<List<Integer>> color;
+
+    private final Optional<Double> opacity;
+
+    private final Optional<List<Integer>> fontColor;
 
     private final Optional<String> font;
 
@@ -37,13 +41,17 @@ public final class EditTextOptions {
 
     private EditTextOptions(
             Optional<Double> fontSize,
-            Optional<List<Double>> fontColor,
+            Optional<List<Integer>> color,
+            Optional<Double> opacity,
+            Optional<List<Integer>> fontColor,
             Optional<String> font,
             Optional<Boolean> combing,
             Optional<Integer> maxLength,
             Optional<Boolean> multiLine,
             Map<String, Object> additionalProperties) {
         this.fontSize = fontSize;
+        this.color = color;
+        this.opacity = opacity;
         this.fontColor = fontColor;
         this.font = font;
         this.combing = combing;
@@ -61,10 +69,26 @@ public final class EditTextOptions {
     }
 
     /**
-     * @return RGB color values (0-255) for text color
+     * @return RGB color values from 0 to 255 for text color.
+     */
+    @JsonProperty("color")
+    public Optional<List<Integer>> getColor() {
+        return color;
+    }
+
+    /**
+     * @return Text opacity from 0 to 1. Defaults to 1.
+     */
+    @JsonProperty("opacity")
+    public Optional<Double> getOpacity() {
+        return opacity;
+    }
+
+    /**
+     * @return Deprecated alias for <code>color</code>. RGB color values from 0 to 255.
      */
     @JsonProperty("fontColor")
-    public Optional<List<Double>> getFontColor() {
+    public Optional<List<Integer>> getFontColor() {
         return fontColor;
     }
 
@@ -113,6 +137,8 @@ public final class EditTextOptions {
 
     private boolean equalTo(EditTextOptions other) {
         return fontSize.equals(other.fontSize)
+                && color.equals(other.color)
+                && opacity.equals(other.opacity)
                 && fontColor.equals(other.fontColor)
                 && font.equals(other.font)
                 && combing.equals(other.combing)
@@ -122,7 +148,15 @@ public final class EditTextOptions {
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.fontSize, this.fontColor, this.font, this.combing, this.maxLength, this.multiLine);
+        return Objects.hash(
+                this.fontSize,
+                this.color,
+                this.opacity,
+                this.fontColor,
+                this.font,
+                this.combing,
+                this.maxLength,
+                this.multiLine);
     }
 
     @java.lang.Override
@@ -138,7 +172,11 @@ public final class EditTextOptions {
     public static final class Builder {
         private Optional<Double> fontSize = Optional.empty();
 
-        private Optional<List<Double>> fontColor = Optional.empty();
+        private Optional<List<Integer>> color = Optional.empty();
+
+        private Optional<Double> opacity = Optional.empty();
+
+        private Optional<List<Integer>> fontColor = Optional.empty();
 
         private Optional<String> font = Optional.empty();
 
@@ -155,6 +193,8 @@ public final class EditTextOptions {
 
         public Builder from(EditTextOptions other) {
             fontSize(other.getFontSize());
+            color(other.getColor());
+            opacity(other.getOpacity());
             fontColor(other.getFontColor());
             font(other.getFont());
             combing(other.getCombing());
@@ -178,15 +218,43 @@ public final class EditTextOptions {
         }
 
         /**
-         * <p>RGB color values (0-255) for text color</p>
+         * <p>RGB color values from 0 to 255 for text color.</p>
+         */
+        @JsonSetter(value = "color", nulls = Nulls.SKIP)
+        public Builder color(Optional<List<Integer>> color) {
+            this.color = color;
+            return this;
+        }
+
+        public Builder color(List<Integer> color) {
+            this.color = Optional.ofNullable(color);
+            return this;
+        }
+
+        /**
+         * <p>Text opacity from 0 to 1. Defaults to 1.</p>
+         */
+        @JsonSetter(value = "opacity", nulls = Nulls.SKIP)
+        public Builder opacity(Optional<Double> opacity) {
+            this.opacity = opacity;
+            return this;
+        }
+
+        public Builder opacity(Double opacity) {
+            this.opacity = Optional.ofNullable(opacity);
+            return this;
+        }
+
+        /**
+         * <p>Deprecated alias for <code>color</code>. RGB color values from 0 to 255.</p>
          */
         @JsonSetter(value = "fontColor", nulls = Nulls.SKIP)
-        public Builder fontColor(Optional<List<Double>> fontColor) {
+        public Builder fontColor(Optional<List<Integer>> fontColor) {
             this.fontColor = fontColor;
             return this;
         }
 
-        public Builder fontColor(List<Double> fontColor) {
+        public Builder fontColor(List<Integer> fontColor) {
             this.fontColor = Optional.ofNullable(fontColor);
             return this;
         }
@@ -248,7 +316,8 @@ public final class EditTextOptions {
         }
 
         public EditTextOptions build() {
-            return new EditTextOptions(fontSize, fontColor, font, combing, maxLength, multiLine, additionalProperties);
+            return new EditTextOptions(
+                    fontSize, color, opacity, fontColor, font, combing, maxLength, multiLine, additionalProperties);
         }
     }
 }

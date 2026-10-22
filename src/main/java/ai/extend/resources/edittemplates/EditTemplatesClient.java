@@ -5,7 +5,9 @@ package ai.extend.resources.edittemplates;
 
 import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
+import ai.extend.resources.edittemplates.requests.EditTemplatesListRequest;
 import ai.extend.resources.edittemplates.requests.EditTemplatesRetrieveRequest;
+import ai.extend.resources.edittemplates.types.EditTemplatesListResponse;
 import ai.extend.types.EditTemplate;
 
 public class EditTemplatesClient {
@@ -26,8 +28,40 @@ public class EditTemplatesClient {
     }
 
     /**
+     * List the edit templates saved in a workspace, with an optional filter on the template name.
+     * <p>Returns a paginated list of edit template summaries. Use <code>GET /edit_templates/{id}</code> to retrieve a specific template in full, including its <code>config</code> and <code>schemaConfig</code>.</p>
+     */
+    public EditTemplatesListResponse list() {
+        return this.rawClient.list().body();
+    }
+
+    /**
+     * List the edit templates saved in a workspace, with an optional filter on the template name.
+     * <p>Returns a paginated list of edit template summaries. Use <code>GET /edit_templates/{id}</code> to retrieve a specific template in full, including its <code>config</code> and <code>schemaConfig</code>.</p>
+     */
+    public EditTemplatesListResponse list(RequestOptions requestOptions) {
+        return this.rawClient.list(requestOptions).body();
+    }
+
+    /**
+     * List the edit templates saved in a workspace, with an optional filter on the template name.
+     * <p>Returns a paginated list of edit template summaries. Use <code>GET /edit_templates/{id}</code> to retrieve a specific template in full, including its <code>config</code> and <code>schemaConfig</code>.</p>
+     */
+    public EditTemplatesListResponse list(EditTemplatesListRequest request) {
+        return this.rawClient.list(request).body();
+    }
+
+    /**
+     * List the edit templates saved in a workspace, with an optional filter on the template name.
+     * <p>Returns a paginated list of edit template summaries. Use <code>GET /edit_templates/{id}</code> to retrieve a specific template in full, including its <code>config</code> and <code>schemaConfig</code>.</p>
+     */
+    public EditTemplatesListResponse list(EditTemplatesListRequest request, RequestOptions requestOptions) {
+        return this.rawClient.list(request, requestOptions).body();
+    }
+
+    /**
      * Retrieve a saved edit template by ID.
-     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
+     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. To run an edit directly from a template, pass its ID as the top-level <code>templateId</code> field (in place of <code>file</code>) to <code>POST /edit</code> or <code>POST /edit_runs</code> — the template's file and <code>config</code> are used automatically, and any <code>config</code> values also set on the request take precedence over the template's. Reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
      */
     public EditTemplate retrieve(String id) {
         return this.rawClient.retrieve(id).body();
@@ -35,7 +69,7 @@ public class EditTemplatesClient {
 
     /**
      * Retrieve a saved edit template by ID.
-     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
+     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. To run an edit directly from a template, pass its ID as the top-level <code>templateId</code> field (in place of <code>file</code>) to <code>POST /edit</code> or <code>POST /edit_runs</code> — the template's file and <code>config</code> are used automatically, and any <code>config</code> values also set on the request take precedence over the template's. Reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
      */
     public EditTemplate retrieve(String id, RequestOptions requestOptions) {
         return this.rawClient.retrieve(id, requestOptions).body();
@@ -43,7 +77,7 @@ public class EditTemplatesClient {
 
     /**
      * Retrieve a saved edit template by ID.
-     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
+     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. To run an edit directly from a template, pass its ID as the top-level <code>templateId</code> field (in place of <code>file</code>) to <code>POST /edit</code> or <code>POST /edit_runs</code> — the template's file and <code>config</code> are used automatically, and any <code>config</code> values also set on the request take precedence over the template's. Reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
      */
     public EditTemplate retrieve(String id, EditTemplatesRetrieveRequest request) {
         return this.rawClient.retrieve(id, request).body();
@@ -51,7 +85,7 @@ public class EditTemplatesClient {
 
     /**
      * Retrieve a saved edit template by ID.
-     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. You can reuse the returned <code>config</code> with <code>POST /edit</code> or <code>POST /edit_runs</code>, and reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
+     * <p>Use this endpoint to inspect the source file, default edit configuration, and optional schema generation configuration saved on an edit template. To run an edit directly from a template, pass its ID as the top-level <code>templateId</code> field (in place of <code>file</code>) to <code>POST /edit</code> or <code>POST /edit_runs</code> — the template's file and <code>config</code> are used automatically, and any <code>config</code> values also set on the request take precedence over the template's. Reuse <code>schemaConfig</code> with <code>POST /detect_form</code> or <code>POST /form_detection_runs</code>.</p>
      */
     public EditTemplate retrieve(String id, EditTemplatesRetrieveRequest request, RequestOptions requestOptions) {
         return this.rawClient.retrieve(id, request, requestOptions).body();

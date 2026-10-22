@@ -37,7 +37,7 @@ public final class CitationPage {
     }
 
     /**
-     * @return Page number where the citation was found. Starts at 1.
+     * @return Page number where the citation was found. Starts at 1. For Excel, the 1-based worksheet index; for CSV, always 1.
      */
     @JsonProperty("number")
     public double getNumber() {
@@ -91,7 +91,7 @@ public final class CitationPage {
 
     public interface NumberStage {
         /**
-         * <p>Page number where the citation was found. Starts at 1.</p>
+         * <p>Page number where the citation was found. Starts at 1. For Excel, the 1-based worksheet index; for CSV, always 1.</p>
          */
         _FinalStage number(double number);
 
@@ -138,8 +138,8 @@ public final class CitationPage {
         }
 
         /**
-         * <p>Page number where the citation was found. Starts at 1.</p>
-         * <p>Page number where the citation was found. Starts at 1.</p>
+         * <p>Page number where the citation was found. Starts at 1. For Excel, the 1-based worksheet index; for CSV, always 1.</p>
+         * <p>Page number where the citation was found. Starts at 1. For Excel, the 1-based worksheet index; for CSV, always 1.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override

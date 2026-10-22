@@ -3,9 +3,12 @@
  */
 package ai.extend.types;
 
+import ai.extend.core.Nullable;
+import ai.extend.core.NullableNonemptyFilter;
 import ai.extend.core.ObjectMappers;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,6 +34,8 @@ public final class ParseRunOutputOcrWordsItem {
 
     private final Optional<String> blockId;
 
+    private final Optional<Double> rotation;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseRunOutputOcrWordsItem(
@@ -39,12 +44,14 @@ public final class ParseRunOutputOcrWordsItem {
             double confidence,
             double pageNumber,
             Optional<String> blockId,
+            Optional<Double> rotation,
             Map<String, Object> additionalProperties) {
         this.content = content;
         this.boundingBox = boundingBox;
         this.confidence = confidence;
         this.pageNumber = pageNumber;
         this.blockId = blockId;
+        this.rotation = rotation;
         this.additionalProperties = additionalProperties;
     }
 
@@ -88,6 +95,25 @@ public final class ParseRunOutputOcrWordsItem {
         return blockId;
     }
 
+    /**
+     * @return Clockwise degrees the word is rotated from upright, as a whole number in <code>[0, 360)</code>.
+     * <p><code>null</code> when the orientation could not be calculated for the word.</p>
+     * <p><strong>Availability:</strong> Present on parse runs created on or after October 6, 2026.</p>
+     */
+    @JsonIgnore
+    public Optional<Double> getRotation() {
+        if (rotation == null) {
+            return Optional.empty();
+        }
+        return rotation;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("rotation")
+    private Optional<Double> _getRotation() {
+        return rotation;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -104,12 +130,14 @@ public final class ParseRunOutputOcrWordsItem {
                 && boundingBox.equals(other.boundingBox)
                 && confidence == other.confidence
                 && pageNumber == other.pageNumber
-                && blockId.equals(other.blockId);
+                && blockId.equals(other.blockId)
+                && rotation.equals(other.rotation);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.content, this.boundingBox, this.confidence, this.pageNumber, this.blockId);
+        return Objects.hash(
+                this.content, this.boundingBox, this.confidence, this.pageNumber, this.blockId, this.rotation);
     }
 
     @java.lang.Override
@@ -160,6 +188,17 @@ public final class ParseRunOutputOcrWordsItem {
         _FinalStage blockId(Optional<String> blockId);
 
         _FinalStage blockId(String blockId);
+
+        /**
+         * <p>Clockwise degrees the word is rotated from upright, as a whole number in <code>[0, 360)</code>.</p>
+         * <p><code>null</code> when the orientation could not be calculated for the word.</p>
+         * <p><strong>Availability:</strong> Present on parse runs created on or after October 6, 2026.</p>
+         */
+        _FinalStage rotation(Optional<Double> rotation);
+
+        _FinalStage rotation(Double rotation);
+
+        _FinalStage rotation(Nullable<Double> rotation);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -172,6 +211,8 @@ public final class ParseRunOutputOcrWordsItem {
         private double confidence;
 
         private double pageNumber;
+
+        private Optional<Double> rotation = Optional.empty();
 
         private Optional<String> blockId = Optional.empty();
 
@@ -187,6 +228,7 @@ public final class ParseRunOutputOcrWordsItem {
             confidence(other.getConfidence());
             pageNumber(other.getPageNumber());
             blockId(other.getBlockId());
+            rotation(other.getRotation());
             return this;
         }
 
@@ -239,6 +281,48 @@ public final class ParseRunOutputOcrWordsItem {
         }
 
         /**
+         * <p>Clockwise degrees the word is rotated from upright, as a whole number in <code>[0, 360)</code>.</p>
+         * <p><code>null</code> when the orientation could not be calculated for the word.</p>
+         * <p><strong>Availability:</strong> Present on parse runs created on or after October 6, 2026.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage rotation(Nullable<Double> rotation) {
+            if (rotation.isNull()) {
+                this.rotation = null;
+            } else if (rotation.isEmpty()) {
+                this.rotation = Optional.empty();
+            } else {
+                this.rotation = Optional.of(rotation.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>Clockwise degrees the word is rotated from upright, as a whole number in <code>[0, 360)</code>.</p>
+         * <p><code>null</code> when the orientation could not be calculated for the word.</p>
+         * <p><strong>Availability:</strong> Present on parse runs created on or after October 6, 2026.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage rotation(Double rotation) {
+            this.rotation = Optional.ofNullable(rotation);
+            return this;
+        }
+
+        /**
+         * <p>Clockwise degrees the word is rotated from upright, as a whole number in <code>[0, 360)</code>.</p>
+         * <p><code>null</code> when the orientation could not be calculated for the word.</p>
+         * <p><strong>Availability:</strong> Present on parse runs created on or after October 6, 2026.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "rotation", nulls = Nulls.SKIP)
+        public _FinalStage rotation(Optional<Double> rotation) {
+            this.rotation = rotation;
+            return this;
+        }
+
+        /**
          * <p>The <code>id</code> of the block (see the <code>Block</code> schema) this word was assigned to, based on bounding-box overlap. Omitted when the word doesn't fall within any block's bounding box.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
@@ -261,7 +345,7 @@ public final class ParseRunOutputOcrWordsItem {
         @java.lang.Override
         public ParseRunOutputOcrWordsItem build() {
             return new ParseRunOutputOcrWordsItem(
-                    content, boundingBox, confidence, pageNumber, blockId, additionalProperties);
+                    content, boundingBox, confidence, pageNumber, blockId, rotation, additionalProperties);
         }
     }
 }

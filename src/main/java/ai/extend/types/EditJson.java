@@ -37,6 +37,8 @@ public final class EditJson {
 
     private final Optional<Double> extendEditColumnWidth;
 
+    private final Optional<EditSourceAcroForm> extendEditSourceAcroform;
+
     private final Optional<Object> extendEditValue;
 
     private final Optional<EditJsonExtendEditImage> extendEditImage;
@@ -48,6 +50,8 @@ public final class EditJson {
     private final Optional<Map<String, EditJson>> properties;
 
     private final Optional<List<String>> enum_;
+
+    private final Optional<List<String>> extendDescriptions;
 
     private final Optional<Integer> maxItems;
 
@@ -66,12 +70,14 @@ public final class EditJson {
             Optional<Integer> extendEditPageIndex,
             Optional<EditTextOptions> extendEditTextEditOptions,
             Optional<Double> extendEditColumnWidth,
+            Optional<EditSourceAcroForm> extendEditSourceAcroform,
             Optional<Object> extendEditValue,
             Optional<EditJsonExtendEditImage> extendEditImage,
             Optional<List<Double>> extendEditRowHeights,
             Optional<EditObjectJson> items,
             Optional<Map<String, EditJson>> properties,
             Optional<List<String>> enum_,
+            Optional<List<String>> extendDescriptions,
             Optional<Integer> maxItems,
             Optional<List<String>> required,
             Optional<Boolean> additionalProperties,
@@ -84,12 +90,14 @@ public final class EditJson {
         this.extendEditPageIndex = extendEditPageIndex;
         this.extendEditTextEditOptions = extendEditTextEditOptions;
         this.extendEditColumnWidth = extendEditColumnWidth;
+        this.extendEditSourceAcroform = extendEditSourceAcroform;
         this.extendEditValue = extendEditValue;
         this.extendEditImage = extendEditImage;
         this.extendEditRowHeights = extendEditRowHeights;
         this.items = items;
         this.properties = properties;
         this.enum_ = enum_;
+        this.extendDescriptions = extendDescriptions;
         this.maxItems = maxItems;
         this.required = required;
         this.additionalProperties = additionalProperties;
@@ -168,6 +176,11 @@ public final class EditJson {
         return extendEditColumnWidth;
     }
 
+    @JsonProperty("extend_edit:source_acroform")
+    public Optional<EditSourceAcroForm> getExtendEditSourceAcroform() {
+        return extendEditSourceAcroform;
+    }
+
     /**
      * @return The value to fill into this field. Can be any type. This will force the value at this field to be filled with this value. If a value is not provided, we will attempt to generate or infer one based on the instructions.
      */
@@ -217,6 +230,14 @@ public final class EditJson {
     }
 
     /**
+     * @return Human-readable labels for the values in <code>enum</code>, in the same order. Include this property when using a schema returned by Detect Form.
+     */
+    @JsonProperty("extend:descriptions")
+    public Optional<List<String>> getExtendDescriptions() {
+        return extendDescriptions;
+    }
+
+    /**
      * @return Maximum number of rows for array/table fields
      */
     @JsonProperty("maxItems")
@@ -260,12 +281,14 @@ public final class EditJson {
                 && extendEditPageIndex.equals(other.extendEditPageIndex)
                 && extendEditTextEditOptions.equals(other.extendEditTextEditOptions)
                 && extendEditColumnWidth.equals(other.extendEditColumnWidth)
+                && extendEditSourceAcroform.equals(other.extendEditSourceAcroform)
                 && extendEditValue.equals(other.extendEditValue)
                 && extendEditImage.equals(other.extendEditImage)
                 && extendEditRowHeights.equals(other.extendEditRowHeights)
                 && items.equals(other.items)
                 && properties.equals(other.properties)
                 && enum_.equals(other.enum_)
+                && extendDescriptions.equals(other.extendDescriptions)
                 && maxItems.equals(other.maxItems)
                 && required.equals(other.required)
                 && additionalProperties.equals(other.additionalProperties);
@@ -282,12 +305,14 @@ public final class EditJson {
                 this.extendEditPageIndex,
                 this.extendEditTextEditOptions,
                 this.extendEditColumnWidth,
+                this.extendEditSourceAcroform,
                 this.extendEditValue,
                 this.extendEditImage,
                 this.extendEditRowHeights,
                 this.items,
                 this.properties,
                 this.enum_,
+                this.extendDescriptions,
                 this.maxItems,
                 this.required,
                 this.additionalProperties);
@@ -320,6 +345,8 @@ public final class EditJson {
 
         private Optional<Double> extendEditColumnWidth = Optional.empty();
 
+        private Optional<EditSourceAcroForm> extendEditSourceAcroform = Optional.empty();
+
         private Optional<Object> extendEditValue = Optional.empty();
 
         private Optional<EditJsonExtendEditImage> extendEditImage = Optional.empty();
@@ -331,6 +358,8 @@ public final class EditJson {
         private Optional<Map<String, EditJson>> properties = Optional.empty();
 
         private Optional<List<String>> enum_ = Optional.empty();
+
+        private Optional<List<String>> extendDescriptions = Optional.empty();
 
         private Optional<Integer> maxItems = Optional.empty();
 
@@ -352,12 +381,14 @@ public final class EditJson {
             extendEditPageIndex(other.getExtendEditPageIndex());
             extendEditTextEditOptions(other.getExtendEditTextEditOptions());
             extendEditColumnWidth(other.getExtendEditColumnWidth());
+            extendEditSourceAcroform(other.getExtendEditSourceAcroform());
             extendEditValue(other.getExtendEditValue());
             extendEditImage(other.getExtendEditImage());
             extendEditRowHeights(other.getExtendEditRowHeights());
             items(other.getItems());
             properties(other.getProperties());
             enum_(other.getEnum());
+            extendDescriptions(other.getExtendDescriptions());
             maxItems(other.getMaxItems());
             required(other.getRequired());
             additionalProperties(other.getAdditionalProperties());
@@ -484,6 +515,17 @@ public final class EditJson {
             return this;
         }
 
+        @JsonSetter(value = "extend_edit:source_acroform", nulls = Nulls.SKIP)
+        public Builder extendEditSourceAcroform(Optional<EditSourceAcroForm> extendEditSourceAcroform) {
+            this.extendEditSourceAcroform = extendEditSourceAcroform;
+            return this;
+        }
+
+        public Builder extendEditSourceAcroform(EditSourceAcroForm extendEditSourceAcroform) {
+            this.extendEditSourceAcroform = Optional.ofNullable(extendEditSourceAcroform);
+            return this;
+        }
+
         /**
          * <p>The value to fill into this field. Can be any type. This will force the value at this field to be filled with this value. If a value is not provided, we will attempt to generate or infer one based on the instructions.</p>
          */
@@ -569,6 +611,20 @@ public final class EditJson {
         }
 
         /**
+         * <p>Human-readable labels for the values in <code>enum</code>, in the same order. Include this property when using a schema returned by Detect Form.</p>
+         */
+        @JsonSetter(value = "extend:descriptions", nulls = Nulls.SKIP)
+        public Builder extendDescriptions(Optional<List<String>> extendDescriptions) {
+            this.extendDescriptions = extendDescriptions;
+            return this;
+        }
+
+        public Builder extendDescriptions(List<String> extendDescriptions) {
+            this.extendDescriptions = Optional.ofNullable(extendDescriptions);
+            return this;
+        }
+
+        /**
          * <p>Maximum number of rows for array/table fields</p>
          */
         @JsonSetter(value = "maxItems", nulls = Nulls.SKIP)
@@ -620,12 +676,14 @@ public final class EditJson {
                     extendEditPageIndex,
                     extendEditTextEditOptions,
                     extendEditColumnWidth,
+                    extendEditSourceAcroform,
                     extendEditValue,
                     extendEditImage,
                     extendEditRowHeights,
                     items,
                     properties,
                     enum_,
+                    extendDescriptions,
                     maxItems,
                     required,
                     additionalProperties,

@@ -23,11 +23,16 @@ import java.util.Optional;
 public final class ParseRunOutputOcr {
     private final Optional<List<ParseRunOutputOcrWordsItem>> words;
 
+    private final Optional<List<ParseRunOutputOcrLinesItem>> lines;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseRunOutputOcr(
-            Optional<List<ParseRunOutputOcrWordsItem>> words, Map<String, Object> additionalProperties) {
+            Optional<List<ParseRunOutputOcrWordsItem>> words,
+            Optional<List<ParseRunOutputOcrLinesItem>> lines,
+            Map<String, Object> additionalProperties) {
         this.words = words;
+        this.lines = lines;
         this.additionalProperties = additionalProperties;
     }
 
@@ -37,6 +42,14 @@ public final class ParseRunOutputOcr {
     @JsonProperty("words")
     public Optional<List<ParseRunOutputOcrWordsItem>> getWords() {
         return words;
+    }
+
+    /**
+     * @return Text lines detected by OCR. Only included when <code>config.advancedOptions.returnOcr.lines</code> is true and line data is available; enabling words does not enable lines.
+     */
+    @JsonProperty("lines")
+    public Optional<List<ParseRunOutputOcrLinesItem>> getLines() {
+        return lines;
     }
 
     @java.lang.Override
@@ -51,12 +64,12 @@ public final class ParseRunOutputOcr {
     }
 
     private boolean equalTo(ParseRunOutputOcr other) {
-        return words.equals(other.words);
+        return words.equals(other.words) && lines.equals(other.lines);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.words);
+        return Objects.hash(this.words, this.lines);
     }
 
     @java.lang.Override
@@ -72,6 +85,8 @@ public final class ParseRunOutputOcr {
     public static final class Builder {
         private Optional<List<ParseRunOutputOcrWordsItem>> words = Optional.empty();
 
+        private Optional<List<ParseRunOutputOcrLinesItem>> lines = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -79,6 +94,7 @@ public final class ParseRunOutputOcr {
 
         public Builder from(ParseRunOutputOcr other) {
             words(other.getWords());
+            lines(other.getLines());
             return this;
         }
 
@@ -96,8 +112,22 @@ public final class ParseRunOutputOcr {
             return this;
         }
 
+        /**
+         * <p>Text lines detected by OCR. Only included when <code>config.advancedOptions.returnOcr.lines</code> is true and line data is available; enabling words does not enable lines.</p>
+         */
+        @JsonSetter(value = "lines", nulls = Nulls.SKIP)
+        public Builder lines(Optional<List<ParseRunOutputOcrLinesItem>> lines) {
+            this.lines = lines;
+            return this;
+        }
+
+        public Builder lines(List<ParseRunOutputOcrLinesItem> lines) {
+            this.lines = Optional.ofNullable(lines);
+            return this;
+        }
+
         public ParseRunOutputOcr build() {
-            return new ParseRunOutputOcr(words, additionalProperties);
+            return new ParseRunOutputOcr(words, lines, additionalProperties);
         }
     }
 }

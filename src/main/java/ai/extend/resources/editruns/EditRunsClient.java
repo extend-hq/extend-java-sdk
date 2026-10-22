@@ -7,8 +7,10 @@ import ai.extend.core.ClientOptions;
 import ai.extend.core.RequestOptions;
 import ai.extend.resources.editruns.requests.EditRunsCreateRequest;
 import ai.extend.resources.editruns.requests.EditRunsDeleteRequest;
+import ai.extend.resources.editruns.requests.EditRunsListRequest;
 import ai.extend.resources.editruns.requests.EditRunsRetrieveRequest;
 import ai.extend.resources.editruns.types.EditRunsDeleteResponse;
+import ai.extend.resources.editruns.types.EditRunsListResponse;
 import ai.extend.types.EditRun;
 
 public class EditRunsClient {
@@ -26,6 +28,56 @@ public class EditRunsClient {
      */
     public RawEditRunsClient withRawResponse() {
         return this.rawClient;
+    }
+
+    /**
+     * List edit runs, with optional filters for status, source, and file name.
+     * <p>Returns a paginated list of edit runs. Use <code>GET /edit_runs/{id}</code> to retrieve the full result, including <code>config</code> and <code>output</code>, for a specific run.</p>
+     */
+    public EditRunsListResponse list() {
+        return this.rawClient.list().body();
+    }
+
+    /**
+     * List edit runs, with optional filters for status, source, and file name.
+     * <p>Returns a paginated list of edit runs. Use <code>GET /edit_runs/{id}</code> to retrieve the full result, including <code>config</code> and <code>output</code>, for a specific run.</p>
+     */
+    public EditRunsListResponse list(RequestOptions requestOptions) {
+        return this.rawClient.list(requestOptions).body();
+    }
+
+    /**
+     * List edit runs, with optional filters for status, source, and file name.
+     * <p>Returns a paginated list of edit runs. Use <code>GET /edit_runs/{id}</code> to retrieve the full result, including <code>config</code> and <code>output</code>, for a specific run.</p>
+     */
+    public EditRunsListResponse list(EditRunsListRequest request) {
+        return this.rawClient.list(request).body();
+    }
+
+    /**
+     * List edit runs, with optional filters for status, source, and file name.
+     * <p>Returns a paginated list of edit runs. Use <code>GET /edit_runs/{id}</code> to retrieve the full result, including <code>config</code> and <code>output</code>, for a specific run.</p>
+     */
+    public EditRunsListResponse list(EditRunsListRequest request, RequestOptions requestOptions) {
+        return this.rawClient.list(request, requestOptions).body();
+    }
+
+    /**
+     * Edit and manipulate PDF documents by detecting and filling form fields.
+     * <p>The Edit Runs endpoint allows you to convert and edit documents and get an edit run ID that can be used to check status and retrieve results with the Get Edit Run endpoint.</p>
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Edit Run endpoint for results.</p>
+     */
+    public EditRun create() {
+        return this.rawClient.create().body();
+    }
+
+    /**
+     * Edit and manipulate PDF documents by detecting and filling form fields.
+     * <p>The Edit Runs endpoint allows you to convert and edit documents and get an edit run ID that can be used to check status and retrieve results with the Get Edit Run endpoint.</p>
+     * <p>The request returns immediately with a <code>PROCESSING</code> status. Use webhooks or poll the Get Edit Run endpoint for results.</p>
+     */
+    public EditRun create(RequestOptions requestOptions) {
+        return this.rawClient.create(requestOptions).body();
     }
 
     /**

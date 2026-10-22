@@ -70,6 +70,14 @@ public final class WorkflowStepDefinition {
         return new WorkflowStepDefinition(new RuleValidationValue(value));
     }
 
+    public static WorkflowStepDefinition validation(ValidationStepDefinition value) {
+        return new WorkflowStepDefinition(new ValidationValue(value));
+    }
+
+    public static WorkflowStepDefinition router(RouterStepDefinition value) {
+        return new WorkflowStepDefinition(new RouterValue(value));
+    }
+
     public static WorkflowStepDefinition humanReview(HumanReviewStepDefinition value) {
         return new WorkflowStepDefinition(new HumanReviewValue(value));
     }
@@ -124,6 +132,14 @@ public final class WorkflowStepDefinition {
 
     public boolean isRuleValidation() {
         return value instanceof RuleValidationValue;
+    }
+
+    public boolean isValidation() {
+        return value instanceof ValidationValue;
+    }
+
+    public boolean isRouter() {
+        return value instanceof RouterValue;
     }
 
     public boolean isHumanReview() {
@@ -219,6 +235,20 @@ public final class WorkflowStepDefinition {
         return Optional.empty();
     }
 
+    public Optional<ValidationStepDefinition> getValidation() {
+        if (isValidation()) {
+            return Optional.of(((ValidationValue) value).value);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<RouterStepDefinition> getRouter() {
+        if (isRouter()) {
+            return Optional.of(((RouterValue) value).value);
+        }
+        return Optional.empty();
+    }
+
     public Optional<HumanReviewStepDefinition> getHumanReview() {
         if (isHumanReview()) {
             return Optional.of(((HumanReviewValue) value).value);
@@ -275,6 +305,10 @@ public final class WorkflowStepDefinition {
 
         T visitRuleValidation(RuleValidationStepDefinition ruleValidation);
 
+        T visitValidation(ValidationStepDefinition validation);
+
+        T visitRouter(RouterStepDefinition router);
+
         T visitHumanReview(HumanReviewStepDefinition humanReview);
 
         T visitCollect(CollectStepDefinition collect);
@@ -297,6 +331,8 @@ public final class WorkflowStepDefinition {
         @JsonSubTypes.Type(ExternalDataValidationValue.class),
         @JsonSubTypes.Type(WebhookResponseValue.class),
         @JsonSubTypes.Type(RuleValidationValue.class),
+        @JsonSubTypes.Type(ValidationValue.class),
+        @JsonSubTypes.Type(RouterValue.class),
         @JsonSubTypes.Type(HumanReviewValue.class),
         @JsonSubTypes.Type(CollectValue.class),
         @JsonSubTypes.Type(FileConversionValue.class)
@@ -721,6 +757,84 @@ public final class WorkflowStepDefinition {
         }
 
         private boolean equalTo(RuleValidationValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WorkflowStepDefinition{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("VALIDATION")
+    @JsonIgnoreProperties("type")
+    private static final class ValidationValue implements Value {
+        @JsonUnwrapped
+        private ValidationStepDefinition value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private ValidationValue() {}
+
+        private ValidationValue(ValidationStepDefinition value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitValidation(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof ValidationValue && equalTo((ValidationValue) other);
+        }
+
+        private boolean equalTo(ValidationValue other) {
+            return value.equals(other.value);
+        }
+
+        @java.lang.Override
+        public int hashCode() {
+            return Objects.hash(this.value);
+        }
+
+        @java.lang.Override
+        public String toString() {
+            return "WorkflowStepDefinition{" + "value: " + value + "}";
+        }
+    }
+
+    @JsonTypeName("ROUTER")
+    @JsonIgnoreProperties("type")
+    private static final class RouterValue implements Value {
+        @JsonUnwrapped
+        private RouterStepDefinition value;
+
+        @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+        private RouterValue() {}
+
+        private RouterValue(RouterStepDefinition value) {
+            this.value = value;
+        }
+
+        @java.lang.Override
+        public <T> T visit(Visitor<T> visitor) {
+            return visitor.visitRouter(value);
+        }
+
+        @java.lang.Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            return other instanceof RouterValue && equalTo((RouterValue) other);
+        }
+
+        private boolean equalTo(RouterValue other) {
             return value.equals(other.value);
         }
 

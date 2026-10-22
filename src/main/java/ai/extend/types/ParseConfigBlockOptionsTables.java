@@ -76,7 +76,7 @@ public final class ParseConfigBlockOptionsTables {
     }
 
     /**
-     * @return Whether to include individual table cell blocks in the output. When enabled, each cell in a table will be represented as a separate block with its own bounding box and content and will be <code>children</code> of the table block.
+     * @return Whether to include individual table cell blocks in the output. When enabled, each cell in a table will be represented as a separate block with its own bounding box and content and will be <code>children</code> of the table block. Only supported on <code>parse_performance</code> engineVersion <code>1.0.1</code>.
      */
     @JsonProperty("cellBlocksEnabled")
     public Optional<Boolean> getCellBlocksEnabled() {
@@ -202,7 +202,7 @@ public final class ParseConfigBlockOptionsTables {
         }
 
         /**
-         * <p>Whether to include individual table cell blocks in the output. When enabled, each cell in a table will be represented as a separate block with its own bounding box and content and will be <code>children</code> of the table block.</p>
+         * <p>Whether to include individual table cell blocks in the output. When enabled, each cell in a table will be represented as a separate block with its own bounding box and content and will be <code>children</code> of the table block. Only supported on <code>parse_performance</code> engineVersion <code>1.0.1</code>.</p>
          */
         @JsonSetter(value = "cellBlocksEnabled", nulls = Nulls.SKIP)
         public Builder cellBlocksEnabled(Optional<Boolean> cellBlocksEnabled) {

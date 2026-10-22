@@ -83,6 +83,7 @@ public final class ParseConfig {
      * <ul>
      * <li><code>parse_performance</code>: Full-featured parsing engine with highest accuracy (default)</li>
      * <li><code>parse_light</code>: Lightweight parsing engine optimized for high-volume, cost-sensitive ingestion. Uses the new layout model with full layout support and the markdown target at lower cost and latency, but performs worse than <code>parse_performance</code> on lower-quality scans, harder handwriting, larger tables, non-Latin-based languages, and dense checkbox regions.</li>
+     * <li><code>parse_auto</code>: Adaptive parsing that classifies difficulty and routes work per page — simple pages are parsed with the parse_light model pipeline while complex pages get performance-level model treatment. Billed per page by complexity.</li>
      * </ul>
      */
     @JsonProperty("engine")
@@ -224,6 +225,7 @@ public final class ParseConfig {
          * <ul>
          * <li><code>parse_performance</code>: Full-featured parsing engine with highest accuracy (default)</li>
          * <li><code>parse_light</code>: Lightweight parsing engine optimized for high-volume, cost-sensitive ingestion. Uses the new layout model with full layout support and the markdown target at lower cost and latency, but performs worse than <code>parse_performance</code> on lower-quality scans, harder handwriting, larger tables, non-Latin-based languages, and dense checkbox regions.</li>
+         * <li><code>parse_auto</code>: Adaptive parsing that classifies difficulty and routes work per page — simple pages are parsed with the parse_light model pipeline while complex pages get performance-level model treatment. Billed per page by complexity.</li>
          * </ul>
          */
         @JsonSetter(value = "engine", nulls = Nulls.SKIP)

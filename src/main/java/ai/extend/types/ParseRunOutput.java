@@ -53,7 +53,7 @@ public final class ParseRunOutput {
     }
 
     /**
-     * @return Raw OCR data from the parsing process. Only included when <code>returnOcr</code> is configured in the parse config's advanced options.
+     * @return Raw OCR data from the parsing process. Words and lines are independently enabled with <code>returnOcr.words</code> and <code>returnOcr.lines</code>; either array may be omitted.
      */
     @JsonProperty("ocr")
     public Optional<ParseRunOutputOcr> getOcr() {
@@ -151,7 +151,7 @@ public final class ParseRunOutput {
         }
 
         /**
-         * <p>Raw OCR data from the parsing process. Only included when <code>returnOcr</code> is configured in the parse config's advanced options.</p>
+         * <p>Raw OCR data from the parsing process. Words and lines are independently enabled with <code>returnOcr.words</code> and <code>returnOcr.lines</code>; either array may be omitted.</p>
          */
         @JsonSetter(value = "ocr", nulls = Nulls.SKIP)
         public Builder ocr(Optional<ParseRunOutputOcr> ocr) {

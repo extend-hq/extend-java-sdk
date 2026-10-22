@@ -12,6 +12,7 @@ import ai.extend.requests.EditRequest;
 import ai.extend.requests.ExtractRequest;
 import ai.extend.requests.ParseRequest;
 import ai.extend.requests.SplitRequest;
+import ai.extend.requests.VerifyRequest;
 import ai.extend.resources.batchprocessorrun.BatchProcessorRunClient;
 import ai.extend.resources.batchruns.BatchRunsClient;
 import ai.extend.resources.classifiers.ClassifiersClient;
@@ -35,6 +36,7 @@ import ai.extend.resources.processorversion.ProcessorVersionClient;
 import ai.extend.resources.splitruns.SplitRunsClient;
 import ai.extend.resources.splitters.SplittersClient;
 import ai.extend.resources.splitterversions.SplitterVersionsClient;
+import ai.extend.resources.verifyruns.VerifyRunsClient;
 import ai.extend.resources.webhookendpoints.WebhookEndpointsClient;
 import ai.extend.resources.webhooksubscriptions.WebhookSubscriptionsClient;
 import ai.extend.resources.workflowruns.WorkflowRunsClient;
@@ -46,6 +48,7 @@ import ai.extend.types.ExtractRun;
 import ai.extend.types.FormDetectionRun;
 import ai.extend.types.ParseRun;
 import ai.extend.types.SplitRun;
+import ai.extend.types.VerifyRun;
 import java.util.function.Supplier;
 
 public class ExtendClientBase {
@@ -64,6 +67,8 @@ public class ExtendClientBase {
     protected final Supplier<EditSchemasClient> editSchemasClient;
 
     protected final Supplier<FormDetectionRunsClient> formDetectionRunsClient;
+
+    protected final Supplier<VerifyRunsClient> verifyRunsClient;
 
     protected final Supplier<ExtractRunsClient> extractRunsClient;
 
@@ -118,6 +123,7 @@ public class ExtendClientBase {
         this.editTemplatesClient = Suppliers.memoize(() -> new EditTemplatesClient(clientOptions));
         this.editSchemasClient = Suppliers.memoize(() -> new EditSchemasClient(clientOptions));
         this.formDetectionRunsClient = Suppliers.memoize(() -> new FormDetectionRunsClient(clientOptions));
+        this.verifyRunsClient = Suppliers.memoize(() -> new VerifyRunsClient(clientOptions));
         this.extractRunsClient = Suppliers.memoize(() -> new ExtractRunsClient(clientOptions));
         this.extractorsClient = Suppliers.memoize(() -> new ExtractorsClient(clientOptions));
         this.extractorVersionsClient = Suppliers.memoize(() -> new ExtractorVersionsClient(clientOptions));
@@ -173,6 +179,29 @@ public class ExtendClientBase {
      * Edit a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /edit_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
+     * <p>Pass <code>file</code> to edit a document directly, or <code>templateId</code> to run against a saved <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/edit/get-edit-template">edit template</a>. Exactly one of <code>file</code> or <code>templateId</code> must be provided.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/overview">Edit File guide</a>. See <a href="https://docs.extend.ai/2026-02-09/editing/error-handling">Editing Error Handling</a> for HTTP errors and run failure reasons.</p>
+     */
+    public EditRun edit() {
+        return this.rawClient.edit().body();
+    }
+
+    /**
+     * Edit a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
+     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /edit_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
+     * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
+     * <p>Pass <code>file</code> to edit a document directly, or <code>templateId</code> to run against a saved <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/edit/get-edit-template">edit template</a>. Exactly one of <code>file</code> or <code>templateId</code> must be provided.</p>
+     * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/overview">Edit File guide</a>. See <a href="https://docs.extend.ai/2026-02-09/editing/error-handling">Editing Error Handling</a> for HTTP errors and run failure reasons.</p>
+     */
+    public EditRun edit(RequestOptions requestOptions) {
+        return this.rawClient.edit(requestOptions).body();
+    }
+
+    /**
+     * Edit a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
+     * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /edit_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
+     * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
+     * <p>Pass <code>file</code> to edit a document directly, or <code>templateId</code> to run against a saved <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/edit/get-edit-template">edit template</a>. Exactly one of <code>file</code> or <code>templateId</code> must be provided.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/overview">Edit File guide</a>. See <a href="https://docs.extend.ai/2026-02-09/editing/error-handling">Editing Error Handling</a> for HTTP errors and run failure reasons.</p>
      */
     public EditRun edit(EditRequest request) {
@@ -183,6 +212,7 @@ public class ExtendClientBase {
      * Edit a file synchronously, waiting for the result before returning. This endpoint has a <strong>5-minute timeout</strong> — if processing takes longer, the request will fail.
      * <p><strong>Note:</strong> This endpoint is intended for onboarding and testing only. For production workloads, use <code>POST /edit_runs</code> with <a href="https://docs.extend.ai/2026-02-09/general/async-processing">polling or webhooks</a> instead, as it provides better reliability for large files and avoids timeout issues.</p>
      * <p>The Edit endpoint allows you to detect and fill form fields in PDF documents.</p>
+     * <p>Pass <code>file</code> to edit a document directly, or <code>templateId</code> to run against a saved <a href="https://docs.extend.ai/2026-02-09/api-reference/endpoints/edit/get-edit-template">edit template</a>. Exactly one of <code>file</code> or <code>templateId</code> must be provided.</p>
      * <p>For more details, see the <a href="https://docs.extend.ai/2026-02-09/editing/overview">Edit File guide</a>. See <a href="https://docs.extend.ai/2026-02-09/editing/error-handling">Editing Error Handling</a> for HTTP errors and run failure reasons.</p>
      */
     public EditRun edit(EditRequest request, RequestOptions requestOptions) {
@@ -203,6 +233,22 @@ public class ExtendClientBase {
      */
     public FormDetectionRun detectForm(DetectFormRequest request, RequestOptions requestOptions) {
         return this.rawClient.detectForm(request, requestOptions).body();
+    }
+
+    /**
+     * Check a single document for evidence of tampering, forgery, or AI generation and wait for the result. This endpoint times out after 5 minutes on both engines. A timed-out request usually fails with <code>504 Gateway Timeout</code>; the run keeps processing in the background. Use <code>POST /verify_runs</code> for <code>verify_agentic</code> and for any document that may take longer.
+     * <p>For production workloads, use <code>POST /verify_runs</code> and poll <code>GET /verify_runs/{id}</code> instead. The response is a completed <code>verify_run</code>; read <code>output.riskLevel</code>, <code>output.summary</code>, and <code>output.signals</code>. An empty <code>signals</code> array means no Public Signals were detected; it is not a claim that the document is authentic.</p>
+     */
+    public VerifyRun verify(VerifyRequest request) {
+        return this.rawClient.verify(request).body();
+    }
+
+    /**
+     * Check a single document for evidence of tampering, forgery, or AI generation and wait for the result. This endpoint times out after 5 minutes on both engines. A timed-out request usually fails with <code>504 Gateway Timeout</code>; the run keeps processing in the background. Use <code>POST /verify_runs</code> for <code>verify_agentic</code> and for any document that may take longer.
+     * <p>For production workloads, use <code>POST /verify_runs</code> and poll <code>GET /verify_runs/{id}</code> instead. The response is a completed <code>verify_run</code>; read <code>output.riskLevel</code>, <code>output.summary</code>, and <code>output.signals</code>. An empty <code>signals</code> array means no Public Signals were detected; it is not a claim that the document is authentic.</p>
+     */
+    public VerifyRun verify(VerifyRequest request, RequestOptions requestOptions) {
+        return this.rawClient.verify(request, requestOptions).body();
     }
 
     /**
@@ -311,6 +357,10 @@ public class ExtendClientBase {
 
     public FormDetectionRunsClient formDetectionRuns() {
         return this.formDetectionRunsClient.get();
+    }
+
+    public VerifyRunsClient verifyRuns() {
+        return this.verifyRunsClient.get();
     }
 
     public ExtractRunsClient extractRuns() {

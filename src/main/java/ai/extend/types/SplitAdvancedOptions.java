@@ -31,6 +31,8 @@ public final class SplitAdvancedOptions {
 
     private final Optional<Boolean> pageOverlapEnabled;
 
+    private final Optional<Boolean> strictIdentifierModeEnabled;
+
     private final Map<String, Object> additionalProperties;
 
     private SplitAdvancedOptions(
@@ -39,12 +41,14 @@ public final class SplitAdvancedOptions {
             Optional<Boolean> splitExcelDocumentsBySheetEnabled,
             Optional<List<PageRangesItem>> pageRanges,
             Optional<Boolean> pageOverlapEnabled,
+            Optional<Boolean> strictIdentifierModeEnabled,
             Map<String, Object> additionalProperties) {
         this.splitIdentifierRules = splitIdentifierRules;
         this.splitMethod = splitMethod;
         this.splitExcelDocumentsBySheetEnabled = splitExcelDocumentsBySheetEnabled;
         this.pageRanges = pageRanges;
         this.pageOverlapEnabled = pageOverlapEnabled;
+        this.strictIdentifierModeEnabled = strictIdentifierModeEnabled;
         this.additionalProperties = additionalProperties;
     }
 
@@ -88,6 +92,17 @@ public final class SplitAdvancedOptions {
         return pageOverlapEnabled;
     }
 
+    /**
+     * @return When enabled, adjacent candidate sub-documents that share the same type and the same extracted identifier are merged into a single split before the splitter finalizes its boundaries. Use it when one logical document repeats its identifier across its pages — for example a multi-page invoice whose invoice number appears on every page.
+     * <p>Identifiers come from the <code>identifierKey</code> rule on the matching classification in <code>splitClassifications</code> when one is defined. The splitter will always define a short descriptive identifier for each sub-document — make sure to define <code>identifierKey</code> on any classification you intend to merge by, so the identifier is a stable document-level value.</p>
+     * <p><strong>Default:</strong> When omitted, this setting is enabled on <code>splitting_performance</code> &gt;= 1.6.2 and <code>splitting_light</code> &gt;= 1.4.1, and disabled on earlier versions.</p>
+     * <p><strong>Availability:</strong> all <code>splitting_performance</code> versions and <code>splitting_light</code> &gt;= 1.3.0</p>
+     */
+    @JsonProperty("strictIdentifierModeEnabled")
+    public Optional<Boolean> getStrictIdentifierModeEnabled() {
+        return strictIdentifierModeEnabled;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -104,7 +119,8 @@ public final class SplitAdvancedOptions {
                 && splitMethod.equals(other.splitMethod)
                 && splitExcelDocumentsBySheetEnabled.equals(other.splitExcelDocumentsBySheetEnabled)
                 && pageRanges.equals(other.pageRanges)
-                && pageOverlapEnabled.equals(other.pageOverlapEnabled);
+                && pageOverlapEnabled.equals(other.pageOverlapEnabled)
+                && strictIdentifierModeEnabled.equals(other.strictIdentifierModeEnabled);
     }
 
     @java.lang.Override
@@ -114,7 +130,8 @@ public final class SplitAdvancedOptions {
                 this.splitMethod,
                 this.splitExcelDocumentsBySheetEnabled,
                 this.pageRanges,
-                this.pageOverlapEnabled);
+                this.pageOverlapEnabled,
+                this.strictIdentifierModeEnabled);
     }
 
     @java.lang.Override
@@ -138,6 +155,8 @@ public final class SplitAdvancedOptions {
 
         private Optional<Boolean> pageOverlapEnabled = Optional.empty();
 
+        private Optional<Boolean> strictIdentifierModeEnabled = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -149,6 +168,7 @@ public final class SplitAdvancedOptions {
             splitExcelDocumentsBySheetEnabled(other.getSplitExcelDocumentsBySheetEnabled());
             pageRanges(other.getPageRanges());
             pageOverlapEnabled(other.getPageOverlapEnabled());
+            strictIdentifierModeEnabled(other.getStrictIdentifierModeEnabled());
             return this;
         }
 
@@ -222,6 +242,23 @@ public final class SplitAdvancedOptions {
             return this;
         }
 
+        /**
+         * <p>When enabled, adjacent candidate sub-documents that share the same type and the same extracted identifier are merged into a single split before the splitter finalizes its boundaries. Use it when one logical document repeats its identifier across its pages — for example a multi-page invoice whose invoice number appears on every page.</p>
+         * <p>Identifiers come from the <code>identifierKey</code> rule on the matching classification in <code>splitClassifications</code> when one is defined. The splitter will always define a short descriptive identifier for each sub-document — make sure to define <code>identifierKey</code> on any classification you intend to merge by, so the identifier is a stable document-level value.</p>
+         * <p><strong>Default:</strong> When omitted, this setting is enabled on <code>splitting_performance</code> &gt;= 1.6.2 and <code>splitting_light</code> &gt;= 1.4.1, and disabled on earlier versions.</p>
+         * <p><strong>Availability:</strong> all <code>splitting_performance</code> versions and <code>splitting_light</code> &gt;= 1.3.0</p>
+         */
+        @JsonSetter(value = "strictIdentifierModeEnabled", nulls = Nulls.SKIP)
+        public Builder strictIdentifierModeEnabled(Optional<Boolean> strictIdentifierModeEnabled) {
+            this.strictIdentifierModeEnabled = strictIdentifierModeEnabled;
+            return this;
+        }
+
+        public Builder strictIdentifierModeEnabled(Boolean strictIdentifierModeEnabled) {
+            this.strictIdentifierModeEnabled = Optional.ofNullable(strictIdentifierModeEnabled);
+            return this;
+        }
+
         public SplitAdvancedOptions build() {
             return new SplitAdvancedOptions(
                     splitIdentifierRules,
@@ -229,6 +266,7 @@ public final class SplitAdvancedOptions {
                     splitExcelDocumentsBySheetEnabled,
                     pageRanges,
                     pageOverlapEnabled,
+                    strictIdentifierModeEnabled,
                     additionalProperties);
         }
     }

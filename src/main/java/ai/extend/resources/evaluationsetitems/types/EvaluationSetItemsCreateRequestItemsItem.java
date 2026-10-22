@@ -11,39 +11,58 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = EvaluationSetItemsCreateRequestItemsItem.Builder.class)
 public final class EvaluationSetItemsCreateRequestItemsItem {
-    private final String fileId;
+    private final Optional<String> fileId;
+
+    private final Optional<List<String>> fileIds;
 
     private final ProvidedProcessorOutput expectedOutput;
 
     private final Map<String, Object> additionalProperties;
 
     private EvaluationSetItemsCreateRequestItemsItem(
-            String fileId, ProvidedProcessorOutput expectedOutput, Map<String, Object> additionalProperties) {
+            Optional<String> fileId,
+            Optional<List<String>> fileIds,
+            ProvidedProcessorOutput expectedOutput,
+            Map<String, Object> additionalProperties) {
         this.fileId = fileId;
+        this.fileIds = fileIds;
         this.expectedOutput = expectedOutput;
         this.additionalProperties = additionalProperties;
     }
 
     /**
-     * @return Extend's internal ID for the file. It will always start with &quot;file_&quot;.
+     * @return Extend's internal ID for the file. It will always start with &quot;file_&quot;. Mutually exclusive with <code>fileIds</code>.
      * <p>Example: <code>&quot;file_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
      */
     @JsonProperty("fileId")
-    public String getFileId() {
+    public Optional<String> getFileId() {
         return fileId;
     }
 
     /**
-     * @return The expected output that will be compared to the actual output of the extractor, classifier, or splitter when run against the file.
+     * @return An ordered list of Extend file IDs to evaluate together as a single multifile item. Mutually exclusive with <code>fileId</code>.
+     * <p>Each evaluation run evaluates the item as one multifile extraction run over these files, in this order. Only supported for evaluation sets whose entity is a JSON-schema extractor. File IDs must be unique.</p>
+     * <p>See <a href="https://docs.extend.ai/2026-02-09/extraction/multifile">Multifile Extraction</a> for details.</p>
+     */
+    @JsonProperty("fileIds")
+    public Optional<List<String>> getFileIds() {
+        return fileIds;
+    }
+
+    /**
+     * @return The expected output that will be compared to the actual output of the extractor, classifier, or splitter when run against the file(s).
      */
     @JsonProperty("expectedOutput")
     public ProvidedProcessorOutput getExpectedOutput() {
@@ -63,12 +82,14 @@ public final class EvaluationSetItemsCreateRequestItemsItem {
     }
 
     private boolean equalTo(EvaluationSetItemsCreateRequestItemsItem other) {
-        return fileId.equals(other.fileId) && expectedOutput.equals(other.expectedOutput);
+        return fileId.equals(other.fileId)
+                && fileIds.equals(other.fileIds)
+                && expectedOutput.equals(other.expectedOutput);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.fileId, this.expectedOutput);
+        return Objects.hash(this.fileId, this.fileIds, this.expectedOutput);
     }
 
     @java.lang.Override
@@ -76,36 +97,47 @@ public final class EvaluationSetItemsCreateRequestItemsItem {
         return ObjectMappers.stringify(this);
     }
 
-    public static FileIdStage builder() {
+    public static ExpectedOutputStage builder() {
         return new Builder();
-    }
-
-    public interface FileIdStage {
-        /**
-         * <p>Extend's internal ID for the file. It will always start with &quot;file_&quot;.</p>
-         * <p>Example: <code>&quot;file_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
-         */
-        ExpectedOutputStage fileId(@NotNull String fileId);
-
-        Builder from(EvaluationSetItemsCreateRequestItemsItem other);
     }
 
     public interface ExpectedOutputStage {
         /**
-         * <p>The expected output that will be compared to the actual output of the extractor, classifier, or splitter when run against the file.</p>
+         * <p>The expected output that will be compared to the actual output of the extractor, classifier, or splitter when run against the file(s).</p>
          */
         _FinalStage expectedOutput(@NotNull ProvidedProcessorOutput expectedOutput);
+
+        Builder from(EvaluationSetItemsCreateRequestItemsItem other);
     }
 
     public interface _FinalStage {
         EvaluationSetItemsCreateRequestItemsItem build();
+
+        /**
+         * <p>Extend's internal ID for the file. It will always start with &quot;file_&quot;. Mutually exclusive with <code>fileIds</code>.</p>
+         * <p>Example: <code>&quot;file_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         */
+        _FinalStage fileId(Optional<String> fileId);
+
+        _FinalStage fileId(String fileId);
+
+        /**
+         * <p>An ordered list of Extend file IDs to evaluate together as a single multifile item. Mutually exclusive with <code>fileId</code>.</p>
+         * <p>Each evaluation run evaluates the item as one multifile extraction run over these files, in this order. Only supported for evaluation sets whose entity is a JSON-schema extractor. File IDs must be unique.</p>
+         * <p>See <a href="https://docs.extend.ai/2026-02-09/extraction/multifile">Multifile Extraction</a> for details.</p>
+         */
+        _FinalStage fileIds(Optional<List<String>> fileIds);
+
+        _FinalStage fileIds(List<String> fileIds);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static final class Builder implements FileIdStage, ExpectedOutputStage, _FinalStage {
-        private String fileId;
-
+    public static final class Builder implements ExpectedOutputStage, _FinalStage {
         private ProvidedProcessorOutput expectedOutput;
+
+        private Optional<List<String>> fileIds = Optional.empty();
+
+        private Optional<String> fileId = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -115,27 +147,14 @@ public final class EvaluationSetItemsCreateRequestItemsItem {
         @java.lang.Override
         public Builder from(EvaluationSetItemsCreateRequestItemsItem other) {
             fileId(other.getFileId());
+            fileIds(other.getFileIds());
             expectedOutput(other.getExpectedOutput());
             return this;
         }
 
         /**
-         * <p>Extend's internal ID for the file. It will always start with &quot;file_&quot;.</p>
-         * <p>Example: <code>&quot;file_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
-         * <p>Extend's internal ID for the file. It will always start with &quot;file_&quot;.</p>
-         * <p>Example: <code>&quot;file_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("fileId")
-        public ExpectedOutputStage fileId(@NotNull String fileId) {
-            this.fileId = Objects.requireNonNull(fileId, "fileId must not be null");
-            return this;
-        }
-
-        /**
-         * <p>The expected output that will be compared to the actual output of the extractor, classifier, or splitter when run against the file.</p>
-         * <p>The expected output that will be compared to the actual output of the extractor, classifier, or splitter when run against the file.</p>
+         * <p>The expected output that will be compared to the actual output of the extractor, classifier, or splitter when run against the file(s).</p>
+         * <p>The expected output that will be compared to the actual output of the extractor, classifier, or splitter when run against the file(s).</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -145,9 +164,55 @@ public final class EvaluationSetItemsCreateRequestItemsItem {
             return this;
         }
 
+        /**
+         * <p>An ordered list of Extend file IDs to evaluate together as a single multifile item. Mutually exclusive with <code>fileId</code>.</p>
+         * <p>Each evaluation run evaluates the item as one multifile extraction run over these files, in this order. Only supported for evaluation sets whose entity is a JSON-schema extractor. File IDs must be unique.</p>
+         * <p>See <a href="https://docs.extend.ai/2026-02-09/extraction/multifile">Multifile Extraction</a> for details.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage fileIds(List<String> fileIds) {
+            this.fileIds = Optional.ofNullable(fileIds);
+            return this;
+        }
+
+        /**
+         * <p>An ordered list of Extend file IDs to evaluate together as a single multifile item. Mutually exclusive with <code>fileId</code>.</p>
+         * <p>Each evaluation run evaluates the item as one multifile extraction run over these files, in this order. Only supported for evaluation sets whose entity is a JSON-schema extractor. File IDs must be unique.</p>
+         * <p>See <a href="https://docs.extend.ai/2026-02-09/extraction/multifile">Multifile Extraction</a> for details.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "fileIds", nulls = Nulls.SKIP)
+        public _FinalStage fileIds(Optional<List<String>> fileIds) {
+            this.fileIds = fileIds;
+            return this;
+        }
+
+        /**
+         * <p>Extend's internal ID for the file. It will always start with &quot;file_&quot;. Mutually exclusive with <code>fileIds</code>.</p>
+         * <p>Example: <code>&quot;file_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage fileId(String fileId) {
+            this.fileId = Optional.ofNullable(fileId);
+            return this;
+        }
+
+        /**
+         * <p>Extend's internal ID for the file. It will always start with &quot;file_&quot;. Mutually exclusive with <code>fileIds</code>.</p>
+         * <p>Example: <code>&quot;file_xK9mLPqRtN3vS8wF5hB2cQ&quot;</code></p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "fileId", nulls = Nulls.SKIP)
+        public _FinalStage fileId(Optional<String> fileId) {
+            this.fileId = fileId;
+            return this;
+        }
+
         @java.lang.Override
         public EvaluationSetItemsCreateRequestItemsItem build() {
-            return new EvaluationSetItemsCreateRequestItemsItem(fileId, expectedOutput, additionalProperties);
+            return new EvaluationSetItemsCreateRequestItemsItem(fileId, fileIds, expectedOutput, additionalProperties);
         }
     }
 }

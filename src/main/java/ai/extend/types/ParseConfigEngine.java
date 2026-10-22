@@ -12,6 +12,8 @@ public final class ParseConfigEngine {
 
     public static final ParseConfigEngine PARSE_LIGHT = new ParseConfigEngine(Value.PARSE_LIGHT, "parse_light");
 
+    public static final ParseConfigEngine PARSE_AUTO = new ParseConfigEngine(Value.PARSE_AUTO, "parse_auto");
+
     private final Value value;
 
     private final String string;
@@ -48,6 +50,8 @@ public final class ParseConfigEngine {
                 return visitor.visitParsePerformance();
             case PARSE_LIGHT:
                 return visitor.visitParseLight();
+            case PARSE_AUTO:
+                return visitor.visitParseAuto();
             case UNKNOWN:
             default:
                 return visitor.visitUnknown(string);
@@ -61,6 +65,8 @@ public final class ParseConfigEngine {
                 return PARSE_PERFORMANCE;
             case "parse_light":
                 return PARSE_LIGHT;
+            case "parse_auto":
+                return PARSE_AUTO;
             default:
                 return new ParseConfigEngine(Value.UNKNOWN, value);
         }
@@ -71,6 +77,8 @@ public final class ParseConfigEngine {
 
         PARSE_LIGHT,
 
+        PARSE_AUTO,
+
         UNKNOWN
     }
 
@@ -78,6 +86,8 @@ public final class ParseConfigEngine {
         T visitParsePerformance();
 
         T visitParseLight();
+
+        T visitParseAuto();
 
         T visitUnknown(String unknownType);
     }
