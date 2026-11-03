@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +34,11 @@ public final class Block {
 
     private final BlockMetadata metadata;
 
-    private final List<BlockPolygonItem> polygon;
+    private final Optional<List<BlockPolygonItem>> polygon;
 
-    private final BoundingBox boundingBox;
+    private final Optional<BoundingBox> boundingBox;
+
+    private final Optional<BlockSource> source;
 
     private final Optional<List<Block>> children;
 
@@ -50,8 +51,9 @@ public final class Block {
             String content,
             BlockDetails details,
             BlockMetadata metadata,
-            List<BlockPolygonItem> polygon,
-            BoundingBox boundingBox,
+            Optional<List<BlockPolygonItem>> polygon,
+            Optional<BoundingBox> boundingBox,
+            Optional<BlockSource> source,
             Optional<List<Block>> children,
             Map<String, Object> additionalProperties) {
         this.id = id;
@@ -62,6 +64,7 @@ public final class Block {
         this.metadata = metadata;
         this.polygon = polygon;
         this.boundingBox = boundingBox;
+        this.source = source;
         this.children = children;
         this.additionalProperties = additionalProperties;
     }
@@ -138,23 +141,31 @@ public final class Block {
     }
 
     /**
-     * @return An array of points defining the polygon that bounds the block.
+     * @return An array of points defining the polygon that bounds the block. Omitted on blocks that carry a <code>source</code> anchor.
      */
     @JsonProperty("polygon")
-    public List<BlockPolygonItem> getPolygon() {
+    public Optional<List<BlockPolygonItem>> getPolygon() {
         return polygon;
     }
 
     /**
-     * @return A simplified bounding box for the block.
+     * @return A simplified bounding box for the block. Omitted on blocks that carry a <code>source</code> anchor.
      */
     @JsonProperty("boundingBox")
-    public BoundingBox getBoundingBox() {
+    public Optional<BoundingBox> getBoundingBox() {
         return boundingBox;
     }
 
     /**
-     * @return An array of child blocks. For example, a table block may contain table cell blocks as children when <code>cellBlocksEnabled</code> is set to true.
+     * @return The byte range this block came from in the uploaded file, measured in the encoding reported by <code>output.metadata.sourceEncoding</code>. Replaces <code>polygon</code>/<code>boundingBox</code>. Only set for HTML input when <code>advancedOptions.htmlSourceAnchors</code> is enabled.
+     */
+    @JsonProperty("source")
+    public Optional<BlockSource> getSource() {
+        return source;
+    }
+
+    /**
+     * @return An array of child blocks. For example, a table block may contain table cell blocks as children when <code>blockOptions.tables.cellBlocksEnabled</code> is set to true.
      */
     @JsonProperty("children")
     public Optional<List<Block>> getChildren() {
@@ -181,6 +192,7 @@ public final class Block {
                 && metadata.equals(other.metadata)
                 && polygon.equals(other.polygon)
                 && boundingBox.equals(other.boundingBox)
+                && source.equals(other.source)
                 && children.equals(other.children);
     }
 
@@ -195,6 +207,7 @@ public final class Block {
                 this.metadata,
                 this.polygon,
                 this.boundingBox,
+                this.source,
                 this.children);
     }
 
@@ -256,14 +269,7 @@ public final class Block {
         /**
          * <p>Metadata about the block.</p>
          */
-        BoundingBoxStage metadata(@NotNull BlockMetadata metadata);
-    }
-
-    public interface BoundingBoxStage {
-        /**
-         * <p>A simplified bounding box for the block.</p>
-         */
-        _FinalStage boundingBox(@NotNull BoundingBox boundingBox);
+        _FinalStage metadata(@NotNull BlockMetadata metadata);
     }
 
     public interface _FinalStage {
@@ -277,16 +283,28 @@ public final class Block {
         _FinalStage parentBlockId(String parentBlockId);
 
         /**
-         * <p>An array of points defining the polygon that bounds the block.</p>
+         * <p>An array of points defining the polygon that bounds the block. Omitted on blocks that carry a <code>source</code> anchor.</p>
          */
+        _FinalStage polygon(Optional<List<BlockPolygonItem>> polygon);
+
         _FinalStage polygon(List<BlockPolygonItem> polygon);
 
-        _FinalStage addPolygon(BlockPolygonItem polygon);
+        /**
+         * <p>A simplified bounding box for the block. Omitted on blocks that carry a <code>source</code> anchor.</p>
+         */
+        _FinalStage boundingBox(Optional<BoundingBox> boundingBox);
 
-        _FinalStage addAllPolygon(List<BlockPolygonItem> polygon);
+        _FinalStage boundingBox(BoundingBox boundingBox);
 
         /**
-         * <p>An array of child blocks. For example, a table block may contain table cell blocks as children when <code>cellBlocksEnabled</code> is set to true.</p>
+         * <p>The byte range this block came from in the uploaded file, measured in the encoding reported by <code>output.metadata.sourceEncoding</code>. Replaces <code>polygon</code>/<code>boundingBox</code>. Only set for HTML input when <code>advancedOptions.htmlSourceAnchors</code> is enabled.</p>
+         */
+        _FinalStage source(Optional<BlockSource> source);
+
+        _FinalStage source(BlockSource source);
+
+        /**
+         * <p>An array of child blocks. For example, a table block may contain table cell blocks as children when <code>blockOptions.tables.cellBlocksEnabled</code> is set to true.</p>
          */
         _FinalStage children(Optional<List<Block>> children);
 
@@ -295,7 +313,7 @@ public final class Block {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder
-            implements IdStage, TypeStage, ContentStage, DetailsStage, MetadataStage, BoundingBoxStage, _FinalStage {
+            implements IdStage, TypeStage, ContentStage, DetailsStage, MetadataStage, _FinalStage {
         private String id;
 
         private BlockType type;
@@ -306,11 +324,13 @@ public final class Block {
 
         private BlockMetadata metadata;
 
-        private BoundingBox boundingBox;
-
         private Optional<List<Block>> children = Optional.empty();
 
-        private List<BlockPolygonItem> polygon = new ArrayList<>();
+        private Optional<BlockSource> source = Optional.empty();
+
+        private Optional<BoundingBox> boundingBox = Optional.empty();
+
+        private Optional<List<BlockPolygonItem>> polygon = Optional.empty();
 
         private Optional<String> parentBlockId = Optional.empty();
 
@@ -329,6 +349,7 @@ public final class Block {
             metadata(other.getMetadata());
             polygon(other.getPolygon());
             boundingBox(other.getBoundingBox());
+            source(other.getSource());
             children(other.getChildren());
             return this;
         }
@@ -418,25 +439,13 @@ public final class Block {
          */
         @java.lang.Override
         @JsonSetter("metadata")
-        public BoundingBoxStage metadata(@NotNull BlockMetadata metadata) {
+        public _FinalStage metadata(@NotNull BlockMetadata metadata) {
             this.metadata = Objects.requireNonNull(metadata, "metadata must not be null");
             return this;
         }
 
         /**
-         * <p>A simplified bounding box for the block.</p>
-         * <p>A simplified bounding box for the block.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
-         */
-        @java.lang.Override
-        @JsonSetter("boundingBox")
-        public _FinalStage boundingBox(@NotNull BoundingBox boundingBox) {
-            this.boundingBox = Objects.requireNonNull(boundingBox, "boundingBox must not be null");
-            return this;
-        }
-
-        /**
-         * <p>An array of child blocks. For example, a table block may contain table cell blocks as children when <code>cellBlocksEnabled</code> is set to true.</p>
+         * <p>An array of child blocks. For example, a table block may contain table cell blocks as children when <code>blockOptions.tables.cellBlocksEnabled</code> is set to true.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
@@ -446,7 +455,7 @@ public final class Block {
         }
 
         /**
-         * <p>An array of child blocks. For example, a table block may contain table cell blocks as children when <code>cellBlocksEnabled</code> is set to true.</p>
+         * <p>An array of child blocks. For example, a table block may contain table cell blocks as children when <code>blockOptions.tables.cellBlocksEnabled</code> is set to true.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "children", nulls = Nulls.SKIP)
@@ -456,37 +465,62 @@ public final class Block {
         }
 
         /**
-         * <p>An array of points defining the polygon that bounds the block.</p>
+         * <p>The byte range this block came from in the uploaded file, measured in the encoding reported by <code>output.metadata.sourceEncoding</code>. Replaces <code>polygon</code>/<code>boundingBox</code>. Only set for HTML input when <code>advancedOptions.htmlSourceAnchors</code> is enabled.</p>
          * @return Reference to {@code this} so that method calls can be chained together.
          */
         @java.lang.Override
-        public _FinalStage addAllPolygon(List<BlockPolygonItem> polygon) {
-            if (polygon != null) {
-                this.polygon.addAll(polygon);
-            }
+        public _FinalStage source(BlockSource source) {
+            this.source = Optional.ofNullable(source);
             return this;
         }
 
         /**
-         * <p>An array of points defining the polygon that bounds the block.</p>
-         * @return Reference to {@code this} so that method calls can be chained together.
+         * <p>The byte range this block came from in the uploaded file, measured in the encoding reported by <code>output.metadata.sourceEncoding</code>. Replaces <code>polygon</code>/<code>boundingBox</code>. Only set for HTML input when <code>advancedOptions.htmlSourceAnchors</code> is enabled.</p>
          */
         @java.lang.Override
-        public _FinalStage addPolygon(BlockPolygonItem polygon) {
-            this.polygon.add(polygon);
+        @JsonSetter(value = "source", nulls = Nulls.SKIP)
+        public _FinalStage source(Optional<BlockSource> source) {
+            this.source = source;
             return this;
         }
 
         /**
-         * <p>An array of points defining the polygon that bounds the block.</p>
+         * <p>A simplified bounding box for the block. Omitted on blocks that carry a <code>source</code> anchor.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage boundingBox(BoundingBox boundingBox) {
+            this.boundingBox = Optional.ofNullable(boundingBox);
+            return this;
+        }
+
+        /**
+         * <p>A simplified bounding box for the block. Omitted on blocks that carry a <code>source</code> anchor.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "boundingBox", nulls = Nulls.SKIP)
+        public _FinalStage boundingBox(Optional<BoundingBox> boundingBox) {
+            this.boundingBox = boundingBox;
+            return this;
+        }
+
+        /**
+         * <p>An array of points defining the polygon that bounds the block. Omitted on blocks that carry a <code>source</code> anchor.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage polygon(List<BlockPolygonItem> polygon) {
+            this.polygon = Optional.ofNullable(polygon);
+            return this;
+        }
+
+        /**
+         * <p>An array of points defining the polygon that bounds the block. Omitted on blocks that carry a <code>source</code> anchor.</p>
          */
         @java.lang.Override
         @JsonSetter(value = "polygon", nulls = Nulls.SKIP)
-        public _FinalStage polygon(List<BlockPolygonItem> polygon) {
-            this.polygon.clear();
-            if (polygon != null) {
-                this.polygon.addAll(polygon);
-            }
+        public _FinalStage polygon(Optional<List<BlockPolygonItem>> polygon) {
+            this.polygon = polygon;
             return this;
         }
 
@@ -521,6 +555,7 @@ public final class Block {
                     metadata,
                     polygon,
                     boundingBox,
+                    source,
                     children,
                     additionalProperties);
         }

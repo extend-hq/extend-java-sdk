@@ -148,6 +148,7 @@ public final class ParseRun {
      * <li><code>CHUNKING_ERROR</code> - An error occurred while chunking the document</li>
      * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
      * <li><code>INVALID_CONFIG_OPTIONS</code> - The provided configuration options are invalid</li>
+     * <li><code>UNSUPPORTED_FILE_ENCODING</code> - The file could not be decoded as UTF-8 or Windows-1252, which <code>advancedOptions.htmlSourceAnchors</code> requires</li>
      * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to process the file</li>
      * </ul>
      * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
@@ -408,6 +409,7 @@ public final class ParseRun {
          * <li><code>CHUNKING_ERROR</code> - An error occurred while chunking the document</li>
          * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
          * <li><code>INVALID_CONFIG_OPTIONS</code> - The provided configuration options are invalid</li>
+         * <li><code>UNSUPPORTED_FILE_ENCODING</code> - The file could not be decoded as UTF-8 or Windows-1252, which <code>advancedOptions.htmlSourceAnchors</code> requires</li>
          * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to process the file</li>
          * </ul>
          * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
@@ -840,6 +842,7 @@ public final class ParseRun {
          * <li><code>CHUNKING_ERROR</code> - An error occurred while chunking the document</li>
          * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
          * <li><code>INVALID_CONFIG_OPTIONS</code> - The provided configuration options are invalid</li>
+         * <li><code>UNSUPPORTED_FILE_ENCODING</code> - The file could not be decoded as UTF-8 or Windows-1252, which <code>advancedOptions.htmlSourceAnchors</code> requires</li>
          * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to process the file</li>
          * </ul>
          * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
@@ -874,6 +877,7 @@ public final class ParseRun {
          * <li><code>CHUNKING_ERROR</code> - An error occurred while chunking the document</li>
          * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
          * <li><code>INVALID_CONFIG_OPTIONS</code> - The provided configuration options are invalid</li>
+         * <li><code>UNSUPPORTED_FILE_ENCODING</code> - The file could not be decoded as UTF-8 or Windows-1252, which <code>advancedOptions.htmlSourceAnchors</code> requires</li>
          * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to process the file</li>
          * </ul>
          * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>
@@ -902,6 +906,7 @@ public final class ParseRun {
          * <li><code>CHUNKING_ERROR</code> - An error occurred while chunking the document</li>
          * <li><code>INTERNAL_ERROR</code> - An unexpected internal error occurred</li>
          * <li><code>INVALID_CONFIG_OPTIONS</code> - The provided configuration options are invalid</li>
+         * <li><code>UNSUPPORTED_FILE_ENCODING</code> - The file could not be decoded as UTF-8 or Windows-1252, which <code>advancedOptions.htmlSourceAnchors</code> requires</li>
          * <li><code>OUT_OF_CREDITS</code> - Insufficient credits to process the file</li>
          * </ul>
          * <p><strong>Note:</strong> Additional failure reasons may be added in the future. Your integration should handle unknown values gracefully.</p>

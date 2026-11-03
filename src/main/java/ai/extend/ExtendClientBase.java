@@ -42,6 +42,7 @@ import ai.extend.resources.webhooksubscriptions.WebhookSubscriptionsClient;
 import ai.extend.resources.workflowruns.WorkflowRunsClient;
 import ai.extend.resources.workflows.WorkflowsClient;
 import ai.extend.resources.workflowversions.WorkflowVersionsClient;
+import ai.extend.resources.workspaces.WorkspacesClient;
 import ai.extend.types.ClassifyRun;
 import ai.extend.types.EditRun;
 import ai.extend.types.ExtractRun;
@@ -114,6 +115,8 @@ public class ExtendClientBase {
 
     protected final Supplier<WebhookSubscriptionsClient> webhookSubscriptionsClient;
 
+    protected final Supplier<WorkspacesClient> workspacesClient;
+
     public ExtendClientBase(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         this.rawClient = new RawExtendClientBase(clientOptions);
@@ -146,6 +149,7 @@ public class ExtendClientBase {
         this.evaluationSetRunsClient = Suppliers.memoize(() -> new EvaluationSetRunsClient(clientOptions));
         this.webhookEndpointsClient = Suppliers.memoize(() -> new WebhookEndpointsClient(clientOptions));
         this.webhookSubscriptionsClient = Suppliers.memoize(() -> new WebhookSubscriptionsClient(clientOptions));
+        this.workspacesClient = Suppliers.memoize(() -> new WorkspacesClient(clientOptions));
     }
 
     /**
@@ -449,6 +453,10 @@ public class ExtendClientBase {
 
     public WebhookSubscriptionsClient webhookSubscriptions() {
         return this.webhookSubscriptionsClient.get();
+    }
+
+    public WorkspacesClient workspaces() {
+        return this.workspacesClient.get();
     }
 
     public static ExtendClientBaseBuilder builder() {

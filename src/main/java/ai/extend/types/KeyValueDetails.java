@@ -9,16 +9,24 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
 @JsonDeserialize(builder = KeyValueDetails.Builder.class)
 public final class KeyValueDetails {
+    private final Optional<List<KeyValueFormNode>> form;
+
     private final Map<String, Object> additionalProperties;
 
-    private KeyValueDetails(Map<String, Object> additionalProperties) {
+    private KeyValueDetails(Optional<List<KeyValueFormNode>> form, Map<String, Object> additionalProperties) {
+        this.form = form;
         this.additionalProperties = additionalProperties;
     }
 
@@ -30,15 +38,32 @@ public final class KeyValueDetails {
         return "key_value_details";
     }
 
+    /**
+     * @return The form region as a tree of nodes in reading order. Only set when <code>blockOptions.keyValue.structuredOutputEnabled</code> is <code>true</code>.
+     */
+    @JsonProperty("form")
+    public Optional<List<KeyValueFormNode>> getForm() {
+        return form;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        return other instanceof KeyValueDetails;
+        return other instanceof KeyValueDetails && equalTo((KeyValueDetails) other);
     }
 
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
+    }
+
+    private boolean equalTo(KeyValueDetails other) {
+        return form.equals(other.form);
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+        return Objects.hash(this.form);
     }
 
     @java.lang.Override
@@ -52,17 +77,34 @@ public final class KeyValueDetails {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static final class Builder {
+        private Optional<List<KeyValueFormNode>> form = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
         private Builder() {}
 
         public Builder from(KeyValueDetails other) {
+            form(other.getForm());
+            return this;
+        }
+
+        /**
+         * <p>The form region as a tree of nodes in reading order. Only set when <code>blockOptions.keyValue.structuredOutputEnabled</code> is <code>true</code>.</p>
+         */
+        @JsonSetter(value = "form", nulls = Nulls.SKIP)
+        public Builder form(Optional<List<KeyValueFormNode>> form) {
+            this.form = form;
+            return this;
+        }
+
+        public Builder form(List<KeyValueFormNode> form) {
+            this.form = Optional.ofNullable(form);
             return this;
         }
 
         public KeyValueDetails build() {
-            return new KeyValueDetails(additionalProperties);
+            return new KeyValueDetails(form, additionalProperties);
         }
     }
 }

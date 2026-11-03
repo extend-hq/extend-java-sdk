@@ -29,6 +29,8 @@ public final class ParseRunOutput {
 
     private final Optional<ParseRunOutputOcr> ocr;
 
+    private final Optional<ParseRunOutputSource> source;
+
     private final Optional<ParseRunOutputMetadata> metadata;
 
     private final Map<String, Object> additionalProperties;
@@ -36,10 +38,12 @@ public final class ParseRunOutput {
     private ParseRunOutput(
             List<Chunk> chunks,
             Optional<ParseRunOutputOcr> ocr,
+            Optional<ParseRunOutputSource> source,
             Optional<ParseRunOutputMetadata> metadata,
             Map<String, Object> additionalProperties) {
         this.chunks = chunks;
         this.ocr = ocr;
+        this.source = source;
         this.metadata = metadata;
         this.additionalProperties = additionalProperties;
     }
@@ -61,7 +65,15 @@ public final class ParseRunOutput {
     }
 
     /**
-     * @return Rotation, dimension, and file-type metadata about the parse output. <code>null</code> for parse runs that completed before this field was introduced.
+     * @return Word-level source anchors for text formats, the counterpart to <code>ocr</code> for documents parsed from markup rather than pixels. Only included when <code>advancedOptions.returnSourceNodes</code> is enabled and the file contains text.
+     */
+    @JsonProperty("source")
+    public Optional<ParseRunOutputSource> getSource() {
+        return source;
+    }
+
+    /**
+     * @return Rotation, dimension, file-type, and detected-language metadata about the parse output. <code>null</code> for parse runs that completed before this field was introduced.
      */
     @JsonIgnore
     public Optional<ParseRunOutputMetadata> getMetadata() {
@@ -89,12 +101,15 @@ public final class ParseRunOutput {
     }
 
     private boolean equalTo(ParseRunOutput other) {
-        return chunks.equals(other.chunks) && ocr.equals(other.ocr) && metadata.equals(other.metadata);
+        return chunks.equals(other.chunks)
+                && ocr.equals(other.ocr)
+                && source.equals(other.source)
+                && metadata.equals(other.metadata);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.chunks, this.ocr, this.metadata);
+        return Objects.hash(this.chunks, this.ocr, this.source, this.metadata);
     }
 
     @java.lang.Override
@@ -112,6 +127,8 @@ public final class ParseRunOutput {
 
         private Optional<ParseRunOutputOcr> ocr = Optional.empty();
 
+        private Optional<ParseRunOutputSource> source = Optional.empty();
+
         private Optional<ParseRunOutputMetadata> metadata = Optional.empty();
 
         @JsonAnySetter
@@ -122,6 +139,7 @@ public final class ParseRunOutput {
         public Builder from(ParseRunOutput other) {
             chunks(other.getChunks());
             ocr(other.getOcr());
+            source(other.getSource());
             metadata(other.getMetadata());
             return this;
         }
@@ -165,7 +183,21 @@ public final class ParseRunOutput {
         }
 
         /**
-         * <p>Rotation, dimension, and file-type metadata about the parse output. <code>null</code> for parse runs that completed before this field was introduced.</p>
+         * <p>Word-level source anchors for text formats, the counterpart to <code>ocr</code> for documents parsed from markup rather than pixels. Only included when <code>advancedOptions.returnSourceNodes</code> is enabled and the file contains text.</p>
+         */
+        @JsonSetter(value = "source", nulls = Nulls.SKIP)
+        public Builder source(Optional<ParseRunOutputSource> source) {
+            this.source = source;
+            return this;
+        }
+
+        public Builder source(ParseRunOutputSource source) {
+            this.source = Optional.ofNullable(source);
+            return this;
+        }
+
+        /**
+         * <p>Rotation, dimension, file-type, and detected-language metadata about the parse output. <code>null</code> for parse runs that completed before this field was introduced.</p>
          */
         @JsonSetter(value = "metadata", nulls = Nulls.SKIP)
         public Builder metadata(Optional<ParseRunOutputMetadata> metadata) {
@@ -190,7 +222,7 @@ public final class ParseRunOutput {
         }
 
         public ParseRunOutput build() {
-            return new ParseRunOutput(chunks, ocr, metadata, additionalProperties);
+            return new ParseRunOutput(chunks, ocr, source, metadata, additionalProperties);
         }
     }
 }

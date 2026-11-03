@@ -22,11 +22,16 @@ import java.util.Optional;
 public final class ParseConfigBlockOptionsKeyValue {
     private final Optional<Boolean> blankFieldFormattingEnabled;
 
+    private final Optional<Boolean> structuredOutputEnabled;
+
     private final Map<String, Object> additionalProperties;
 
     private ParseConfigBlockOptionsKeyValue(
-            Optional<Boolean> blankFieldFormattingEnabled, Map<String, Object> additionalProperties) {
+            Optional<Boolean> blankFieldFormattingEnabled,
+            Optional<Boolean> structuredOutputEnabled,
+            Map<String, Object> additionalProperties) {
         this.blankFieldFormattingEnabled = blankFieldFormattingEnabled;
+        this.structuredOutputEnabled = structuredOutputEnabled;
         this.additionalProperties = additionalProperties;
     }
 
@@ -36,6 +41,14 @@ public final class ParseConfigBlockOptionsKeyValue {
     @JsonProperty("blankFieldFormattingEnabled")
     public Optional<Boolean> getBlankFieldFormattingEnabled() {
         return blankFieldFormattingEnabled;
+    }
+
+    /**
+     * @return Whether to return each form region as a typed tree of keys, filled values, empty fields, signatures, checkboxes, and tables, with a bounding box per node. When enabled, every <code>key_value</code> block includes <code>details.form</code>. Requires <code>parse_performance</code> &gt;= <code>2.0.0</code>, <code>parse_light</code> &gt;= <code>1.0.0</code>, or <code>parse_auto</code>.
+     */
+    @JsonProperty("structuredOutputEnabled")
+    public Optional<Boolean> getStructuredOutputEnabled() {
+        return structuredOutputEnabled;
     }
 
     @java.lang.Override
@@ -50,12 +63,13 @@ public final class ParseConfigBlockOptionsKeyValue {
     }
 
     private boolean equalTo(ParseConfigBlockOptionsKeyValue other) {
-        return blankFieldFormattingEnabled.equals(other.blankFieldFormattingEnabled);
+        return blankFieldFormattingEnabled.equals(other.blankFieldFormattingEnabled)
+                && structuredOutputEnabled.equals(other.structuredOutputEnabled);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.blankFieldFormattingEnabled);
+        return Objects.hash(this.blankFieldFormattingEnabled, this.structuredOutputEnabled);
     }
 
     @java.lang.Override
@@ -71,6 +85,8 @@ public final class ParseConfigBlockOptionsKeyValue {
     public static final class Builder {
         private Optional<Boolean> blankFieldFormattingEnabled = Optional.empty();
 
+        private Optional<Boolean> structuredOutputEnabled = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -78,6 +94,7 @@ public final class ParseConfigBlockOptionsKeyValue {
 
         public Builder from(ParseConfigBlockOptionsKeyValue other) {
             blankFieldFormattingEnabled(other.getBlankFieldFormattingEnabled());
+            structuredOutputEnabled(other.getStructuredOutputEnabled());
             return this;
         }
 
@@ -95,8 +112,23 @@ public final class ParseConfigBlockOptionsKeyValue {
             return this;
         }
 
+        /**
+         * <p>Whether to return each form region as a typed tree of keys, filled values, empty fields, signatures, checkboxes, and tables, with a bounding box per node. When enabled, every <code>key_value</code> block includes <code>details.form</code>. Requires <code>parse_performance</code> &gt;= <code>2.0.0</code>, <code>parse_light</code> &gt;= <code>1.0.0</code>, or <code>parse_auto</code>.</p>
+         */
+        @JsonSetter(value = "structuredOutputEnabled", nulls = Nulls.SKIP)
+        public Builder structuredOutputEnabled(Optional<Boolean> structuredOutputEnabled) {
+            this.structuredOutputEnabled = structuredOutputEnabled;
+            return this;
+        }
+
+        public Builder structuredOutputEnabled(Boolean structuredOutputEnabled) {
+            this.structuredOutputEnabled = Optional.ofNullable(structuredOutputEnabled);
+            return this;
+        }
+
         public ParseConfigBlockOptionsKeyValue build() {
-            return new ParseConfigBlockOptionsKeyValue(blankFieldFormattingEnabled, additionalProperties);
+            return new ParseConfigBlockOptionsKeyValue(
+                    blankFieldFormattingEnabled, structuredOutputEnabled, additionalProperties);
         }
     }
 }

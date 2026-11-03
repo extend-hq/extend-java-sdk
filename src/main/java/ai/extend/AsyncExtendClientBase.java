@@ -42,6 +42,7 @@ import ai.extend.resources.webhooksubscriptions.AsyncWebhookSubscriptionsClient;
 import ai.extend.resources.workflowruns.AsyncWorkflowRunsClient;
 import ai.extend.resources.workflows.AsyncWorkflowsClient;
 import ai.extend.resources.workflowversions.AsyncWorkflowVersionsClient;
+import ai.extend.resources.workspaces.AsyncWorkspacesClient;
 import ai.extend.types.ClassifyRun;
 import ai.extend.types.EditRun;
 import ai.extend.types.ExtractRun;
@@ -115,6 +116,8 @@ public class AsyncExtendClientBase {
 
     protected final Supplier<AsyncWebhookSubscriptionsClient> webhookSubscriptionsClient;
 
+    protected final Supplier<AsyncWorkspacesClient> workspacesClient;
+
     public AsyncExtendClientBase(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         this.rawClient = new AsyncRawExtendClientBase(clientOptions);
@@ -147,6 +150,7 @@ public class AsyncExtendClientBase {
         this.evaluationSetRunsClient = Suppliers.memoize(() -> new AsyncEvaluationSetRunsClient(clientOptions));
         this.webhookEndpointsClient = Suppliers.memoize(() -> new AsyncWebhookEndpointsClient(clientOptions));
         this.webhookSubscriptionsClient = Suppliers.memoize(() -> new AsyncWebhookSubscriptionsClient(clientOptions));
+        this.workspacesClient = Suppliers.memoize(() -> new AsyncWorkspacesClient(clientOptions));
     }
 
     /**
@@ -450,6 +454,10 @@ public class AsyncExtendClientBase {
 
     public AsyncWebhookSubscriptionsClient webhookSubscriptions() {
         return this.webhookSubscriptionsClient.get();
+    }
+
+    public AsyncWorkspacesClient workspaces() {
+        return this.workspacesClient.get();
     }
 
     public static AsyncExtendClientBaseBuilder builder() {

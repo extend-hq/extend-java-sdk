@@ -3,18 +3,23 @@
  */
 package ai.extend.types;
 
+import ai.extend.core.Nullable;
+import ai.extend.core.NullableNonemptyFilter;
 import ai.extend.core.ObjectMappers;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
@@ -34,6 +39,8 @@ public final class EvaluationSetRun {
 
     private final EvaluationSetRunOptions options;
 
+    private final Optional<EvaluationSetRunUsage> usage;
+
     private final OffsetDateTime createdAt;
 
     private final OffsetDateTime updatedAt;
@@ -48,6 +55,7 @@ public final class EvaluationSetRun {
             EvaluationSetRunMetrics metrics,
             BatchRunStatus status,
             EvaluationSetRunOptions options,
+            Optional<EvaluationSetRunUsage> usage,
             OffsetDateTime createdAt,
             OffsetDateTime updatedAt,
             Map<String, Object> additionalProperties) {
@@ -58,6 +66,7 @@ public final class EvaluationSetRun {
         this.metrics = metrics;
         this.status = status;
         this.options = options;
+        this.usage = usage;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.additionalProperties = additionalProperties;
@@ -126,6 +135,17 @@ public final class EvaluationSetRun {
         return options;
     }
 
+    /**
+     * @return Usage credits consumed by this evaluation set run, aggregated across the processor runs it executed.
+     */
+    @JsonIgnore
+    public Optional<EvaluationSetRunUsage> getUsage() {
+        if (usage == null) {
+            return Optional.empty();
+        }
+        return usage;
+    }
+
     @JsonProperty("createdAt")
     public OffsetDateTime getCreatedAt() {
         return createdAt;
@@ -134,6 +154,12 @@ public final class EvaluationSetRun {
     @JsonProperty("updatedAt")
     public OffsetDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("usage")
+    private Optional<EvaluationSetRunUsage> _getUsage() {
+        return usage;
     }
 
     @java.lang.Override
@@ -155,6 +181,7 @@ public final class EvaluationSetRun {
                 && metrics.equals(other.metrics)
                 && status.equals(other.status)
                 && options.equals(other.options)
+                && usage.equals(other.usage)
                 && createdAt.equals(other.createdAt)
                 && updatedAt.equals(other.updatedAt);
     }
@@ -169,6 +196,7 @@ public final class EvaluationSetRun {
                 this.metrics,
                 this.status,
                 this.options,
+                this.usage,
                 this.createdAt,
                 this.updatedAt);
     }
@@ -242,6 +270,15 @@ public final class EvaluationSetRun {
 
     public interface _FinalStage {
         EvaluationSetRun build();
+
+        /**
+         * <p>Usage credits consumed by this evaluation set run, aggregated across the processor runs it executed.</p>
+         */
+        _FinalStage usage(Optional<EvaluationSetRunUsage> usage);
+
+        _FinalStage usage(EvaluationSetRunUsage usage);
+
+        _FinalStage usage(Nullable<EvaluationSetRunUsage> usage);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -274,6 +311,8 @@ public final class EvaluationSetRun {
 
         private OffsetDateTime updatedAt;
 
+        private Optional<EvaluationSetRunUsage> usage = Optional.empty();
+
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -288,6 +327,7 @@ public final class EvaluationSetRun {
             metrics(other.getMetrics());
             status(other.getStatus());
             options(other.getOptions());
+            usage(other.getUsage());
             createdAt(other.getCreatedAt());
             updatedAt(other.getUpdatedAt());
             return this;
@@ -390,6 +430,42 @@ public final class EvaluationSetRun {
             return this;
         }
 
+        /**
+         * <p>Usage credits consumed by this evaluation set run, aggregated across the processor runs it executed.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage usage(Nullable<EvaluationSetRunUsage> usage) {
+            if (usage.isNull()) {
+                this.usage = null;
+            } else if (usage.isEmpty()) {
+                this.usage = Optional.empty();
+            } else {
+                this.usage = Optional.of(usage.get());
+            }
+            return this;
+        }
+
+        /**
+         * <p>Usage credits consumed by this evaluation set run, aggregated across the processor runs it executed.</p>
+         * @return Reference to {@code this} so that method calls can be chained together.
+         */
+        @java.lang.Override
+        public _FinalStage usage(EvaluationSetRunUsage usage) {
+            this.usage = Optional.ofNullable(usage);
+            return this;
+        }
+
+        /**
+         * <p>Usage credits consumed by this evaluation set run, aggregated across the processor runs it executed.</p>
+         */
+        @java.lang.Override
+        @JsonSetter(value = "usage", nulls = Nulls.SKIP)
+        public _FinalStage usage(Optional<EvaluationSetRunUsage> usage) {
+            this.usage = usage;
+            return this;
+        }
+
         @java.lang.Override
         public EvaluationSetRun build() {
             return new EvaluationSetRun(
@@ -400,6 +476,7 @@ public final class EvaluationSetRun {
                     metrics,
                     status,
                     options,
+                    usage,
                     createdAt,
                     updatedAt,
                     additionalProperties);
