@@ -30,7 +30,7 @@ public final class VerifyAdvancedOptions {
     }
 
     /**
-     * @return If <code>true</code>, this forces the verify run to parse the document if it has not already been parsed in Extend. This is for checks that require OCR, like detecting mismatches with the text layer. <code>verify_agentic</code> requires this to be <code>true</code>, and rejects <code>false</code> with <code>400</code>. <code>verify_light</code> parses only when this is <code>true</code>. Defaults to <code>false</code> for <code>verify_light</code> to reduce latency. In both cases, if the file has already been parsed in Extend with Verify's default parse settings and you reuse the <code>fileId</code> without zero data retention (ZDR), then the parsed results will be used here.
+     * @return If <code>true</code>, this forces the verify run to parse the document if it has not already been parsed in Extend. This is for checks that require OCR, like detecting mismatches with the text layer. <code>verify_agentic</code> requires this to be <code>true</code>, and rejects <code>false</code> with <code>400</code>. <code>verify_standard</code> parses only when this is <code>true</code>. Defaults to <code>false</code> for <code>verify_standard</code> to reduce latency. In both cases, if the file has already been parsed in Extend with Verify's default parse settings and you reuse the <code>fileId</code> without zero data retention (ZDR), then the parsed results will be used here.
      */
     @JsonProperty("requireParsing")
     public Optional<Boolean> getRequireParsing() {
@@ -81,7 +81,7 @@ public final class VerifyAdvancedOptions {
         }
 
         /**
-         * <p>If <code>true</code>, this forces the verify run to parse the document if it has not already been parsed in Extend. This is for checks that require OCR, like detecting mismatches with the text layer. <code>verify_agentic</code> requires this to be <code>true</code>, and rejects <code>false</code> with <code>400</code>. <code>verify_light</code> parses only when this is <code>true</code>. Defaults to <code>false</code> for <code>verify_light</code> to reduce latency. In both cases, if the file has already been parsed in Extend with Verify's default parse settings and you reuse the <code>fileId</code> without zero data retention (ZDR), then the parsed results will be used here.</p>
+         * <p>If <code>true</code>, this forces the verify run to parse the document if it has not already been parsed in Extend. This is for checks that require OCR, like detecting mismatches with the text layer. <code>verify_agentic</code> requires this to be <code>true</code>, and rejects <code>false</code> with <code>400</code>. <code>verify_standard</code> parses only when this is <code>true</code>. Defaults to <code>false</code> for <code>verify_standard</code> to reduce latency. In both cases, if the file has already been parsed in Extend with Verify's default parse settings and you reuse the <code>fileId</code> without zero data retention (ZDR), then the parsed results will be used here.</p>
          */
         @JsonSetter(value = "requireParsing", nulls = Nulls.SKIP)
         public Builder requireParsing(Optional<Boolean> requireParsing) {

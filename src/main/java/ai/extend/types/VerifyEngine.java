@@ -7,9 +7,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public final class VerifyEngine {
-    public static final VerifyEngine VERIFY_AGENTIC = new VerifyEngine(Value.VERIFY_AGENTIC, "verify_agentic");
+    public static final VerifyEngine VERIFY_STANDARD = new VerifyEngine(Value.VERIFY_STANDARD, "verify_standard");
 
-    public static final VerifyEngine VERIFY_LIGHT = new VerifyEngine(Value.VERIFY_LIGHT, "verify_light");
+    public static final VerifyEngine VERIFY_AGENTIC = new VerifyEngine(Value.VERIFY_AGENTIC, "verify_agentic");
 
     private final Value value;
 
@@ -42,10 +42,10 @@ public final class VerifyEngine {
 
     public <T> T visit(Visitor<T> visitor) {
         switch (value) {
+            case VERIFY_STANDARD:
+                return visitor.visitVerifyStandard();
             case VERIFY_AGENTIC:
                 return visitor.visitVerifyAgentic();
-            case VERIFY_LIGHT:
-                return visitor.visitVerifyLight();
             case UNKNOWN:
             default:
                 return visitor.visitUnknown(string);
@@ -55,10 +55,10 @@ public final class VerifyEngine {
     @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
     public static VerifyEngine valueOf(String value) {
         switch (value) {
+            case "verify_standard":
+                return VERIFY_STANDARD;
             case "verify_agentic":
                 return VERIFY_AGENTIC;
-            case "verify_light":
-                return VERIFY_LIGHT;
             default:
                 return new VerifyEngine(Value.UNKNOWN, value);
         }
@@ -67,7 +67,7 @@ public final class VerifyEngine {
     public enum Value {
         VERIFY_AGENTIC,
 
-        VERIFY_LIGHT,
+        VERIFY_STANDARD,
 
         UNKNOWN
     }
@@ -75,7 +75,7 @@ public final class VerifyEngine {
     public interface Visitor<T> {
         T visitVerifyAgentic();
 
-        T visitVerifyLight();
+        T visitVerifyStandard();
 
         T visitUnknown(String unknownType);
     }

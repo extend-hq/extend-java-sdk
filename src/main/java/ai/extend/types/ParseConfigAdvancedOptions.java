@@ -25,6 +25,8 @@ public final class ParseConfigAdvancedOptions {
 
     private final Optional<List<PageRangesItem>> pageRanges;
 
+    private final Optional<ParseConfigAdvancedOptionsTextExtractionMethod> textExtractionMethod;
+
     private final Optional<ParseConfigAdvancedOptionsExcelParsingMode> excelParsingMode;
 
     private final Optional<Boolean> excelSkipHiddenContent;
@@ -39,9 +41,15 @@ public final class ParseConfigAdvancedOptions {
 
     private final Optional<Double> verticalGroupingThreshold;
 
+    private final Optional<Boolean> embedOcrInPdf;
+
     private final Optional<ParseConfigAdvancedOptionsReturnOcr> returnOcr;
 
     private final Optional<Boolean> alwaysConvertToPdf;
+
+    private final Optional<Boolean> htmlSourceAnchors;
+
+    private final Optional<Boolean> returnSourceNodes;
 
     private final Optional<ParseConfigAdvancedOptionsEnrichmentFormat> enrichmentFormat;
 
@@ -54,6 +62,7 @@ public final class ParseConfigAdvancedOptions {
     private ParseConfigAdvancedOptions(
             Optional<Boolean> pageRotationEnabled,
             Optional<List<PageRangesItem>> pageRanges,
+            Optional<ParseConfigAdvancedOptionsTextExtractionMethod> textExtractionMethod,
             Optional<ParseConfigAdvancedOptionsExcelParsingMode> excelParsingMode,
             Optional<Boolean> excelSkipHiddenContent,
             Optional<Boolean> excelUseRawCellValues,
@@ -61,14 +70,18 @@ public final class ParseConfigAdvancedOptions {
             Optional<Boolean> excelIncludeCellMetadata,
             Optional<Boolean> excelIncludeCellFormatting,
             Optional<Double> verticalGroupingThreshold,
+            Optional<Boolean> embedOcrInPdf,
             Optional<ParseConfigAdvancedOptionsReturnOcr> returnOcr,
             Optional<Boolean> alwaysConvertToPdf,
+            Optional<Boolean> htmlSourceAnchors,
+            Optional<Boolean> returnSourceNodes,
             Optional<ParseConfigAdvancedOptionsEnrichmentFormat> enrichmentFormat,
             Optional<ParseConfigAdvancedOptionsImageConversionQuality> imageConversionQuality,
             Optional<List<ParseConfigAdvancedOptionsFormattingDetectionItem>> formattingDetection,
             Map<String, Object> additionalProperties) {
         this.pageRotationEnabled = pageRotationEnabled;
         this.pageRanges = pageRanges;
+        this.textExtractionMethod = textExtractionMethod;
         this.excelParsingMode = excelParsingMode;
         this.excelSkipHiddenContent = excelSkipHiddenContent;
         this.excelUseRawCellValues = excelUseRawCellValues;
@@ -76,8 +89,11 @@ public final class ParseConfigAdvancedOptions {
         this.excelIncludeCellMetadata = excelIncludeCellMetadata;
         this.excelIncludeCellFormatting = excelIncludeCellFormatting;
         this.verticalGroupingThreshold = verticalGroupingThreshold;
+        this.embedOcrInPdf = embedOcrInPdf;
         this.returnOcr = returnOcr;
         this.alwaysConvertToPdf = alwaysConvertToPdf;
+        this.htmlSourceAnchors = htmlSourceAnchors;
+        this.returnSourceNodes = returnSourceNodes;
         this.enrichmentFormat = enrichmentFormat;
         this.imageConversionQuality = imageConversionQuality;
         this.formattingDetection = formattingDetection;
@@ -95,6 +111,19 @@ public final class ParseConfigAdvancedOptions {
     @JsonProperty("pageRanges")
     public Optional<List<PageRangesItem>> getPageRanges() {
         return pageRanges;
+    }
+
+    /**
+     * @return Controls how page text is obtained for PDFs, including documents converted to PDF.
+     * <ul>
+     * <li><code>auto</code>: Use the PDF's own embedded text on pages where it is reliable, and OCR the rest.</li>
+     * <li><code>ocr_only</code>: Read every page with OCR and ignore embedded text.</li>
+     * </ul>
+     * <p>Available on <code>parse_auto</code> and <code>parse_light</code> &gt;= <code>1.0.0</code>, which both default to <code>auto</code>. Other engines, including <code>parse_performance</code>, always use OCR.</p>
+     */
+    @JsonProperty("textExtractionMethod")
+    public Optional<ParseConfigAdvancedOptionsTextExtractionMethod> getTextExtractionMethod() {
+        return textExtractionMethod;
     }
 
     /**
@@ -159,6 +188,16 @@ public final class ParseConfigAdvancedOptions {
     }
 
     /**
+     * @return Embed recognized OCR words as an invisible text layer in the processed PDF, enabling search, selection, and copying while preserving page appearance. Pages that already contain text are skipped entirely; existing text layers are not replaced or corrected. Only processed pages with usable OCR words are candidates for embedding.
+     * <p>Applies to PDFs, including supported inputs converted to PDF with <code>alwaysConvertToPdf</code>. Independent of <code>returnOcr.words</code> and <code>returnOcr.lines</code>; enabling embedding does not include OCR arrays in the JSON response.</p>
+     * <p>After the run is processed, retrieve its <code>file.id</code> with Get File and use <code>presignedUrl</code> to download the PDF. The parse run's <code>outputUrl</code> downloads parsed JSON. See <a href="https://docs.extend.ai/parsing/embed-ocr-in-pdf">Embed OCR in PDF</a>.</p>
+     */
+    @JsonProperty("embedOcrInPdf")
+    public Optional<Boolean> getEmbedOcrInPdf() {
+        return embedOcrInPdf;
+    }
+
+    /**
      * @return Options for returning raw OCR data in the response. Words and lines are independent opt-ins and both default to false.
      */
     @JsonProperty("returnOcr")
@@ -167,11 +206,27 @@ public final class ParseConfigAdvancedOptions {
     }
 
     /**
-     * @return Whether to convert supported file types (images, Word documents, PowerPoint, Excel, HTML) to PDF before parsing. This can improve parsing quality for some file types and ensures spatial output with bounding boxes.
+     * @return Whether to convert supported file types (images, Word documents, PowerPoint, Excel, HTML) to PDF before parsing. This can improve parsing quality for some file types and ensures spatial output with bounding boxes. Cannot be combined with <code>htmlSourceAnchors</code>.
      */
     @JsonProperty("alwaysConvertToPdf")
     public Optional<Boolean> getAlwaysConvertToPdf() {
         return alwaysConvertToPdf;
+    }
+
+    /**
+     * @return HTML only. Whether to anchor each block to the byte range it came from in the uploaded file, returned as <code>source</code> on the block in place of <code>polygon</code>/<code>boundingBox</code>. Files must be UTF-8 or Windows-1252 encoded. Cannot be combined with <code>alwaysConvertToPdf</code>.
+     */
+    @JsonProperty("htmlSourceAnchors")
+    public Optional<Boolean> getHtmlSourceAnchors() {
+        return htmlSourceAnchors;
+    }
+
+    /**
+     * @return HTML only. Whether to include word-level source anchors under <code>output.source.nodes</code>, the text-format counterpart to <code>returnOcr.words</code>. Requires <code>htmlSourceAnchors</code>.
+     */
+    @JsonProperty("returnSourceNodes")
+    public Optional<Boolean> getReturnSourceNodes() {
+        return returnSourceNodes;
     }
 
     /**
@@ -224,6 +279,7 @@ public final class ParseConfigAdvancedOptions {
     private boolean equalTo(ParseConfigAdvancedOptions other) {
         return pageRotationEnabled.equals(other.pageRotationEnabled)
                 && pageRanges.equals(other.pageRanges)
+                && textExtractionMethod.equals(other.textExtractionMethod)
                 && excelParsingMode.equals(other.excelParsingMode)
                 && excelSkipHiddenContent.equals(other.excelSkipHiddenContent)
                 && excelUseRawCellValues.equals(other.excelUseRawCellValues)
@@ -231,8 +287,11 @@ public final class ParseConfigAdvancedOptions {
                 && excelIncludeCellMetadata.equals(other.excelIncludeCellMetadata)
                 && excelIncludeCellFormatting.equals(other.excelIncludeCellFormatting)
                 && verticalGroupingThreshold.equals(other.verticalGroupingThreshold)
+                && embedOcrInPdf.equals(other.embedOcrInPdf)
                 && returnOcr.equals(other.returnOcr)
                 && alwaysConvertToPdf.equals(other.alwaysConvertToPdf)
+                && htmlSourceAnchors.equals(other.htmlSourceAnchors)
+                && returnSourceNodes.equals(other.returnSourceNodes)
                 && enrichmentFormat.equals(other.enrichmentFormat)
                 && imageConversionQuality.equals(other.imageConversionQuality)
                 && formattingDetection.equals(other.formattingDetection);
@@ -243,6 +302,7 @@ public final class ParseConfigAdvancedOptions {
         return Objects.hash(
                 this.pageRotationEnabled,
                 this.pageRanges,
+                this.textExtractionMethod,
                 this.excelParsingMode,
                 this.excelSkipHiddenContent,
                 this.excelUseRawCellValues,
@@ -250,8 +310,11 @@ public final class ParseConfigAdvancedOptions {
                 this.excelIncludeCellMetadata,
                 this.excelIncludeCellFormatting,
                 this.verticalGroupingThreshold,
+                this.embedOcrInPdf,
                 this.returnOcr,
                 this.alwaysConvertToPdf,
+                this.htmlSourceAnchors,
+                this.returnSourceNodes,
                 this.enrichmentFormat,
                 this.imageConversionQuality,
                 this.formattingDetection);
@@ -272,6 +335,8 @@ public final class ParseConfigAdvancedOptions {
 
         private Optional<List<PageRangesItem>> pageRanges = Optional.empty();
 
+        private Optional<ParseConfigAdvancedOptionsTextExtractionMethod> textExtractionMethod = Optional.empty();
+
         private Optional<ParseConfigAdvancedOptionsExcelParsingMode> excelParsingMode = Optional.empty();
 
         private Optional<Boolean> excelSkipHiddenContent = Optional.empty();
@@ -286,9 +351,15 @@ public final class ParseConfigAdvancedOptions {
 
         private Optional<Double> verticalGroupingThreshold = Optional.empty();
 
+        private Optional<Boolean> embedOcrInPdf = Optional.empty();
+
         private Optional<ParseConfigAdvancedOptionsReturnOcr> returnOcr = Optional.empty();
 
         private Optional<Boolean> alwaysConvertToPdf = Optional.empty();
+
+        private Optional<Boolean> htmlSourceAnchors = Optional.empty();
+
+        private Optional<Boolean> returnSourceNodes = Optional.empty();
 
         private Optional<ParseConfigAdvancedOptionsEnrichmentFormat> enrichmentFormat = Optional.empty();
 
@@ -305,6 +376,7 @@ public final class ParseConfigAdvancedOptions {
         public Builder from(ParseConfigAdvancedOptions other) {
             pageRotationEnabled(other.getPageRotationEnabled());
             pageRanges(other.getPageRanges());
+            textExtractionMethod(other.getTextExtractionMethod());
             excelParsingMode(other.getExcelParsingMode());
             excelSkipHiddenContent(other.getExcelSkipHiddenContent());
             excelUseRawCellValues(other.getExcelUseRawCellValues());
@@ -312,8 +384,11 @@ public final class ParseConfigAdvancedOptions {
             excelIncludeCellMetadata(other.getExcelIncludeCellMetadata());
             excelIncludeCellFormatting(other.getExcelIncludeCellFormatting());
             verticalGroupingThreshold(other.getVerticalGroupingThreshold());
+            embedOcrInPdf(other.getEmbedOcrInPdf());
             returnOcr(other.getReturnOcr());
             alwaysConvertToPdf(other.getAlwaysConvertToPdf());
+            htmlSourceAnchors(other.getHtmlSourceAnchors());
+            returnSourceNodes(other.getReturnSourceNodes());
             enrichmentFormat(other.getEnrichmentFormat());
             imageConversionQuality(other.getImageConversionQuality());
             formattingDetection(other.getFormattingDetection());
@@ -342,6 +417,26 @@ public final class ParseConfigAdvancedOptions {
 
         public Builder pageRanges(List<PageRangesItem> pageRanges) {
             this.pageRanges = Optional.ofNullable(pageRanges);
+            return this;
+        }
+
+        /**
+         * <p>Controls how page text is obtained for PDFs, including documents converted to PDF.</p>
+         * <ul>
+         * <li><code>auto</code>: Use the PDF's own embedded text on pages where it is reliable, and OCR the rest.</li>
+         * <li><code>ocr_only</code>: Read every page with OCR and ignore embedded text.</li>
+         * </ul>
+         * <p>Available on <code>parse_auto</code> and <code>parse_light</code> &gt;= <code>1.0.0</code>, which both default to <code>auto</code>. Other engines, including <code>parse_performance</code>, always use OCR.</p>
+         */
+        @JsonSetter(value = "textExtractionMethod", nulls = Nulls.SKIP)
+        public Builder textExtractionMethod(
+                Optional<ParseConfigAdvancedOptionsTextExtractionMethod> textExtractionMethod) {
+            this.textExtractionMethod = textExtractionMethod;
+            return this;
+        }
+
+        public Builder textExtractionMethod(ParseConfigAdvancedOptionsTextExtractionMethod textExtractionMethod) {
+            this.textExtractionMethod = Optional.ofNullable(textExtractionMethod);
             return this;
         }
 
@@ -449,6 +544,22 @@ public final class ParseConfigAdvancedOptions {
         }
 
         /**
+         * <p>Embed recognized OCR words as an invisible text layer in the processed PDF, enabling search, selection, and copying while preserving page appearance. Pages that already contain text are skipped entirely; existing text layers are not replaced or corrected. Only processed pages with usable OCR words are candidates for embedding.</p>
+         * <p>Applies to PDFs, including supported inputs converted to PDF with <code>alwaysConvertToPdf</code>. Independent of <code>returnOcr.words</code> and <code>returnOcr.lines</code>; enabling embedding does not include OCR arrays in the JSON response.</p>
+         * <p>After the run is processed, retrieve its <code>file.id</code> with Get File and use <code>presignedUrl</code> to download the PDF. The parse run's <code>outputUrl</code> downloads parsed JSON. See <a href="https://docs.extend.ai/parsing/embed-ocr-in-pdf">Embed OCR in PDF</a>.</p>
+         */
+        @JsonSetter(value = "embedOcrInPdf", nulls = Nulls.SKIP)
+        public Builder embedOcrInPdf(Optional<Boolean> embedOcrInPdf) {
+            this.embedOcrInPdf = embedOcrInPdf;
+            return this;
+        }
+
+        public Builder embedOcrInPdf(Boolean embedOcrInPdf) {
+            this.embedOcrInPdf = Optional.ofNullable(embedOcrInPdf);
+            return this;
+        }
+
+        /**
          * <p>Options for returning raw OCR data in the response. Words and lines are independent opt-ins and both default to false.</p>
          */
         @JsonSetter(value = "returnOcr", nulls = Nulls.SKIP)
@@ -463,7 +574,7 @@ public final class ParseConfigAdvancedOptions {
         }
 
         /**
-         * <p>Whether to convert supported file types (images, Word documents, PowerPoint, Excel, HTML) to PDF before parsing. This can improve parsing quality for some file types and ensures spatial output with bounding boxes.</p>
+         * <p>Whether to convert supported file types (images, Word documents, PowerPoint, Excel, HTML) to PDF before parsing. This can improve parsing quality for some file types and ensures spatial output with bounding boxes. Cannot be combined with <code>htmlSourceAnchors</code>.</p>
          */
         @JsonSetter(value = "alwaysConvertToPdf", nulls = Nulls.SKIP)
         public Builder alwaysConvertToPdf(Optional<Boolean> alwaysConvertToPdf) {
@@ -473,6 +584,34 @@ public final class ParseConfigAdvancedOptions {
 
         public Builder alwaysConvertToPdf(Boolean alwaysConvertToPdf) {
             this.alwaysConvertToPdf = Optional.ofNullable(alwaysConvertToPdf);
+            return this;
+        }
+
+        /**
+         * <p>HTML only. Whether to anchor each block to the byte range it came from in the uploaded file, returned as <code>source</code> on the block in place of <code>polygon</code>/<code>boundingBox</code>. Files must be UTF-8 or Windows-1252 encoded. Cannot be combined with <code>alwaysConvertToPdf</code>.</p>
+         */
+        @JsonSetter(value = "htmlSourceAnchors", nulls = Nulls.SKIP)
+        public Builder htmlSourceAnchors(Optional<Boolean> htmlSourceAnchors) {
+            this.htmlSourceAnchors = htmlSourceAnchors;
+            return this;
+        }
+
+        public Builder htmlSourceAnchors(Boolean htmlSourceAnchors) {
+            this.htmlSourceAnchors = Optional.ofNullable(htmlSourceAnchors);
+            return this;
+        }
+
+        /**
+         * <p>HTML only. Whether to include word-level source anchors under <code>output.source.nodes</code>, the text-format counterpart to <code>returnOcr.words</code>. Requires <code>htmlSourceAnchors</code>.</p>
+         */
+        @JsonSetter(value = "returnSourceNodes", nulls = Nulls.SKIP)
+        public Builder returnSourceNodes(Optional<Boolean> returnSourceNodes) {
+            this.returnSourceNodes = returnSourceNodes;
+            return this;
+        }
+
+        public Builder returnSourceNodes(Boolean returnSourceNodes) {
+            this.returnSourceNodes = Optional.ofNullable(returnSourceNodes);
             return this;
         }
 
@@ -537,6 +676,7 @@ public final class ParseConfigAdvancedOptions {
             return new ParseConfigAdvancedOptions(
                     pageRotationEnabled,
                     pageRanges,
+                    textExtractionMethod,
                     excelParsingMode,
                     excelSkipHiddenContent,
                     excelUseRawCellValues,
@@ -544,8 +684,11 @@ public final class ParseConfigAdvancedOptions {
                     excelIncludeCellMetadata,
                     excelIncludeCellFormatting,
                     verticalGroupingThreshold,
+                    embedOcrInPdf,
                     returnOcr,
                     alwaysConvertToPdf,
+                    htmlSourceAnchors,
+                    returnSourceNodes,
                     enrichmentFormat,
                     imageConversionQuality,
                     formattingDetection,

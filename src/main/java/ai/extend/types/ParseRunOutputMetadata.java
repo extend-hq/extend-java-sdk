@@ -28,18 +28,26 @@ public final class ParseRunOutputMetadata {
 
     private final Optional<String> finalMimeType;
 
+    private final Optional<ParseRunOutputMetadataSourceEncoding> sourceEncoding;
+
     private final Optional<List<ParseRunOutputMetadataPagesItem>> pages;
+
+    private final Optional<ParseRunOutputMetadataLanguageDetected> languageDetected;
 
     private final Map<String, Object> additionalProperties;
 
     private ParseRunOutputMetadata(
             Optional<String> originalMimeType,
             Optional<String> finalMimeType,
+            Optional<ParseRunOutputMetadataSourceEncoding> sourceEncoding,
             Optional<List<ParseRunOutputMetadataPagesItem>> pages,
+            Optional<ParseRunOutputMetadataLanguageDetected> languageDetected,
             Map<String, Object> additionalProperties) {
         this.originalMimeType = originalMimeType;
         this.finalMimeType = finalMimeType;
+        this.sourceEncoding = sourceEncoding;
         this.pages = pages;
+        this.languageDetected = languageDetected;
         this.additionalProperties = additionalProperties;
     }
 
@@ -66,7 +74,15 @@ public final class ParseRunOutputMetadata {
     }
 
     /**
-     * @return Per-page rotation and original-dimension info. Set when file is a PDF or was converted to PDF.
+     * @return The encoding that <code>source.byteOffset</code>/<code>byteLength</code> values are measured against. Only set when <code>advancedOptions.htmlSourceAnchors</code> is enabled.
+     */
+    @JsonProperty("sourceEncoding")
+    public Optional<ParseRunOutputMetadataSourceEncoding> getSourceEncoding() {
+        return sourceEncoding;
+    }
+
+    /**
+     * @return Per-page rotation and original-dimension info. Set when file is a PDF or was converted to PDF, otherwise is null.
      */
     @JsonIgnore
     public Optional<List<ParseRunOutputMetadataPagesItem>> getPages() {
@@ -74,6 +90,18 @@ public final class ParseRunOutputMetadata {
             return Optional.empty();
         }
         return pages;
+    }
+
+    /**
+     * @return The languages detected in the document. Set for every supported file type, regardless of how the file was parsed.
+     * <p><code>null</code> when no reliable detection was possible because the document did not contain enough characters for the detector to reach a conclusion. This can happen on numeric-only documents such as ledgers or forms of bare amounts and dates. Omitted when the parse run completed before language detection was introduced.</p>
+     */
+    @JsonIgnore
+    public Optional<ParseRunOutputMetadataLanguageDetected> getLanguageDetected() {
+        if (languageDetected == null) {
+            return Optional.empty();
+        }
+        return languageDetected;
     }
 
     @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
@@ -94,6 +122,12 @@ public final class ParseRunOutputMetadata {
         return pages;
     }
 
+    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = NullableNonemptyFilter.class)
+    @JsonProperty("languageDetected")
+    private Optional<ParseRunOutputMetadataLanguageDetected> _getLanguageDetected() {
+        return languageDetected;
+    }
+
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
@@ -108,12 +142,15 @@ public final class ParseRunOutputMetadata {
     private boolean equalTo(ParseRunOutputMetadata other) {
         return originalMimeType.equals(other.originalMimeType)
                 && finalMimeType.equals(other.finalMimeType)
-                && pages.equals(other.pages);
+                && sourceEncoding.equals(other.sourceEncoding)
+                && pages.equals(other.pages)
+                && languageDetected.equals(other.languageDetected);
     }
 
     @java.lang.Override
     public int hashCode() {
-        return Objects.hash(this.originalMimeType, this.finalMimeType, this.pages);
+        return Objects.hash(
+                this.originalMimeType, this.finalMimeType, this.sourceEncoding, this.pages, this.languageDetected);
     }
 
     @java.lang.Override
@@ -131,7 +168,11 @@ public final class ParseRunOutputMetadata {
 
         private Optional<String> finalMimeType = Optional.empty();
 
+        private Optional<ParseRunOutputMetadataSourceEncoding> sourceEncoding = Optional.empty();
+
         private Optional<List<ParseRunOutputMetadataPagesItem>> pages = Optional.empty();
+
+        private Optional<ParseRunOutputMetadataLanguageDetected> languageDetected = Optional.empty();
 
         @JsonAnySetter
         private Map<String, Object> additionalProperties = new HashMap<>();
@@ -141,7 +182,9 @@ public final class ParseRunOutputMetadata {
         public Builder from(ParseRunOutputMetadata other) {
             originalMimeType(other.getOriginalMimeType());
             finalMimeType(other.getFinalMimeType());
+            sourceEncoding(other.getSourceEncoding());
             pages(other.getPages());
+            languageDetected(other.getLanguageDetected());
             return this;
         }
 
@@ -196,7 +239,21 @@ public final class ParseRunOutputMetadata {
         }
 
         /**
-         * <p>Per-page rotation and original-dimension info. Set when file is a PDF or was converted to PDF.</p>
+         * <p>The encoding that <code>source.byteOffset</code>/<code>byteLength</code> values are measured against. Only set when <code>advancedOptions.htmlSourceAnchors</code> is enabled.</p>
+         */
+        @JsonSetter(value = "sourceEncoding", nulls = Nulls.SKIP)
+        public Builder sourceEncoding(Optional<ParseRunOutputMetadataSourceEncoding> sourceEncoding) {
+            this.sourceEncoding = sourceEncoding;
+            return this;
+        }
+
+        public Builder sourceEncoding(ParseRunOutputMetadataSourceEncoding sourceEncoding) {
+            this.sourceEncoding = Optional.ofNullable(sourceEncoding);
+            return this;
+        }
+
+        /**
+         * <p>Per-page rotation and original-dimension info. Set when file is a PDF or was converted to PDF, otherwise is null.</p>
          */
         @JsonSetter(value = "pages", nulls = Nulls.SKIP)
         public Builder pages(Optional<List<ParseRunOutputMetadataPagesItem>> pages) {
@@ -220,8 +277,35 @@ public final class ParseRunOutputMetadata {
             return this;
         }
 
+        /**
+         * <p>The languages detected in the document. Set for every supported file type, regardless of how the file was parsed.</p>
+         * <p><code>null</code> when no reliable detection was possible because the document did not contain enough characters for the detector to reach a conclusion. This can happen on numeric-only documents such as ledgers or forms of bare amounts and dates. Omitted when the parse run completed before language detection was introduced.</p>
+         */
+        @JsonSetter(value = "languageDetected", nulls = Nulls.SKIP)
+        public Builder languageDetected(Optional<ParseRunOutputMetadataLanguageDetected> languageDetected) {
+            this.languageDetected = languageDetected;
+            return this;
+        }
+
+        public Builder languageDetected(ParseRunOutputMetadataLanguageDetected languageDetected) {
+            this.languageDetected = Optional.ofNullable(languageDetected);
+            return this;
+        }
+
+        public Builder languageDetected(Nullable<ParseRunOutputMetadataLanguageDetected> languageDetected) {
+            if (languageDetected.isNull()) {
+                this.languageDetected = null;
+            } else if (languageDetected.isEmpty()) {
+                this.languageDetected = Optional.empty();
+            } else {
+                this.languageDetected = Optional.of(languageDetected.get());
+            }
+            return this;
+        }
+
         public ParseRunOutputMetadata build() {
-            return new ParseRunOutputMetadata(originalMimeType, finalMimeType, pages, additionalProperties);
+            return new ParseRunOutputMetadata(
+                    originalMimeType, finalMimeType, sourceEncoding, pages, languageDetected, additionalProperties);
         }
     }
 }
